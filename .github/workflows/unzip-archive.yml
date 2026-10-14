@@ -1,8 +1,11 @@
 name: Unzip archive
 
-# Run manually from the Actions tab (or with `gh workflow run`).
+# Runs on a push that changes this file, or manually from the Actions tab.
 # Extracts the named zip in the repo root into the repo root and commits the result.
 on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/unzip-archive.yml']
   workflow_dispatch:
     inputs:
       archive:
@@ -13,6 +16,9 @@ on:
 permissions:
   contents: write
 
+env:
+  ARCHIVE: ${{ inputs.archive || 'Titan-Zero-Trades-Front-Desk-2.0.1-FULL-2026-10-14-r5.zip' }}
+
 jobs:
   unzip:
     runs-on: ubuntu-latest
@@ -21,8 +27,6 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate archive name
-        env:
-          ARCHIVE: ${{ inputs.archive }}
         run: |
           set -euo pipefail
           case "$ARCHIVE" in
@@ -31,8 +35,6 @@ jobs:
           test -f "$ARCHIVE" || { echo "Missing $ARCHIVE"; exit 1; }
 
       - name: Extract archive
-        env:
-          ARCHIVE: ${{ inputs.archive }}
         run: |
           set -euo pipefail
           unzip -q "$ARCHIVE" -d .
@@ -40,8 +42,6 @@ jobs:
           find . -maxdepth 2 -type d -not -path './.git*' -not -path './.github*' | sort
 
       - name: Commit extracted files
-        env:
-          ARCHIVE: ${{ inputs.archive }}
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"

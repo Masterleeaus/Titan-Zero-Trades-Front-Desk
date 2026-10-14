@@ -19,7 +19,13 @@ function titan_zero_front_desk_get_captcha() {
     if (!function_exists('imagecreatetruecolor')) {
         // Stream the bundled binary PNG as-is. Escaping does not apply to image bytes.
         $fallback = __DIR__ . '/no-gd-library.png';
-        if (is_readable($fallback)) { readfile($fallback); }
+        if (is_readable($fallback)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            if (WP_Filesystem() && isset($GLOBALS['wp_filesystem'])) {
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- binary PNG bytes read through WP_Filesystem.
+                echo $GLOBALS['wp_filesystem']->get_contents($fallback);
+            }
+        }
         exit;
     }
     $image = TZFD_Captcha::image($config, $code);

@@ -101,7 +101,9 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
         private static function read_pack( $tzfd_file_path ) {
             // The file is only read and parsed as JSON data. Nothing in it is executed.
             if ( ! is_readable( $tzfd_file_path ) ) return null;
-            $raw = file_get_contents( $tzfd_file_path );
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            if ( ! WP_Filesystem() || ! isset( $GLOBALS['wp_filesystem'] ) ) return null;
+            $raw = $GLOBALS['wp_filesystem']->get_contents( $tzfd_file_path );
             if ( ! $raw ) return null;
             $tzfd_data = json_decode( $raw, true );
             if ( ! is_array($tzfd_data) || empty($tzfd_data['id']) ) return null;
@@ -707,7 +709,11 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
                 wp_safe_redirect( add_query_arg('pack_error', rawurlencode(__('The pack file is too large (512 KB at most).','titan-zero-trades-front-desk')), admin_url('admin.php?page=tzfd-packs') ) );
                 exit;
             }
-            $raw      = is_readable( $tmp_path ) ? file_get_contents( $tmp_path ) : false;
+            $raw      = false;
+            if ( is_readable( $tmp_path ) ) {
+                require_once ABSPATH . 'wp-admin/includes/file.php';
+                if ( WP_Filesystem() && isset( $GLOBALS['wp_filesystem'] ) ) $raw = $GLOBALS['wp_filesystem']->get_contents( $tmp_path );
+            }
             if ( ! $raw || strlen( $raw ) > self::MAX_UPLOAD_BYTES ) return;
             $tzfd_data = json_decode( $raw, true );
             if ( ! is_array($tzfd_data) || empty($tzfd_data['id']) || empty($tzfd_data['name']) || ( isset($tzfd_data['kb']) && ! is_array($tzfd_data['kb']) ) || ( isset($tzfd_data['catalog']) && ! is_array($tzfd_data['catalog']) ) ) {

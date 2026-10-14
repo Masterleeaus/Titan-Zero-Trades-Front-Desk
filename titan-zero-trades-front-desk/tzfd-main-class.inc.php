@@ -3094,15 +3094,15 @@ private function countBookingsFor( $tzfd_date, $slot, $service ) {
         header("Content-type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".$filename.".csv");
         // CSV is a file download, not HTML, so rows are written to the response stream unchanged.
-        $tzfd_csv_out = fopen( 'php://output', 'w' );
+        $tzfd_csv = '';
         $end = count($fields);
         for ($tzfd_i=0; $tzfd_i<$end; $tzfd_i++)
         {
             $hlabel = $this->iconv("utf-8", "ISO-8859-1//TRANSLIT//IGNORE", $this->get_form_field_label($fields[$tzfd_i],$tzfd_form));
-            fwrite( $tzfd_csv_out, '"'.str_replace('"','""', $this->clean_csv_value($hlabel)).'"'.$separator );
+            $tzfd_csv .= '"'.str_replace('"','""', $this->clean_csv_value($hlabel)).'"'.$separator;
         }
 
-        echo "\n";
+        $tzfd_csv .= "\n";
         foreach ( $values as $tzfd_item )
         {
             for ( $tzfd_i=0; $tzfd_i<$end; $tzfd_i++ )
@@ -3112,11 +3112,12 @@ private function countBookingsFor( $tzfd_date, $slot, $service ) {
                 if (is_array($tzfd_item[$tzfd_i]))
                     $tzfd_item[$tzfd_i] = implode(',',$tzfd_item[$tzfd_i]);
                 $tzfd_item[$tzfd_i] = $this->iconv("utf-8", "ISO-8859-1//TRANSLIT//IGNORE", $tzfd_item[$tzfd_i]);
-                fwrite( $tzfd_csv_out, '"'.str_replace('"','""', $this->clean_csv_value($tzfd_item[$tzfd_i])).'"'.$separator );
+                $tzfd_csv .= '"'.str_replace('"','""', $this->clean_csv_value($tzfd_item[$tzfd_i])).'"'.$separator;
             }
-            echo "\n";
+            $tzfd_csv .= "\n";
         }
 
+        echo $tzfd_csv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file download, not HTML; the cells are CSV-quoted above.
         exit;
     }
 
@@ -3224,24 +3225,24 @@ private function countBookingsFor( $tzfd_date, $slot, $service ) {
         header("Content-type: application/octet-stream");
         header("Content-Disposition: attachment; filename=".$filename.".csv");
         // CSV is a file download, not HTML, so rows are written to the response stream unchanged.
-        $tzfd_csv_out = fopen( 'php://output', 'w' );
+        $tzfd_csv = '';
 		
         $end = count($fields);
         for ($tzfd_i=0; $tzfd_i<$end; $tzfd_i++)
         {
             $hlabel = $this->iconv("utf-8", "ISO-8859-1//TRANSLIT//IGNORE", $this->get_form_field_label($fields[$tzfd_i],$tzfd_form));
 			if ($hlabel == 'cancelled') $hlabel = 'status';
-            fwrite( $tzfd_csv_out, '"'.str_replace('"','""', $this->clean_csv_value($hlabel)).'"'.$separator );
+            $tzfd_csv .= '"'.str_replace('"','""', $this->clean_csv_value($hlabel)).'"'.$separator;
         }
-        echo "\n";		
+        $tzfd_csv .= "\n";		
 		
         // print table
         for($tzfd_i=0; $tzfd_i<count($tzfd_selection); $tzfd_i++)
         {
             for($tzfd_j=0; $tzfd_j<count($fields); $tzfd_j++)
             {
-                if ($tzfd_j>0) echo esc_html($separator);
-                echo '"';
+                if ($tzfd_j>0) $tzfd_csv .= esc_html($separator);
+                $tzfd_csv .= '"';
                 switch ($fields[$tzfd_j]) {
                     case 'date':
                         $tzfd_value = $tzfd_selection[$tzfd_i][1];
@@ -3274,12 +3275,13 @@ private function countBookingsFor( $tzfd_date, $slot, $service ) {
                         $tzfd_value = ($tzfd_selection[$tzfd_i][3][$fields[$tzfd_j]]==''?'':$tzfd_selection[$tzfd_i][3][$fields[$tzfd_j]])."";
                 }
                 $tzfd_value = str_replace('"','""', $tzfd_value);
-                fwrite( $tzfd_csv_out, $this->clean_csv_value($tzfd_value) );
-                echo '"';
+                $tzfd_csv .= $this->clean_csv_value($tzfd_value);
+                $tzfd_csv .= '"';
             }
-            echo "\n";
+            $tzfd_csv .= "\n";
         }
 
+        echo $tzfd_csv; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CSV file download, not HTML; the cells are CSV-quoted above.
         exit;
     }
 

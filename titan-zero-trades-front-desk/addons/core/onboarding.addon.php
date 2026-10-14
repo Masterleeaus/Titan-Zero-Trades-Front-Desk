@@ -301,7 +301,9 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $csv_size = isset( $_FILES['services_csv']['size'] ) ? absint( $_FILES['services_csv']['size'] ) : 0;
                 if ( in_array( 'csv', $sources, true ) && '' !== $csv_tmp && is_uploaded_file( $csv_tmp ) ) {
                     if ( $csv_size <= self::MAX_CSV && 'csv' === strtolower( pathinfo( $csv_name, PATHINFO_EXTENSION ) ) ) {
-                        $items = array_merge( $items, self::candidates_from_csv( (string) file_get_contents( $csv_tmp ) ) );
+                        require_once ABSPATH . 'wp-admin/includes/file.php';
+                        $csv_text = ( WP_Filesystem() && isset( $GLOBALS['wp_filesystem'] ) ) ? (string) $GLOBALS['wp_filesystem']->get_contents( $csv_tmp ) : '';
+                        $items = array_merge( $items, self::candidates_from_csv( $csv_text ) );
                     }
                 }
                 $url = trim( esc_url_raw( wp_unslash( $_POST['web_url'] ?? '' ) ) );

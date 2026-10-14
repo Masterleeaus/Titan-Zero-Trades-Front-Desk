@@ -422,7 +422,8 @@ if ( ! class_exists( 'TZFD_Quote_PDF' ) ) {
             if ( ! $res['ok'] || ! $res['bytes'] ) return;
 
             $tmp = wp_tempnam( 'quote-'.sanitize_file_name( $q->reference ).'.pdf' );
-            if ( ! $tmp || false === file_put_contents( $tmp, $res['bytes'] ) ) return;
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            if ( ! $tmp || ! WP_Filesystem() || ! isset( $GLOBALS['wp_filesystem'] ) || ! $GLOBALS['wp_filesystem']->put_contents( $tmp, $res['bytes'], FS_CHMOD_FILE ) ) return;
             // Remove the temp file once the request (and the send) has finished.
             register_shutdown_function( function() use ( $tmp ) { if ( file_exists( $tmp ) ) wp_delete_file( $tmp ); } );
 

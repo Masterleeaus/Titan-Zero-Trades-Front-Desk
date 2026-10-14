@@ -1,0 +1,394 @@
+{
+  "id": "handyman",
+  "name": "Handyman",
+  "icon": "🛠️",
+  "tagline": "Small repairs, painting, fixtures, doors, flat-pack assembly",
+  "version": "1.0.0",
+  "service_types": [
+    "General Handyman",
+    "Painting & Patching",
+    "Doors & Windows Repair",
+    "Fixture Installation",
+    "Flat-Pack Assembly",
+    "Bathroom Fixture Install",
+    "Garden Structures & Sheds",
+    "Pergola & Shelf Install",
+    "Furniture Repair",
+    "Home Maintenance Check",
+    "Furniture Assembly",
+    "TV Mounting",
+    "Shelving Installation",
+    "Door Hanging",
+    "Deck Repair",
+    "Fence Repair",
+    "Tile Repair",
+    "Drywall Patch",
+    "Pergola Repair",
+    "Minor Carpentry"
+  ],
+  "staff_skills": [
+    "handyman",
+    "painting",
+    "carpentry",
+    "fixtures",
+    "assembly",
+    "sheds",
+    "furniture repair",
+    "maintenance check"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "door won't close after break-in",
+      "window broken and open",
+      "ceiling collapsing",
+      "water coming through ceiling"
+    ],
+    "urgent": [
+      "door off its hinges",
+      "window will not lock",
+      "hole in wall",
+      "tap dripping badly",
+      "fence down",
+      "handrail loose on stairs"
+    ],
+    "routine": [
+      "fix",
+      "hang",
+      "assemble",
+      "paint",
+      "patch",
+      "install shelf",
+      "quote",
+      "small job"
+    ]
+  },
+  "extra_prompt": "You are booking for a general handyman service. Ask for a clear description of the job, how many tasks there are, and whether the customer or the business supplies materials. Ask the height or size of any work. If the job involves gas, mains water or electrical work, explain that a licensed trade is required and book that trade instead. Give a price range only after the full scope is clear.",
+  "kb": [
+    {
+      "q": "What jobs do you do?",
+      "a": "We handle general repairs and small installations: fixing doors and cupboards, hanging items, patching walls, painting, and assembling furniture.",
+      "keywords": "jobs,services,what do you do,repairs",
+      "priority": 10
+    },
+    {
+      "q": "Do you do electrical or plumbing work?",
+      "a": "No. We refer electrical and plumbing work to a licensed tradesperson. We can handle the non-trade parts of your job, such as making good walls afterwards.",
+      "keywords": "electrical,plumbing,licensed,refer",
+      "priority": 10
+    },
+    {
+      "q": "Do you supply the materials?",
+      "a": "We can buy materials and fittings for you, and we charge them at cost plus a small handling fee. Or you can supply your own.",
+      "keywords": "materials,supply,fittings,cost",
+      "priority": 9
+    },
+    {
+      "q": "How do you charge?",
+      "a": "Small jobs have a fixed price quoted when you book. Larger jobs are quoted after a visit, or charged by the hour.",
+      "keywords": "charge,price,fixed,hourly",
+      "priority": 9
+    },
+    {
+      "q": "Can you hang a TV or shelves?",
+      "a": "Yes. We mount TVs, shelves and mirrors and check the wall type first so the fixings are safe for the load.",
+      "keywords": "tv,mount,shelf,hang,mirror",
+      "priority": 9
+    },
+    {
+      "q": "Do you assemble flat-pack furniture?",
+      "a": "Yes. We assemble most flat-pack furniture. Let us know the number of items and whether the parts are all there.",
+      "keywords": "flat pack,assemble,furniture,ikea",
+      "priority": 8
+    },
+    {
+      "q": "Can you paint a room?",
+      "a": "Yes. We prepare, patch and paint walls and ceilings. Tell us the colours and whether you are supplying the paint.",
+      "keywords": "paint,painting,room,wall,ceiling",
+      "priority": 9
+    },
+    {
+      "q": "Can you fix a door that will not close?",
+      "a": "Usually yes. We check the hinges, strike plate and frame, and adjust or replace parts as needed.",
+      "keywords": "door,close,hinge,adjust",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair fences and gates?",
+      "a": "Yes. We fix palings, gates and latches. Major fence rebuilds are quoted separately.",
+      "keywords": "fence,gate,paling,latch",
+      "priority": 8
+    },
+    {
+      "q": "Can you fix a broken window?",
+      "a": "We can board up or replace glazing in some windows. For large or double-glazed units, we arrange a glazier.",
+      "keywords": "window,glass,glazing,board up",
+      "priority": 9
+    },
+    {
+      "q": "Do you fix holes in walls?",
+      "a": "Yes. We patch holes and cracks in plasterboard and render, sand them and prepare them for paint.",
+      "keywords": "hole,wall,patch,plaster,crack",
+      "priority": 8
+    },
+    {
+      "q": "Do you install curtains, blinds or pelmets?",
+      "a": "Yes. We install curtain rods, blinds, pelmets and tracks, and we check the wall type first.",
+      "keywords": "curtain,blind,pelmet,rod",
+      "priority": 8
+    },
+    {
+      "q": "How do I book a job that needs more than one visit?",
+      "a": "Tell us the full list when you book. We quote the whole job and schedule the visits together where possible.",
+      "keywords": "multiple visits,list,quote,schedule",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes. Our handymen are insured for public liability, and we can send a certificate on request.",
+      "keywords": "insured,insurance,liability,certificate",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean up after the job?",
+      "a": "Yes. We remove our packaging and rubbish and leave the work area clean. Bulk waste removal is quoted separately.",
+      "keywords": "clean up,rubbish,packaging,waste",
+      "priority": 7
+    },
+    {
+      "q": "Can you come the same day?",
+      "a": "Often yes, if a van is free nearby. Ask us when you book, and we will tell you the earliest time.",
+      "keywords": "same day,urgent,today,earliest",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home maintenance checks?",
+      "a": "Yes. A maintenance check looks at doors, windows, taps, smoke alarm batteries, gutters from ground level, and small repairs. You get a list of what needs attention and what it costs.",
+      "keywords": "maintenance,check,home,list",
+      "priority": 9
+    },
+    {
+      "q": "Can you fix a squeaky floorboard?",
+      "a": "Often yes, from underneath or with a fixing at the joist. Access to the subfloor matters, so tell us about the floor type when you book.",
+      "keywords": "squeaky,floorboard,fix,joist",
+      "priority": 7
+    },
+    {
+      "q": "Can you fix a sliding door track?",
+      "a": "Yes. We clean, realign and repair sliding door tracks and rollers, and replace worn parts when needed.",
+      "keywords": "sliding door,track,roller,realign",
+      "priority": 7
+    },
+    {
+      "q": "Can you build custom shelves?",
+      "a": "Yes. We build and fit custom shelves in timber or board, and we can work to your measurements or come out to measure.",
+      "keywords": "custom shelf,build,timber,measure",
+      "priority": 7
+    },
+    {
+      "q": "Do you repair furniture?",
+      "a": "Yes. We fix chairs, tables and drawers, and tighten or re-glue joints. Antique or valuable pieces are referred to a specialist.",
+      "keywords": "furniture,repair,chair,drawer,antique",
+      "priority": 7
+    },
+    {
+      "q": "Can you fix a loose handrail or balustrade?",
+      "a": "Yes. We tighten and fix handrails and balustrades. If a fixing is failing in a major way, we tell you before going further, because stairs need to be safe.",
+      "keywords": "handrail,balustrade,loose,stairs,safe",
+      "priority": 9
+    },
+    {
+      "q": "Can you replace door handles?",
+      "a": "Yes. We fit door handles and knobs. For security locks, we can refer you to a locksmith.",
+      "keywords": "door handle,knob,replace,lock",
+      "priority": 7
+    },
+    {
+      "q": "Can you install a letterbox?",
+      "a": "Yes. We install letterboxes on posts, walls or fences, and we make sure the box is secure and at a safe height for the postie.",
+      "keywords": "letterbox,install,post,wall,fence",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "HDM-HR",
+      "label": "Handyman labour (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "handyman,hour,labour"
+    },
+    {
+      "sku": "HDM-MIN",
+      "label": "Minimum call-out (first hour)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "minimum,call out,first hour"
+    },
+    {
+      "sku": "HDM-HANG",
+      "label": "Hang shelf, mirror or picture (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "hang,shelf,mirror,picture"
+    },
+    {
+      "sku": "HDM-TV",
+      "label": "TV wall mount install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "tv,mount,wall,install"
+    },
+    {
+      "sku": "HDM-FLAT",
+      "label": "Flat-pack assembly (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "flat pack,assemble,furniture"
+    },
+    {
+      "sku": "HDM-DOOR",
+      "label": "Door adjustment or rehang",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "door,adjust,hinge,rehang"
+    },
+    {
+      "sku": "HDM-PATCH",
+      "label": "Wall hole patch and sand (small)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "patch,hole,wall,small"
+    },
+    {
+      "sku": "HDM-PAINT-R",
+      "label": "Paint a room (labour, per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "paint,room,labour,wall"
+    },
+    {
+      "sku": "HDM-CURT",
+      "label": "Curtain rod or blind install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "curtain,blind,rod,install"
+    },
+    {
+      "sku": "HDM-FENCE",
+      "label": "Fence paling or gate repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "fence,gate,paling,repair"
+    },
+    {
+      "sku": "HDM-MAT",
+      "label": "Materials handling fee (per job)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "materials,handling,fee"
+    },
+    {
+      "sku": "HDM-QUOTE",
+      "label": "Site visit and written quote",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "quote,visit,estimate,free"
+    },
+    {
+      "sku": "HDM-CHECK",
+      "label": "Home maintenance check (per visit)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 149,
+      "taxable": 1,
+      "keywords": "maintenance,check,home,visit"
+    },
+    {
+      "sku": "HDM-SQUEAK",
+      "label": "Squeaky floorboard fix (per board)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "squeaky,floorboard,fix"
+    },
+    {
+      "sku": "HDM-SLIDE",
+      "label": "Sliding door track repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "sliding door,track,roller,repair"
+    },
+    {
+      "sku": "HDM-SHELF",
+      "label": "Custom shelf build (per linear metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "custom,shelf,build,metre"
+    },
+    {
+      "sku": "HDM-FURN",
+      "label": "Furniture repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "furniture,repair,hour"
+    },
+    {
+      "sku": "HDM-HAND",
+      "label": "Handrail tighten or fix",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "handrail,tighten,balustrade"
+    },
+    {
+      "sku": "HDM-HANDLE",
+      "label": "Door handle replacement (per door)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "door handle,knob,replace"
+    },
+    {
+      "sku": "HDM-LBOX",
+      "label": "Letterbox install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "letterbox,install"
+    }
+  ]
+}

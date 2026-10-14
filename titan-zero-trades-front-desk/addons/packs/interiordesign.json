@@ -1,0 +1,240 @@
+{
+  "id": "interiordesign",
+  "name": "Interior Designers",
+  "icon": "🛋️",
+  "tagline": "Residential, commercial, styling, renovation, e-design",
+  "version": "1.0.0",
+  "service_types": [
+    "Residential Design",
+    "Commercial Design",
+    "Renovation Design",
+    "Space Planning",
+    "Colour Consulting",
+    "Furniture Selection",
+    "Styling",
+    "Property Styling",
+    "E-Design",
+    "Mood Boards",
+    "Lighting Design",
+    "Kitchen Design",
+    "Bathroom Design",
+    "Home Staging",
+    "Bathroom & Kitchen",
+    "Project Management"
+  ],
+  "staff_skills": [
+    "interior design",
+    "space planning",
+    "styling",
+    "colour",
+    "CAD",
+    "furniture",
+    "lighting",
+    "project management"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "before photos",
+      "before listing",
+      "urgent styling"
+    ],
+    "urgent": [
+      "this week",
+      "before open house",
+      "before sale",
+      "next week"
+    ],
+    "routine": [
+      "quote",
+      "consultation",
+      "design",
+      "project",
+      "styling"
+    ]
+  },
+  "extra_prompt": "You are booking for an interior designer. Ask about the property, rooms involved, budget range, style preferences, and timeline. Ask whether it is design only, design + supply, or full project management. Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise a specific design outcome or supplier availability not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Design fees can be hourly, per room, or a percentage of the project.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do e-design?",
+      "a": "Yes, we offer remote e-design packages.",
+      "keywords": "e-design,remote,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do residential and commercial?",
+      "a": "Yes, we work on homes, offices, retail, and hospitality.",
+      "keywords": "residential,commercial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do property styling?",
+      "a": "Yes, we style properties for sale and rent.",
+      "keywords": "styling,property",
+      "priority": 9
+    },
+    {
+      "q": "Do you manage the project?",
+      "a": "Yes, we can manage the project end-to-end.",
+      "keywords": "project management",
+      "priority": 8
+    },
+    {
+      "q": "Do you supply furniture?",
+      "a": "Yes, we source and supply furniture, lighting, and finishes.",
+      "keywords": "furniture,supply",
+      "priority": 8
+    },
+    {
+      "q": "Can you work with my builder?",
+      "a": "Yes, we coordinate with builders and trades.",
+      "keywords": "builder,trades",
+      "priority": 8
+    },
+    {
+      "q": "Do you do kitchen and bathroom design?",
+      "a": "Yes, we design kitchens, bathrooms, and laundries.",
+      "keywords": "kitchen,bathroom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do 3D visuals?",
+      "a": "Yes, we provide 3D renders for larger projects.",
+      "keywords": "3d,render,visuals",
+      "priority": 8
+    },
+    {
+      "q": "What is your minimum project?",
+      "a": "{minimum_note}",
+      "keywords": "minimum,min",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge a consultation fee?",
+      "a": "{consult_note}",
+      "keywords": "consultation,fee",
+      "priority": 9
+    },
+    {
+      "q": "How long does a project take?",
+      "a": "Design-only projects take 2–6 weeks. Full projects depend on the build.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you work outside the local area?",
+      "a": "Yes, we travel. Travel fees may apply.",
+      "keywords": "travel,outside",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer colour consulting?",
+      "a": "Yes, colour consulting is available as a standalone service.",
+      "keywords": "colour,color",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home staging?",
+      "a": "Yes, we stage homes for sale and rent.",
+      "keywords": "staging,home staging",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "ID-CONS",
+      "label": "Initial consultation (in-home)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "consult"
+    },
+    {
+      "sku": "ID-E",
+      "label": "E-design package (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "e design"
+    },
+    {
+      "sku": "ID-ROOM",
+      "label": "Full room design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "room"
+    },
+    {
+      "sku": "ID-HR",
+      "label": "Design hourly",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "ID-KITCH",
+      "label": "Kitchen design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "kitchen"
+    },
+    {
+      "sku": "ID-BATH",
+      "label": "Bathroom design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "bathroom"
+    },
+    {
+      "sku": "ID-STYLE",
+      "label": "Property styling (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "styling"
+    },
+    {
+      "sku": "ID-STAGE",
+      "label": "Home staging (per week)",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "staging"
+    },
+    {
+      "sku": "ID-PM",
+      "label": "Project management (% of build)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "project management"
+    },
+    {
+      "sku": "ID-TRAVEL",
+      "label": "Travel (per km beyond 30km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

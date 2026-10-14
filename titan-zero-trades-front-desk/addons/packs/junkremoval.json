@@ -1,0 +1,268 @@
+{
+  "id": "junkremoval",
+  "name": "Junk Removal",
+  "icon": "🗑️",
+  "tagline": "Rubbish removal, cleanouts, e-waste, green waste",
+  "version": "1.0.0",
+  "service_types": [
+    "Household Junk",
+    "Furniture Removal",
+    "Appliance Removal",
+    "Green Waste",
+    "Construction Waste",
+    "E-Waste",
+    "Mattress Removal",
+    "Garage Cleanout",
+    "Hoarding Cleanout",
+    "Estate Cleanout",
+    "Commercial Junk",
+    "Same-Day Junk",
+    "Tip Runs",
+    "Skip Bin Alternative"
+  ],
+  "staff_skills": [
+    "junk removal",
+    "rubbish",
+    "furniture",
+    "e-waste",
+    "green waste",
+    "cleanouts",
+    "recycling"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hoarding",
+      "urgent cleanout",
+      "eviction",
+      "health hazard"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before settlement"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "cleanout",
+      "removal",
+      "tip run"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional junk removal company. Ask what needs to be removed, the volume, access, and whether items are upstairs or in a basement. Ask about hazardous items, e-waste, and green waste. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise disposal of hazardous items that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does junk removal cost?",
+      "a": "{price_note} Junk removal is priced by load size and access. Tell us the items and we will quote.",
+      "keywords": "cost,price,junk removal",
+      "priority": 9
+    },
+    {
+      "q": "What do you remove?",
+      "a": "We remove household junk, furniture, appliances, green waste, and construction waste.",
+      "keywords": "what,remove,accepted",
+      "priority": 9
+    },
+    {
+      "q": "Do you take mattresses?",
+      "a": "Yes, we remove mattresses. A recycling fee may apply.",
+      "keywords": "mattress,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you take appliances?",
+      "a": "Yes, we remove fridges, washing machines, and other appliances.",
+      "keywords": "appliance,fridge,washing machine",
+      "priority": 9
+    },
+    {
+      "q": "Do you take e-waste?",
+      "a": "Yes, we remove e-waste such as TVs, computers, and printers.",
+      "keywords": "e-waste,electronics,tv,computer",
+      "priority": 8
+    },
+    {
+      "q": "Do you take green waste?",
+      "a": "Yes, we remove branches, leaves, and garden waste.",
+      "keywords": "green waste,garden",
+      "priority": 8
+    },
+    {
+      "q": "Do you take construction waste?",
+      "a": "Yes, we remove building and renovation waste.",
+      "keywords": "construction,building,rubble",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hoarding cleanouts?",
+      "a": "Yes, we do hoarding and estate cleanouts with sensitivity.",
+      "keywords": "hoarding,estate",
+      "priority": 9
+    },
+    {
+      "q": "Do you recycle?",
+      "a": "Yes, we recycle and donate where possible.",
+      "keywords": "recycle,donate",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer same-day service?",
+      "a": "Yes, same-day is possible subject to availability. Call early.",
+      "keywords": "same day,today",
+      "priority": 9
+    },
+    {
+      "q": "Do you take hazardous waste?",
+      "a": "We do not take hazardous waste such as chemicals, asbestos, or paint.",
+      "keywords": "hazardous,asbestos,chemicals",
+      "priority": 9
+    },
+    {
+      "q": "How much can you take?",
+      "a": "We take from single items to full truckloads.",
+      "keywords": "how much,load",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial cleanouts?",
+      "a": "Yes, we do office and commercial cleanouts.",
+      "keywords": "commercial,office",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a receipt?",
+      "a": "Yes, we provide a receipt for all jobs.",
+      "keywords": "receipt,invoice",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps, but we can arrange access if not.",
+      "keywords": "home,present,access",
+      "priority": 7
+    },
+    {
+      "q": "Can you remove items from upstairs?",
+      "a": "Yes, we can. A stairs surcharge may apply.",
+      "keywords": "stairs,upstairs",
+      "priority": 8
+    },
+    {
+      "q": "Do you take tyres?",
+      "a": "Yes, we take tyres for a fee.",
+      "keywords": "tyre,tire",
+      "priority": 7
+    },
+    {
+      "q": "Do you take paint?",
+      "a": "We take dried paint only. Liquid paint is hazardous waste.",
+      "keywords": "paint,hazardous",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "JNK-QTR",
+      "label": "Quarter load",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "quarter,load"
+    },
+    {
+      "sku": "JNK-HALF",
+      "label": "Half load",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "half,load"
+    },
+    {
+      "sku": "JNK-FULL",
+      "label": "Full load",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "full,load"
+    },
+    {
+      "sku": "JNK-ITEM",
+      "label": "Single item removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "single,item"
+    },
+    {
+      "sku": "JNK-MATT",
+      "label": "Mattress removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "mattress"
+    },
+    {
+      "sku": "JNK-APP",
+      "label": "Appliance removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "appliance,fridge"
+    },
+    {
+      "sku": "JNK-EWASTE",
+      "label": "E-waste removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "e-waste,electronics"
+    },
+    {
+      "sku": "JNK-GREEN",
+      "label": "Green waste (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "green waste,garden"
+    },
+    {
+      "sku": "JNK-STAIRS",
+      "label": "Stairs surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "stairs"
+    },
+    {
+      "sku": "JNK-HOARD",
+      "label": "Hoarding cleanout (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hoarding,cleanout"
+    }
+  ]
+}

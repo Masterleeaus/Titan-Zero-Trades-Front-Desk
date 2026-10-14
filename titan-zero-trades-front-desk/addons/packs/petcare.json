@@ -1,0 +1,269 @@
+{
+  "id": "petcare",
+  "name": "Pet Care & Dog Walking",
+  "icon": "🐾",
+  "tagline": "Dog walking, pet sitting, overnight care, pet taxi",
+  "version": "1.0.0",
+  "service_types": [
+    "Dog Walking",
+    "Group Walks",
+    "Private Walks",
+    "Puppy Visits",
+    "Pet Sitting",
+    "Overnight Care",
+    "House Sitting",
+    "Pet Taxi",
+    "Vet Visits",
+    "Feeding",
+    "Medication",
+    "Puppy Daycare",
+    "Holiday Care",
+    "Cat Visits",
+    "Pet First Aid"
+  ],
+  "staff_skills": [
+    "dog walking",
+    "pet sitting",
+    "house sitting",
+    "pet taxi",
+    "puppy care",
+    "medication",
+    "cat care"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "pet unwell",
+      "emergency vet",
+      "urgent care"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "last minute",
+      "this weekend"
+    ],
+    "routine": [
+      "regular",
+      "daily",
+      "weekly",
+      "holiday",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional pet care and dog walking business. Ask about the pet, breed, temperament, vaccination status, and any medical needs. Ask about access, keys, feeding routine, and emergency vet details. Quote prices only from the reference answers, and say the final price is confirmed after a meet-and-greet. Do not promise a specific outcome for pets with behavioural or medical issues.",
+  "kb": [
+    {
+      "q": "How much is dog walking?",
+      "a": "{price_note} Walks are priced by duration and whether it is a group or private walk.",
+      "keywords": "cost,price,walk",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer pet sitting?",
+      "a": "Yes, we offer in-home pet sitting and overnight care.",
+      "keywords": "pet sitting,sitting",
+      "priority": 9
+    },
+    {
+      "q": "Do you do overnight stays?",
+      "a": "Yes, we do overnight stays at your home.",
+      "keywords": "overnight,stay",
+      "priority": 9
+    },
+    {
+      "q": "Do you do house sitting?",
+      "a": "Yes, we house sit with pets.",
+      "keywords": "house sitting",
+      "priority": 8
+    },
+    {
+      "q": "Do you walk dogs in groups?",
+      "a": "Yes, group walks are available. Private walks are also available.",
+      "keywords": "group,private",
+      "priority": 9
+    },
+    {
+      "q": "Do you give medication?",
+      "a": "Yes, we can administer oral and topical medication.",
+      "keywords": "medication,meds",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pet taxi?",
+      "a": "Yes, we do pet taxi and vet visits.",
+      "keywords": "taxi,vet",
+      "priority": 8
+    },
+    {
+      "q": "Do you do puppy visits?",
+      "a": "Yes, we do puppy visits for toilet training and company.",
+      "keywords": "puppy,visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you care for cats?",
+      "a": "Yes, we do cat visits and cat sitting.",
+      "keywords": "cat",
+      "priority": 9
+    },
+    {
+      "q": "What vaccinations are required?",
+      "a": "Dogs must be up to date with C5. Cats should be up to date with F3.",
+      "keywords": "vaccination,vaccine",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a meet-and-greet?",
+      "a": "Yes, we offer a free meet-and-greet before the first booking.",
+      "keywords": "meet and greet,intro",
+      "priority": 9
+    },
+    {
+      "q": "What if my pet gets sick?",
+      "a": "We contact you and your vet immediately and follow your instructions.",
+      "keywords": "sick,vet,emergency",
+      "priority": 9
+    },
+    {
+      "q": "Do you have references?",
+      "a": "Yes, references available on request.",
+      "keywords": "references",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do holiday care?",
+      "a": "Yes, we do holiday care. Book early for peak periods.",
+      "keywords": "holiday,christmas",
+      "priority": 8
+    },
+    {
+      "q": "How long are walks?",
+      "a": "Walks are usually 30 or 60 minutes.",
+      "keywords": "how long,walk,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do puppy daycare?",
+      "a": "Yes, we offer puppy daycare.",
+      "keywords": "daycare,puppy",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you send updates?",
+      "a": "Yes, we send photos and updates after each visit.",
+      "keywords": "update,photo,report",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PETC-W30",
+      "label": "Dog walk 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "walk 30"
+    },
+    {
+      "sku": "PETC-W60",
+      "label": "Dog walk 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 50,
+      "taxable": 1,
+      "keywords": "walk 60"
+    },
+    {
+      "sku": "PETC-PRIV",
+      "label": "Private walk",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "private walk"
+    },
+    {
+      "sku": "PETC-PUPPY",
+      "label": "Puppy visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "puppy"
+    },
+    {
+      "sku": "PETC-CAT",
+      "label": "Cat visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "cat"
+    },
+    {
+      "sku": "PETC-SIT",
+      "label": "Pet sitting (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "sitting"
+    },
+    {
+      "sku": "PETC-OVER",
+      "label": "Overnight stay",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "PETC-HOUSE",
+      "label": "House sitting (per night)",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 100,
+      "taxable": 1,
+      "keywords": "house sitting"
+    },
+    {
+      "sku": "PETC-TAXI",
+      "label": "Pet taxi (per trip)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "taxi,vet"
+    },
+    {
+      "sku": "PETC-MED",
+      "label": "Medication administration",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "medication"
+    }
+  ]
+}

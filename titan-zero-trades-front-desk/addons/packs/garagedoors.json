@@ -1,0 +1,275 @@
+{
+  "id": "garagedoors",
+  "name": "Garage Doors",
+  "icon": "🚪",
+  "tagline": "Repairs, installation, openers, springs, remotes",
+  "version": "1.0.0",
+  "service_types": [
+    "Garage Door Repair",
+    "Garage Door Installation",
+    "Spring Replacement",
+    "Opener Repair",
+    "Opener Installation",
+    "Panel Replacement",
+    "Cable Replacement",
+    "Roller Replacement",
+    "Track Repair",
+    "Remote Programming",
+    "Sensor Repair",
+    "Roller Door Repair",
+    "Sectional Door Repair",
+    "Tilt Door Repair",
+    "Commercial Garage Doors",
+    "Emergency Garage Door"
+  ],
+  "staff_skills": [
+    "garage doors",
+    "springs",
+    "openers",
+    "panels",
+    "tracks",
+    "remotes",
+    "motors"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "door stuck",
+      "car trapped",
+      "spring broken",
+      "door off track",
+      "security risk",
+      "door won't close"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "won't open",
+      "won't close",
+      "strange noise",
+      "remote not working"
+    ],
+    "routine": [
+      "service",
+      "maintenance",
+      "quote",
+      "install",
+      "remote",
+      "new door"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional garage door company. Ask for the door type (roller, sectional, tilt), the brand, and the exact fault. Ask whether the door is stuck open or closed and whether a car is trapped. Ask about access and ceiling height. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a repair outcome or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer emergency garage door repair?",
+      "a": "Yes, emergency service is available for stuck doors, broken springs, and trapped cars.",
+      "keywords": "emergency,stuck,trapped",
+      "priority": 9
+    },
+    {
+      "q": "How much does a garage door repair cost?",
+      "a": "{price_note} Repair cost depends on the fault and parts. We quote before work begins.",
+      "keywords": "cost,price,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you replace springs?",
+      "a": "Yes, we replace torsion and extension springs. Springs are replaced in pairs for safety.",
+      "keywords": "spring,torsion,extension",
+      "priority": 9
+    },
+    {
+      "q": "Do you install openers?",
+      "a": "Yes, we supply and install garage door openers.",
+      "keywords": "opener,motor,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair openers?",
+      "a": "Yes, we repair and service openers.",
+      "keywords": "opener,repair",
+      "priority": 9
+    },
+    {
+      "q": "Can you program a new remote?",
+      "a": "Yes, we program and supply remotes.",
+      "keywords": "remote,program",
+      "priority": 8
+    },
+    {
+      "q": "Do you replace panels?",
+      "a": "Yes, we replace damaged panels where the model is still available.",
+      "keywords": "panel,replace",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair tracks?",
+      "a": "Yes, we repair and realign tracks.",
+      "keywords": "track,repair",
+      "priority": 8
+    },
+    {
+      "q": "Do you replace cables?",
+      "a": "Yes, we replace cables and rollers.",
+      "keywords": "cable,roller",
+      "priority": 8
+    },
+    {
+      "q": "Do you install new doors?",
+      "a": "Yes, we supply and install new garage doors.",
+      "keywords": "install,new door",
+      "priority": 9
+    },
+    {
+      "q": "Do you service commercial doors?",
+      "a": "Yes, we service commercial roller and sectional doors.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "How long does a repair take?",
+      "a": "Most repairs take 1–2 hours. Spring replacements usually take about an hour.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "What brands do you service?",
+      "a": "We service most major brands. Tell us the brand and model.",
+      "keywords": "brand,model",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Yes, someone must be home to provide access.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge a call-out fee?",
+      "a": "{callout_note}",
+      "keywords": "callout,fee",
+      "priority": 8
+    },
+    {
+      "q": "Can you make my door quieter?",
+      "a": "Yes, we lubricate and service the door to reduce noise.",
+      "keywords": "noise,quiet,service",
+      "priority": 7
+    },
+    {
+      "q": "Do you install insulation on doors?",
+      "a": "Yes, we can supply insulated doors.",
+      "keywords": "insulation,insulated",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "GD-CALL",
+      "label": "Garage door call-out",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "callout,fee"
+    },
+    {
+      "sku": "GD-SPRING",
+      "label": "Spring replacement (pair)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "spring,torsion"
+    },
+    {
+      "sku": "GD-OPENER",
+      "label": "Opener installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "opener,install"
+    },
+    {
+      "sku": "GD-OPENREP",
+      "label": "Opener repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "opener,repair"
+    },
+    {
+      "sku": "GD-REMOTE",
+      "label": "Remote supply & program",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "remote,program"
+    },
+    {
+      "sku": "GD-PANEL",
+      "label": "Panel replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "panel,replace"
+    },
+    {
+      "sku": "GD-CABLE",
+      "label": "Cable replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "cable,replace"
+    },
+    {
+      "sku": "GD-ROLLER",
+      "label": "Roller replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "roller,replace"
+    },
+    {
+      "sku": "GD-TRACK",
+      "label": "Track repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "track,repair"
+    },
+    {
+      "sku": "GD-SERV",
+      "label": "Garage door service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "service,maintenance"
+    }
+  ]
+}

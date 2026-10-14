@@ -1,0 +1,403 @@
+{
+  "id": "hvac",
+  "name": "HVAC / Heating & Cooling",
+  "icon": "❄️",
+  "tagline": "Air conditioning, heating, refrigerant, thermostats",
+  "version": "1.0.0",
+  "service_types": [
+    "HVAC",
+    "Air Conditioning",
+    "Heating",
+    "Refrigeration",
+    "Indoor Air Quality",
+    "Split System Install",
+    "Ducted System Service",
+    "Heat Pump Service",
+    "Thermostat & Controls",
+    "Ducted Air Conditioning Install",
+    "Evaporative Cooler Service",
+    "Ducted Heating Service",
+    "Gas Heater Service",
+    "Duct Cleaning",
+    "Thermostat Replacement",
+    "Commercial HVAC Maintenance",
+    "Filter Replacement"
+  ],
+  "staff_skills": [
+    "hvac",
+    "ac",
+    "heating",
+    "refrigeration",
+    "emergency",
+    "split system",
+    "ducted",
+    "heat pump",
+    "controls"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "no ac",
+      "no heating",
+      "gas smell",
+      "carbon monoxide",
+      "compressor smoking",
+      "unbearable heat",
+      "gas smell from heater",
+      "carbon monoxide alarm sounding",
+      "smoke from unit"
+    ],
+    "urgent": [
+      "not cooling",
+      "not heating",
+      "strange noise",
+      "frozen unit",
+      "water leak from unit",
+      "no cooling in extreme heat",
+      "no heat in extreme cold",
+      "unit leaking water inside",
+      "unit making a loud bang"
+    ],
+    "routine": [
+      "service",
+      "maintenance",
+      "filter",
+      "tune up",
+      "quote",
+      "install",
+      "annual service",
+      "new split system quote",
+      "filter clean",
+      "musty smell",
+      "thermostat change"
+    ]
+  },
+  "extra_prompt": "You are booking for a heating and cooling company. Ask the brand and model if known, the system type (split, ducted, evaporative, heat pump, or gas heater), and its approximate age. Ask whether the unit runs at all and whether it blows warm or cold air. For gas heaters, a gas smell, a yellow or orange flame, or a carbon monoxide alarm is an emergency: tell the caller to turn the heater off, open windows, and get everyone outside, then treat it as an emergency. For installs, offer an on-site assessment before quoting.",
+  "kb": [
+    {
+      "q": "Do you do emergency AC repair?",
+      "a": "Yes, we run an emergency line for no-cool and no-heat calls. Availability depends on the season.",
+      "keywords": "emergency,no ac,no heat,urgent",
+      "priority": 10
+    },
+    {
+      "q": "Do you install new systems?",
+      "a": "Yes, we install and replace split systems, ducted systems, and heat pumps. Every install includes a load calculation and commissioning report.",
+      "keywords": "install,new system,replace,split,ducted",
+      "priority": 9
+    },
+    {
+      "q": "How much does a new AC unit cost?",
+      "a": "{price_note} Costs depend on the system type, the size needed, and how complex the install is. We give you a fixed quote after a site visit.",
+      "keywords": "cost,price,new ac,unit,quote",
+      "priority": 9
+    },
+    {
+      "q": "Do you service commercial HVAC?",
+      "a": "Yes, we service light commercial systems, including rooftop units and split systems.",
+      "keywords": "commercial,business,light commercial,rtu",
+      "priority": 8
+    },
+    {
+      "q": "What brands do you work on?",
+      "a": "All major brands — Daikin, Mitsubishi, Carrier, Trane, Lennox, Rheem, Goodman, and more.",
+      "keywords": "brand,daikin,mitsubishi,carrier,trane",
+      "priority": 8
+    },
+    {
+      "q": "How long does a service call take?",
+      "a": "A standard AC service is one to two hours. Diagnostics can take longer if it is a complex fault.",
+      "keywords": "time,long,how long,duration",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer financing?",
+      "a": "Yes, we offer financing on system replacements. Ask for details when we quote.",
+      "keywords": "finance,payment plan,credit",
+      "priority": 7
+    },
+    {
+      "q": "Why is my AC leaking water?",
+      "a": "Usually a blocked condensate drain. It is a common issue and we can usually clear it in a single visit.",
+      "keywords": "leak,water,condensate,drain",
+      "priority": 9
+    },
+    {
+      "q": "My system is frozen — what should I do?",
+      "a": "Turn the system off at the thermostat immediately. Running a frozen system can damage the compressor. We can be out to diagnose the cause.",
+      "keywords": "frozen,ice,freeze,compressor",
+      "priority": 10
+    },
+    {
+      "q": "How often should I change my filter?",
+      "a": "Every one to three months for standard filters. High-efficiency or heavily used systems need more frequent changes.",
+      "keywords": "filter,change,replace,how often",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide a warranty on repairs?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee,repair",
+      "priority": 9
+    },
+    {
+      "q": "Can you install a smart thermostat?",
+      "a": "Yes, we install and configure all major smart thermostats including Nest, Ecobee, and Honeywell Home.",
+      "keywords": "thermostat,smart,nest,ecobee,honeywell",
+      "priority": 8
+    },
+    {
+      "q": "Do you test for carbon monoxide?",
+      "a": "Yes, our heating service includes a carbon monoxide safety check. If you suspect a CO issue now, leave the property and call emergency services.",
+      "keywords": "carbon monoxide,co,safety,heating",
+      "priority": 10
+    },
+    {
+      "q": "How long does a new system install take?",
+      "a": "Most residential replacements take a full day. Ducted or commercial systems can take two or more days.",
+      "keywords": "install,time,how long,day",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer maintenance plans?",
+      "a": "Yes, our annual maintenance plan includes two services a year and priority booking for emergencies.",
+      "keywords": "plan,membership,annual,contract",
+      "priority": 8
+    },
+    {
+      "q": "What SEER rating should I choose?",
+      "a": "Higher SEER means lower running costs but higher upfront cost. We help match the right rating to your climate and usage.",
+      "keywords": "seer,efficiency,rating,energy",
+      "priority": 7
+    },
+    {
+      "q": "Can you repair a unit over twenty years old?",
+      "a": "We can, but on very old equipment we weigh repair cost against replacement and will always give you both options.",
+      "keywords": "old,age,ancient,replace vs repair",
+      "priority": 7
+    },
+    {
+      "q": "How often should I service my air conditioner?",
+      "a": "Once a year is recommended for most systems, and before the start of summer or winter. Regular service keeps the efficiency up and prevents breakdowns.",
+      "keywords": "how often,service,annual,maintenance",
+      "priority": 9
+    },
+    {
+      "q": "Is it worth repairing an old system?",
+      "a": "Often a repair is worth it on a system under about ten years old. For older systems, we give you a repair cost against a replacement cost so you can decide.",
+      "keywords": "old system,worth,repair,replace",
+      "priority": 8
+    },
+    {
+      "q": "Why does my air conditioner smell musty?",
+      "a": "A musty smell is usually mould or bacteria on the evaporator coil or in the drain pan. A clean and sanitise fixes most cases.",
+      "keywords": "musty,smell,mould,coil,drain",
+      "priority": 8
+    },
+    {
+      "q": "Why is water dripping inside from my indoor unit?",
+      "a": "The condensate drain is usually blocked or the unit is not level. Switch the unit off and book a service so the drain can be cleared and checked.",
+      "keywords": "dripping,indoor,drain,condensate",
+      "priority": 9
+    },
+    {
+      "q": "What size system do I need?",
+      "a": "It depends on room size, insulation, sun exposure and ceiling height. We do a load calculation on site and recommend a size that is neither too large nor too small.",
+      "keywords": "size,capacity,kw,load,right size",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a maintenance plan for heating and cooling?",
+      "a": "Yes. Our plans include a yearly or twice-yearly service, priority booking, and a discount on repairs.",
+      "keywords": "plan,maintenance,service,discount",
+      "priority": 8
+    },
+    {
+      "q": "How often should I service my AC?",
+      "a": "Once a year before summer. A yearly service keeps efficiency high and catches small problems before they become expensive.",
+      "keywords": "service,maintenance,annual,tune up",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "HVC-DIAG",
+      "label": "HVAC diagnostic visit",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 89,
+      "taxable": 1,
+      "keywords": "diagnostic,visit,trip,callout"
+    },
+    {
+      "sku": "HVC-LAB-1",
+      "label": "HVAC labor (hourly)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "labor,labour,hourly"
+    },
+    {
+      "sku": "HVC-LAB-AH",
+      "label": "After-hours HVAC labor",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "after hours,emergency,night"
+    },
+    {
+      "sku": "HVC-CAP-RUN",
+      "label": "Run capacitor",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "capacitor,cap,run,start"
+    },
+    {
+      "sku": "HVC-CONTACT",
+      "label": "Contactor",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "contactor,relay,switch"
+    },
+    {
+      "sku": "HVC-BLOWER",
+      "label": "Blower motor",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 385,
+      "taxable": 1,
+      "keywords": "blower,motor,fan"
+    },
+    {
+      "sku": "HVC-COMP",
+      "label": "Compressor",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 1250,
+      "taxable": 1,
+      "keywords": "compressor,main"
+    },
+    {
+      "sku": "HVC-FILT-STD",
+      "label": "Air filter — standard",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "filter,air filter,standard"
+    },
+    {
+      "sku": "HVC-FILT-HEPA",
+      "label": "Air filter — HEPA / high efficiency",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 68,
+      "taxable": 1,
+      "keywords": "filter,hepa,high efficiency"
+    },
+    {
+      "sku": "HVC-REF-R410",
+      "label": "Refrigerant R-410A (per pound)",
+      "kind": "material",
+      "unit": "lb",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "refrigerant,freon,r410"
+    },
+    {
+      "sku": "HVC-REF-R32",
+      "label": "Refrigerant R-32 (per pound)",
+      "kind": "material",
+      "unit": "lb",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "refrigerant,freon,r32"
+    },
+    {
+      "sku": "HVC-CLEAN",
+      "label": "Coil cleaning",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 210,
+      "taxable": 1,
+      "keywords": "coil,clean,maintenance"
+    },
+    {
+      "sku": "HVC-SERVICE",
+      "label": "Standard AC service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 189,
+      "taxable": 1,
+      "keywords": "service,maintenance,tune up"
+    },
+    {
+      "sku": "HVC-STAT-SMART",
+      "label": "Smart thermostat installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "thermostat,smart,nest,ecobee"
+    },
+    {
+      "sku": "HVC-SPLIT-REPL",
+      "label": "Split system replacement (3-ton)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 7200,
+      "taxable": 1,
+      "keywords": "replace,install,split,3 ton"
+    },
+    {
+      "sku": "HVC-DUCT-CLEAN",
+      "label": "Duct cleaning (residential)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 595,
+      "taxable": 1,
+      "keywords": "duct,cleaning,air quality"
+    },
+    {
+      "sku": "HVC-DRAIN-CLN",
+      "label": "Condensate drain clearing",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "drain,condensate,clog,water"
+    },
+    {
+      "sku": "HVX-GASCHK",
+      "label": "Gas heater safety check and service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "gas heater,safety,check,service"
+    },
+    {
+      "sku": "HVX-DRAIN",
+      "label": "Condensate drain clear and clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "drain,condensate,clear,clean"
+    },
+    {
+      "sku": "HVX-ANNUAL",
+      "label": "Annual split system service (per unit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 185,
+      "taxable": 1,
+      "keywords": "annual,service,split system,maintenance"
+    }
+  ]
+}

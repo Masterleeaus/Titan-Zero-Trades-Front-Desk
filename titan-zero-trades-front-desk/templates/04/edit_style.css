@@ -1,0 +1,32 @@
+.tzfd_cff_elegant{padding:10px;}
+.tzfd_cff_elegant #tzfdform{color:#513e2b;}
+.tzfd_cff_elegant #tzfdform h1{color: rgb(81, 62, 43);text-align: center;text-transform: uppercase;}
+.tzfd_cff_elegant #tzfdform  .fields  input{border-color:#948474;padding:5px 0;background:#FFF;color:#513e2b;}
+
+.tzfd_cff_elegant #tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+.tzfd_cff_elegant #tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+.tzfd_cff_elegant #tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+				
+.tzfd_cff_elegant #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+.tzfd_cff_elegant #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+.tzfd_cff_elegant #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+.tzfd_cff_elegant #tzfdform .slots div a{background-color: #ededed;padding:4px;}
+.tzfd_cff_elegant #tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+
+.tzfd_cff_elegant #tzfdform .pbSubmit{color:#fff;font-size:14px;font-weight:bold;background:#73b9d6;border-top-right-radius: 10px;border-bottom-left-radius: 10px;border-top-left-radius: 0px;border-bottom-right-radius: 0px;}
+.tzfd_cff_elegant #tzfdform .pbSubmit:hover {color: #fff}
+.tzfd_field_service{display:inherit;}
+.tzfd_cff_elegant #tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+.tzfd_cff_elegant #tzfdform .slots span{color: inherit;}
+.tzfd_cff_elegant #tzfdform .usedSlots .tzfd_list {padding: inherit;margin:inherit}
+.tzfd_cff_elegant #tzfdform .usedSlots .tzfd_list .d{color: inherit;}
+.tzfd_cff_elegant #tzfdform .usedSlots .tzfd_list .t{color: inherit;}
+.tzfd_cff_elegant #tzfdform .usedSlots .tzfd_list .tzfd_list_service{color: inherit;}
+.tzfd_cff_elegant #tzfdform .usedSlots .tzfd_list .cancel{font-weight:inherit}
+.tzfd_cff_elegant #tzfdform .totalCost{color: inherit;}
+.tzfd_cff_elegant #tzfdform .totalCost span:not(.n){color: inherit;}
+.tzfd_cff_elegant #tzfdform .totalCost span.n{color: inherit;}
+

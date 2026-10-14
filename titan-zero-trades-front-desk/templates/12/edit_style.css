@@ -1,0 +1,30 @@
+#tzfdform {
+    /* Brand Colors */
+    --tzfd-primary: #3995D0;
+    --tzfd-primary-hover: #2a7db3;
+    --tzfd-primary-shadow: rgba(57, 149, 208, 0.3);
+
+    /* Typography Colors */
+    --tzfd-text-main: #1f2937;
+    --tzfd-text-muted: #6b7280;
+    --tzfd-text-disabled: #d1d5db;
+    --tzfd-text-light: #ffffff;
+
+    /* Background Colors */
+    --tzfd-bg-main: #ffffff;
+    --tzfd-bg-secondary: #f9fafb;
+    --tzfd-bg-hover: #f3f4f6;
+    --tzfd-bg-summary: #f8fafc;
+
+    /* Borders and Shadows */
+    --tzfd-border-light: #e5e7eb;
+    --tzfd-border-dark: #d1d5db;
+    --tzfd2-shadow-card: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+    /* Shape and Typography settings */
+    --tzfd2-font-family: Inter, -apple-system, sans-serif;
+    --tzfd2-radius-card: 16px;
+    --tzfd2-radius-summary: 12px;
+    --tzfd2-radius-pill: 999px;
+    --tzfd2-radius-circle: 50%;
+}

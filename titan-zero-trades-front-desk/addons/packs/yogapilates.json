@@ -1,0 +1,257 @@
+{
+  "id": "yogapilates",
+  "name": "Yoga & Pilates Studios",
+  "icon": "🧘",
+  "tagline": "Classes, private sessions, teacher training, workshops",
+  "version": "1.0.0",
+  "service_types": [
+    "Group Yoga Class",
+    "Group Pilates Class",
+    "Private Yoga",
+    "Private Pilates",
+    "Reformer Pilates",
+    "Mat Pilates",
+    "Prenatal Yoga",
+    "Mums & Bubs",
+    "Seniors Yoga",
+    "Yin Yoga",
+    "Vinyasa",
+    "Hatha",
+    "Meditation",
+    "Breathwork",
+    "Teacher Training",
+    "Workshops & Retreats",
+    "Corporate Classes",
+    "Online Classes"
+  ],
+  "staff_skills": [
+    "yoga",
+    "pilates",
+    "reformer",
+    "meditation",
+    "breathwork",
+    "prenatal",
+    "seniors",
+    "teacher training"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "injury",
+      "acute pain",
+      "urgent session"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "starting now"
+    ],
+    "routine": [
+      "weekly",
+      "membership",
+      "class pack",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a yoga and pilates studio. Ask about experience level, injuries, pregnancy, and preferred class style. Ask whether they prefer group, private, or online. Quote prices only from the reference answers, and say the final price is confirmed at the studio. Do not provide medical advice or promise a specific physical outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a class?",
+      "a": "{price_note} Classes are priced per session or as a class pack.",
+      "keywords": "cost,price,class",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer private sessions?",
+      "a": "Yes, one-on-one and duet sessions are available.",
+      "keywords": "private,one on one",
+      "priority": 9
+    },
+    {
+      "q": "Do you have reformer pilates?",
+      "a": "Yes, we run reformer classes in small groups.",
+      "keywords": "reformer,pilates",
+      "priority": 9
+    },
+    {
+      "q": "I'm a beginner. Which class?",
+      "a": "Start with our beginner or foundations class. Tell us your goals and we'll recommend one.",
+      "keywords": "beginner,new,start",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer prenatal yoga?",
+      "a": "Yes, we run prenatal and mums & bubs classes.",
+      "keywords": "prenatal,pregnancy,mums",
+      "priority": 9
+    },
+    {
+      "q": "Do you have seniors classes?",
+      "a": "Yes, we run gentle and seniors classes.",
+      "keywords": "seniors,gentle,older",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer online classes?",
+      "a": "Yes, we offer live and on-demand online classes.",
+      "keywords": "online,streaming",
+      "priority": 8
+    },
+    {
+      "q": "Do you do teacher training?",
+      "a": "Yes, we run accredited teacher training. Ask for dates.",
+      "keywords": "teacher training,certification",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer corporate classes?",
+      "a": "Yes, we run corporate and workplace classes.",
+      "keywords": "corporate,workplace",
+      "priority": 8
+    },
+    {
+      "q": "What should I bring?",
+      "a": "Bring water and a towel. Mats and props are provided.",
+      "keywords": "bring,mat,what to bring",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell your teacher before class. We can offer modifications or a private session.",
+      "keywords": "injury,modification",
+      "priority": 9
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Yes, booking is recommended. Walk-ins are subject to space.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the class or incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "Yes, we offer weekly and annual memberships.",
+      "keywords": "membership,unlimited",
+      "priority": 8
+    },
+    {
+      "q": "Do you run workshops and retreats?",
+      "a": "Yes, we run workshops and retreats. Ask for upcoming dates.",
+      "keywords": "workshop,retreat",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a trial?",
+      "a": "{trial_note}",
+      "keywords": "trial,free",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "YOG-DROP",
+      "label": "Drop-in class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "drop in"
+    },
+    {
+      "sku": "YOG-10",
+      "label": "10-class pack",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 200,
+      "taxable": 1,
+      "keywords": "pack,10"
+    },
+    {
+      "sku": "YOG-MEM",
+      "label": "Unlimited monthly membership",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "membership"
+    },
+    {
+      "sku": "YOG-PRIV",
+      "label": "Private session (1-on-1)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "private"
+    },
+    {
+      "sku": "YOG-DUET",
+      "label": "Duet session (2 people)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "duet"
+    },
+    {
+      "sku": "YOG-REF",
+      "label": "Reformer class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "reformer"
+    },
+    {
+      "sku": "YOG-PREN",
+      "label": "Prenatal class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "prenatal"
+    },
+    {
+      "sku": "YOG-ONLINE",
+      "label": "Online class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "YOG-CORP",
+      "label": "Corporate class (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "YOG-TT",
+      "label": "Teacher training module",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "teacher training"
+    },
+    {
+      "sku": "YOG-WORK",
+      "label": "Workshop",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "workshop"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+# Upstream provenance
+
+Titan Zero Trades: Front Desk derives from Appointment Hour Booking 1.5.98, a GPLv2 plugin by CodePeople. Inherited code remains under GPLv2. This file records where the inherited code came from. Licence texts and third-party libraries are in THIRD-PARTY-NOTICES.txt. Upstream attribution is in readme.txt.
+
+## Upstream package
+
+- Plugin: Appointment Hour Booking, version 1.5.98, by CodePeople
+- Project page: https://wordpress.org/plugins/appointment-hour-booking/ (HTTP 200, checked 2026-10-14)
+- Package: https://downloads.wordpress.org/plugin/appointment-hour-booking.1.5.98.zip (HTTP 200, checked 2026-10-14)
+- Imported package SHA-256: 754d42504b19c3df8e4405afb139c66811b785dd833e89f30a96bdf5ba174bc4 (recomputed from that download on 2026-10-14; it matches)
+- Upstream licence: GPLv2, as declared in the plugin header ("License: GPLv2") and readme.txt
+- SVN path and revision: not recorded
+
+## Licence of this plugin
+
+This plugin is GPLv2 (LICENSE.txt), not "GPLv2 or later". The inherited code is declared GPLv2 by its upstream, and GPLv2-only code can only be distributed under GPLv2. See THIRD-PARTY-NOTICES.txt, section "Plugin licence".
+
+## Scope of the rebrand
+
+Product names, file names, the text domain and identifiers were renamed to Titan Zero Trades: Front Desk equivalents. The deactivation survey (cp-feedback.php) and the promotional banner (banner.php) are not in this plugin; both are in the upstream package. The CodePeople and dwbooster names appear in this plugin only in credits (readme.txt, js/jQuery.stringify.js, js/src/tzfdform-public.src.js and THIRD-PARTY-NOTICES.txt). Vendor help links and the vendor-hosted AI gateway option were also removed in an earlier pass; this pass did not re-check them.
+
+## Compatibility
+
+Database tables were renamed (this build uses tzfd_forms and tzfd_messages; upstream used cp-prefixed names such as cpappbk_messages). Option keys were not all renamed. 59 option names (found by scanning get_option, update_option, add_option and delete_option calls in both trees) are the same as upstream, for example form_structure, fp_from_email, fp_subject, cu_subject, date_format, timezone_string and the cv_* and vs_text_* keys. So this build reads any value that an upstream installation stored under those names. Whether that reuse is intended, or whether a migration should be written and tested first, is not decided in this file. includes/class-tzfd-stored-data.php describes an "inherited, database-only array storage format" and is related to the same question.
+
+## Inherited files and their upstream counterparts
+
+Upstream paths are from the 1.5.98 package. The calendar folder was named mv/ upstream and is tzfd-calendar/ here.
+
+- Renamed, content identical to upstream: mv/css/cupertino/calendar.css, mv/css/main.css and mv/language/multiview_lang_*.js (here tzfd-calendar/css/ and tzfd-calendar/language/tzfdcalendar_lang_*.js).
+- Renamed and changed: mv/js/jquery.calendar.js (here tzfd-calendar/js/jquery.calendar.js) and js/fbuilder-admin.js (here js/tzfdform-admin.js). The changes are listed in THIRD-PARTY-NOTICES.txt, section 7.
+- Identical to upstream: js/tzfdform-admin-fields/00_jquery.parse.min.js (same as js/fields-admin/00_jquery.parse.min.js); css/cupertino/jquery-ui-1.8.20.custom.css and the 59 files in js/languages/ (same as the upstream files of the same name).
+- Changed by a few lines: js/jQuery.stringify.js. Its code is upstream's; it has a header comment added and three alias lines renamed (fbuilderjQuery to tzfdformjQuery). See section 6 of THIRD-PARTY-NOTICES.txt.
+- Replaced by a newer release: js/chart.js. The upstream copy is Chart.js 4.4.4 (its header); this build ships 4.5.1 from npm.
+- Added from npm, not in upstream: js/jquery.validate.js (jquery-validation 1.22.1, with four local changes) and tzfd-calendar/js/rrule.js (rrule 2.8.1, with a wrapper appended).
+- Not compared line by line in this pass: other renamed files (for example js/tzfdform-admin-fields/ from js/fields-admin/, js/tzfdform-core-*.jquery.js from js/fbuilder-pro-*.jquery.js, and the add-on, template and CSS folders). Their changes are not yet recorded file by file.
+
+## Readable source
+
+The following upstream files were supplied minified. Readable copies are in this plugin:
+
+- tzfd-calendar/js/jquery.calendar.js: upstream mv/js/jquery.calendar.js, one line of 92,252 bytes. The readable file is not the same code as upstream (see THIRD-PARTY-NOTICES.txt, section 7).
+- js/tzfdform-admin.js: upstream js/fbuilder-admin.js, one line of 101,549 bytes. The readable file is not the same code as upstream (see THIRD-PARTY-NOTICES.txt, section 7).
+- js/tzfdform-admin-fields/00_jquery.parse.min.js: upstream js/fields-admin/00_jquery.parse.min.js, unchanged. The readable copy is js/src/00_jquery.parse.src.js.
+
+The jQuery Validation file was also minified upstream (js/jquery.validate.js in the package). This plugin now uses the readable jquery-validation 1.22.1 file from npm, not the upstream file. See THIRD-PARTY-NOTICES.txt, section 3.
+
+## Files removed from the upstream set
+
+These upstream files are not in this plugin, because nothing in the plugin referenced them. Paths are the upstream paths, shown with the upstream mv/ folder where the calendar copy was made:
+
+- mv/js/jquery.cleditor.js, mv/js/jquery.cleditor.css, mv/js/jquery.colorselect.js, mv/js/jquery.dropdown.js, mv/js/widget.admin.js, mv/js/repeat.js, mv/js/jquery.form.js
+- mv/js/jquery.validate.js (a second copy of the validation plugin; the public form uses js/jquery.validate.js)
+- mv/js/multiview.public.js (here there is no tzfd-calendar/js/tzfdcalendar.public.js)
+- cp-feedback.php and banner.php (see "Scope of the rebrand")
+
+The rename of js/tzfdform-pro-*.jquery.js to js/tzfdform-core-*.jquery.js is recorded in changelog.txt.
+
+## Licence and credit
+
+Inherited code remains under GPLv2. LICENSE.txt is the unmodified GNU General Public License, version 2. THIRD-PARTY-NOTICES.txt lists the third-party libraries and the changes to inherited files. The upstream author credit is in readme.txt, Credits.

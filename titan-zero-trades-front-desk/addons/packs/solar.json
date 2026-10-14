@@ -1,0 +1,269 @@
+{
+  "id": "solar",
+  "name": "Solar & Battery",
+  "icon": "☀️",
+  "tagline": "Solar panels, inverters, batteries, maintenance",
+  "version": "1.0.0",
+  "service_types": [
+    "Solar Panel Installation",
+    "Solar Repair",
+    "Inverter Installation",
+    "Inverter Repair",
+    "Battery Installation",
+    "Battery Repair",
+    "Solar Maintenance",
+    "Solar Cleaning",
+    "Off-Grid Systems",
+    "Commercial Solar",
+    "EV Charger Integration",
+    "System Upgrade",
+    "Solar Inspection",
+    "Rebate Assistance"
+  ],
+  "staff_skills": [
+    "solar",
+    "inverter",
+    "battery",
+    "electrical",
+    "install",
+    "maintenance",
+    "roofing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "system down",
+      "battery fault",
+      "inverter fault",
+      "burning smell"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "no power",
+      "fault"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "service",
+      "clean",
+      "inspection"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional solar and battery company. Ask about the property type, roof type, existing system, and energy goals. Ask about switchboard capacity and whether a battery or EV charger is wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise rebate amounts, payback times, or system performance that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully licensed and insured. Certificates available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does solar cost?",
+      "a": "{price_note} Solar is priced per kW including panels, inverter, and install.",
+      "keywords": "cost,price,solar",
+      "priority": 9
+    },
+    {
+      "q": "Do you install batteries?",
+      "a": "Yes, we install home and commercial batteries.",
+      "keywords": "battery,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair inverters?",
+      "a": "Yes, we repair and replace inverters.",
+      "keywords": "inverter,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean solar panels?",
+      "a": "Yes, we clean solar panels.",
+      "keywords": "clean,panel",
+      "priority": 8
+    },
+    {
+      "q": "Do you maintain solar systems?",
+      "a": "Yes, we offer annual solar maintenance.",
+      "keywords": "maintenance,service",
+      "priority": 8
+    },
+    {
+      "q": "What rebates are available?",
+      "a": "Rebates vary by state and system. We can advise at quote stage.",
+      "keywords": "rebate,incentive",
+      "priority": 9
+    },
+    {
+      "q": "Do you install EV chargers?",
+      "a": "Yes, we install EV chargers and integrate with solar.",
+      "keywords": "ev charger,electric vehicle",
+      "priority": 8
+    },
+    {
+      "q": "Do you install off-grid systems?",
+      "a": "Yes, we install off-grid and hybrid systems.",
+      "keywords": "off grid,hybrid",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial solar?",
+      "a": "Yes, we do commercial solar. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "What roof types do you work on?",
+      "a": "We work on tile, metal, and flat roofs.",
+      "keywords": "roof,tile,metal",
+      "priority": 8
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "Most residential systems take 1–2 days.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you upgrade old systems?",
+      "a": "Yes, we upgrade panels, inverters, and batteries.",
+      "keywords": "upgrade,replace",
+      "priority": 8
+    },
+    {
+      "q": "Do you do solar inspections?",
+      "a": "Yes, we do pre-purchase and compliance inspections.",
+      "keywords": "inspection,compliance",
+      "priority": 8
+    },
+    {
+      "q": "What warranty do you offer?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Yes, someone must be home to provide access.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle switchboard upgrades?",
+      "a": "Yes, we can upgrade switchboards as part of the install.",
+      "keywords": "switchboard,upgrade",
+      "priority": 8
+    },
+    {
+      "q": "What happens during a blackout?",
+      "a": "With a battery, backup power can be provided. Tell us what you want backed up.",
+      "keywords": "blackout,backup",
+      "priority": 9
+    },
+    {
+      "q": "Do you monitor systems?",
+      "a": "Yes, we can monitor system performance remotely.",
+      "keywords": "monitor,remote",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "SOL-6KW",
+      "label": "6.6kW solar system installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "6kw,solar system"
+    },
+    {
+      "sku": "SOL-10KW",
+      "label": "10kW solar system installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8500,
+      "taxable": 1,
+      "keywords": "10kw,solar system"
+    },
+    {
+      "sku": "SOL-BATT",
+      "label": "Home battery installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 9500,
+      "taxable": 1,
+      "keywords": "battery,install"
+    },
+    {
+      "sku": "SOL-INV",
+      "label": "Inverter replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "inverter,replace"
+    },
+    {
+      "sku": "SOL-CLEAN",
+      "label": "Solar panel cleaning",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "clean,panel"
+    },
+    {
+      "sku": "SOL-SERV",
+      "label": "Solar service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "service,maintenance"
+    },
+    {
+      "sku": "SOL-INSP",
+      "label": "Solar inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "inspection"
+    },
+    {
+      "sku": "SOL-EV",
+      "label": "EV charger installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "ev charger"
+    },
+    {
+      "sku": "SOL-SWITCH",
+      "label": "Switchboard upgrade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1400,
+      "taxable": 1,
+      "keywords": "switchboard,upgrade"
+    },
+    {
+      "sku": "SOL-UPGR",
+      "label": "System upgrade (per kW)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "upgrade"
+    }
+  ]
+}

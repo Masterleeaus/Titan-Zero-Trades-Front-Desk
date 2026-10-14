@@ -1,0 +1,239 @@
+{
+  "id": "travelagent",
+  "name": "Travel Agents",
+  "icon": "✈️",
+  "tagline": "Flights, cruises, packages, corporate travel",
+  "version": "1.0.0",
+  "service_types": [
+    "Flight Booking",
+    "Holiday Packages",
+    "Cruises",
+    "Luxury Travel",
+    "Corporate Travel",
+    "Honeymoons",
+    "Family Holidays",
+    "Group Travel",
+    "School Trips",
+    "Ski Holidays",
+    "Adventure Travel",
+    "Rail Travel",
+    "Car Hire",
+    "Travel Insurance",
+    "Visas",
+    "Disney & Theme Parks"
+  ],
+  "staff_skills": [
+    "travel booking",
+    "flights",
+    "cruises",
+    "packages",
+    "corporate travel",
+    "visas",
+    "insurance"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "flight cancelled",
+      "travel today",
+      "stranded",
+      "missed flight"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "departing soon"
+    ],
+    "routine": [
+      "quote",
+      "booking",
+      "holiday",
+      "package",
+      "cruise"
+    ]
+  },
+  "extra_prompt": "You are booking for a travel agency. Ask about departure city, dates, destination, travellers, budget, and any preferences (airline, class, hotel standard). Ask about passports, visas, and travel insurance. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not promise prices that are not in the reference answers as live availability changes.",
+  "kb": [
+    {
+      "q": "Do you charge a service fee?",
+      "a": "{price_note} Some bookings are fee-free; complex itineraries may attract a fee.",
+      "keywords": "fee,cost,price,service",
+      "priority": 9
+    },
+    {
+      "q": "Can you beat online prices?",
+      "a": "We often match or beat online prices when you factor in support and changes.",
+      "keywords": "cheaper,online price,beat",
+      "priority": 9
+    },
+    {
+      "q": "Do you book flights only?",
+      "a": "Yes, we can do flight-only bookings, though packages often offer better value.",
+      "keywords": "flights only",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cruises?",
+      "a": "Yes, we book cruises across all major lines.",
+      "keywords": "cruise",
+      "priority": 9
+    },
+    {
+      "q": "Do you do corporate travel?",
+      "a": "Yes, we handle corporate travel with reporting and policy support.",
+      "keywords": "corporate,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you arrange travel insurance?",
+      "a": "Yes, we can arrange travel insurance.",
+      "keywords": "insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with visas?",
+      "a": "Yes, we guide visa requirements and paperwork.",
+      "keywords": "visa",
+      "priority": 8
+    },
+    {
+      "q": "Do you do honeymoons?",
+      "a": "Yes, we specialise in honeymoons and romantic travel.",
+      "keywords": "honeymoon,romantic",
+      "priority": 8
+    },
+    {
+      "q": "Do you do group travel?",
+      "a": "Yes, we do group, family, and school group travel.",
+      "keywords": "group",
+      "priority": 9
+    },
+    {
+      "q": "Do you do Disney and theme parks?",
+      "a": "Yes, we book Disney and theme park holidays.",
+      "keywords": "disney,theme park",
+      "priority": 8
+    },
+    {
+      "q": "Can you help if my flight is cancelled?",
+      "a": "Yes, we support you during travel disruptions.",
+      "keywords": "cancelled,disruption",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note}",
+      "keywords": "payment plan,instalment",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancellation terms depend on the supplier. We confirm at booking.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you have an after-hours line?",
+      "a": "{afterhours_note}",
+      "keywords": "after hours,emergency",
+      "priority": 8
+    },
+    {
+      "q": "How do I get a quote?",
+      "a": "Tell us your departure city, dates, destination, and travellers. We'll send options.",
+      "keywords": "quote,how",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "TRV-FEE",
+      "label": "Service fee (per booking)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "fee"
+    },
+    {
+      "sku": "TRV-FLIGHT",
+      "label": "Flight booking",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "flight"
+    },
+    {
+      "sku": "TRV-PKG",
+      "label": "Holiday package deposit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "package,deposit"
+    },
+    {
+      "sku": "TRV-CRUISE",
+      "label": "Cruise deposit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "cruise"
+    },
+    {
+      "sku": "TRV-INS",
+      "label": "Travel insurance (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "insurance"
+    },
+    {
+      "sku": "TRV-VISA",
+      "label": "Visa assistance",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "visa"
+    },
+    {
+      "sku": "TRV-CAR",
+      "label": "Car hire",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "car hire"
+    },
+    {
+      "sku": "TRV-CORP",
+      "label": "Corporate management fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "TRV-AFTER",
+      "label": "After-hours support",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "after hours"
+    },
+    {
+      "sku": "TRV-CHANGE",
+      "label": "Change / reissue fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "change"
+    }
+  ]
+}

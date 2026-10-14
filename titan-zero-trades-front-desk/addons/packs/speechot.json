@@ -1,0 +1,256 @@
+{
+  "id": "speechot",
+  "name": "Speech Pathology & OT",
+  "icon": "🗣️",
+  "tagline": "Speech, OT, paediatrics, adults, telehealth",
+  "version": "1.0.0",
+  "service_types": [
+    "Speech Assessment",
+    "Speech Therapy – Children",
+    "Speech Therapy – Adults",
+    "Stuttering",
+    "Articulation",
+    "Language Delay",
+    "Literacy Support",
+    "Autism Support",
+    "AAC",
+    "Swallowing",
+    "Occupational Therapy – Children",
+    "Occupational Therapy – Adults",
+    "Sensory Integration",
+    "Fine Motor Skills",
+    "Handwriting",
+    "Home Modifications",
+    "School Support",
+    "Telehealth"
+  ],
+  "staff_skills": [
+    "speech pathology",
+    "occupational therapy",
+    "paediatrics",
+    "autism",
+    "literacy",
+    "swallowing",
+    "sensory",
+    "home modifications"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "safety concern",
+      "choking",
+      "urgent review"
+    ],
+    "urgent": [
+      "this week",
+      "school deadline",
+      "NDIS plan review"
+    ],
+    "routine": [
+      "assessment",
+      "therapy",
+      "plan",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a speech pathology or occupational therapy practice. Ask about the client's age, diagnosis or concern, current supports, and funding (NDIS, Medicare, private). Ask about goals and whether school or kinder reports are available. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise specific therapeutic outcomes.",
+  "kb": [
+    {
+      "q": "How much does a session cost?",
+      "a": "{price_note} Sessions are priced by duration. We confirm after assessment.",
+      "keywords": "cost,price,session",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept NDIS?",
+      "a": "Yes, we accept NDIS (plan and self-managed). Ask us to confirm your funding.",
+      "keywords": "ndis",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer Medicare rebates?",
+      "a": "Yes, with a Chronic Disease Management plan from your GP.",
+      "keywords": "medicare,cdm,gp",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim private health?",
+      "a": "Yes, if your fund covers allied health. We provide HICAPS where available.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, telehealth is available.",
+      "keywords": "telehealth,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in the local metro area.",
+      "keywords": "home visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you do school visits?",
+      "a": "Yes, with the school's agreement and parent consent.",
+      "keywords": "school visit",
+      "priority": 8
+    },
+    {
+      "q": "What ages do you work with?",
+      "a": "We work with children, teens, and adults.",
+      "keywords": "ages,children,adults",
+      "priority": 9
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Standard sessions are 45–60 minutes. Assessments are 60–90 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a waitlist?",
+      "a": "{waitlist_note}",
+      "keywords": "waitlist,waiting",
+      "priority": 9
+    },
+    {
+      "q": "Do you do reports?",
+      "a": "Yes, reports for NDIS, schools, and paediatricians are available.",
+      "keywords": "report",
+      "priority": 8
+    },
+    {
+      "q": "Do you do group programs?",
+      "a": "Yes, social and literacy groups are available.",
+      "keywords": "group",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions will we need?",
+      "a": "It depends on the goals. We'll discuss after assessment.",
+      "keywords": "how many,sessions",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Yes, all therapists are registered with SPA or AHPRA and insured.",
+      "keywords": "registered,insured",
+      "priority": 9
+    },
+    {
+      "q": "Do you work with adults after stroke?",
+      "a": "Yes, including post-stroke rehabilitation and swallowing.",
+      "keywords": "stroke,adult",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "SP-ASSESS",
+      "label": "Initial assessment (60–90 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "assessment"
+    },
+    {
+      "sku": "SP-SESS",
+      "label": "Therapy session (45 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "session,45"
+    },
+    {
+      "sku": "SP-SESS60",
+      "label": "Therapy session (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 230,
+      "taxable": 1,
+      "keywords": "session,60"
+    },
+    {
+      "sku": "SP-GROUP",
+      "label": "Group session (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "SP-HOME",
+      "label": "Home visit surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "SP-SCHOOL",
+      "label": "School visit surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "school"
+    },
+    {
+      "sku": "SP-TELE",
+      "label": "Telehealth session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "telehealth"
+    },
+    {
+      "sku": "SP-REPORT",
+      "label": "Written report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "report"
+    },
+    {
+      "sku": "SP-PLAN",
+      "label": "Therapy plan / review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "plan"
+    },
+    {
+      "sku": "SP-PROG",
+      "label": "Home program development",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "program"
+    },
+    {
+      "sku": "SP-CANC",
+      "label": "Late cancellation fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "cancellation"
+    }
+  ]
+}

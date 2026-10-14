@@ -1,0 +1,441 @@
+{
+  "id": "plumbing",
+  "name": "Plumbing",
+  "icon": "🔧",
+  "tagline": "Leaks, drains, water heaters, gas fitting",
+  "version": "1.0.0",
+  "service_types": [
+    "Plumbing",
+    "Drain Cleaning",
+    "Water Heater",
+    "Gas Fitting",
+    "Emergency Plumbing",
+    "Hot Water Repair",
+    "Tap & Toilet Repair",
+    "Leak Detection",
+    "Bathroom Renovation Plumbing",
+    "Blocked Drain Clearing",
+    "Toilet Installation",
+    "Tap Replacement",
+    "Hot Water System Install",
+    "Pipe Relining",
+    "Leaking Shower Repair",
+    "Stormwater Drain Work",
+    "Backflow Prevention Test"
+  ],
+  "staff_skills": [
+    "plumbing",
+    "drain",
+    "gas",
+    "emergency",
+    "water-heater",
+    "leak detection",
+    "toilets",
+    "taps",
+    "renovation"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "flooding",
+      "burst pipe",
+      "gas smell",
+      "sewage backup",
+      "no water",
+      "water everywhere",
+      "water flowing from ceiling",
+      "no water to the home",
+      "sewage backing up into the house"
+    ],
+    "urgent": [
+      "leaking",
+      "leak under sink",
+      "clogged toilet",
+      "no hot water",
+      "slow drain",
+      "hot water system leaking",
+      "toilet running constantly",
+      "tap dripping badly",
+      "water pressure suddenly dropped"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "replace",
+      "upgrade",
+      "maintenance",
+      "new toilet",
+      "tap replacement",
+      "leak check",
+      "bathroom renovation",
+      "pre-purchase plumbing inspection"
+    ]
+  },
+  "extra_prompt": "You are booking for a licensed plumbing company. Ask whether the property is residential or commercial, and what the problem is. If the caller reports a gas smell, tell them to leave the building, avoid switches and flames, and call the gas emergency number for their area before we dispatch; treat it as an emergency. For burst pipes or flooding, tell the caller to isolate the water at the main if it is safe. Confirm the property has a current gas safety certificate where one is required.",
+  "kb": [
+    {
+      "q": "Are you licensed?",
+      "a": "Yes, all our plumbers are fully licensed and insured. We can provide license numbers on request.",
+      "keywords": "license,licensed,insured,certified",
+      "priority": 10
+    },
+    {
+      "q": "Do you charge a callout fee?",
+      "a": "Yes. {callout_note}",
+      "keywords": "callout,dispatch,trip,fee",
+      "priority": 10
+    },
+    {
+      "q": "How much does it cost to fix a leaking tap?",
+      "a": "{price_note} Tap repairs vary by tap type. We can give you an exact figure after a quick look.",
+      "keywords": "tap,leak,cost,price,faucet",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer emergency service?",
+      "a": "Yes. {emergency_note} We attend burst pipes, gas leaks, flooding, and sewage backups.",
+      "keywords": "emergency,urgent,24 7,after hours",
+      "priority": 10
+    },
+    {
+      "q": "Can you replace a water heater today?",
+      "a": "If we have the right unit in stock, we can usually complete a water heater replacement the same day. Let me check availability.",
+      "keywords": "water heater,today,same day,replace",
+      "priority": 9
+    },
+    {
+      "q": "What payment methods do you accept?",
+      "a": "Cash, all major credit and debit cards, and bank transfer. Card payments are taken on-site.",
+      "keywords": "payment,card,cash,invoice",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured for commercial work?",
+      "a": "Yes, we carry full commercial liability cover. We can email a certificate of insurance on request.",
+      "keywords": "commercial,business,insurance,liability",
+      "priority": 8
+    },
+    {
+      "q": "Do you fix blocked drains?",
+      "a": "Yes, we clear blocked drains with power rods and high-pressure jetting. Most residential blocks clear in a single visit.",
+      "keywords": "drain,blocked,clog,sewer",
+      "priority": 9
+    },
+    {
+      "q": "How long does a bathroom remodel plumbing job take?",
+      "a": "Plumbing rough-in for a full bathroom remodel is typically two to three days, followed by fitting after tiling. The whole project usually runs three to four weeks depending on the build.",
+      "keywords": "bathroom,remodel,renovation,timeline",
+      "priority": 7
+    },
+    {
+      "q": "Do you service my area?",
+      "a": "Give me your postcode and I will confirm coverage right away. We cover most of the metro area and many outer suburbs.",
+      "keywords": "area,postcode,coverage,service",
+      "priority": 9
+    },
+    {
+      "q": "Do you install tankless water heaters?",
+      "a": "Yes, we install and service tankless and heat-pump water heaters. Pricing depends on gas line and venting requirements.",
+      "keywords": "tankless,on demand,water heater,install",
+      "priority": 8
+    },
+    {
+      "q": "What causes low water pressure?",
+      "a": "Common causes are a partially closed valve, a failing pressure regulator, or scale buildup. A quick diagnostic usually pinpoints it.",
+      "keywords": "pressure,low,weak,flow",
+      "priority": 7
+    },
+    {
+      "q": "Can you fix a running toilet?",
+      "a": "Yes, that is usually a flapper, fill valve, or float issue. Most running toilets are repaired in under an hour.",
+      "keywords": "toilet,running,flapper,fill valve",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide written estimates?",
+      "a": "Yes, every job gets a written estimate before work begins. Nothing is charged beyond the estimate without your approval.",
+      "keywords": "estimate,written,quote,approval",
+      "priority": 9
+    },
+    {
+      "q": "What happens if the repair doesn't work?",
+      "a": "{warranty_note} If the same issue returns, tell us and we will come back to look at it.",
+      "keywords": "warranty,guarantee,redo",
+      "priority": 9
+    },
+    {
+      "q": "Can I speak to a plumber directly before booking?",
+      "a": "Yes, if you would like to talk it through first, we can have a plumber call you back shortly.",
+      "keywords": "talk,speak,plumber,direct,callback",
+      "priority": 8
+    },
+    {
+      "q": "Do you do gas fitting?",
+      "a": "Yes, our gas work is carried out by licensed gas fitters. We can issue the compliance certificate on completion.",
+      "keywords": "gas,gasfitter,certificate,compliance",
+      "priority": 9
+    },
+    {
+      "q": "Are weekend appointments available?",
+      "a": "Saturday mornings are available for routine work. Sundays and public holidays are emergency only.",
+      "keywords": "weekend,saturday,sunday,holiday",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a new dishwasher or washing machine?",
+      "a": "Yes, we install and connect appliances including dishwasher and washing machine plumbing. Bring us the model number and we will confirm fittings.",
+      "keywords": "appliance,dishwasher,washing machine,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you fix water leaks inside walls?",
+      "a": "Yes. Wall leaks usually require a small access cut. We locate the leak with moisture detection first so we cut as little as possible.",
+      "keywords": "wall,leak,hidden,moisture",
+      "priority": 8
+    },
+    {
+      "q": "Do you install a new toilet?",
+      "a": "Yes. We supply and install standard and wall-hung toilets, and we check the waste pipe and floor before fitting.",
+      "keywords": "toilet,install,new,wall hung",
+      "priority": 8
+    },
+    {
+      "q": "Do you do a plumbing inspection before buying a home?",
+      "a": "Yes. A pre-purchase inspection checks visible pipes, taps, drains, hot water and the water pressure, and we give you a written report.",
+      "keywords": "pre-purchase,inspection,buying,report",
+      "priority": 8
+    },
+    {
+      "q": "How do I turn off my water in an emergency?",
+      "a": "Find the main isolation valve, usually near the water meter or where the pipe enters the house, and turn it clockwise until it stops. Then book us for the repair.",
+      "keywords": "turn off,water,main valve,emergency",
+      "priority": 10
+    },
+    {
+      "q": "Do you do bathroom renovation plumbing?",
+      "a": "Yes. We rough in and connect showers, baths, basins and toilets for renovations, and we coordinate with the tiler and builder.",
+      "keywords": "bathroom,renovation,rough in,shower",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PLB-CALL",
+      "label": "Callout fee",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "callout,dispatch,trip",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-LAB-1",
+      "label": "Plumbing labor (hourly)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "labor,labour,hourly",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-LAB-AH",
+      "label": "After-hours plumbing labor",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "after hours,emergency,night",
+      "service_type": "Emergency Plumbing"
+    },
+    {
+      "sku": "PLB-FLX-38",
+      "label": "Flexible hose — 3/8 in",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 12,
+      "taxable": 1,
+      "keywords": "hose,flex,supply",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-VLV-BALL",
+      "label": "Ball valve — 1/2 in",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "valve,shutoff,isolation",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-VLV-PRESS",
+      "label": "Pressure reducing valve",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "pressure,regulator,prv",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-TRAP-P",
+      "label": "P-trap assembly",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 32,
+      "taxable": 1,
+      "keywords": "trap,sink,drain",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-TOIL-FLAP",
+      "label": "Toilet flapper + fill valve kit",
+      "kind": "material",
+      "unit": "kit",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "toilet,flapper,fill valve,running",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-TOIL-WAX",
+      "label": "Wax ring and bolt set",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "wax ring,toilet,seal",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-DRAIN-CLN",
+      "label": "Drain cleaning (per line)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "drain,clog,blocked,sewer",
+      "service_type": "Drain Cleaning"
+    },
+    {
+      "sku": "PLB-DRAIN-JET",
+      "label": "High-pressure jetting",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 295,
+      "taxable": 1,
+      "keywords": "jetting,high pressure,sewer,root",
+      "service_type": "Drain Cleaning"
+    },
+    {
+      "sku": "PLB-DRAIN-CAM",
+      "label": "CCTV drain camera inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "camera,cctv,inspection",
+      "service_type": "Drain Cleaning"
+    },
+    {
+      "sku": "PLB-WH-ELEM",
+      "label": "Water heater heating element",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "element,heater,hot water",
+      "service_type": "Water Heater"
+    },
+    {
+      "sku": "PLB-WH-40",
+      "label": "40-gallon water heater (tank)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 780,
+      "taxable": 1,
+      "keywords": "tank,water heater,replace,40",
+      "service_type": "Water Heater"
+    },
+    {
+      "sku": "PLB-WH-TANKLESS",
+      "label": "Tankless water heater installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1450,
+      "taxable": 1,
+      "keywords": "tankless,on demand,install",
+      "service_type": "Water Heater"
+    },
+    {
+      "sku": "PLB-WH-ANODE",
+      "label": "Anode rod replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "anode,rod,maintenance",
+      "service_type": "Water Heater"
+    },
+    {
+      "sku": "PLB-GAS-LINE",
+      "label": "Gas line — new run (per metre)",
+      "kind": "material",
+      "unit": "m",
+      "unit_price": 48,
+      "taxable": 1,
+      "keywords": "gas,line,pipe,run",
+      "service_type": "Gas Fitting"
+    },
+    {
+      "sku": "PLB-GAS-CERT",
+      "label": "Gas safety certificate",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 0,
+      "keywords": "certificate,compliance,gas",
+      "service_type": "Gas Fitting"
+    },
+    {
+      "sku": "PLB-TAP-REPAIR",
+      "label": "Tap / faucet repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 135,
+      "taxable": 1,
+      "keywords": "tap,faucet,repair,washer",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-TAP-REPL",
+      "label": "Tap / faucet replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 215,
+      "taxable": 1,
+      "keywords": "tap,faucet,replace,new",
+      "service_type": "Plumbing"
+    },
+    {
+      "sku": "PLB-LEAKDET",
+      "label": "Leak detection (pressure test and camera check)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "leak,detection,pressure test,camera"
+    },
+    {
+      "sku": "PLB-TOILET",
+      "label": "Toilet supply and install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 260,
+      "taxable": 1,
+      "keywords": "toilet,install,new"
+    }
+  ]
+}

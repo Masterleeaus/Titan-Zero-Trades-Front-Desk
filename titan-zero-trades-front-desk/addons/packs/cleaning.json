@@ -1,0 +1,387 @@
+{
+  "id": "cleaning",
+  "name": "Cleaning Services",
+  "icon": "🧹",
+  "tagline": "Residential, commercial, deep clean, move-out",
+  "version": "1.0.0",
+  "service_types": [
+    "Residential Cleaning",
+    "Commercial Cleaning",
+    "Deep Clean",
+    "Move-In / Move-Out",
+    "Carpet Cleaning",
+    "Window Cleaning",
+    "Oven Cleaning",
+    "End of Lease Clean",
+    "Bond Cleaning",
+    "Office Cleaning",
+    "Post-Construction Clean",
+    "Airbnb Turnover Clean",
+    "Spring Clean",
+    "Strata & Common Area Clean"
+  ],
+  "staff_skills": [
+    "cleaning",
+    "deep clean",
+    "commercial",
+    "windows",
+    "carpets",
+    "oven",
+    "end of lease"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "biohazard",
+      "flood damage",
+      "sewage",
+      "hoarding",
+      "meth remediation",
+      "biohazard or body fluid cleanup needed urgently"
+    ],
+    "urgent": [
+      "tomorrow",
+      "day after",
+      "inspection",
+      "showing",
+      "moving out friday",
+      "clean needed before inspection tomorrow",
+      "clean needed before guests arrive today"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "fortnightly",
+      "monthly",
+      "quote",
+      "estimate",
+      "end of lease",
+      "window clean",
+      "oven clean",
+      "carpet clean",
+      "regular clean"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional cleaning company. Ask the property type, the number of bedrooms and bathrooms, and whether this is a one-off, recurring, or move-out or bond clean. Ask about pets, access arrangements, and any areas needing extra attention. Ask whether the client supplies products, and assume the business brings its standard supplies unless the reference answers say otherwise. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a rental inspection result or any guarantee that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured and bonded?",
+      "a": "Yes, we are fully insured and bonded. Certificates available on request.",
+      "keywords": "insured,bonded,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do background-checked cleaners?",
+      "a": "Yes, every cleaner is background checked and trained before their first job.",
+      "keywords": "background check,police check,vetted",
+      "priority": 9
+    },
+    {
+      "q": "How much does a regular clean cost?",
+      "a": "{price_note} Regular cleaning is priced by size and frequency. Tell us your property size and how often you want the clean, and we will give you a fixed figure.",
+      "keywords": "cost,price,regular,weekly",
+      "priority": 9
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, most clients are not home. We can arrange key handover, lockbox, or door code access.",
+      "keywords": "home,present,key,lockbox,access",
+      "priority": 9
+    },
+    {
+      "q": "What is included in a deep clean?",
+      "a": "Deep clean includes inside oven, inside fridge, inside cabinets, baseboards, window tracks, and detailed bathroom work. It takes noticeably longer than a standard clean.",
+      "keywords": "deep clean,included,what is",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean after renovation?",
+      "a": "Yes, we do post-construction cleaning including dust removal, paint spot removal, and floor polishing.",
+      "keywords": "post construction,renovation,builder,after build",
+      "priority": 8
+    },
+    {
+      "q": "Can you clean while I'm moving out?",
+      "a": "Yes, we do move-in and move-out cleans. Most agents require a receipt, which we provide.",
+      "keywords": "move out,move in,exit,vacate,bond",
+      "priority": 9
+    },
+    {
+      "q": "Do you do carpets?",
+      "a": "Yes, we offer carpet steam cleaning as an add-on or as a standalone service.",
+      "keywords": "carpet,steam,shampoo",
+      "priority": 8
+    },
+    {
+      "q": "What about pets?",
+      "a": "We are pet-friendly. Tell us about pets so we can plan around them and avoid allergens.",
+      "keywords": "pet,dog,cat,allergy",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Let us know as early as you can.",
+      "keywords": "cancel,cancellation,policy",
+      "priority": 8
+    },
+    {
+      "q": "Can you do commercial offices?",
+      "a": "Yes, we service offices, medical suites, retail, and light industrial. Commercial is priced separately.",
+      "keywords": "commercial,office,business,retail",
+      "priority": 9
+    },
+    {
+      "q": "How many cleaners will come?",
+      "a": "Most residential jobs send one or two cleaners depending on size. Commercial jobs are staffed to scope.",
+      "keywords": "cleaners,how many,team,people",
+      "priority": 8
+    },
+    {
+      "q": "What if I am not happy with the clean?",
+      "a": "Our work is backed by a satisfaction guarantee. {guarantee_note}",
+      "keywords": "guarantee,satisfaction,unhappy,redo",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer same-day cleaning?",
+      "a": "Same-day is possible subject to availability. Call before mid-morning for the best chance.",
+      "keywords": "same day,today,urgent",
+      "priority": 8
+    },
+    {
+      "q": "Is a deposit required?",
+      "a": "{deposit_note}",
+      "keywords": "deposit,prepay,upfront",
+      "priority": 7
+    },
+    {
+      "q": "Do you do Airbnb turnovers?",
+      "a": "Yes, we specialise in short-term rental turnovers including linen changes, restocking, and staging photos.",
+      "keywords": "airbnb,turnover,short term rental,vrbo",
+      "priority": 9
+    },
+    {
+      "q": "Do you bring your own equipment and products?",
+      "a": "Yes. We bring all equipment and eco-friendly products. Tell us if you have a product you prefer or a sensitivity, and we will use that instead.",
+      "keywords": "equipment,products,bring,eco",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean windows inside and out?",
+      "a": "Yes. We clean windows, frames and tracks, inside and out where we can reach safely. High or fragile windows are quoted separately.",
+      "keywords": "windows,inside,outside,frames,tracks",
+      "priority": 8
+    },
+    {
+      "q": "How do I book an end-of-lease clean?",
+      "a": "Tell us your move-out date and the property address. We can check the lease checklist with you, and we can book a re-inspection clean if needed.",
+      "keywords": "end of lease,book,move out,checklist",
+      "priority": 9
+    },
+    {
+      "q": "Are pets a problem for your cleaners?",
+      "a": "We ask you to put pets in a safe room during the clean. Tell us about any allergies or pet hair issues so we can plan extra time.",
+      "keywords": "pets,allergy,pet hair,safe room",
+      "priority": 7
+    },
+    {
+      "q": "Can you clean after a party or event?",
+      "a": "Yes. We can do a clean-up after a party or event. Tell us the size of the event so we can bring the right team and equipment.",
+      "keywords": "party,event,clean up,after",
+      "priority": 7
+    },
+    {
+      "q": "Do you bring your own supplies?",
+      "a": "Yes, we bring all supplies and equipment. If you prefer specific products for allergy or sensitivity reasons, we can use yours.",
+      "keywords": "supplies,products,equipment,bring",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean windows?",
+      "a": "Interior windows are included in most deep cleans. Exterior windows and full window washing are available as an add-on.",
+      "keywords": "window,glass,exterior,interior",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CLN-STD-1",
+      "label": "Standard clean (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "standard,hourly,regular"
+    },
+    {
+      "sku": "CLN-DEEP-1",
+      "label": "Deep clean (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "deep,thorough,hourly"
+    },
+    {
+      "sku": "CLN-MOVE-1",
+      "label": "Move-out clean (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "move out,move in,bond,exit"
+    },
+    {
+      "sku": "CLN-POSTCON-1",
+      "label": "Post-construction clean (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "post construction,renovation,build"
+    },
+    {
+      "sku": "CLN-COMM-1",
+      "label": "Commercial clean (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "commercial,office,business"
+    },
+    {
+      "sku": "CLN-OVEN",
+      "label": "Inside oven clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "oven,inside,appliance"
+    },
+    {
+      "sku": "CLN-FRIDGE",
+      "label": "Inside fridge clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "fridge,refrigerator,inside"
+    },
+    {
+      "sku": "CLN-WINDOW-IN",
+      "label": "Interior windows (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "window,interior,glass"
+    },
+    {
+      "sku": "CLN-WINDOW-OUT",
+      "label": "Exterior windows (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "window,exterior,outside"
+    },
+    {
+      "sku": "CLN-CARPET",
+      "label": "Carpet steam clean (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "carpet,steam,shampoo"
+    },
+    {
+      "sku": "CLN-SUP",
+      "label": "Supplies surcharge",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "supplies,sundries,products"
+    },
+    {
+      "sku": "CLN-BBQ",
+      "label": "BBQ deep clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "bbq,barbecue,grill"
+    },
+    {
+      "sku": "CLN-BLIND",
+      "label": "Blinds clean (per set)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "blinds,shutters,clean"
+    },
+    {
+      "sku": "CLN-AIRBNB",
+      "label": "Airbnb turnover (per turnover)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 125,
+      "taxable": 1,
+      "keywords": "airbnb,turnover,short term rental"
+    },
+    {
+      "sku": "CLN-PRESSURE",
+      "label": "Pressure wash (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "pressure,power wash,paving,driveway"
+    },
+    {
+      "sku": "CLN-WIN",
+      "label": "Window clean (per window, inside and out)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "window,clean,inside,outside"
+    },
+    {
+      "sku": "CLN-EOL",
+      "label": "End of lease clean (3-bedroom home)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "end of lease,move out,clean,bond"
+    },
+    {
+      "sku": "CLN-SOFA",
+      "label": "Upholstery clean (per seat)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "sofa,upholstery,couch,seat"
+    },
+    {
+      "sku": "CLN-BOND2",
+      "label": "Bond clean (2-bedroom unit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "bond,end of lease,unit,2 bedroom"
+    },
+    {
+      "sku": "CLN-SHOWER",
+      "label": "Shower screen descale and polish",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "shower,screen,descale,polish,glass"
+    }
+  ]
+}

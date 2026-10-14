@@ -1,0 +1,268 @@
+{
+  "id": "plastering",
+  "name": "Plastering & Drywall",
+  "icon": "🏗️",
+  "tagline": "Plasterboard, repairs, cornice, rendering, skimming",
+  "version": "1.0.0",
+  "service_types": [
+    "Plasterboard Installation",
+    "Plaster Repair",
+    "Ceiling Repair",
+    "Cornice Installation",
+    "Rendering",
+    "Skimming",
+    "Texture Coating",
+    "Water Damage Repair",
+    "Hole Repair",
+    "Crack Repair",
+    "Soundproofing",
+    "Insulation",
+    "Cornice Replacement",
+    "Commercial Plastering"
+  ],
+  "staff_skills": [
+    "plastering",
+    "drywall",
+    "plasterboard",
+    "cornice",
+    "rendering",
+    "skimming",
+    "texture"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water damage",
+      "ceiling collapse",
+      "urgent repair",
+      "mould"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before paint",
+      "before inspection"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "repair",
+      "install",
+      "render"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional plastering company. Ask about the area size, surface type, and the extent of damage. Ask whether painting is included and whether cornice or texture is wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a finish that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does plastering cost?",
+      "a": "{price_note} Plastering is priced per square meter or per repair.",
+      "keywords": "cost,price,plastering",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair holes?",
+      "a": "Yes, we repair holes, cracks, and water damage.",
+      "keywords": "hole,crack,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you install plasterboard?",
+      "a": "Yes, we install plasterboard for walls and ceilings.",
+      "keywords": "plasterboard,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cornice?",
+      "a": "Yes, we install and replace cornice.",
+      "keywords": "cornice",
+      "priority": 8
+    },
+    {
+      "q": "Do you render?",
+      "a": "Yes, we render interior and exterior walls.",
+      "keywords": "render,rendering",
+      "priority": 9
+    },
+    {
+      "q": "Do you skim coat?",
+      "a": "Yes, we skim coat for a smooth finish.",
+      "keywords": "skim,skim coat",
+      "priority": 8
+    },
+    {
+      "q": "Do you do texture coating?",
+      "a": "Yes, we apply texture coatings.",
+      "keywords": "texture,coating",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair water damage?",
+      "a": "Yes, we repair water-damaged plaster and ceilings.",
+      "keywords": "water damage,ceiling",
+      "priority": 9
+    },
+    {
+      "q": "Do you soundproof?",
+      "a": "Yes, we install acoustic plasterboard and insulation.",
+      "keywords": "soundproof,acoustic",
+      "priority": 8
+    },
+    {
+      "q": "Do you install insulation?",
+      "a": "Yes, we install ceiling and wall insulation.",
+      "keywords": "insulation",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint after plastering?",
+      "a": "We can recommend painters, or coordinate with yours.",
+      "keywords": "paint,painter",
+      "priority": 7
+    },
+    {
+      "q": "How long does plastering take?",
+      "a": "Most repairs take a day. Full rooms take longer.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial plastering?",
+      "a": "Yes, we do commercial plastering. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, but access is needed.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "How long before I can paint?",
+      "a": "Usually 24–48 hours after plastering, depending on weather.",
+      "keywords": "paint,dry",
+      "priority": 8
+    },
+    {
+      "q": "Do you fix ceiling cracks?",
+      "a": "Yes, we repair ceiling cracks and sagging.",
+      "keywords": "ceiling,crack",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old plaster?",
+      "a": "Yes, we remove and dispose of old plaster.",
+      "keywords": "remove,old plaster",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PLS-INST",
+      "label": "Plasterboard install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "plasterboard,install"
+    },
+    {
+      "sku": "PLS-REP",
+      "label": "Plaster repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "PLS-CORN",
+      "label": "Cornice install (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "cornice"
+    },
+    {
+      "sku": "PLS-REND",
+      "label": "Rendering (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "render,rendering"
+    },
+    {
+      "sku": "PLS-SKIM",
+      "label": "Skim coat (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "skim"
+    },
+    {
+      "sku": "PLS-TEX",
+      "label": "Texture coating (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "texture"
+    },
+    {
+      "sku": "PLS-WATER",
+      "label": "Water damage repair (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "water damage"
+    },
+    {
+      "sku": "PLS-SOUND",
+      "label": "Soundproofing (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "soundproof,acoustic"
+    },
+    {
+      "sku": "PLS-INSUL",
+      "label": "Insulation install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "insulation"
+    },
+    {
+      "sku": "PLS-REMOVE",
+      "label": "Old plaster removal (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "remove"
+    }
+  ]
+}

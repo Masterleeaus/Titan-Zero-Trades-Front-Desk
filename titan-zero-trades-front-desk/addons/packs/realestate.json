@@ -1,0 +1,249 @@
+{
+  "id": "realestate",
+  "name": "Real Estate Agents",
+  "icon": "🏡",
+  "tagline": "Sales, rentals, property management, appraisals",
+  "version": "1.0.0",
+  "service_types": [
+    "Property Sale",
+    "Property Appraisal",
+    "Auction",
+    "Private Treaty Sale",
+    "Off-Market Sale",
+    "Property Management",
+    "Tenant Finding",
+    "Routine Inspections",
+    "Rent Collection",
+    "Lease Renewal",
+    "Vacating Inspection",
+    "Buyer Advocacy",
+    "Landlord Representation",
+    "Investment Advice",
+    "Rural & Acreage",
+    "Commercial Property",
+    "Off-the-Plan",
+    "First Home Buyers"
+  ],
+  "staff_skills": [
+    "real estate",
+    "sales",
+    "auctions",
+    "property management",
+    "appraisals",
+    "marketing",
+    "negotiation",
+    "tenancy"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "urgent sale",
+      "urgent repair",
+      "emergency tenancy",
+      "water leak"
+    ],
+    "urgent": [
+      "this week",
+      "before auction",
+      "settlement soon",
+      "tenant issue"
+    ],
+    "routine": [
+      "appraisal",
+      "quote",
+      "management",
+      "sale",
+      "inspection"
+    ]
+  },
+  "extra_prompt": "You are booking for a real estate agency. Ask whether it is a sale, purchase, or rental matter. For sales, ask about the property, timeline, and reason for selling. For rentals, ask about the property, current tenancy, and management needs. Quote fees only from the reference answers, and say final fees are confirmed in the agency agreement. Do not give legal advice or promise a sale price.",
+  "kb": [
+    {
+      "q": "What are your commission rates?",
+      "a": "{price_note} Commission is confirmed in the agency agreement after appraisal.",
+      "keywords": "commission,fee,rate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do free appraisals?",
+      "a": "{appraisal_note}",
+      "keywords": "appraisal,free",
+      "priority": 9
+    },
+    {
+      "q": "Do you do auctions?",
+      "a": "Yes, we run auction and private treaty campaigns.",
+      "keywords": "auction",
+      "priority": 9
+    },
+    {
+      "q": "What are your management fees?",
+      "a": "{management_note} Management fees are a percentage of rent plus letting fees.",
+      "keywords": "management fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you find tenants?",
+      "a": "Yes, including advertising, screening, and reference checks.",
+      "keywords": "tenant,find tenant",
+      "priority": 9
+    },
+    {
+      "q": "How often are inspections?",
+      "a": "Routine inspections are usually every 3–6 months.",
+      "keywords": "inspection,routine",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle repairs?",
+      "a": "Yes, we coordinate repairs and maintenance with your approval.",
+      "keywords": "repairs,maintenance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rent reviews?",
+      "a": "Yes, we conduct market rent reviews annually.",
+      "keywords": "rent review",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle bond?",
+      "a": "Yes, we lodge and manage bonds with the bond authority.",
+      "keywords": "bond",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial property?",
+      "a": "Yes, sales and leasing of commercial property.",
+      "keywords": "commercial",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rural property?",
+      "a": "Yes, including acreage and rural sales.",
+      "keywords": "rural,acreage",
+      "priority": 7
+    },
+    {
+      "q": "Do you help first home buyers?",
+      "a": "Yes, we guide first home buyers through the process and grants.",
+      "keywords": "first home",
+      "priority": 9
+    },
+    {
+      "q": "How long does a sale take?",
+      "a": "Typically 30–90 days from listing, depending on the market.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Are you licensed?",
+      "a": "Yes, all agents are licensed and insured.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer buyer advocacy?",
+      "a": "Yes, we can represent buyers in a purchase.",
+      "keywords": "buyer advocacy",
+      "priority": 7
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Agency agreements are typically 60–90 days. Terms are in the agreement.",
+      "keywords": "cancel,agreement",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "RE-APP",
+      "label": "Property appraisal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "appraisal"
+    },
+    {
+      "sku": "RE-COMM",
+      "label": "Sales commission (% of sale price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "commission"
+    },
+    {
+      "sku": "RE-MKTG",
+      "label": "Marketing package (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "marketing"
+    },
+    {
+      "sku": "RE-AUC",
+      "label": "Auctioneer fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 800,
+      "taxable": 1,
+      "keywords": "auction"
+    },
+    {
+      "sku": "RE-MGT",
+      "label": "Property management (% of rent)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "management"
+    },
+    {
+      "sku": "RE-LET",
+      "label": "Letting fee (1 week rent)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "letting"
+    },
+    {
+      "sku": "RE-LEASE",
+      "label": "Lease preparation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "lease"
+    },
+    {
+      "sku": "RE-INSP",
+      "label": "Routine inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "inspection"
+    },
+    {
+      "sku": "RE-VACATE",
+      "label": "Vacating inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "vacate"
+    },
+    {
+      "sku": "RE-ADV",
+      "label": "Buyer advocacy (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "buyer advocacy"
+    }
+  ]
+}

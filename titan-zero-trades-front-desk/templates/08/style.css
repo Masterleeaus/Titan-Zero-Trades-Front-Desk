@@ -1,0 +1,143 @@
+.tzfd_m2 #tzfdform .ui-datepicker table, .tzfd_m2 #tzfdform .ui-datepicker thead, .tzfd_m2 #tzfdform .ui-datepicker tr, .tzfd_m2 #tzfdform .ui-datepicker th, .tzfd_m2 #tzfdform .ui-datepicker td {border: 0px;}
+.tzfd_m2 #tzfdform .ui-datepicker{box-shadow:none;font:inherit}
+.tzfd_m2 #tzfdform .ui-datepicker-header{background:none;padding:0px}
+.tzfd_m2 #tzfdform .ui-datepicker-header{text-shadow:none;color:inherit}
+.tzfd_m2 #tzfdform .ui-datepicker-calendar .ui-state-default{background:none;box-shadow: none;}
+.tzfd_m2 #tzfdform .ui-datepicker-calendar .ui-state-active{box-shadow:none;text-shadow:none;color:#2271b3;border:0px solid}
+.tzfd_m2 #tzfdform .ui-datepicker thead{background:none}
+
+.tzfd_m2 #tzfdform .dfield.fapp{display: flex;flex-wrap: wrap;}
+.tzfd_m2 #tzfdform .fieldCalendarService,.tzfd_m2 #tzfdform .usedSlots ,.tzfd_m2 #tzfdform .usedSlots,.tzfd_m2 #tzfdform .totalCost{width: 100%;}  
+.tzfd_m2 #tzfdform .fieldCalendar,#tzfdform .slotsCalendar{
+    width: auto;
+    display: inline-flex;
+    flex: 1;
+    
+}
+@media (max-width: 767px) {
+ .tzfd_m2 #tzfdform .dfield.fapp{display: block}
+ .tzfd_m2 #tzfdform .slots{margin:0px;padding:0px}
+
+.tzfd_m2 #tzfdform .ui-datepicker-header{padding:0px 3%}
+}
+.tzfd_m2 #tzfdform .ui-datepicker-inline{max-width:calc(97%);}   
+.tzfd_m2 #tzfdform .slots{border:0px;box-shadow:none;}	
+
+.tzfd_m2 #tzfdform .ui-datepicker-next,.tzfd_m2 #tzfdform .ui-datepicker-prev {display: inline-block;width: 10px;height: 10px;border-top: 2px solid #000;border-right: 2px solid #000;background:none;margin:30px 10px;}
+.tzfd_m2 #tzfdform .ui-datepicker-next {transform: rotate(45deg);}
+.tzfd_m2 #tzfdform .ui-datepicker-prev {transform: rotate(-135deg);}
+.tzfd_m2 #tzfdform .ui-datepicker .ui-datepicker-next, .tzfd_m2 #tzfdform .ui-datepicker .ui-datepicker-prev{background:none}
+
+
+
+.tzfd_m2 #tzfdform .dfield.fapp{display: block}
+.tzfd_m2 #tzfdform {text-shadow: none;}
+.tzfd_m2 #tzfdform .ui-datepicker table, .tzfd_m2 #tzfdform .ui-datepicker thead, .tzfd_m2 #tzfdform .ui-datepicker tr, .tzfd_m2 #tzfdform .ui-datepicker th, .tzfd_m2 #tzfdform .ui-datepicker td {border: 0px;}
+.tzfd_m2 #tzfdform .ui-datepicker table {
+	border-collapse:collapse;
+	background-color: #f8f8f8;
+}
+
+.tzfd_m2 #tzfdform .ui-datepicker-calendar td {
+	text-align: center;
+}
+.tzfd_m2 #tzfdform .ui-datepicker-header { 
+	font-size: 1.6rem;
+    background: #D4D4D4;
+    font-weight: 300;
+    line-height: 70px;
+}
+.tzfd_m2 #tzfdform .ui-datepicker th {
+	background: #eaeaea; font-weight: 300;
+	line-height: 40px;
+}
+.tzfd_m2 #tzfdform td a,.tzfd_m2 #tzfdform td span
+{
+    border-radius: 50%;
+	max-width:50px  !important;
+	max-height:50px !important;
+	width: 90%;
+	padding-top: min(12px, 10%)  !important; /* 1:1 Aspect Ratio */
+	padding-bottom: min(38px, 90%)  !important;
+	vertical-align:middle !important;
+	margin-top:2px; 
+	text-shadow:none;
+	font-weight: 300;
+	color:#000;
+}
+
+.tzfd_m2 #tzfdform .ui-datepicker-unselectable .ui-state-default {color:#AAAAAA}
+.tzfd_m2 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover {color: #FFF; background: #66CCFF;}
+.tzfd_m2 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active {color: #FFF;background: #3995D0;}
+
+.tzfd_m2 #tzfdform .slots {
+	text-align: center; padding: 20px 10px 10px;
+}
+
+.tzfd_m2 #tzfdform .slots div {
+	border-color:transparent; margin: 14px 4px 0;
+}
+
+.tzfd_m2 #tzfdform .slots div a {
+	width: 100%; border-radius: 100px; 
+	background: #f8f8f8; 
+	color: #000;
+	border:1px solid #66CCFF;
+	text-decoration:none;
+	padding:8px 12px;
+}
+.tzfd_m2 #tzfdform .slots div:not(.htmlUsed)  a:hover {
+	background:#66CCFF;
+	color:#fff;
+}
+.tzfd_m2 #tzfdform .slots div.htmlUsed a:hover {
+	cursor:text;
+}
+.tzfd_m2 #tzfdform .slots div.htmlUsed a{
+	border:1px solid #ccc;
+}
+.tzfd_m2 #tzfdform .slots div.htmlUsed {
+border-color:transparent;
+}
+
+.tzfd_m2 #tzfdform .slots div.currentSelection.htmlUsed a {
+    color: #fff; background: #3995D0 !important;
+}
+.tzfd_m2 #tzfdform .slots div.currentSelection a {
+    color: #fff; background: #3995D0 !important;
+}
+.tzfd_m2 #tzfdform .usedSlots .tzfd_list{
+margin-top:5px;
+}
+.tzfd_m2 #tzfdform a.cancel {
+    visibility:hidden;
+    padding: 0 14px 2px 12px;
+    color: #FFA500;
+    background: #FFA500;
+    border-radius: 999em;
+    position:relative;
+}
+.tzfd_m2 #tzfdform a.cancel:before {
+    display: inline-block;
+    content: "X";
+    color: #fff;
+    background: #FFA500;
+    border-radius: 999em;
+    visibility: visible;
+    position: absolute;
+    padding: 0px 10px;    
+    font-weight: 500;
+    margin-top: 5px;
+    font-size: 12px;
+}
+@media (hover: none) {
+.tzfd_m2 #tzfdform .slots a:hover { background: #f8f8f8 !important;color: #000 !important; }
+}
+.tzfd_m2 #tzfdform td a, .tzfd_m2 #tzfdform td span{margin-top:0px !important;}
+.tzfd_m2 #tzfdform .ui-datepicker .ui-datepicker-prev, #tzfdform .ui-datepicker .ui-datepicker-next{width:24px;height:24px;margin:16px;}
+.tzfd_m2 #tzfdform .ui-datepicker-title {line-height:60px;}
+@media screen and (max-width: 640px){
+.tzfd_m2 #tzfdform .ui-datepicker .ui-datepicker-prev, #tzfdform .ui-datepicker .ui-datepicker-next{width:18px;height:18px;margin:10px}
+.tzfd_m2 #tzfdform .ui-datepicker-title {font-size: 1rem;font-weight:bold;line-height:30px;padding-top:5px;}
+.tzfd_m2 #tzfdform td a, .tzfd_m2 #tzfdform td span{padding-bottom:34px !important;}
+}

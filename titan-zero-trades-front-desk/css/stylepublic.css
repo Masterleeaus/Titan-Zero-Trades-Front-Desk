@@ -1,0 +1,217 @@
+@supports (-webkit-touch-callout: none) {#tzfdform select, #tzfdform textarea, #tzfdform input[type="text"], #tzfdform input[type="password"]{ font-size: 16px !important; }}
+#tzfdform .ui-datepicker-calendar th{white-space:nowrap}
+.clearer{clear:both;}
+#tzfdform *,#tzfdform ::after,#tzfdform ::before{box-sizing:border-box;}
+#tzfdform{}
+#tzfdform .fields,#tzfdform .fform{padding:5px 0px;}
+#tzfdform .fform h1{margin:5px 0px;padding:0px;}
+
+#tzfdform .small{width:25% !important;padding-left:0;padding-right:0;}
+#tzfdform .medium{width:50% !important;padding-left:0;padding-right:0;}
+#tzfdform .large{width:100% !important;padding-left:0;padding-right:0;}
+
+@media screen and (min-width: 740px){
+    #tzfdform .fields.column2{float:left;width:49.9%;}
+    #tzfdform .fields.column3{float:left;width:33.3%;}
+    #tzfdform .fields.column4{float:left;width:24.9%;}
+}
+
+@media screen and (max-width: 640px){
+    #tzfdform .small,
+	#tzfdform .medium{width:98% !important;padding-left:0;padding-right:0;}
+}
+
+#tzfdform .one_column{}
+#tzfdform .two_column{float:left;width:48%;}
+#tzfdform .three_column{float:left;width:30%;}
+#tzfdform .side_by_side{float:left;}
+
+#tzfdform .dfield{position:relative;}
+#tzfdform .center_aligned *{text-align:center}
+#tzfdform .center_aligned legend{margin:auto}
+#tzfdform .top_aligned .fields label{}
+#tzfdform .top_aligned .fields .dfield{}
+#tzfdform .left_aligned .fields label{float:left;width:31%;}
+#tzfdform .left_aligned .fields .dfield{float:left;width:65%;}
+#tzfdform .right_aligned .fields label{float:left;width:31%;text-align:right;padding:3px 3px 0px 0px;}
+#tzfdform .right_aligned .fields .dfield{float:left;width:65%;}
+#tzfdform .right_aligned .fields .dfield label{text-align:left;}
+#tzfdform .right_aligned .captcha,#tzfdform .left_aligned .captcha{margin-left:31%}
+
+#tzfdform .one_column label,
+#tzfdform .two_column label,
+#tzfdform .three_column label,
+#tzfdform .side_by_side label{ width:100% !important; }
+
+#tzfdform .left_aligned .section_breaks.fields label,
+#tzfdform .left_aligned .comment_area.fields label,
+#tzfdform .right_aligned .section_breaks.fields label,
+#tzfdform .right_aligned .comment_area.fields label{width:100%;clear:both;}
+
+#tzfdform .tzfdefb_error{border1:1px solid red;}
+#tzfdform .top_aligned .fields label.tzfdefb_error,.left_aligned .fields label.tzfdefb_error,.right_aligned .fields label.tzfdefb_error{display:block;border:0px;color:#f00;float:none;}
+
+#tzfdform div.tzfdefb_error{background:#FDF9E5;border:1px solid #f00;opacity:0.9;margin-top:7px;position:relative;padding:0px 5px;z-index:1000;display:inline-block}
+#tzfdform div.tzfdefb_error:after{content:"";position:absolute;background:transparent url("../images/tooltop.gif") no-repeat scroll 10px center;color:red;font-weight:bold;height:8px;width:100%;top:-8px;left:0px;z-index:1000;}
+
+#tzfdform .ui-datepicker{ z-index:9999 !important;}
+#tzfdform span.uh{display:block;font-size:80%;clear:both;}
+#tzfdform .section_break{border-top:1px dotted #555;clear:both;}
+
+#tzfdform .uh_phone{display:inline-block;margin:0px 5px;font-size:80%;text-align:center;position:relative;}
+#tzfdform .uh_phone input{text-align:center;font-size:100%;}
+#tzfdform .uh_phone div.tzfdefb_error{white-space:nowrap;}
+#tzfdform .tzfdp_form { text-align:left;}
+#tzfdform .pbreak{display:none;}
+#tzfdform .pbreak.pb0{display:block;}
+#tzfdform .pbreak .pbPrevious,#tzfdform .pbreak .pbNext,#tzfdform .pbSubmit{background:#ccc;color:#000;display:inline-block;cursor:pointer;margin:10px 10px 0px 0px;padding:5px 20px;}
+.left_aligned .pb0 .pbNext, .right_aligned .pb0 .pbNext{margin-left:31% !important}
+.left_aligned .pbreak:not(.pb0) .pbPrevious, .right_aligned .pbreak:not(.pb0) .pbPrevious{margin-left:31% !important}
+.left_aligned .pb0 .pbSubmit,  .right_aligned .pb0 .pbSubmit{margin-left:31% !important}
+#tzfdform fieldset{display:inherit}
+#tzfdform .pbreak.pb0 .pbPrevious{display:none;}
+#tzfdform .pbreak.pbEnd .pbNext{display:none;}
+#tzfdform .ignore{display:none;}
+#tzfdform fieldset{border:1px solid #ccc;padding:10px;}
+#tzfdform legend{border:1px solid #ccc;padding:5px 10px;}
+#tzfdform .tzfdcaptchalayer,.tzfd_subbtn{display:none;}
+#tzfdform .captcha img{ cursor:pointer; }
+
+.ui-tooltip.uh-tooltip{width:250px;font-size:10px;font-weight:normal;padding:5px;}
+
+#tzfdform  .cff-summary-title:after{ content: ': '; }
+
+#tzfdform  .hide{ display:none; }
+#tzfdform  .clear{ clear:both; }
+
+#tzfdform .slots{border:1px solid #888;width:100%;padding:10px;-webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+	-moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);}
+#tzfdform .slots div{display:inline-block;border:1px solid #005;margin:5px;padding:1px}
+#tzfdform .slots div a{background: #ededed;box-shadow:none;display:inline-block;padding:4px;cursor:pointer;}
+#tzfdform .slots div a:hover{background: #f7f7f7;}
+
+
+.tzfdapp_break { clear: both; }
+.tzfdapp_no_wrap { display: inline-flex; }
+.tzfd_field_0, .tzfd_field_1,
+.tzfd_field_2, .tzfd_field_3,
+.tzfd_field_4, .tzfd_field_5,
+.tzfd_field_6, .tzfd_field_7,
+.tzfd_field_7, .tzfd_field_9,
+.tzfd_field_10, .tzfd_field_11
+{
+float: left;
+min-width: 85px;
+padding-right:11px;
+border-bottom: 1px dotted #777777;
+margin-left: 1px;
+padding: 5px;
+margin: 2px;
+}
+.tzfd_list_service{padding:0px 10px}
+.tzfd_list_quantity{padding-right:10px}
+#tzfdform .slots div.htmlUsed{border:1px solid #ccc;}
+#tzfdform .slots div.htmlUsed a{color:#ccc;}
+.summary-field-value a{display:none !important}
+.ui-datepicker{min-width:260px}
+.ui-tooltip {padding: 8px;position: absolute;z-index: 9999;border:1px solid #ccc;min-width:300px;background-color:#fff;}
+.adminonly { display:none; }
+#tzfdadminedititem .adminonly { display:block; }
+#tzfdform .slots div.tzfdmoreinfo{display:none}
+.tzfdtooltip{display:none !important;max-width:200px !important;border:1px solid #888;padding:10px;-webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);-moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);}
+.tzfdtooltip{display:block !important;width:auto !important;max-width:500px !important;}
+.notavailable{color:#f00;text-decoration: line-through;}
+.tzfd_slot_availability{display: none;text-align:center}
+.tzfd_slot_availability .p:after {content: "/"}
+
+#tzfdform .cff-close-dlg{display:inline-block;width:16px;height:16px;position:absolute;top:10px;right:10px;cursor:pointer;background-image:url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABHNCSVQICAgIfAhkiAAAAAlwSFlzAAAAowAAAKMB8MeazgAAABl0RVh0U29mdHdhcmUAd3d3Lmlua3NjYXBlLm9yZ5vuPBoAAAB5SURBVDiNrZPRCcAwCEQfnUiySAZuF8kSWeH6Yz8KrQZMQAicJ+epAB0YwAmYJKIADLic0/GPPCbQAnLznCd/4NWUFfkgy1VjH8CryA95ApYltAiTRCZxpuoW+gz9WXE6NPeg+ra1UDIxGlWEObe4SGxY5fIxlc75Bkt9V4JS7KWJAAAAAElFTkSuQmCC59ef34356faa7edebc7ed5432ddb673d');
+}
+
+#tzfdform .cff-dialog{position:fixed;z-index:999999;padding:30px;width:600px;height:300px;background:#fff;top:50%;left:50%;box-shadow:rgba(0, 0, 0, 0.5) 0px 0px 10px 0px;}
+
+#tzfdform .cff-dialog-content{width:100%;height:100%;overflow:auto;}
+#tzfdform  .hide{ display:none; }
+.emptyvalue{display:none !important}
+#tzfdform .ui-datepicker-calendar td,#tzfdform .ui-datepicker-calendar th{padding:inherit}
+#tzfdform .slots .service{border:0px}
+#tzfdform .slots .service .service_title{border:0px;display:block}
+#tzfdform .tzfd_list_quantity1{display:none}
+#tzfdform .slots .currentSelection{border:2px solid #005;padding:0px;}
+#tzfdform .slots .htmlUsed.currentSelection{border:2px solid #005;padding:0px;}
+#tzfdform table{margin:auto}
+
+#tzfdform .ui-datepicker-header a{-webkit-box-shadow:none}
+#tzfdform label{display:initial}
+
+#tzfdform .slots{position:relative}
+#tzfdform .slots .hide{display:none}
+a.tzfd_showhidelink{position: absolute;
+    right: 5px;
+    top: 0px;
+}
+.tzfd_bt_selected a{background:#FF6961  !important}
+.tzfd_overlapping_detail{display:none}
+#tzfdform .g-recaptcha {display:inline-block}
+
+#tzfdform .right_aligned .captcha .fields .dfield{width:100%}
+#tzfdform .left_aligned .captcha .fields .dfield{width:100%}
+
+/* The chosen time is booking information even when repeat activation is disabled. */
+#tzfdform .slots div.currentSelection a{color:#333;}
+
+
+/* Side-label columns must stack before the calendar's 260px minimum can overflow. */
+@media screen and (max-width: 640px){
+    #tzfdform .left_aligned .fields label,
+    #tzfdform .right_aligned .fields label{
+        float:none;
+        display:block;
+        width:100%;
+        text-align:left;
+        padding:0;
+    }
+    #tzfdform .left_aligned .fields .dfield,
+    #tzfdform .right_aligned .fields .dfield{
+        float:none;
+        width:100%;
+    }
+    #tzfdform .left_aligned .captcha,
+    #tzfdform .right_aligned .captcha{
+        margin-left:0;
+    }
+    #tzfdform .left_aligned .pbNext,
+    #tzfdform .right_aligned .pbNext,
+    #tzfdform .left_aligned .pbPrevious,
+    #tzfdform .right_aligned .pbPrevious,
+    #tzfdform .left_aligned .pbSubmit,
+    #tzfdform .right_aligned .pbSubmit{
+        margin-left:0 !important;
+    }
+}
+
+
+/* Native modal sizing is recalculated by CSS when the viewport changes. */
+#tzfdform dialog.cff-dialog{
+    inset:0;
+    margin:auto;
+    width:600px;
+    max-width:calc(100vw - 32px);
+    height:300px;
+    max-height:calc(100vh - 32px);
+    padding:20px;
+    border:1px solid #666;
+    color:#222;
+}
+#tzfdform dialog.cff-dialog[open]{display:flex;flex-direction:column;}
+#tzfdform dialog.cff-dialog::backdrop{background:rgba(0,0,0,.45);}
+#tzfdform dialog.cff-dialog .cff-dialog-title{font-size:1.2em;margin:0 36px 12px 0;}
+#tzfdform dialog.cff-dialog .cff-dialog-content{height:auto;min-height:0;overflow:auto;}
+#tzfdform dialog.cff-dialog .cff-close-dlg{
+    width:32px;height:32px;line-height:1;padding:0;
+    border:1px solid #555;background:#fff;color:#222;font-size:24px;
+}
+#tzfdform dialog.cff-dialog .cff-close-dlg:focus-visible{outline:2px solid #005;outline-offset:2px;}
+#tzfdform dialog.cff-dialog.cff-dialog-inline{
+    position:relative;inset:auto;width:100%;height:auto;max-height:none;margin:10px 0;
+}

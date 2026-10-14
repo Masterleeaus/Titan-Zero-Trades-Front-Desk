@@ -1,0 +1,274 @@
+{
+  "id": "veterinary",
+  "name": "Veterinary",
+  "icon": "🐾",
+  "tagline": "Vet consults, vaccinations, surgery, dentistry",
+  "version": "1.0.0",
+  "service_types": [
+    "Vet Consultation",
+    "Vaccinations",
+    "Desexing",
+    "Dentistry",
+    "Microchipping",
+    "Flea & Worm Treatment",
+    "X-ray & Ultrasound",
+    "Blood Tests",
+    "Surgery",
+    "Emergency Care",
+    "House Calls",
+    "Puppy School",
+    "Senior Pet Checks",
+    "Behaviour Consults",
+    "Euthanasia",
+    "Cremation"
+  ],
+  "staff_skills": [
+    "veterinary",
+    "surgery",
+    "dentistry",
+    "vaccinations",
+    "emergency",
+    "diagnostics",
+    "behaviour",
+    "house calls"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hit by car",
+      "poisoning",
+      "bloat",
+      "seizure",
+      "bleeding",
+      "not breathing"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "unwell",
+      "vomiting",
+      "not eating"
+    ],
+    "routine": [
+      "check-up",
+      "vaccination",
+      "quote",
+      "booking",
+      "desexing"
+    ]
+  },
+  "extra_prompt": "You are booking for a veterinary clinic. Ask about the pet's species, age, sex, and symptoms. Ask how long the symptoms have been present and whether the pet is eating and drinking. For emergencies, advise attending immediately. Quote prices only from the reference answers, and say the final price is confirmed after examination. Do not give clinical advice in the booking flow.",
+  "kb": [
+    {
+      "q": "How much is a consultation?",
+      "a": "{price_note} Consultation fees are confirmed before booking.",
+      "keywords": "cost,price,consult",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note}",
+      "keywords": "payment plan,finance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do house calls?",
+      "a": "Yes, house calls are available in the local metro area.",
+      "keywords": "house call,mobile",
+      "priority": 9
+    },
+    {
+      "q": "Do you do emergency care?",
+      "a": "Yes, during opening hours. After hours, we refer to an emergency hospital.",
+      "keywords": "emergency,after hours",
+      "priority": 9
+    },
+    {
+      "q": "Do you desex pets?",
+      "a": "Yes, including cats, dogs, and rabbits.",
+      "keywords": "desex,neuter,spay",
+      "priority": 9
+    },
+    {
+      "q": "Do you vaccinate?",
+      "a": "Yes, including C5 for dogs and F3 for cats.",
+      "keywords": "vaccination,vaccine",
+      "priority": 9
+    },
+    {
+      "q": "Do you microchip?",
+      "a": "Yes, including registration.",
+      "keywords": "microchip",
+      "priority": 8
+    },
+    {
+      "q": "Do you do dentistry?",
+      "a": "Yes, including scale and polish and extractions.",
+      "keywords": "dentistry,dental",
+      "priority": 9
+    },
+    {
+      "q": "Do you do blood tests?",
+      "a": "Yes, including in-house and external pathology.",
+      "keywords": "blood test,pathology",
+      "priority": 9
+    },
+    {
+      "q": "Do you do x-rays?",
+      "a": "Yes, including x-ray and ultrasound.",
+      "keywords": "xray,ultrasound",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat wildlife?",
+      "a": "We treat injured wildlife where possible and refer to wildlife carers.",
+      "keywords": "wildlife",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer puppy school?",
+      "a": "Yes, puppy preschool and socialisation classes.",
+      "keywords": "puppy school",
+      "priority": 8
+    },
+    {
+      "q": "Do you do euthanasia?",
+      "a": "Yes, including home euthanasia and cremation arrangements.",
+      "keywords": "euthanasia",
+      "priority": 9
+    },
+    {
+      "q": "Do you do behaviour consults?",
+      "a": "Yes, including anxiety and aggression cases.",
+      "keywords": "behaviour,behavior",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat rabbits and guinea pigs?",
+      "a": "Yes, small animal medicine is available.",
+      "keywords": "rabbit,guinea pig,small animal",
+      "priority": 8
+    },
+    {
+      "q": "Do you do senior checks?",
+      "a": "Yes, including bloods and mobility checks.",
+      "keywords": "senior",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer health plans?",
+      "a": "{health_plan_note}",
+      "keywords": "health plan",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "VET-CONS",
+      "label": "Standard consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "consult"
+    },
+    {
+      "sku": "VET-EMERG",
+      "label": "Emergency consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "emergency"
+    },
+    {
+      "sku": "VET-VAC",
+      "label": "Vaccination (C5 / F3)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "vaccination"
+    },
+    {
+      "sku": "VET-DESEX-C",
+      "label": "Desexing (cat)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "desex cat"
+    },
+    {
+      "sku": "VET-DESEX-D",
+      "label": "Desexing (dog)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 520,
+      "taxable": 1,
+      "keywords": "desex dog"
+    },
+    {
+      "sku": "VET-DENT",
+      "label": "Dental scale & polish",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "dental"
+    },
+    {
+      "sku": "VET-CHIP",
+      "label": "Microchipping",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "microchip"
+    },
+    {
+      "sku": "VET-BLOOD",
+      "label": "Blood test (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "blood"
+    },
+    {
+      "sku": "VET-XRAY",
+      "label": "X-ray (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "xray"
+    },
+    {
+      "sku": "VET-HOUSE",
+      "label": "House call",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "house call"
+    },
+    {
+      "sku": "VET-EUTH",
+      "label": "Euthanasia",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "euthanasia"
+    },
+    {
+      "sku": "VET-CREM",
+      "label": "Cremation (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "cremation"
+    }
+  ]
+}

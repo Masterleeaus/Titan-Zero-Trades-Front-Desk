@@ -1,0 +1,255 @@
+{
+  "id": "funeral",
+  "name": "Funeral Services",
+  "icon": "🕊️",
+  "tagline": "Funeral homes, cremation, burial, memorials",
+  "version": "1.0.0",
+  "service_types": [
+    "Funeral Service",
+    "Cremation",
+    "Burial",
+    "Memorial Service",
+    "Graveside Service",
+    "Direct Cremation",
+    "Prepaid Funerals",
+    "Repatriation",
+    "Casket Selection",
+    "Urn Selection",
+    "Floral Tributes",
+    "Order of Service",
+    "Death Notices",
+    "Grief Support",
+    "Pet Cremation"
+  ],
+  "staff_skills": [
+    "funeral directing",
+    "arranging",
+    "cremation",
+    "burial",
+    "repatriation",
+    "grief support",
+    "ceremony"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "passed away",
+      "urgent funeral",
+      "hospital release",
+      "after death"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "family arriving"
+    ],
+    "routine": [
+      "prepaid",
+      "planning",
+      "quote",
+      "consultation"
+    ]
+  },
+  "extra_prompt": "You are booking for a funeral service. Be warm, respectful, and unhurried. Ask about the deceased's name, the family's wishes, whether it is burial or cremation, and whether a service is wanted. Ask about cultural or religious requirements. Quote prices only from the reference answers, and say the final price is confirmed at arrangement. Do not provide legal or estate advice.",
+  "kb": [
+    {
+      "q": "How much does a funeral cost?",
+      "a": "{price_note} Costs depend on the service type, casket, and location. We confirm at arrangement.",
+      "keywords": "cost,price,funeral",
+      "priority": 9
+    },
+    {
+      "q": "What is a direct cremation?",
+      "a": "A direct cremation is an unattended cremation without a formal service.",
+      "keywords": "direct cremation",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer prepaid funerals?",
+      "a": "Yes, we offer prepaid and pre-arranged funeral plans.",
+      "keywords": "prepaid,pre-arranged",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle repatriation?",
+      "a": "Yes, we arrange domestic and international repatriation.",
+      "keywords": "repatriation,overseas",
+      "priority": 8
+    },
+    {
+      "q": "Can we have a viewing?",
+      "a": "Yes, viewings can be arranged at our facility or a chapel.",
+      "keywords": "viewing",
+      "priority": 8
+    },
+    {
+      "q": "Do you do culturally specific funerals?",
+      "a": "Yes, we honour religious and cultural traditions.",
+      "keywords": "cultural,religious",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with the death certificate?",
+      "a": "Yes, we guide you through the required paperwork.",
+      "keywords": "death certificate,paperwork",
+      "priority": 9
+    },
+    {
+      "q": "Do you do graveside services?",
+      "a": "Yes, we coordinate graveside and chapel services.",
+      "keywords": "graveside",
+      "priority": 8
+    },
+    {
+      "q": "Do you supply flowers?",
+      "a": "Yes, we can arrange floral tributes.",
+      "keywords": "flowers,floral",
+      "priority": 7
+    },
+    {
+      "q": "Do you do memorial services?",
+      "a": "Yes, memorial services without a casket are available.",
+      "keywords": "memorial",
+      "priority": 9
+    },
+    {
+      "q": "Can we personalise the service?",
+      "a": "Yes, we help create a personalised service including music, readings, and photo tributes.",
+      "keywords": "personalise,personalize",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer grief support?",
+      "a": "Yes, we provide grief support referrals and resources.",
+      "keywords": "grief,support",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pet cremation?",
+      "a": "Yes, we offer pet cremation services.",
+      "keywords": "pet,cremation",
+      "priority": 7
+    },
+    {
+      "q": "Are you available 24/7?",
+      "a": "Yes, we are available 24/7 to take your call.",
+      "keywords": "24/7,available",
+      "priority": 9
+    },
+    {
+      "q": "Can we pay in instalments?",
+      "a": "{payment_note}",
+      "keywords": "payment,instalment",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "FUN-DIRECT",
+      "label": "Direct cremation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3200,
+      "taxable": 1,
+      "keywords": "direct cremation"
+    },
+    {
+      "sku": "FUN-CREM",
+      "label": "Cremation with service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 6500,
+      "taxable": 1,
+      "keywords": "cremation"
+    },
+    {
+      "sku": "FUN-BURIAL",
+      "label": "Burial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8500,
+      "taxable": 1,
+      "keywords": "burial"
+    },
+    {
+      "sku": "FUN-MEM",
+      "label": "Memorial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "memorial"
+    },
+    {
+      "sku": "FUN-CASK",
+      "label": "Casket (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "casket"
+    },
+    {
+      "sku": "FUN-URN",
+      "label": "Urn (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "urn"
+    },
+    {
+      "sku": "FUN-FLOR",
+      "label": "Floral tribute (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "flowers"
+    },
+    {
+      "sku": "FUN-ORDER",
+      "label": "Order of service booklets (per 50)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "order of service"
+    },
+    {
+      "sku": "FUN-NOTICE",
+      "label": "Death notice / newspaper",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "notice"
+    },
+    {
+      "sku": "FUN-REPAT",
+      "label": "Repatriation (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "repatriation"
+    },
+    {
+      "sku": "FUN-PET",
+      "label": "Pet cremation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "pet"
+    },
+    {
+      "sku": "FUN-PREPAID",
+      "label": "Prepaid funeral plan (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "prepaid"
+    }
+  ]
+}

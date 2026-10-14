@@ -1,0 +1,397 @@
+{
+  "id": "electrical",
+  "name": "Electrical",
+  "icon": "⚡",
+  "tagline": "Wiring, panels, outlets, safety inspections",
+  "version": "1.0.0",
+  "service_types": [
+    "Electrical",
+    "Panel Upgrade",
+    "Electrical Safety",
+    "Emergency Electrical",
+    "Solar & Battery",
+    "Ceiling Fans & Lighting",
+    "Switchboard Upgrade",
+    "EV Charger Install",
+    "Power Point & Switch Installation",
+    "Lighting Installation",
+    "Smoke Alarm Installation",
+    "Safety Switch (RCD) Installation",
+    "EV Charger Installation",
+    "Ceiling Fan Installation",
+    "Data & TV Cabling",
+    "Electrical Inspection & Test and Tag",
+    "Outdoor Lighting"
+  ],
+  "staff_skills": [
+    "electrical",
+    "panel",
+    "safety",
+    "emergency",
+    "solar",
+    "ceiling fans",
+    "switchboards",
+    "smoke alarms",
+    "ev chargers"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "sparking",
+      "burning smell",
+      "smoke",
+      "power out to whole house",
+      "shock",
+      "exposed live wire",
+      "arcing",
+      "switchboard burning",
+      "electric shock from appliance",
+      "live wire exposed in wall"
+    ],
+    "urgent": [
+      "breaker keeps tripping",
+      "some outlets dead",
+      "flickering lights",
+      "hot outlet",
+      "burning smell from outlet",
+      "power point scorched",
+      "smoke alarm chirping at night",
+      "switchboard hot to touch",
+      "EV charger tripping"
+    ],
+    "routine": [
+      "install outlet",
+      "add circuit",
+      "quote",
+      "inspection",
+      "ceiling fan",
+      "light fitting",
+      "ceiling fan install",
+      "smoke alarm check",
+      "switchboard inspection",
+      "EV charger quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a licensed electrical contractor. Ask whether the job is residential or commercial and roughly how old the property is. For burning smells, sparking, scorching, or a safety switch that keeps tripping, tell the caller to switch off the affected circuit at the switchboard only if it is safe, keep away from exposed wires, and treat it as an emergency. Never ask anyone to open a switchboard or touch wiring. Electrical safety certificates for sales or rentals are a separate booking; ask whether one is needed.",
+  "kb": [
+    {
+      "q": "Are your electricians licensed?",
+      "a": "Yes, every electrician is fully licensed and insured. We can provide license details on request.",
+      "keywords": "licensed,insured,certified,electrician",
+      "priority": 10
+    },
+    {
+      "q": "Do you do emergency electrical work?",
+      "a": "Yes. {emergency_note} Call us for sparks, smoke, and no-power emergencies.",
+      "keywords": "emergency,urgent,24 7,sparks",
+      "priority": 10
+    },
+    {
+      "q": "What should I do if I smell burning from an outlet?",
+      "a": "Turn off the circuit at the panel if it is safe, unplug anything nearby, and call us immediately. Do not use that outlet.",
+      "keywords": "burning,smell,outlet,safety",
+      "priority": 10
+    },
+    {
+      "q": "Can you install a new power point?",
+      "a": "Yes, we install new power points, USB outlets, and dedicated circuits. Most single-point installations are done in a few hours.",
+      "keywords": "power point,outlet,install,usb",
+      "priority": 9
+    },
+    {
+      "q": "How much does a panel upgrade cost?",
+      "a": "{price_note} The cost depends on the size of the service and how hard it is to access. We inspect first and give you a fixed figure.",
+      "keywords": "panel,upgrade,switchboard,cost",
+      "priority": 9
+    },
+    {
+      "q": "Do you install EV chargers?",
+      "a": "Yes, we install and commission level two home EV chargers. We can advise on load capacity and any panel work needed.",
+      "keywords": "ev,charger,electric vehicle,level 2",
+      "priority": 9
+    },
+    {
+      "q": "Do you do safety inspections?",
+      "a": "Yes, we carry out full electrical safety inspections and can issue a compliance report on completion.",
+      "keywords": "safety,inspection,compliance,report",
+      "priority": 9
+    },
+    {
+      "q": "Why does my breaker keep tripping?",
+      "a": "Usually an overloaded circuit, a faulty appliance, or a failing breaker. Do not keep resetting it — call us to diagnose.",
+      "keywords": "breaker,tripping,reset,trip",
+      "priority": 10
+    },
+    {
+      "q": "Can you install outdoor lighting?",
+      "a": "Yes, we install garden, security, and flood lighting. Outdoor work includes weatherproof wiring and GFCI protection.",
+      "keywords": "outdoor,lighting,garden,security,flood",
+      "priority": 8
+    },
+    {
+      "q": "Do you do solar?",
+      "a": "Yes, we install solar PV and battery systems, including hybrid inverter setups and grid-tied systems.",
+      "keywords": "solar,pv,battery,install",
+      "priority": 9
+    },
+    {
+      "q": "How long does a rewire take?",
+      "a": "A full house rewire usually takes several working days, depending on size. We discuss staging to minimise disruption.",
+      "keywords": "rewire,house,whole,timeline",
+      "priority": 8
+    },
+    {
+      "q": "What does a smoke alarm installation cost?",
+      "a": "{price_note} The cost depends on how many alarms are needed and how complex the wiring is.",
+      "keywords": "smoke alarm,detector,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you work on commercial premises?",
+      "a": "Yes, we service retail, office, and light industrial sites including three-phase work.",
+      "keywords": "commercial,business,three phase,industrial",
+      "priority": 8
+    },
+    {
+      "q": "Can you fix an outlet that stopped working?",
+      "a": "Yes. The most common cause is a loose connection or a tripped GFCI upstream. We can diagnose and repair quickly.",
+      "keywords": "outlet,dead,stopped working,no power",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a warranty on work?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee,redo",
+      "priority": 9
+    },
+    {
+      "q": "What payment methods do you take?",
+      "a": "Cash, card, and bank transfer. Card payments are taken on-site at job completion.",
+      "keywords": "payment,card,cash,bank",
+      "priority": 8
+    },
+    {
+      "q": "Are weekend appointments available?",
+      "a": "Saturday morning bookings are usually available. Sunday and public holidays are for emergencies only.",
+      "keywords": "weekend,saturday,sunday,holiday",
+      "priority": 8
+    },
+    {
+      "q": "Do smoke alarms need to be replaced?",
+      "a": "Smoke alarm rules vary by state and by the age of the alarm. We check your alarms and tell you what applies to your property and when they should be replaced.",
+      "keywords": "smoke alarm,replace,rules,state",
+      "priority": 9
+    },
+    {
+      "q": "How often should my switchboard be checked?",
+      "a": "A switchboard should be checked when you buy a home, after renovations, or when you notice warm breakers, flickering or tripping. We recommend a check every few years for older homes.",
+      "keywords": "switchboard,check,how often,older",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a power point outside?",
+      "a": "Yes. Outdoor power points need weatherproof boxes and RCD protection, and we install them to current standards.",
+      "keywords": "outdoor,power point,weatherproof,rcd",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pre-purchase electrical inspections?",
+      "a": "Yes. We inspect the switchboard, visible wiring, power points and safety switches, and we give you a written report before you buy.",
+      "keywords": "pre-purchase,inspection,report,buy",
+      "priority": 8
+    },
+    {
+      "q": "Can you install ceiling fans and downlights?",
+      "a": "Yes. We install ceiling fans and downlights and check the ceiling space for safe wiring and clearances.",
+      "keywords": "ceiling fan,downlight,install,light",
+      "priority": 8
+    },
+    {
+      "q": "Do you install ceiling fans?",
+      "a": "Yes, we install and wire ceiling fans including ones requiring new circuits or remote control modules.",
+      "keywords": "ceiling fan,install,fan",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "ELC-DIAG",
+      "label": "Electrical diagnostic visit",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 99,
+      "taxable": 1,
+      "keywords": "diagnostic,visit,callout"
+    },
+    {
+      "sku": "ELC-LAB-1",
+      "label": "Electrical labor (hourly)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "labor,labour,hourly"
+    },
+    {
+      "sku": "ELC-LAB-AH",
+      "label": "After-hours electrical labor",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "after hours,emergency,night"
+    },
+    {
+      "sku": "ELC-OUT-STD",
+      "label": "Standard outlet / power point",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "outlet,power point,install,standard"
+    },
+    {
+      "sku": "ELC-OUT-GFCI",
+      "label": "GFCI outlet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 185,
+      "taxable": 1,
+      "keywords": "gfci,outlet,receptacle,safety"
+    },
+    {
+      "sku": "ELC-OUT-USB",
+      "label": "USB outlet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "usb,outlet,charger"
+    },
+    {
+      "sku": "ELC-BRK-STD",
+      "label": "Standard circuit breaker",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 38,
+      "taxable": 1,
+      "keywords": "breaker,circuit,panel"
+    },
+    {
+      "sku": "ELC-BRK-AFCI",
+      "label": "AFCI / GFCI breaker",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 78,
+      "taxable": 1,
+      "keywords": "afci,gfci,breaker,safety"
+    },
+    {
+      "sku": "ELC-WIRE-12",
+      "label": "12/2 NM-B cable (per foot)",
+      "kind": "material",
+      "unit": "ft",
+      "unit_price": 1.4,
+      "taxable": 1,
+      "keywords": "wire,cable,nm-b,12/2"
+    },
+    {
+      "sku": "ELC-WIRE-14",
+      "label": "14/2 NM-B cable (per foot)",
+      "kind": "material",
+      "unit": "ft",
+      "unit_price": 1.1,
+      "taxable": 1,
+      "keywords": "wire,cable,nm-b,14/2"
+    },
+    {
+      "sku": "ELC-PANEL-200A",
+      "label": "200A panel upgrade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2450,
+      "taxable": 1,
+      "keywords": "panel,upgrade,200 amp,switchboard"
+    },
+    {
+      "sku": "ELC-FAN-INST",
+      "label": "Ceiling fan installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "ceiling fan,install"
+    },
+    {
+      "sku": "ELC-LIGHT-INST",
+      "label": "Light fitting installation (per fixture)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "light,fitting,install,fixture"
+    },
+    {
+      "sku": "ELC-FLOOD-INST",
+      "label": "Outdoor flood light installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 185,
+      "taxable": 1,
+      "keywords": "flood light,outdoor,security"
+    },
+    {
+      "sku": "ELC-SMOKE-INST",
+      "label": "Interconnected smoke alarm installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "smoke alarm,detector,interconnected"
+    },
+    {
+      "sku": "ELC-EV-INST",
+      "label": "EV charger installation (level 2)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 895,
+      "taxable": 1,
+      "keywords": "ev,charger,electric vehicle"
+    },
+    {
+      "sku": "ELC-SOLAR-SURVEY",
+      "label": "Solar site survey",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 199,
+      "taxable": 0,
+      "keywords": "solar,survey,site check"
+    },
+    {
+      "sku": "ELC-SMOKE",
+      "label": "Smoke alarm supply and install (per alarm)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "smoke alarm,install,supply"
+    },
+    {
+      "sku": "ELC-EVCH",
+      "label": "EV charger install (supplied, standard run)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 680,
+      "taxable": 1,
+      "keywords": "ev,charger,install,car"
+    },
+    {
+      "sku": "ELC-SWCHK",
+      "label": "Switchboard safety check and report",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "switchboard,safety,check,report"
+    }
+  ]
+}

@@ -1,0 +1,411 @@
+{
+  "id": "poolcleaning",
+  "name": "Pool Cleaning",
+  "icon": "🏊",
+  "tagline": "Weekly pool service, water balance, filters, pumps, green pool recovery",
+  "version": "1.0.0",
+  "service_types": [
+    "Weekly Pool Service",
+    "Water Testing & Chemical Balance",
+    "Green Pool Recovery",
+    "Pool Filter & Pump Service",
+    "Pool Equipment Repair",
+    "Pool Opening & Closing",
+    "Salt Chlorinator Service",
+    "Pool Tile & Surface Cleaning",
+    "Pool Equipment Check",
+    "Pool Acid Wash",
+    "Spa Cleaning",
+    "Pool Algae Treatment",
+    "Pool Cover Cleaning",
+    "Pool Leak Check"
+  ],
+  "staff_skills": [
+    "pool chemistry",
+    "filters",
+    "pumps",
+    "green pool",
+    "salt chlorinator",
+    "tiles",
+    "heaters",
+    "pool safety"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "someone in difficulty in the pool",
+      "chemical spill into or around the pool",
+      "electric tingle or shock in the water",
+      "strong chemical fumes with breathing trouble",
+      "burning smell from the pool pump or power box"
+    ],
+    "urgent": [
+      "pump not running",
+      "water level dropping fast",
+      "cloudy water after a party",
+      "green water with children using it",
+      "heater leaking",
+      "filter pressure very high",
+      "pool gate or fence damaged"
+    ],
+    "routine": [
+      "weekly clean",
+      "water test",
+      "quote",
+      "opening for summer",
+      "closing for winter",
+      "clean tiles",
+      "salt cell service",
+      "pool looks dull"
+    ]
+  },
+  "extra_prompt": "You are booking for a pool service company. Ask the pool type (inground, above-ground, or spa), its approximate size or volume, the sanitiser type (chlorine, salt, or other), and whether it is covered. For green or cloudy pools, ask how long it has been like that. A report of swimmer illness or a cracked or drained pool is urgent. Do not give chemical dosing advice; the technician balances the water on site.",
+  "kb": [
+    {
+      "q": "How often should my pool be cleaned?",
+      "a": "Most pools need a weekly service in summer and a fortnightly service in cooler months. Heavy tree cover or a lot of use may need more visits.",
+      "keywords": "how often,weekly,fortnightly,schedule",
+      "priority": 10
+    },
+    {
+      "q": "What does a weekly pool service include?",
+      "a": "We skim the surface, brush the walls and floor, empty the baskets, check the pump and filter, test the water, and balance the chemicals.",
+      "keywords": "weekly,service,includes,skim,brush",
+      "priority": 10
+    },
+    {
+      "q": "Why is my pool water cloudy?",
+      "a": "Cloudy water usually means the filter is not clearing fine particles or the chemical balance is off. We test the water, check the filter, and correct the balance.",
+      "keywords": "cloudy,murky,filter,balance",
+      "priority": 9
+    },
+    {
+      "q": "Why has my pool turned green?",
+      "a": "Green water is algae, usually from low chlorine, high pH, or a filter that has stopped working. We recover green pools in stages and retest as we go.",
+      "keywords": "green,algae,recover,chlorine",
+      "priority": 10
+    },
+    {
+      "q": "Is my pool safe to swim in after a green-water treatment?",
+      "a": "We tell you when the chlorine level and water balance are back within the safe range. Please wait until we confirm, usually a day or two after treatment.",
+      "keywords": "swim,safe,after treatment,green",
+      "priority": 9
+    },
+    {
+      "q": "Do you test the water chemistry?",
+      "a": "Yes. We test free chlorine, pH, total alkalinity, calcium hardness and cyanuric acid, and give you a written summary of the results.",
+      "keywords": "test,chemistry,chlorine,ph,alkalinity",
+      "priority": 9
+    },
+    {
+      "q": "Do you use salt or chlorine?",
+      "a": "We service both. Salt systems use a salt chlorinator cell that needs regular cleaning and checks, and we can explain which suits your pool.",
+      "keywords": "salt,chlorine,chlorinator,system",
+      "priority": 8
+    },
+    {
+      "q": "My salt chlorinator cell is not producing chlorine. What can I do?",
+      "a": "Check that the salt level is in the right range and that the cell is clean. Book a service if it still does not produce chlorine, as the cell may need cleaning or replacing.",
+      "keywords": "salt cell,not producing,chlorinator,replace",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean the pool filter?",
+      "a": "Yes. We backwash or clean the filter, check the pressure gauge, and replace the filter media if it is worn out.",
+      "keywords": "filter,backwash,clean,media",
+      "priority": 9
+    },
+    {
+      "q": "How do I know if my pool pump is failing?",
+      "a": "Signs include a loud noise, low flow, a leak around the pump, or a pump that trips the power. Switch it off and book a service rather than running it.",
+      "keywords": "pump,failing,noise,low flow",
+      "priority": 9
+    },
+    {
+      "q": "Can you repair a pool leak?",
+      "a": "We check for leaks with a bucket test and pressure tests, and we can recommend a leak detection service if the leak is underground.",
+      "keywords": "leak,bucket test,underground,detection",
+      "priority": 9
+    },
+    {
+      "q": "Do you open and close pools for the season?",
+      "a": "Yes. Opening includes filling to level, starting the pump, balancing the water, and checking equipment. Closing includes lowering the water, winterising and covering.",
+      "keywords": "opening,closing,season,winter,summer",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean pool tiles and waterline?",
+      "a": "Yes. We remove scale and oily build-up from tiles and the waterline, using products suited to the tile type.",
+      "keywords": "tile,waterline,scale,clean",
+      "priority": 8
+    },
+    {
+      "q": "What causes white scale on my pool tiles?",
+      "a": "Scale is usually caused by high calcium levels or high pH. We test the water and adjust the balance, then clean the scale from the tiles.",
+      "keywords": "scale,calcium,white,tiles",
+      "priority": 7
+    },
+    {
+      "q": "Is it safe to use pool chemicals at home?",
+      "a": "Pool chemicals are dangerous if mixed or handled badly. Store them in their original containers, keep them away from children, and never mix two products together.",
+      "keywords": "chemicals,safe,store,mix",
+      "priority": 10
+    },
+    {
+      "q": "Do you check pool fencing?",
+      "a": "We check the pool gate and the condition of the barrier, and we can flag anything that looks wrong. Compliance certification must come from a registered inspector under your local rules.",
+      "keywords": "fence,barrier,gate,compliance,inspection",
+      "priority": 10
+    },
+    {
+      "q": "Do you service pool heaters?",
+      "a": "Yes. We service gas and heat-pump pool heaters, check the flue and controls, and arrange repairs. Gas repairs are done by a licensed gasfitter.",
+      "keywords": "heater,gas,heat pump,service",
+      "priority": 8
+    },
+    {
+      "q": "My pool pump is making a loud noise. What should I do?",
+      "a": "Switch the pump off to avoid damage. Check that the basket is clear and the pump is not sucking air, then book a visit if the noise continues.",
+      "keywords": "pump,noise,loud,switch off",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean pool covers?",
+      "a": "Yes. We clean and check solar and safety covers, and report any tears or damage before they become a hazard.",
+      "keywords": "cover,solar,safety,clean,tear",
+      "priority": 7
+    },
+    {
+      "q": "How long do I need to wait before swimming after adding chemicals?",
+      "a": "It depends on the product. We tell you the wait time on site for each treatment, and we give you a written note with the times.",
+      "keywords": "wait,swim,chemicals,time",
+      "priority": 9
+    },
+    {
+      "q": "Do you service pools with automatic cleaners?",
+      "a": "Yes. We check robotic and suction cleaners, clean the filter baskets, and repair or replace worn parts.",
+      "keywords": "robotic,automatic,cleaner,suction",
+      "priority": 7
+    },
+    {
+      "q": "Can you empty and refill the pool?",
+      "a": "We can drain and refill a pool when needed. Draining is done only when safe, because an empty pool can lift if the ground water is high.",
+      "keywords": "empty,drain,refill,lift",
+      "priority": 7
+    },
+    {
+      "q": "Are your pool technicians trained?",
+      "a": "Yes. Our technicians are trained in pool water chemistry and hold the required certificates for the chemicals they use.",
+      "keywords": "trained,qualified,certificate,chemistry",
+      "priority": 8
+    },
+    {
+      "q": "Do you service commercial pools?",
+      "a": "Yes. We service hotel, gym, strata and childcare pools with a scheduled logbook and water test records for audits.",
+      "keywords": "commercial,strata,hotel,gym,logbook",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a pool service plan?",
+      "a": "Yes. Plans include weekly or fortnightly visits, water tests, chemicals and minor equipment checks, on an agreed schedule.",
+      "keywords": "plan,regular,contract,schedule",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pool resurfacing or big repairs?",
+      "a": "We refer major resurfacing, structural cracks and tiling to a specialist. We can coordinate the work and check the water chemistry afterwards.",
+      "keywords": "resurface,structural,crack,tiling,refer",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PCL-WEEK",
+      "label": "Weekly pool service (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "weekly,service,visit,clean"
+    },
+    {
+      "sku": "PCL-FORT",
+      "label": "Fortnightly pool service (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 115,
+      "taxable": 1,
+      "keywords": "fortnightly,service,visit"
+    },
+    {
+      "sku": "PCL-TEST",
+      "label": "Water test and written report",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "test,water,chemistry,report"
+    },
+    {
+      "sku": "PCL-CHEM",
+      "label": "Chemical balance adjustment",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "chemical,balance,adjust,chlorine,ph"
+    },
+    {
+      "sku": "PCL-GREEN",
+      "label": "Green pool recovery (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "green,algae,recovery,shock"
+    },
+    {
+      "sku": "PCL-FILT",
+      "label": "Filter clean and backwash",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "filter,backwash,clean"
+    },
+    {
+      "sku": "PCL-MEDIA",
+      "label": "Filter media replacement (sand or cartridge)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "filter,media,sand,cartridge"
+    },
+    {
+      "sku": "PCL-PUMP",
+      "label": "Pump service and basket clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "pump,service,basket"
+    },
+    {
+      "sku": "PCL-PUMP-R",
+      "label": "Pump replacement (supplied)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 690,
+      "taxable": 1,
+      "keywords": "pump,replace,install"
+    },
+    {
+      "sku": "PCL-HEAT",
+      "label": "Pool heater service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "heater,service,gas,heat pump"
+    },
+    {
+      "sku": "PCL-SALT",
+      "label": "Salt chlorinator cell clean and check",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "salt,cell,chlorinator,clean"
+    },
+    {
+      "sku": "PCL-SALT-R",
+      "label": "Salt chlorinator cell replacement (supplied)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 620,
+      "taxable": 1,
+      "keywords": "salt,cell,replace"
+    },
+    {
+      "sku": "PCL-LEAK",
+      "label": "Leak detection (bucket and pressure test)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "leak,detection,test,bucket"
+    },
+    {
+      "sku": "PCL-OPEN",
+      "label": "Pool opening for the season",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "opening,season,summer,start"
+    },
+    {
+      "sku": "PCL-CLOSE",
+      "label": "Pool closing and winterising",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 260,
+      "taxable": 1,
+      "keywords": "closing,winter,cover"
+    },
+    {
+      "sku": "PCL-TILE",
+      "label": "Tile and waterline clean (per metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "tile,waterline,clean,metre"
+    },
+    {
+      "sku": "PCL-COVER",
+      "label": "Pool cover clean and check",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "cover,clean,check,solar"
+    },
+    {
+      "sku": "PCL-DRAIN",
+      "label": "Pool drain and refill (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 340,
+      "taxable": 1,
+      "keywords": "drain,refill,empty"
+    },
+    {
+      "sku": "PCL-AUTO",
+      "label": "Automatic cleaner service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "robotic,automatic,cleaner,service"
+    },
+    {
+      "sku": "PCL-FENCE",
+      "label": "Pool gate and barrier check (report only)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "fence,barrier,gate,check"
+    },
+    {
+      "sku": "PCL-TRAVEL",
+      "label": "Travel fee outside service area",
+      "kind": "travel",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "travel,distance,outside"
+    }
+  ]
+}

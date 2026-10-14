@@ -1,0 +1,166 @@
+#tzfdform .ui-datepicker-inline {width: auto ! important;display: inline-block !important;border: 0px;}
+#tzfdform .ui-datepicker-inline{width:100%;max-width: 300px;}
+#tzfdform .ui-datepicker-inline.ui-datepicker-multi{max-width: 4000px;}
+/* with multiple calendars */
+#tzfdform .ui-datepicker.ui-datepicker-multi { width:auto; }
+#tzfdform .ui-datepicker-multi .ui-datepicker-group { float:left; }
+#tzfdform .ui-datepicker-multi .ui-datepicker-group table { width:95%; margin:0 auto .4em; }
+#tzfdform .ui-datepicker-multi-2 .ui-datepicker-group { width:50%; }
+#tzfdform .ui-datepicker-multi-3 .ui-datepicker-group { width:33.3%; }
+#tzfdform .ui-datepicker-multi .ui-datepicker-group-last .ui-datepicker-header { border-left-width:0; }
+#tzfdform .ui-datepicker-multi .ui-datepicker-group-middle .ui-datepicker-header { border-left-width:0; }
+#tzfdform .ui-datepicker-multi .ui-datepicker-buttonpane { clear:left; }
+#tzfdform .ui-datepicker-row-break { clear:both; width:100%; font-size:0em; }
+@media screen and (max-width: 640px){
+    #tzfdform .ui-datepicker-multi-2 .ui-datepicker-group { width:auto; }
+    #tzfdform .ui-datepicker-multi-3 .ui-datepicker-group { width:auto; }
+}
+/* DatePicker Container */
+#tzfdform table.ui-datepicker-calendar{table-layout: fixed;}
+#tzfdform .ui-datepicker {
+	height: auto;
+	margin: 5px 0;
+	padding:0px;
+	font: 9pt Arial, sans-serif;
+	-webkit-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+	-moz-box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+	box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, .5);
+}
+#tzfdform .ui-datepicker a {
+	text-decoration: none;
+}
+/* DatePicker Table */
+#tzfdform .ui-datepicker table {
+	width: 100%;
+	border-collapse: separate;
+}
+#tzfdform .ui-datepicker-header {
+	background: #000;
+	color: #e0e0e0;
+	font-weight: bold;
+	-webkit-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, 2);
+	-moz-box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
+	box-shadow: inset 0px 1px 1px 0px rgba(250, 250, 250, .2);
+	text-shadow: 1px -1px 0px #000;
+	filter: dropshadow(color=#000, offx=1, offy=-1);
+	line-height: 30px;
+	border-width: 0;
+	border-style: solid;
+	border-color: #111;
+}
+#tzfdform .ui-datepicker-title {
+	text-align: center;line-height: inherit;
+}
+#tzfdform .ui-datepicker .ui-datepicker-prev, #tzfdform .ui-datepicker .ui-datepicker-next {
+	display: inline-block;
+	width: 30px;
+	height: 30px;
+	text-align: center;
+	cursor: pointer;
+	background-image: url('./images/arrow.png');
+	background-repeat: no-repeat;
+	line-height: 600%;
+	overflow: hidden;
+	position: relative;
+}
+#tzfdform .ui-datepicker .ui-datepicker-prev span, #tzfdform .ui-datepicker .ui-datepicker-next  span{display:none}
+#tzfdform .ui-datepicker .ui-datepicker-prev {
+	float: left;
+	background-position: center -30px;
+	left: 0px;top: 0px;
+}
+#tzfdform .ui-datepicker .ui-datepicker-next {
+	float: right;
+	background-position: center 0px;
+	right: 0px;top: 0px;
+}
+#tzfdform .ui-datepicker .ui-datepicker-prev-hover,#tzfdform .ui-datepicker .ui-datepicker-next-hover {
+    top: 0px;
+}
+#tzfdform .ui-datepicker thead {
+	background-color: #f7f7f7;
+	background-image: -moz-linear-gradient(top,  #f7f7f7 0%, #f1f1f1 100%);
+	background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#f7f7f7), color-stop(100%,#f1f1f1));
+	background-image: -webkit-linear-gradient(top,  #f7f7f7 0%,#f1f1f1 100%);
+	background-image: -o-linear-gradient(top,  #f7f7f7 0%,#f1f1f1 100%);
+	background-image: -ms-linear-gradient(top,  #f7f7f7 0%,#f1f1f1 100%);
+	background-image: linear-gradient(top,  #f7f7f7 0%,#f1f1f1 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f7f7f7', endColorstr='#f1f1f1',GradientType=0 );
+	border-bottom: 1px solid #bbb;
+}
+#tzfdform .ui-datepicker th {
+	text-transform: uppercase;
+	padding: 5px 0;
+	color: #666666;
+	text-align:center;
+	text-shadow: 1px 0px 0px #fff;
+	filter: dropshadow(color=#fff, offx=1, offy=0);
+}
+#tzfdform .ui-datepicker tbody td {
+	padding: 0;
+	border-right: 1px solid #bbb;
+}
+#tzfdform .ui-datepicker tbody td:last-child {
+	border-right: 0px;
+}
+#tzfdform .ui-datepicker tbody tr {
+	border-bottom: 1px solid #bbb;
+}
+#tzfdform .ui-datepicker tbody tr:last-child {
+	border-bottom: 0px;
+}
+#tzfdform .ui-datepicker td span, .ui-datepicker td a {
+	display: inline-block;
+	font-weight: bold;
+	text-align: center;
+	width: 100%;
+	height: 30px;
+	line-height: 30px;
+	color: #555555;
+	text-shadow: 1px 1px 0px #fff;
+	filter: dropshadow(color=#fff, offx=1, offy=1);
+	box-shadow:none;border:0px
+}
+#tzfdform .ui-datepicker-calendar .ui-state-default {
+	background: #ededed;
+	background: -moz-linear-gradient(top,  #ededed 0%, #dedede 100%);
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ededed), color-stop(100%,#dedede));
+	background: -webkit-linear-gradient(top,  #ededed 0%,#dedede 100%);
+	background: -o-linear-gradient(top,  #ededed 0%,#dedede 100%);
+	background: -ms-linear-gradient(top,  #ededed 0%,#dedede 100%);
+	background: linear-gradient(top,  #ededed 0%,#dedede 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#ededed', endColorstr='#dedede',GradientType=0 );
+	-webkit-box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+	-moz-box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+	box-shadow: inset 1px 1px 0px 0px rgba(250, 250, 250, .5);
+	display: inline-grid;text-align: center;
+}
+#tzfdform .ui-datepicker-calendar .ui-state-hover {
+	background: #f7f7f7;box-shadow:none;border:0px
+}
+#tzfdform .ui-datepicker-calendar .ui-state-active {
+	background: #6eafbf;
+	-webkit-box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+	-moz-box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+	box-shadow: inset 0px 0px 10px 0px rgba(0, 0, 0, .1);
+	/* Keep the donor selection colour while making its 12px date readable. */
+	color: #222222;
+	text-shadow: none;
+	filter: none;
+	border: 1px solid #55838f;
+	position: relative;
+}
+#tzfdform .ui-datepicker-unselectable .ui-state-default {
+	background: #f4f4f4;
+	color: #b4b3b3;
+}
+#tzfdform .ui-corner-all, #tzfdform .ui-corner-bottom, #tzfdform .ui-corner-right, #tzfdform .ui-corner-br{border-radius:0px}
+#tzfdform .ui-state-hover{border:0px;left:0px}
+#tzfdform .ui-state-disabled,#tzfdform .ui-widget-content .ui-state-disabled,#tzfdform .ui-widget-header .ui-state-disabled {
+    opacity: inherit;
+    filter: inherit;
+}
+#tzfdform .ui-widget-header .ui-state-hover{background-color:transparent}
+#tzfdform .ui-state-default, #tzfdform .ui-widget-content .ui-state-default, #tzfdform .ui-widget-header .ui-state-default, #tzfdform .ui-button, #tzfdform html .ui-button.ui-state-disabled:hover, #tzfdform html .ui-button.ui-state-disabled:active{border:inherit;font-weight:bold}
+#tzfdform .ui-state-active, #tzfdform .ui-widget-content .ui-state-active, #tzfdform .ui-widget-header .ui-state-active, #tzfdform a.ui-button:active, #tzfdform .ui-button:active, #tzfdform .ui-button.ui-state-active:hover{border:inherit;font-weight:bold}
+#tzfdform .ui-datepicker select.ui-datepicker-month, #tzfdform .ui-datepicker select.ui-datepicker-year{width: auto;}

@@ -1,0 +1,206 @@
+#tzfdform *,#tzfdform ::after,#tzfdform ::before{box-sizing:border-box;}
+.form-builder{font-size:11px;width:100%;min-width:780px;}
+.clearer{clear:both;}
+.column{float:left;}
+.columnr{float:right;}
+.ctrlsColumn{min-width:380px;}
+.dashboardColumn{ width:calc(100% - 400px); }
+.width50{width:48%}
+.width20{width:24%}
+.width40{width:40%}
+.width30{width:30%}
+.padding10{padding:10px;}
+.button, .form-builder .button{float:left;margin:5px 15px;}
+.button.n span,.button.n {color:#AED0EA;border-color:#AED0EA}
+#tabs{height:650px;width:100%;overflow-y:auto;}
+#tzfdform{height:600px;overflow:auto;position:relative;}
+#tzfdform .fields{border:1px solid transparent;padding:3px 10px 14px 10px;margin:5px 0px;display:block;position:relative}
+#tzfdform .fields .arrow{position:absolute;left:-15px;top:20px;display:none}
+#tzfdform .fields .remove{position:absolute;bottom:0;right:0;display:none;background-color:#fff;cursor:pointer}
+#tzfdform .fields .copy{position:absolute;bottom:0;right:20px;display:none;background-color:#fff;cursor:pointer}
+#tzfdform legend{ border:1px solid rgba(222,222,222,.75); background:#FFF; margin-left:5px; padding: 0 5px; }
+#tzfdform .fcontainer{ border:1px solid rgba(222,222,222,.75); min-height:67px; }
+.groupBox,
+.dependenciesBox,
+.choicesSet{border:1px dashed #888;margin:10px 0px;padding:5px}
+.choicesEdit input[type=text]{width:120px;}
+.choicesEdit input[type=text]{width: calc(50% - 50px);}
+.choicesEdit,.choicesEditDep{position:relative;}
+.choicesSet .t{margin-left:18px;width:115px;float:left}
+.addComplexRule{cursor:pointer;}
+.cf_dependence_rule{width:230px;}
+.services.choicesSet .labeltzfd{width:90px;float:left;padding-left:1px;}
+.choicesEdit .choice_down{position:absolute;top:5px;left2:255px;right:50px;cursor:pointer;}
+.choicesEdit .choice_up{position:absolute;top:5px;left2:266px;right:39px;cursor:pointer;}
+.addDep,
+.choicesEdit .choice_add{position:absolute;top:5px;left2:278px;right:22px;cursor:pointer;}
+.removeDep,
+.choicesEdit .choice_remove{position:absolute;top:5px;left2:293px;right:7px;cursor:pointer;}
+.choicesEditDep .choice_addDep{position:absolute;top:5px;left2:278px;right:27px;cursor:pointer;}
+.choicesEditDep .choice_removeDep{position:absolute;top:5px;left2:293px;right:12px;cursor:pointer;}
+.services.choicesSet .choice_down,.services.choicesSet .choice_up,.services.choicesSet .choice_add,.services.choicesSet .choice_remove{top:75px;}
+.service_openhours{width:calc(100% - 10px);}
+.nameopenhours{width:calc(100% - 140px);}
+.calc_dependent{width:150px;}
+.choicesEditDep select{width: calc(100% - 180px);}
+.addDep,
+.ui-widget-content .choice_addDep.ui-icon {background-image: url(cupertino/images/ui-icons_2e83ff_256x240.png); }
+.removeDep,
+.ui-widget-content .choice_removeDep.ui-icon {background-image: url(cupertino/images/ui-icons_2e83ff_256x240.png); }
+.addDep, .removeDep{float:right;}
+.cf_dependence_field{width:150px;}
+.showHideDependencies,.dep{float:right}
+.choicesSet.hide {display:block !important;visibility: visible !important;}
+.choicesSet.hide .choicesEditDep{display:none}
+.choicesSet.show .choicesEditDep{display:block}
+a.helptzfdform.dep{font-size:100%;padding-left:10px}
+input [disabled] {background-color: #f00;}
+input [readonly] {background-color: #f00;}
+#tzfdform .fields.ui-selected{background-color:#DFEFFF;border:1px solid #C2D7EF}
+#tzfdform .fields.ui-selected .arrow,#tzfdform .fields.ui-selected>.remove,#tzfdform .fields.ui-selected>.copy{display:inline}
+#tzfdform .fields.fmark,
+#tzfdform .fields.ui-over{border:1px dashed #888;}
+
+#tzfdform .fform{border:1px solid transparent;padding:10px 10px 20px 10px;margin:5px 0px;display:block;position:relative}
+#tzfdform .fform .arrow{position:absolute;left:-15px;top:20px;display:none}
+#tzfdform .fform.ui-selected{background-color:#E7FFCF;border:1px solid #C2EF95}
+#tzfdform .fform.ui-selected .arrow{display:inline}
+#tzfdform .fform.ui-over{border:1px dashed #888;}
+#tzfdform .fform h1{margin:5px 0px;padding:0px;}
+input.disabled {background: #fff;color: #888;cursor: default;}
+label1{display:inline}
+input.small, select.small, textarea.small, .small{width:25%}
+input.medium, select.medium, textarea.medium, .medium{width:50%}
+input.large, select.large, textarea.large, .large{width:100%;box-sizing: border-box;-webkit-box-sizing:border-box;-moz-box-sizing: border-box;}
+textarea {resize: none}            
+.one_column{}
+.two_column{float:left;width:48%}
+.three_column{float:left;width:30%}
+.side_by_side{float:left;}
+#tzfdform .center_aligned *{text-align:center}
+.top_aligned .fields label{}
+.top_aligned .fields .dfield{}
+.left_aligned .fields label{float:left;width:31%}
+.left_aligned .fields .dfield{float:left;width:65%;}
+.right_aligned .fields label{float:left;width:31%;text-align:right;padding:3px 3px 0px 0px}
+.right_aligned .fields .dfield{float:left;width:65%} 
+#tabs  span.uh,
+#tzfdform span.uh{display:block;font-size:80%;clear:both}
+#tzfdform .section_break{border-top:1px dotted #555;clear:both}
+
+#tzfdform .uh_phone{float:left;margin:0px 5px;font-size:80%;text-align:center;position: relative;}
+#tzfdform .uh_phone input{text-align:center;font-size:100%;}
+#tzfdform .uh_phone div.tzfdefb_error{display:block;white-space:nowrap;width:400px}
+
+.eq_btn{min-width:45px;}
+.cf_dependence_value{ width:20%; }
+#sEq{resize:vertical; min-height:70px;}
+#fCalculated{
+    background: url("cupertino/images/ui-bg_glass_80_eebd4d_1x400.png") repeat-x scroll 50% 50% #EEBD4D;
+    border: 1px solid #D0771D;
+    color: #643F0D;
+    font-weight: bold;
+}
+a.helptzfdform,a.helptzfdformfont{font-size:80%;text-decoration:underline;color:#00f;cursor:pointer;}
+.working_dates input[type='checkbox']{width:8%}
+.form-builder .ui-button-text {
+    display: block !important;
+}
+
+.form-builder-error-messages .error-text{ color: #FF0000; border: 1px solid #FF0000; margin-bottom: 10px; padding:5px; }
+
+.form-builder #tabs label{ font-size:12px !important; }
+
+.form-builder .ui-datepicker td.holidays a,#calConfig .ui-datepicker td.nonworking.holidays a{border:1px solid #FEA69A;background:#FEA69A;color:#fff }
+.form-builder .ui-datepicker td.startreservation a,#calConfig .ui-datepicker td.nonworking.startreservation a{border:1px solid #80BF92;background:#80BF92;color:#fff }
+
+.form-builder .ui-datepicker td.nonworking a{background:#F2F5F7;border:1px solid #DAE8F2;color:#ABCADC}
+/*.form-builder .ui-state-active{background:url("cupertino/images/ui-bg_glass_80_d7ebf9_1x400.png") repeat-x scroll 50% 50% #D7EBF9;color:#2779AA;border:1px solid #AED0EA}*/
+
+
+.form-builder .ui-datepicker td.specialDates a{background:#ff0;border:1px solid #DAE8F2;color:#ABCADC}
+#openclose{display:block}
+#openclose>div{border-left:1px solid red;border-bottom:1px solid red;display:inline-block}
+#openclose .slot{background:#ff0;width:10px;height:10px;float:left;border-left:1px solid red;}
+#openclose .slot:hover{background:#f00;}
+#openclose .slot.sopen{background:#f00}
+
+.choicesSet .labelN{width: calc(100% - 150px);float:left}
+.choicesSet .labelP{width:82px;float:left}
+.choicesSet .labelC{width:60px;float:left}
+.choicesSet .labelD{width:82px;float:left}
+.choicesEdit input.service_name[type=text]{width: calc(100% - 160px);}
+.choicesEdit input.service_price[type=text]{width:80px;margin-right:8px}
+.choicesEdit input.service_capacity[type=text]{width:60px;}
+.choicesEdit select.service_duration{width:87px;margin-right:2px;}
+.choicesEdit select.openhours_type{width: calc((100% - 44px)/4);min-width: 56px;}
+.choicesEdit .specialcover{width:calc((100% - 44px)/4);display:inline-block}
+.choicesEdit .specialcover input{width:99%;}
+td.highlight a{background:#2271b1 !important;color:#fff !important}
+.choicesEdit select.openhours_from,.choicesEdit select.openhours_to{width:calc((100% - 44px)/4);}
+.choicesSet .labelT{width:calc(50%);float:left}
+.choicesSet .labelF{width:20%;float:left}
+.choicesSet.openhours{max-height:400px;overflow:auto}
+.slots{border:1px solid #005;width:100%;padding:10px}
+.slots div{display:inline-block;border:1px solid #005;padding:5px;background:#fff;margin:5px}
+.tzfdappsoft { color: #aaaaaa; }
+
+.tzfdapp_break { clear: both; }
+.tzfdapp_no_wrap { display: inline-flex; }
+.tzfd_field_0, .tzfd_field_1,
+.tzfd_field_2, .tzfd_field_3,
+.tzfd_field_4, .tzfd_field_5,
+.tzfd_field_6, .tzfd_field_7,
+.tzfd_field_7, .tzfd_field_9,
+.tzfd_field_10, .tzfd_field_11
+{
+float: left; 
+min-width: 85px;
+padding-right:11px;
+border-bottom: 1px dotted #777777;
+margin-left: 1px;     
+padding: 5px;
+margin: 2px;
+}
+.tzfd_field_0 {
+color: #44aa44;
+font-weight: bold; 
+width: 60px !important;
+}
+.tzfd_field_1 {
+color: #aaaa44;
+font-weight: bold; 
+}
+.tzfd_field_5 {
+width:220px; 
+overflow: hidden;
+}
+.tzfd_field_6 {
+white-space: pre-wrap;
+min-width: 250px;
+}
+.tzfd_field_7 {
+white-space: pre-wrap;
+min-width: 150px;
+}
+.tzfd_field_header {
+font-weight: bold;
+background-color: #dcdcdc;
+}
+.tzfd_cancelled {
+     opacity: 0.7;
+     color: #ff0000;
+}   
+.tzfd_cancelled input, .tzfd_cancelled select {
+     opacity: 1;
+     color: #ff0000 !important;
+}   
+.tzfd_attended {
+ 
+     color: #006600;
+}   
+.tzfd_attended input, .tzfd_cancelled select {
+
+     color: #006600 !important;
+}
+#tzfdform .ui-datepicker-inline.ui-datepicker-multi{max-width:initial !important} 

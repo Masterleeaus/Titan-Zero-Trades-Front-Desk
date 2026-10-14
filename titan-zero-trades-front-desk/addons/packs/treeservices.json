@@ -1,0 +1,269 @@
+{
+  "id": "treeservices",
+  "name": "Tree Services",
+  "icon": "🌳",
+  "tagline": "Tree removal, pruning, stump grinding, arborist",
+  "version": "1.0.0",
+  "service_types": [
+    "Tree Removal",
+    "Tree Pruning",
+    "Tree Lopping",
+    "Stump Grinding",
+    "Hedge Trimming",
+    "Arborist Report",
+    "Storm Damage",
+    "Palm Tree Removal",
+    "Deadwooding",
+    "Canopy Reduction",
+    "Root Removal",
+    "Mulching",
+    "Land Clearing",
+    "Emergency Tree Work"
+  ],
+  "staff_skills": [
+    "arborist",
+    "tree removal",
+    "pruning",
+    "stump grinding",
+    "climbing",
+    "chainsaw",
+    "mulching"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "fallen tree",
+      "storm damage",
+      "blocked access",
+      "dangerous branch",
+      "tree on house"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before storm",
+      "before inspection"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "prune",
+      "remove",
+      "mulch"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tree service. Ask about the tree species, height, location, and access. Ask whether power lines are nearby and whether a permit is required. Ask about stump grinding and green waste removal. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured and our arborists are qualified.",
+      "keywords": "licensed,insured,arborist",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer emergency tree services?",
+      "a": "Yes, we offer 24/7 emergency tree work for storm damage and fallen trees.",
+      "keywords": "emergency,storm,fallen",
+      "priority": 9
+    },
+    {
+      "q": "How much does tree removal cost?",
+      "a": "{price_note} Tree removal is priced by height, species, and access. We quote after inspection.",
+      "keywords": "cost,price,tree removal",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove stumps?",
+      "a": "Yes, we grind stumps. Roots may need separate treatment.",
+      "keywords": "stump,grind",
+      "priority": 9
+    },
+    {
+      "q": "Do you prune trees?",
+      "a": "Yes, we prune for health, shape, and safety.",
+      "keywords": "prune,pruning",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove palm trees?",
+      "a": "Yes, we remove palm trees and fronds.",
+      "keywords": "palm,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide arborist reports?",
+      "a": "Yes, we provide arborist reports for councils and insurance.",
+      "keywords": "arborist,report,council",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove green waste?",
+      "a": "Yes, we chip and remove green waste.",
+      "keywords": "green waste,chip,mulch",
+      "priority": 8
+    },
+    {
+      "q": "Do you need permits?",
+      "a": "Some trees require council permits. We can advise.",
+      "keywords": "permit,council",
+      "priority": 9
+    },
+    {
+      "q": "Do you work near power lines?",
+      "a": "We work near power lines with the utility isolated where required.",
+      "keywords": "power line,electrical",
+      "priority": 9
+    },
+    {
+      "q": "Do you do land clearing?",
+      "a": "Yes, we do land clearing. Permits may be required.",
+      "keywords": "land clearing,clear",
+      "priority": 8
+    },
+    {
+      "q": "Do you trim hedges?",
+      "a": "Yes, we trim and shape hedges.",
+      "keywords": "hedge,trim",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove roots?",
+      "a": "Yes, we remove surface roots. Deep roots may need excavation.",
+      "keywords": "root,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide mulch?",
+      "a": "Yes, we can leave mulch on site or remove it.",
+      "keywords": "mulch,chips",
+      "priority": 7
+    },
+    {
+      "q": "How long does a removal take?",
+      "a": "Most removals take 2–6 hours depending on size.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps for the quote. For the work, access is enough.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean up after?",
+      "a": "Yes, we clean up and remove debris.",
+      "keywords": "clean up,cleanup",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat diseased trees?",
+      "a": "Yes, we can advise and treat some diseases.",
+      "keywords": "disease,treatment",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "TREE-SMALL",
+      "label": "Small tree removal (up to 5m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "small,removal"
+    },
+    {
+      "sku": "TREE-MED",
+      "label": "Medium tree removal (5–10m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "medium,removal"
+    },
+    {
+      "sku": "TREE-LARGE",
+      "label": "Large tree removal (10m+)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "large,removal"
+    },
+    {
+      "sku": "TREE-PRUNE",
+      "label": "Tree pruning (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "prune,pruning"
+    },
+    {
+      "sku": "TREE-STUMP",
+      "label": "Stump grinding",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "stump,grind"
+    },
+    {
+      "sku": "TREE-HEDGE",
+      "label": "Hedge trimming (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "hedge,trim"
+    },
+    {
+      "sku": "TREE-REPORT",
+      "label": "Arborist report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "arborist,report"
+    },
+    {
+      "sku": "TREE-MULCH",
+      "label": "Mulch supply (per m³)",
+      "kind": "material",
+      "unit": "m3",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "mulch"
+    },
+    {
+      "sku": "TREE-WASTE",
+      "label": "Green waste removal (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "green waste,remove"
+    },
+    {
+      "sku": "TREE-EMERG",
+      "label": "Emergency call-out",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "emergency,storm"
+    }
+  ]
+}

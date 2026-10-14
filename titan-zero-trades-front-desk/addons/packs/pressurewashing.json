@@ -1,0 +1,390 @@
+{
+  "id": "pressurewashing",
+  "name": "Pressure Washing",
+  "icon": "💦",
+  "tagline": "Driveways, paving, house wash, decks, fences, commercial areas",
+  "version": "1.0.0",
+  "service_types": [
+    "Driveway & Paving Clean",
+    "House & Wall Wash",
+    "Deck & Fence Clean",
+    "Commercial Area Wash",
+    "Graffiti & Stain Removal",
+    "Soft Wash (Low Pressure)",
+    "Paving Sealing",
+    "Pre-Sale Exterior Clean",
+    "Roof Soft Wash",
+    "Fence Wash",
+    "Pool Deck Wash",
+    "Concrete Sealing",
+    "Car Park Cleaning",
+    "Gutter Clean Exterior",
+    "Pergola Clean",
+    "Window Frame Wash",
+    "Solar Panel Clean"
+  ],
+  "staff_skills": [
+    "pressure washing",
+    "soft wash",
+    "paving",
+    "decks",
+    "graffiti",
+    "stains",
+    "sealing",
+    "fibro safety"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water running into the switchboard or power points",
+      "injury from the water jet",
+      "chemical splash in the eyes or on skin",
+      "gas smell near the work area"
+    ],
+    "urgent": [
+      "cracked render or brick damaged by washing",
+      "fibro cladding that may need testing",
+      "oil or chemical spill on the driveway",
+      "graffiti on a shopfront before opening",
+      "fence about to fall"
+    ],
+    "routine": [
+      "driveway clean",
+      "house wash",
+      "deck clean",
+      "fence clean",
+      "quote",
+      "before sale",
+      "commercial service",
+      "paving looks dirty"
+    ]
+  },
+  "extra_prompt": "You are booking for a pressure washing company. Ask the surface type (concrete, brick, timber, render, roof tiles, or vinyl), because some surfaces need soft washing or low pressure. Ask the approximate area in square metres or the number of rooms or levels. Ask whether water and power are available on site. For roofs and high work, offer a site assessment and do not quote from a photo alone. Ask about loose paint, timber rot, or cracks, which may need repair before cleaning.",
+  "kb": [
+    {
+      "q": "Will pressure washing damage my house?",
+      "a": "Not when it is done correctly. We choose the pressure, nozzle and cleaning product for each surface, and we use low-pressure soft washing on painted, timber and delicate surfaces.",
+      "keywords": "damage,house,wash,safe,paint",
+      "priority": 10
+    },
+    {
+      "q": "Can you clean a fibro or fibre cement wall?",
+      "a": "Fibro can contain asbestos. We do not pressure wash fibro. We arrange an assessment, and any cleaning is done with low-pressure methods only after the surface is confirmed safe.",
+      "keywords": "fibro,fibre cement,asbestos,cladding,safe",
+      "priority": 10
+    },
+    {
+      "q": "How much does it cost to pressure wash a driveway?",
+      "a": "{price_note} Driveways are usually priced by the square metre, with a minimum charge. The price depends on size, surface type, and how much staining there is.",
+      "keywords": "driveway,price,cost,square metre",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean pavers and concrete?",
+      "a": "Yes. We clean pavers, concrete and exposed aggregate, and we remove moss, oil stains and dirt. We can also reset the joint sand if needed.",
+      "keywords": "paver,concrete,aggregate,moss,oil",
+      "priority": 9
+    },
+    {
+      "q": "Can you remove oil stains from my driveway?",
+      "a": "Often yes. Fresh oil responds well to a degreaser, while old stains may need several treatments. We tell you the likely result before we start.",
+      "keywords": "oil,stain,driveway,degreaser",
+      "priority": 9
+    },
+    {
+      "q": "Do you wash the house or only the walls?",
+      "a": "We wash walls, eaves, and the lower parts of the house using soft wash. Roofs are cleaned only with methods that do not damage tiles or sheets.",
+      "keywords": "house,walls,eaves,roof,soft wash",
+      "priority": 9
+    },
+    {
+      "q": "What is soft washing?",
+      "a": "Soft washing uses low pressure with a biodegradable cleaning solution to remove mould, algae and grime. It is safer for painted and delicate surfaces.",
+      "keywords": "soft wash,low pressure,mould,algae",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean decks?",
+      "a": "Yes. We clean and brighten timber and composite decks. We can also prepare decks for staining or sealing, and we advise on timber that may be too soft for pressure.",
+      "keywords": "deck,timber,composite,stain,seal",
+      "priority": 8
+    },
+    {
+      "q": "Can you clean my fence?",
+      "a": "Yes. We clean timber, colorbond and vinyl fences. Timber that is old or weathered may need low pressure to avoid raising the grain.",
+      "keywords": "fence,timber,colorbond,vinyl,grain",
+      "priority": 8
+    },
+    {
+      "q": "Can you remove graffiti?",
+      "a": "Yes. We remove graffiti from brick, concrete and metal where the surface can take it. Some surfaces may be marked or dulled, and we tell you before we start.",
+      "keywords": "graffiti,remove,brick,concrete,metal",
+      "priority": 8
+    },
+    {
+      "q": "Do you seal the driveway after cleaning?",
+      "a": "Yes. We can apply a penetrating or film-forming sealer. Sealing should wait until the surface is dry, which can take a few days after washing.",
+      "keywords": "seal,sealer,driveway,dry",
+      "priority": 8
+    },
+    {
+      "q": "How long does pressure washing last?",
+      "a": "Driveways and paving typically look clean for several months to a year, depending on traffic, shade and the area. Sealing can extend this.",
+      "keywords": "how long,last,lasting,results",
+      "priority": 7
+    },
+    {
+      "q": "Do you do commercial pressure washing?",
+      "a": "Yes. We wash shopfronts, loading docks, bin areas, car parks and building exteriors, often outside business hours.",
+      "keywords": "commercial,shopfront,car park,bins,after hours",
+      "priority": 8
+    },
+    {
+      "q": "Can you clean before a property sale?",
+      "a": "Yes. A pre-sale exterior clean is quick and makes a big difference to kerb appeal. We can book a visit before inspection days.",
+      "keywords": "sale,pre-sale,kerb appeal,inspection",
+      "priority": 8
+    },
+    {
+      "q": "Do you need water and power on site?",
+      "a": "We need access to a water tap and, for larger jobs, a power point. Tell us if the supply is limited so we can plan the job.",
+      "keywords": "water,power,tap,supply,access",
+      "priority": 7
+    },
+    {
+      "q": "Will the chemicals harm my plants?",
+      "a": "We protect garden beds and plants with covers and rinse them after treatment. Tell us which plants are sensitive, and we will take extra care.",
+      "keywords": "plants,garden,chemicals,protect,rinse",
+      "priority": 9
+    },
+    {
+      "q": "Is pressure washing safe around pets and children?",
+      "a": "We ask people and pets to stay clear of the work area during and for a short time after the wash. We rinse surfaces before they are used again.",
+      "keywords": "pets,children,safe,clear,area",
+      "priority": 9
+    },
+    {
+      "q": "Can you clean rooftops?",
+      "a": "We clean some roofs with soft wash methods that suit the roof type. We do not use high pressure on tiles or sheets, and we do not walk on fragile roofs.",
+      "keywords": "roof,rooftop,soft wash,tiles,sheets",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean gutters?",
+      "a": "We can clean the outside of gutters and rinse the downpipes. For full gutter clearing, a roofing or gutter service may be better.",
+      "keywords": "gutter,downpipe,clean,outside",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes. We carry public liability insurance for our work on site, and we can send a certificate of currency on request.",
+      "keywords": "insured,insurance,liability,certificate",
+      "priority": 9
+    },
+    {
+      "q": "What if the stains do not come out?",
+      "a": "We tell you before we start what is realistic. If a stain does not respond, we stop, explain why, and suggest the next step.",
+      "keywords": "stain,not come out,result,realistic",
+      "priority": 8
+    },
+    {
+      "q": "How do I prepare for a pressure wash?",
+      "a": "Move vehicles and pot plants, close windows and doors, and remove loose items from the area. We handle the rest and tell you if anything needs covering.",
+      "keywords": "prepare,vehicles,pot plants,windows,clear",
+      "priority": 7
+    },
+    {
+      "q": "Do you clean outdoor furniture?",
+      "a": "Yes. We clean outdoor furniture, including timber, metal and some plastic items, using a gentle method on delicate pieces.",
+      "keywords": "outdoor furniture,patio,clean,timber",
+      "priority": 6
+    },
+    {
+      "q": "Do you pressure wash swimming pool surrounds?",
+      "a": "Yes. We clean pool surrounds and pavers. We do not clean inside the pool itself, which is done by a pool service.",
+      "keywords": "pool surround,pavers,pool,clean",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PWS-DRV",
+      "label": "Driveway clean (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 9,
+      "taxable": 1,
+      "keywords": "driveway,clean,m2,pressure"
+    },
+    {
+      "sku": "PWS-DRV-MIN",
+      "label": "Driveway clean minimum charge",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "minimum,driveway,charge"
+    },
+    {
+      "sku": "PWS-PAVE",
+      "label": "Paving clean (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 10,
+      "taxable": 1,
+      "keywords": "paving,paver,clean,m2"
+    },
+    {
+      "sku": "PWS-HOUSE",
+      "label": "House wash (soft wash, per m² of wall)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 12,
+      "taxable": 1,
+      "keywords": "house,wall,soft wash,m2"
+    },
+    {
+      "sku": "PWS-ROOF",
+      "label": "Roof soft wash (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 14,
+      "taxable": 1,
+      "keywords": "roof,soft wash,m2,moss"
+    },
+    {
+      "sku": "PWS-DECK",
+      "label": "Deck clean and brighten (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 11,
+      "taxable": 1,
+      "keywords": "deck,clean,brighten,timber"
+    },
+    {
+      "sku": "PWS-FENCE",
+      "label": "Fence clean (per linear metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "fence,clean,metre"
+    },
+    {
+      "sku": "PWS-COMM",
+      "label": "Commercial area wash (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "commercial,hour,car park,bins"
+    },
+    {
+      "sku": "PWS-GRAF",
+      "label": "Graffiti removal (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "graffiti,remove,m2"
+    },
+    {
+      "sku": "PWS-OIL",
+      "label": "Oil stain treatment (per stain)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "oil,stain,degreaser,treatment"
+    },
+    {
+      "sku": "PWS-SEAL",
+      "label": "Driveway or paving seal (per m²)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "seal,sealer,paving,driveway"
+    },
+    {
+      "sku": "PWS-SEAL-D",
+      "label": "Deck stain or seal (per m²)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "deck,stain,seal"
+    },
+    {
+      "sku": "PWS-PRESALE",
+      "label": "Pre-sale exterior clean package",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 390,
+      "taxable": 1,
+      "keywords": "pre-sale,sale,exterior,package"
+    },
+    {
+      "sku": "PWS-PLANT",
+      "label": "Garden protection and rinse",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "plants,garden,protect,rinse"
+    },
+    {
+      "sku": "PWS-ASSESS",
+      "label": "Surface assessment (fibro or fragile surface)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "assessment,fibro,fragile,test"
+    },
+    {
+      "sku": "PWS-TRAVEL",
+      "label": "Travel fee outside service area",
+      "kind": "travel",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "travel,distance,outside"
+    },
+    {
+      "sku": "PWS-WIN",
+      "label": "Exterior window and frame clean (per window)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "window,frame,exterior,clean"
+    },
+    {
+      "sku": "PWS-BRICK",
+      "label": "Brick and sealed render wash (soft wash, per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 13,
+      "taxable": 1,
+      "keywords": "brick,render,soft wash,m2"
+    },
+    {
+      "sku": "PWS-CARPORT",
+      "label": "Carport or patio roof wash (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 12,
+      "taxable": 1,
+      "keywords": "carport,patio roof,wash,m2"
+    },
+    {
+      "sku": "PWS-BIN",
+      "label": "Bin area wash (per bin)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "bin,bins,wash,area"
+    }
+  ]
+}

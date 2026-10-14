@@ -1,0 +1,247 @@
+{
+  "id": "coaching",
+  "name": "Coaching & Consulting",
+  "icon": "🎯",
+  "tagline": "Business, life, executive, career, health coaching",
+  "version": "1.0.0",
+  "service_types": [
+    "Business Coaching",
+    "Executive Coaching",
+    "Life Coaching",
+    "Career Coaching",
+    "Health Coaching",
+    "Relationship Coaching",
+    "Mindset Coaching",
+    "Leadership Coaching",
+    "Team Coaching",
+    "Sales Coaching",
+    "Marketing Consulting",
+    "Operations Consulting",
+    "HR Consulting",
+    "Strategy Consulting",
+    "Group Programs",
+    "Online Programs",
+    "Retreats",
+    "Workshops"
+  ],
+  "staff_skills": [
+    "coaching",
+    "consulting",
+    "business strategy",
+    "leadership",
+    "life coaching",
+    "career",
+    "mindset",
+    "facilitation"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "crisis",
+      "urgent decision",
+      "team conflict"
+    ],
+    "urgent": [
+      "this week",
+      "starting now",
+      "asap"
+    ],
+    "routine": [
+      "session",
+      "program",
+      "retainer",
+      "quote",
+      "consultation"
+    ]
+  },
+  "extra_prompt": "You are booking for a coach or consultant. Ask about the client's goals, the challenge they want to solve, timeline, and preferred format (1:1, group, online, in person). Ask about their business or context if relevant. Quote prices only from the reference answers, and say the final price is confirmed after the discovery call. Do not promise specific business, financial, or personal outcomes.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Coaching is priced per session or per program. Tell us your goals and we'll recommend a path.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a discovery call?",
+      "a": "{discovery_note}",
+      "keywords": "discovery,free call",
+      "priority": 9
+    },
+    {
+      "q": "Do you do online sessions?",
+      "a": "Yes, via Zoom, Teams, or phone.",
+      "keywords": "online,zoom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do in-person sessions?",
+      "a": "Yes, in-person sessions are available in the local metro area.",
+      "keywords": "in person,face to face",
+      "priority": 9
+    },
+    {
+      "q": "Do you do group coaching?",
+      "a": "Yes, group programs and masterminds are available.",
+      "keywords": "group,mastermind",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer corporate programs?",
+      "a": "Yes, leadership and team programs are available.",
+      "keywords": "corporate,team",
+      "priority": 9
+    },
+    {
+      "q": "What's your approach?",
+      "a": "We blend coaching, strategy, and accountability. Tell us what you want to achieve.",
+      "keywords": "approach,method",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Sessions are usually 45–60 minutes. Intensives run 2–4 hours.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions do I need?",
+      "a": "Most programs run 3–6 months. We'll discuss in the discovery call.",
+      "keywords": "how many,sessions",
+      "priority": 9
+    },
+    {
+      "q": "Are you certified?",
+      "a": "{certification_note}",
+      "keywords": "certified,qualified",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a guarantee?",
+      "a": "{guarantee_note}",
+      "keywords": "guarantee",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note}",
+      "keywords": "payment plan,instalment",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Do you do workshops?",
+      "a": "Yes, workshops and retreats are available.",
+      "keywords": "workshop,retreat",
+      "priority": 8
+    },
+    {
+      "q": "Do you sign NDAs?",
+      "a": "Yes, on request.",
+      "keywords": "nda,confidential",
+      "priority": 8
+    },
+    {
+      "q": "Can I switch coaches?",
+      "a": "Yes, we'll rematch if it's not the right fit.",
+      "keywords": "switch,match",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CO-1",
+      "label": "1:1 coaching session (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "1 on 1,session"
+    },
+    {
+      "sku": "CO-3MO",
+      "label": "3-month 1:1 program",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3000,
+      "taxable": 1,
+      "keywords": "program,3 month"
+    },
+    {
+      "sku": "CO-6MO",
+      "label": "6-month 1:1 program",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "program,6 month"
+    },
+    {
+      "sku": "CO-GROUP",
+      "label": "Group program (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "CO-CORP",
+      "label": "Corporate program (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "CO-INTENS",
+      "label": "Intensive session (half day)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "intensive"
+    },
+    {
+      "sku": "CO-RET",
+      "label": "Consulting retainer (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "retainer,consulting"
+    },
+    {
+      "sku": "CO-WORK",
+      "label": "Workshop (half day)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "workshop"
+    },
+    {
+      "sku": "CO-RETR",
+      "label": "Retreat (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "retreat"
+    },
+    {
+      "sku": "CO-DISC",
+      "label": "Discovery call",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "discovery"
+    }
+  ]
+}

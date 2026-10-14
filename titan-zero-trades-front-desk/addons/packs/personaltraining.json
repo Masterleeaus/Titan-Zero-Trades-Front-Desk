@@ -1,0 +1,274 @@
+{
+  "id": "personaltraining",
+  "name": "Personal Training",
+  "icon": "🏋️",
+  "tagline": "One-on-one, group, online, nutrition coaching",
+  "version": "1.0.0",
+  "service_types": [
+    "One-on-One PT",
+    "Partner Training",
+    "Small Group Training",
+    "Online Coaching",
+    "Nutrition Coaching",
+    "Strength Training",
+    "Weight Loss",
+    "HIIT",
+    "Mobility",
+    "Pre/Post Natal",
+    "Senior Fitness",
+    "Sports Conditioning",
+    "Boxing",
+    "Yoga",
+    "Pilates",
+    "Rehab",
+    "Body Composition",
+    "Program Design"
+  ],
+  "staff_skills": [
+    "personal training",
+    "strength",
+    "conditioning",
+    "HIIT",
+    "nutrition",
+    "mobility",
+    "boxing",
+    "yoga",
+    "pilates"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "race day",
+      "event this week",
+      "injury return"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "starting now"
+    ],
+    "routine": [
+      "weekly",
+      "program",
+      "package",
+      "monthly",
+      "transformation",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a personal training business. Ask about goals, current fitness level, injuries or medical conditions, and availability. Ask whether they prefer one-on-one, partner, or group. Quote prices only from the reference answers, and say the final price is confirmed after the first session. Do not provide medical advice or promise a specific result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does PT cost?",
+      "a": "{price_note} PT is priced per session or per package. Tell us your goals and availability.",
+      "keywords": "cost,price,pt",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a first consultation?",
+      "a": "{consult_note}",
+      "keywords": "free,consultation,first session",
+      "priority": 9
+    },
+    {
+      "q": "Do you do online coaching?",
+      "a": "Yes, we offer online programming and video sessions.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "Do you do nutrition coaching?",
+      "a": "Yes, we offer nutrition coaching alongside training.",
+      "keywords": "nutrition,diet",
+      "priority": 8
+    },
+    {
+      "q": "Do you train at my home?",
+      "a": "Yes, mobile PT is available in the local metro area.",
+      "keywords": "mobile,home",
+      "priority": 8
+    },
+    {
+      "q": "Do you train at a gym?",
+      "a": "Yes, we train at partner gyms and outdoor locations.",
+      "keywords": "gym,outdoor",
+      "priority": 8
+    },
+    {
+      "q": "Do you do small group training?",
+      "a": "Yes, groups of 2–6 are available.",
+      "keywords": "group,small group",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pre/post natal training?",
+      "a": "Yes, with clearance from your health provider.",
+      "keywords": "pre natal,post natal,pregnancy",
+      "priority": 8
+    },
+    {
+      "q": "Do you train seniors?",
+      "a": "Yes, we train seniors and offer falls-prevention programs.",
+      "keywords": "senior,older",
+      "priority": 8
+    },
+    {
+      "q": "Do you do boxing?",
+      "a": "Yes, we offer boxing and pad work.",
+      "keywords": "boxing,pad",
+      "priority": 8
+    },
+    {
+      "q": "Do you do yoga or pilates?",
+      "a": "Yes, one-on-one and small group yoga and pilates are available.",
+      "keywords": "yoga,pilates",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rehab?",
+      "a": "Yes, we do exercise-based rehab. We do not replace physiotherapy.",
+      "keywords": "rehab,injury",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions per week?",
+      "a": "Most clients train 2–3 times per week.",
+      "keywords": "how many,per week,frequency",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer packages?",
+      "a": "Yes, we offer 5, 10, and 20 session packages.",
+      "keywords": "package,bundle",
+      "priority": 8
+    },
+    {
+      "q": "What if I need to cancel?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you certified?",
+      "a": "Yes, all trainers hold nationally recognised qualifications and insurance.",
+      "keywords": "certified,qualified,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer body composition scans?",
+      "a": "Yes, we offer body composition scans and progress tracking.",
+      "keywords": "body composition,scan",
+      "priority": 7
+    },
+    {
+      "q": "Can I get a program without training?",
+      "a": "Yes, we offer standalone program design.",
+      "keywords": "program,design",
+      "priority": 7
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Yes. Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,policy",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell us at booking. We may ask for clearance from your health provider.",
+      "keywords": "injury,medical",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PT-1",
+      "label": "One-on-one PT session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "1 on 1,pt"
+    },
+    {
+      "sku": "PT-5",
+      "label": "5-session PT package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 425,
+      "taxable": 1,
+      "keywords": "package,5"
+    },
+    {
+      "sku": "PT-10",
+      "label": "10-session PT package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 800,
+      "taxable": 1,
+      "keywords": "package,10"
+    },
+    {
+      "sku": "PT-PARTNER",
+      "label": "Partner session (2 people)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "partner"
+    },
+    {
+      "sku": "PT-GROUP",
+      "label": "Small group (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "PT-ONLINE",
+      "label": "Online coaching (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "PT-NUTR",
+      "label": "Nutrition coaching (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "nutrition"
+    },
+    {
+      "sku": "PT-PROG",
+      "label": "Standalone program design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "program"
+    },
+    {
+      "sku": "PT-BODY",
+      "label": "Body composition scan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "scan,body composition"
+    },
+    {
+      "sku": "PT-CONSULT",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "consult"
+    }
+  ]
+}

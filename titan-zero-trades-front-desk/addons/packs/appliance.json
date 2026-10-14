@@ -1,0 +1,394 @@
+{
+  "id": "appliance",
+  "name": "Appliance Repair",
+  "icon": "🧰",
+  "tagline": "Washing machines, dishwashers, fridges, ovens, dryers",
+  "version": "1.0.0",
+  "service_types": [
+    "Washing Machine Repair",
+    "Dishwasher Repair",
+    "Fridge & Freezer Repair",
+    "Oven & Cooktop Repair",
+    "Dryer Repair",
+    "Refrigerator Install",
+    "Range Hood Service",
+    "Icemaker & Water Filter",
+    "Microwave & Small Appliance",
+    "Rental Property Repairs",
+    "Microwave Repair",
+    "Range Hood Installation",
+    "Ice Maker Repair",
+    "Appliance Installation",
+    "Emergency Appliance Callout",
+    "Appliance Service Call"
+  ],
+  "staff_skills": [
+    "washing machine",
+    "dishwasher",
+    "fridge",
+    "oven",
+    "dryer",
+    "range hood",
+    "icemaker",
+    "small appliances",
+    "installation",
+    "rental"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "gas smell from oven or cooktop",
+      "burning smell from appliance",
+      "water leaking onto live power",
+      "sparking from appliance",
+      "smoke from dryer",
+      "gas smell from cooktop",
+      "appliance smoking or sparking",
+      "appliance leaking onto power"
+    ],
+    "urgent": [
+      "fridge not cooling with food inside",
+      "washing machine flooding",
+      "oven not heating",
+      "dishwasher leaking",
+      "dryer will not start"
+    ],
+    "routine": [
+      "appliance noise",
+      "service",
+      "quote",
+      "not draining",
+      "door seal",
+      "replace part",
+      "tune up"
+    ]
+  },
+  "extra_prompt": "You are booking for an appliance repair service. Ask for the brand, the model number (on the rating label inside the door or on the back), the approximate age, and whether the unit is still under warranty. Ask whether it is built-in or freestanding. Quote a diagnostic callout fee first and say the repair price is confirmed after diagnosis. Never give a repair price over the phone. If the caller reports a burning smell, sparks or a gas smell from an oven or cooktop, tell them to switch it off at the wall or at the gas valve if it is safe, not to use it, and treat it as an emergency.",
+  "kb": [
+    {
+      "q": "Do you repair all brands?",
+      "a": "We repair most major brands. Give us the brand and model number when you book, and we confirm whether we carry the parts.",
+      "keywords": "brand,model,all brands,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you have the parts on the van?",
+      "a": "We carry common parts for popular models. If a part is not on the van, we order it and book a second visit.",
+      "keywords": "parts,van,order,second visit",
+      "priority": 8
+    },
+    {
+      "q": "How much does a repair cost?",
+      "a": "{price_note} We charge a diagnostic fee first, then quote the repair before any work starts. If you decline the repair, you pay only the diagnostic fee.",
+      "keywords": "cost,price,diagnostic,quote",
+      "priority": 9
+    },
+    {
+      "q": "Is it worth repairing an old appliance?",
+      "a": "Often yes. We give you an honest view of the repair cost against the age and value of the appliance, so you can decide.",
+      "keywords": "worth,old,age,replace",
+      "priority": 8
+    },
+    {
+      "q": "My washing machine is not draining. What should I do?",
+      "a": "Check the drain filter and hose for blockages if it is safe to do so, and switch off the machine. Book a visit if it still will not drain.",
+      "keywords": "washing machine,drain,not draining,filter",
+      "priority": 8
+    },
+    {
+      "q": "My fridge is not cooling. Is my food safe?",
+      "a": "Keep the door closed and check the temperature. Food that has been above safe fridge temperature for more than a few hours should be thrown out. We can usually book a same-day visit.",
+      "keywords": "fridge,not cooling,food,temperature",
+      "priority": 9
+    },
+    {
+      "q": "My oven smells of gas. What do I do?",
+      "a": "Leave the house, do not use switches or flames, and call the gas emergency line from outside. Then book a technician once it is safe.",
+      "keywords": "gas,oven,smell,emergency",
+      "priority": 10
+    },
+    {
+      "q": "Can you repair a dishwasher that is leaking?",
+      "a": "Yes. A leaking dishwasher is usually a seal, hose or door gasket. Turn off the power and water if it is safe, and book a repair.",
+      "keywords": "dishwasher,leak,seal,gasket",
+      "priority": 8
+    },
+    {
+      "q": "Do you service dryers?",
+      "a": "Yes. We repair heating elements, thermostats, belts and drum problems on most dryers.",
+      "keywords": "dryer,element,thermostat,belt,drum",
+      "priority": 8
+    },
+    {
+      "q": "Can you repair a cooktop or hob?",
+      "a": "Yes. We repair electric and gas cooktops, including ignition, burners and controls.",
+      "keywords": "cooktop,hob,burner,ignition",
+      "priority": 8
+    },
+    {
+      "q": "Do you do a tune up or service?",
+      "a": "Yes. A service checks the appliance, cleans filters and reports any faults before they become breakdowns.",
+      "keywords": "service,tune up,check,maintenance",
+      "priority": 7
+    },
+    {
+      "q": "Is there a warranty on repairs?",
+      "a": "Yes. Our repairs carry a warranty on the labour and the parts we fit. Ask us for the period at the time of the visit.",
+      "keywords": "warranty,guarantee,labour,parts",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a new appliance?",
+      "a": "We can install a new dishwasher, oven or washing machine and connect it. Gas and electrical connections are done by a licensed tradesperson where required.",
+      "keywords": "install,new appliance,connect,gas",
+      "priority": 8
+    },
+    {
+      "q": "Do you collect and recycle old appliances?",
+      "a": "We can arrange removal of the old appliance when we install a replacement, and we recycle it where possible.",
+      "keywords": "removal,recycle,old,collect",
+      "priority": 7
+    },
+    {
+      "q": "Will I be charged if the appliance cannot be fixed?",
+      "a": "You pay the diagnostic fee only. We tell you before any repair is started, so you can decide.",
+      "keywords": "charged,cannot fix,diagnostic,fee",
+      "priority": 9
+    },
+    {
+      "q": "Are your technicians qualified?",
+      "a": "Yes. Our technicians are trained and insured for appliance repair, and they carry identification.",
+      "keywords": "qualified,trained,insured,technician",
+      "priority": 8
+    },
+    {
+      "q": "Can you repair a microwave?",
+      "a": "Yes. We repair microwaves, including magnetron, door switch and turntable faults. Some very old units cost more to repair than to replace, and we tell you which.",
+      "keywords": "microwave,magnetron,door switch,turntable",
+      "priority": 8
+    },
+    {
+      "q": "Why is my washing machine shaking?",
+      "a": "An unbalanced load is the most common cause. If it keeps shaking, the shock absorbers or drum bearings may be worn, and we check those.",
+      "keywords": "washing machine,shaking,unbalanced,shock absorber",
+      "priority": 8
+    },
+    {
+      "q": "Why is my dishwasher not drying dishes?",
+      "a": "Check the rinse aid and the heating element first. If both are fine, the fault may be the element, the fan or the thermostat, and we can test them.",
+      "keywords": "dishwasher,drying,rinse aid,element",
+      "priority": 8
+    },
+    {
+      "q": "Does my fridge need a service?",
+      "a": "A fridge service cleans the condenser coils, checks the door seals and temperature, and tests the thermostat. It helps the fridge last longer and use less power.",
+      "keywords": "fridge,service,condenser,coils,seal",
+      "priority": 7
+    },
+    {
+      "q": "Can you repair a built-in oven?",
+      "a": "Yes. We repair built-in electric and gas ovens, including elements, thermostats, door seals and fans.",
+      "keywords": "built-in,oven,element,thermostat,fan",
+      "priority": 8
+    },
+    {
+      "q": "Why is my range hood not extracting properly?",
+      "a": "The filter may be blocked with grease, or the motor may be worn. We clean or replace the filter and check the motor and ducting.",
+      "keywords": "range hood,extract,filter,grease,motor",
+      "priority": 7
+    },
+    {
+      "q": "Can you repair an ice maker?",
+      "a": "Yes. Ice makers often fail because of a water inlet valve, a blocked filter or a faulty control. We check each part and repair it.",
+      "keywords": "ice maker,icemaker,valve,filter",
+      "priority": 7
+    },
+    {
+      "q": "Do you repair appliances in rental properties?",
+      "a": "Yes. We repair appliances in rentals and provide a written report and invoice for your records or your property manager.",
+      "keywords": "rental,property,landlord,report,invoice",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "APL-DIAG",
+      "label": "Diagnostic visit (credited if repaired)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "diagnostic,visit,callout,inspect"
+    },
+    {
+      "sku": "APL-LAB",
+      "label": "Repair labour (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "labour,hour,repair"
+    },
+    {
+      "sku": "APL-WM-DRAIN",
+      "label": "Washing machine drain pump replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "washing machine,drain pump,pump"
+    },
+    {
+      "sku": "APL-WM-BEAR",
+      "label": "Washing machine bearing replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 210,
+      "taxable": 1,
+      "keywords": "washing machine,bearing,drum"
+    },
+    {
+      "sku": "APL-DW-SEAL",
+      "label": "Dishwasher door seal and gasket",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "dishwasher,seal,gasket,door"
+    },
+    {
+      "sku": "APL-FR-THERM",
+      "label": "Fridge thermostat replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "fridge,thermostat,cooling"
+    },
+    {
+      "sku": "APL-FR-GAS",
+      "label": "Fridge gas recharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "fridge,gas,recharge,refrigerant"
+    },
+    {
+      "sku": "APL-OV-ELEM",
+      "label": "Oven element replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "oven,element,heating"
+    },
+    {
+      "sku": "APL-COOK-IGN",
+      "label": "Gas cooktop ignition repair",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "cooktop,ignition,gas,burner"
+    },
+    {
+      "sku": "APL-DRY-ELEM",
+      "label": "Dryer heating element replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 115,
+      "taxable": 1,
+      "keywords": "dryer,element,heat"
+    },
+    {
+      "sku": "APL-SERV",
+      "label": "Appliance service and clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "service,clean,tune up,check"
+    },
+    {
+      "sku": "APL-INST",
+      "label": "New appliance installation (labour)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "install,new appliance,connect"
+    },
+    {
+      "sku": "APL-REMOVE",
+      "label": "Old appliance removal",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "removal,old,appliance,collect"
+    },
+    {
+      "sku": "APL-TRAVEL",
+      "label": "Travel fee outside service area",
+      "kind": "travel",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "travel,distance,outside"
+    },
+    {
+      "sku": "APL-MW",
+      "label": "Microwave repair (labour)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "microwave,repair,labour"
+    },
+    {
+      "sku": "APL-HOOD",
+      "label": "Range hood motor replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 210,
+      "taxable": 1,
+      "keywords": "range hood,motor,replace"
+    },
+    {
+      "sku": "APL-ICE",
+      "label": "Icemaker repair (valve or filter)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "icemaker,ice maker,valve,filter"
+    },
+    {
+      "sku": "APL-WM-SHOCK",
+      "label": "Washing machine shock absorber replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 155,
+      "taxable": 1,
+      "keywords": "washing machine,shock absorber,replace"
+    },
+    {
+      "sku": "APL-DW-PUMP",
+      "label": "Dishwasher pump replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "dishwasher,pump,replace"
+    },
+    {
+      "sku": "APL-OVEN-SEAL",
+      "label": "Built-in oven door seal",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "oven,door seal,gasket"
+    }
+  ]
+}

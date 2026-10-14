@@ -1,0 +1,291 @@
+{
+  "id": "homecare",
+  "name": "Home Care & Aged Care",
+  "icon": "🧑‍⚕️",
+  "tagline": "Personal care, domestic help, companionship, respite",
+  "version": "1.0.0",
+  "service_types": [
+    "Personal Care",
+    "Domestic Assistance",
+    "Companionship",
+    "Meal Preparation",
+    "Medication Assistance",
+    "Transport",
+    "Respite Care",
+    "Overnight Care",
+    "Dementia Care",
+    "Palliative Support",
+    "Social Support",
+    "Shopping Assistance",
+    "Allied Health",
+    "Nursing Care",
+    "Live-In Care",
+    "Post-Hospital Care"
+  ],
+  "staff_skills": [
+    "aged care",
+    "disability",
+    "personal care",
+    "dementia",
+    "nursing",
+    "companionship",
+    "respite",
+    "hoisting",
+    "medication"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hospital discharge",
+      "fall",
+      "urgent care",
+      "carer unavailable"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "starting now"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "ongoing",
+      "plan",
+      "package",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional home care and aged care provider. Ask about the care needs, mobility, medical conditions, and any dementia or behavioural support needs. Ask about the home environment, access, and whether the client receives a government package. Quote prices only from the reference answers, and say the final price is confirmed after an assessment. Do not provide clinical advice or promise a specific care outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does home care cost?",
+      "a": "{price_note} Home care is priced per hour. Tell us the care needs and hours required.",
+      "keywords": "cost,price,home care",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide personal care?",
+      "a": "Yes, we provide showering, dressing, grooming, and toileting assistance.",
+      "keywords": "personal care,shower,dressing",
+      "priority": 9
+    },
+    {
+      "q": "Do you do domestic help?",
+      "a": "Yes, we do cleaning, laundry, and meal preparation.",
+      "keywords": "domestic,cleaning,laundry",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide companionship?",
+      "a": "Yes, we provide companionship and social support.",
+      "keywords": "companionship,social",
+      "priority": 9
+    },
+    {
+      "q": "Can you help with medication?",
+      "a": "Yes, we can prompt and assist with medication as directed by your health provider.",
+      "keywords": "medication,meds",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide transport?",
+      "a": "Yes, we provide transport to appointments and shopping.",
+      "keywords": "transport,appointments,shopping",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide dementia care?",
+      "a": "Yes, we have carers trained in dementia support.",
+      "keywords": "dementia,alzheimers",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide overnight care?",
+      "a": "Yes, we provide overnight and sleepover care.",
+      "keywords": "overnight,sleepover",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide respite?",
+      "a": "Yes, we provide short-term respite for family carers.",
+      "keywords": "respite,short term",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide nursing care?",
+      "a": "Yes, we have registered nurses for clinical care.",
+      "keywords": "nursing,rn,clinical",
+      "priority": 9
+    },
+    {
+      "q": "Do you do post-hospital care?",
+      "a": "Yes, we provide post-hospital and rehabilitation support.",
+      "keywords": "hospital,rehab",
+      "priority": 8
+    },
+    {
+      "q": "Are your carers screened?",
+      "a": "Yes, all carers have police checks, working with children checks, and are trained.",
+      "keywords": "police check,screened,background",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept government packages?",
+      "a": "Yes, we work with Home Care Packages and NDIS. Ask us to confirm your funding.",
+      "keywords": "home care package,ndis,government",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide live-in care?",
+      "a": "Yes, live-in care is available.",
+      "keywords": "live in",
+      "priority": 8
+    },
+    {
+      "q": "Can I choose my carer?",
+      "a": "We match carers to your needs and preferences. Continuity is a priority.",
+      "keywords": "carer,match,continuity",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured and registered.",
+      "keywords": "insured,insurance,registered",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide 24/7 care?",
+      "a": "Yes, 24/7 care is available.",
+      "keywords": "24/7,around the clock",
+      "priority": 8
+    },
+    {
+      "q": "How do I start?",
+      "a": "We do a free in-home assessment, then match a carer and create a care plan.",
+      "keywords": "start,assessment,care plan",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "HC-1",
+      "label": "Home care (per hour, Mon–Fri)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "hourly,care"
+    },
+    {
+      "sku": "HC-1-WE",
+      "label": "Home care (per hour, weekend)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "weekend"
+    },
+    {
+      "sku": "HC-1-PH",
+      "label": "Home care (per hour, public holiday)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 105,
+      "taxable": 1,
+      "keywords": "public holiday"
+    },
+    {
+      "sku": "HC-PC",
+      "label": "Personal care (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "personal care"
+    },
+    {
+      "sku": "HC-DOM",
+      "label": "Domestic assistance (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "domestic"
+    },
+    {
+      "sku": "HC-COMP",
+      "label": "Companionship (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "companionship"
+    },
+    {
+      "sku": "HC-MEAL",
+      "label": "Meal preparation (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "meal"
+    },
+    {
+      "sku": "HC-TRANS",
+      "label": "Transport (per trip)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "transport"
+    },
+    {
+      "sku": "HC-OVER",
+      "label": "Overnight care",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "HC-RESPITE",
+      "label": "Respite care (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "respite"
+    },
+    {
+      "sku": "HC-NURSE",
+      "label": "Registered nurse (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "nurse"
+    },
+    {
+      "sku": "HC-ASSESS",
+      "label": "Initial in-home assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "assessment"
+    }
+  ]
+}

@@ -1,0 +1,272 @@
+{
+  "id": "flooring",
+  "name": "Flooring",
+  "icon": "🪵",
+  "tagline": "Timber, laminate, vinyl, tile, carpet installation",
+  "version": "1.0.0",
+  "service_types": [
+    "Timber Flooring",
+    "Laminate Flooring",
+    "Vinyl Flooring",
+    "Tile Flooring",
+    "Carpet Installation",
+    "Engineered Wood",
+    "Bamboo Flooring",
+    "Cork Flooring",
+    "Epoxy Flooring",
+    "Floor Sanding",
+    "Floor Polishing",
+    "Floor Refinishing",
+    "Floor Levelling",
+    "Underlay Installation",
+    "Floor Removal",
+    "Commercial Flooring"
+  ],
+  "staff_skills": [
+    "flooring",
+    "timber",
+    "laminate",
+    "vinyl",
+    "tile",
+    "carpet",
+    "sanding",
+    "polishing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water damage",
+      "flooding",
+      "urgent repair",
+      "loose floor"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before move-in",
+      "before inspection"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "sand",
+      "polish",
+      "replace"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional flooring company. Ask about the floor type, area size, subfloor condition, and whether old flooring needs removal. Ask about access, moisture, and whether furniture needs moving. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does flooring cost?",
+      "a": "{price_note} Flooring is priced per square meter, including supply and install. Tell us the area and type.",
+      "keywords": "cost,price,flooring",
+      "priority": 9
+    },
+    {
+      "q": "What floor types do you install?",
+      "a": "We install timber, laminate, vinyl, tile, carpet, bamboo, cork, and epoxy.",
+      "keywords": "types,timber,laminate",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old flooring?",
+      "a": "Yes, we remove and dispose of old flooring.",
+      "keywords": "remove,old flooring",
+      "priority": 8
+    },
+    {
+      "q": "Do you level the subfloor?",
+      "a": "Yes, we check and level the subfloor before installation.",
+      "keywords": "level,subfloor",
+      "priority": 9
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "Most rooms take 1–2 days. Whole homes take longer depending on size.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you sand and polish timber?",
+      "a": "Yes, we sand, stain, and polish timber floors.",
+      "keywords": "sand,polish,timber",
+      "priority": 9
+    },
+    {
+      "q": "Do you install carpet?",
+      "a": "Yes, we supply and install carpet.",
+      "keywords": "carpet,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you install tile?",
+      "a": "Yes, we install floor tiles.",
+      "keywords": "tile,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you install vinyl?",
+      "a": "Yes, we install vinyl planks and sheets.",
+      "keywords": "vinyl,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you install laminate?",
+      "a": "Yes, we install laminate flooring.",
+      "keywords": "laminate,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you do epoxy floors?",
+      "a": "Yes, we install epoxy floors, mainly in garages and commercial spaces.",
+      "keywords": "epoxy,garage",
+      "priority": 8
+    },
+    {
+      "q": "Do you move furniture?",
+      "a": "We can move furniture for a fee. Tell us when booking.",
+      "keywords": "furniture,move",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer commercial flooring?",
+      "a": "Yes, we service commercial properties. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, but access is needed. We can arrange key handover.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "How soon can I walk on the floor?",
+      "a": "Most floors can be walked on immediately. Adhesive and polishing may need 24 hours.",
+      "keywords": "walk,cure,dry",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair damaged floors?",
+      "a": "Yes, we repair scratches, boards, and tiles.",
+      "keywords": "repair,damage,scratch",
+      "priority": 8
+    },
+    {
+      "q": "Do you supply underlay?",
+      "a": "Yes, we supply and install underlay.",
+      "keywords": "underlay,supply",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "FLR-TIMB",
+      "label": "Timber flooring supply & install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "timber,install"
+    },
+    {
+      "sku": "FLR-LAM",
+      "label": "Laminate supply & install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "laminate,install"
+    },
+    {
+      "sku": "FLR-VIN",
+      "label": "Vinyl supply & install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "vinyl,install"
+    },
+    {
+      "sku": "FLR-TILE",
+      "label": "Tile supply & install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "tile,install"
+    },
+    {
+      "sku": "FLR-CARP",
+      "label": "Carpet supply & install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "carpet,install"
+    },
+    {
+      "sku": "FLR-SAND",
+      "label": "Floor sanding (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "sand,sanding"
+    },
+    {
+      "sku": "FLR-POL",
+      "label": "Floor polishing (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "polish,polishing"
+    },
+    {
+      "sku": "FLR-LEVEL",
+      "label": "Floor levelling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "level,levelling"
+    },
+    {
+      "sku": "FLR-REM",
+      "label": "Floor removal (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 20,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "FLR-EPOX",
+      "label": "Epoxy flooring (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "epoxy,garage"
+    }
+  ]
+}

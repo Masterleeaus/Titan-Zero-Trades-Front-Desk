@@ -1,0 +1,269 @@
+{
+  "id": "itsupport",
+  "name": "IT & Tech Support",
+  "icon": "💻",
+  "tagline": "Computer repair, networks, cybersecurity, cloud",
+  "version": "1.0.0",
+  "service_types": [
+    "Computer Repair",
+    "Laptop Repair",
+    "Virus Removal",
+    "Data Recovery",
+    "Network Setup",
+    "Wi-Fi Setup",
+    "Server Support",
+    "Cloud Migration",
+    "Microsoft 365",
+    "Google Workspace",
+    "Cybersecurity Audit",
+    "Backup Solutions",
+    "Printer Setup",
+    "Smart Home Setup",
+    "Remote Support",
+    "Onsite Support",
+    "Managed IT",
+    "Mac Support"
+  ],
+  "staff_skills": [
+    "IT support",
+    "networking",
+    "windows",
+    "mac",
+    "cybersecurity",
+    "cloud",
+    "data recovery",
+    "servers"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "server down",
+      "ransomware",
+      "data loss",
+      "hacked",
+      "network down"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "urgent",
+      "not working",
+      "business down"
+    ],
+    "routine": [
+      "quote",
+      "setup",
+      "upgrade",
+      "maintenance",
+      "support"
+    ]
+  },
+  "extra_prompt": "You are booking for an IT support company. Ask about the device or system, the fault, when it started, and whether it is business or residential. Ask about backups and whether data loss is a risk. Quote prices only from the reference answers, and say the final price is confirmed after diagnosis. Do not promise data recovery or a security outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} We charge per hour or per job. Tell us the issue and we'll quote.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer remote support?",
+      "a": "Yes, remote support is available for most software issues.",
+      "keywords": "remote,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do onsite visits?",
+      "a": "Yes, onsite support is available in the local metro area.",
+      "keywords": "onsite,on site",
+      "priority": 9
+    },
+    {
+      "q": "Can you recover lost data?",
+      "a": "We attempt data recovery. Success depends on the drive's condition.",
+      "keywords": "data recovery,lost data",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove viruses?",
+      "a": "Yes, we remove viruses and malware and harden the system.",
+      "keywords": "virus,malware",
+      "priority": 9
+    },
+    {
+      "q": "Do you set up networks?",
+      "a": "Yes, we set up wired and Wi-Fi networks.",
+      "keywords": "network,wifi,wi-fi",
+      "priority": 9
+    },
+    {
+      "q": "Do you support Macs?",
+      "a": "Yes, we support Windows, Mac, and Linux.",
+      "keywords": "mac,apple,windows",
+      "priority": 9
+    },
+    {
+      "q": "Do you do managed IT?",
+      "a": "Yes, we offer monthly managed IT plans for businesses.",
+      "keywords": "managed it,retainer",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cybersecurity audits?",
+      "a": "Yes, we run security audits and penetration-style reviews.",
+      "keywords": "cybersecurity,security audit",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cloud migration?",
+      "a": "Yes, including Microsoft 365 and Google Workspace migrations.",
+      "keywords": "cloud,microsoft 365,google",
+      "priority": 8
+    },
+    {
+      "q": "Do you do backups?",
+      "a": "Yes, we set up local and cloud backups.",
+      "keywords": "backup",
+      "priority": 8
+    },
+    {
+      "q": "How long does a repair take?",
+      "a": "Most repairs take 1–3 business days. Some are same-day.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do smart home setup?",
+      "a": "Yes, including smart speakers, cameras, and hubs.",
+      "keywords": "smart home,alexa,google home",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer emergency support?",
+      "a": "Yes, emergency support is available for businesses. Ask about SLAs.",
+      "keywords": "emergency,urgent,sla",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area and remotely worldwide.",
+      "keywords": "area,location,remote",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "IT-REMOTE",
+      "label": "Remote support (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "remote"
+    },
+    {
+      "sku": "IT-ONSITE",
+      "label": "Onsite support (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "onsite"
+    },
+    {
+      "sku": "IT-DIAG",
+      "label": "Diagnostic fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "diagnostic"
+    },
+    {
+      "sku": "IT-VIRUS",
+      "label": "Virus removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "virus"
+    },
+    {
+      "sku": "IT-DATA",
+      "label": "Data recovery (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "data recovery"
+    },
+    {
+      "sku": "IT-NET",
+      "label": "Network setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "network"
+    },
+    {
+      "sku": "IT-WIFI",
+      "label": "Wi-Fi setup / optimisation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "wifi"
+    },
+    {
+      "sku": "IT-365",
+      "label": "Microsoft 365 setup (per user)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "microsoft 365"
+    },
+    {
+      "sku": "IT-BACKUP",
+      "label": "Backup setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "backup"
+    },
+    {
+      "sku": "IT-SEC",
+      "label": "Security audit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "security audit"
+    },
+    {
+      "sku": "IT-MGD",
+      "label": "Managed IT (per user / month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "managed"
+    },
+    {
+      "sku": "IT-SMART",
+      "label": "Smart home setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "smart home"
+    }
+  ]
+}

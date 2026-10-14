@@ -1,0 +1,264 @@
+{
+  "id": "cardetailing",
+  "name": "Mobile Car Detailing",
+  "icon": "🚙",
+  "tagline": "Wash, detail, ceramic coating, interior, fleet",
+  "version": "1.0.0",
+  "service_types": [
+    "Basic Wash",
+    "Full Detail",
+    "Interior Detail",
+    "Exterior Detail",
+    "Paint Correction",
+    "Ceramic Coating",
+    "Hand Wash",
+    "Engine Bay Clean",
+    "Headlight Restoration",
+    "Odour Removal",
+    "Pet Hair Removal",
+    "Leather Conditioning",
+    "Fleet Detailing",
+    "Pre-Sale Detail",
+    "New Car Protection",
+    "Mobile Detailing"
+  ],
+  "staff_skills": [
+    "car detailing",
+    "wash",
+    "polish",
+    "paint correction",
+    "ceramic coating",
+    "interior",
+    "mobile detailing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "spill",
+      "vomit",
+      "pet accident",
+      "urgent clean"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before sale",
+      "before guests"
+    ],
+    "routine": [
+      "regular",
+      "monthly",
+      "detail",
+      "quote",
+      "booking"
+    ]
+  },
+  "extra_prompt": "You are booking for a mobile car detailing service. Ask about the vehicle make, model, size, condition, and what needs attention. Ask whether it is a daily driver, a show car, or pre-sale. Ask about water and power access at the location. Quote prices only from the reference answers, and say the final price is confirmed after seeing the car. Do not promise specific results for severe paint defects without inspection.",
+  "kb": [
+    {
+      "q": "How much does detailing cost?",
+      "a": "{price_note} Pricing depends on vehicle size and condition. We confirm after inspecting the car.",
+      "keywords": "cost,price,detail",
+      "priority": 9
+    },
+    {
+      "q": "Do you come to me?",
+      "a": "Yes, we're a mobile service. We need access to water and power, or we can bring our own.",
+      "keywords": "mobile,come to me",
+      "priority": 9
+    },
+    {
+      "q": "Do you do ceramic coating?",
+      "a": "Yes, including paint preparation and coating.",
+      "keywords": "ceramic,coating",
+      "priority": 9
+    },
+    {
+      "q": "Do you do paint correction?",
+      "a": "Yes, including single and multi-stage correction.",
+      "keywords": "paint correction,polish",
+      "priority": 9
+    },
+    {
+      "q": "Do you do interior detailing?",
+      "a": "Yes, including steam, shampoo, and leather care.",
+      "keywords": "interior",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove pet hair?",
+      "a": "Yes, pet hair removal is available as an add-on.",
+      "keywords": "pet hair",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove odours?",
+      "a": "Yes, including ozone and enzyme treatments.",
+      "keywords": "odour,odor",
+      "priority": 8
+    },
+    {
+      "q": "Do you do engine bay cleaning?",
+      "a": "Yes, engine bay cleaning is available.",
+      "keywords": "engine bay",
+      "priority": 8
+    },
+    {
+      "q": "Do you restore headlights?",
+      "a": "Yes, headlight restoration is available.",
+      "keywords": "headlight",
+      "priority": 8
+    },
+    {
+      "q": "Do you do fleet vehicles?",
+      "a": "Yes, including ongoing fleet contracts.",
+      "keywords": "fleet",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pre-sale details?",
+      "a": "Yes, a pre-sale detail is one of our most popular services.",
+      "keywords": "pre sale",
+      "priority": 9
+    },
+    {
+      "q": "How long does a detail take?",
+      "a": "From 1 hour for a wash to a full day for paint correction and coating.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do boats and caravans?",
+      "a": "Yes, boats and caravans can be quoted on request.",
+      "keywords": "boat,caravan",
+      "priority": 7
+    },
+    {
+      "q": "Do you bring water and power?",
+      "a": "Yes, if you don't have access we can bring our own.",
+      "keywords": "water,power",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,suburb",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CD-WASH",
+      "label": "Hand wash & vacuum",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "wash"
+    },
+    {
+      "sku": "CD-INT",
+      "label": "Interior detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "interior"
+    },
+    {
+      "sku": "CD-EXT",
+      "label": "Exterior detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "exterior"
+    },
+    {
+      "sku": "CD-FULL",
+      "label": "Full detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "full detail"
+    },
+    {
+      "sku": "CD-PC",
+      "label": "Paint correction (per stage)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "paint correction"
+    },
+    {
+      "sku": "CD-CER",
+      "label": "Ceramic coating (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "ceramic"
+    },
+    {
+      "sku": "CD-PET",
+      "label": "Pet hair removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "pet hair"
+    },
+    {
+      "sku": "CD-OD",
+      "label": "Odour treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "odour"
+    },
+    {
+      "sku": "CD-ENG",
+      "label": "Engine bay clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "engine bay"
+    },
+    {
+      "sku": "CD-HEAD",
+      "label": "Headlight restoration (pair)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "headlight"
+    },
+    {
+      "sku": "CD-LEATHER",
+      "label": "Leather clean & condition",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "leather"
+    },
+    {
+      "sku": "CD-FLEET",
+      "label": "Fleet detailing (per vehicle)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "fleet"
+    }
+  ]
+}

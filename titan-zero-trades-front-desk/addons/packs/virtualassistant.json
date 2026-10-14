@@ -1,0 +1,245 @@
+{
+  "id": "virtualassistant",
+  "name": "Virtual Assistants",
+  "icon": "🖥️",
+  "tagline": "Admin, inbox, calendar, bookkeeping, research",
+  "version": "1.0.0",
+  "service_types": [
+    "General Admin",
+    "Inbox Management",
+    "Calendar Management",
+    "Data Entry",
+    "Customer Service",
+    "Bookkeeping Support",
+    "Social Media",
+    "Research",
+    "Travel Booking",
+    "Project Coordination",
+    "CRM Management",
+    "Transcription",
+    "Personal Assistant",
+    "Executive Assistant",
+    "E-commerce Support",
+    "Real Estate VA"
+  ],
+  "staff_skills": [
+    "virtual assistant",
+    "admin",
+    "inbox",
+    "calendar",
+    "bookkeeping",
+    "social media",
+    "crm",
+    "research"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "inbox overdue",
+      "urgent project",
+      "backlog"
+    ],
+    "urgent": [
+      "this week",
+      "starting now",
+      "asap"
+    ],
+    "routine": [
+      "retainer",
+      "monthly",
+      "hourly",
+      "quote",
+      "onboarding"
+    ]
+  },
+  "extra_prompt": "You are booking for a virtual assistant service. Ask about the tasks, hours per week, tools used, and time zone. Ask about confidentiality and whether an NDA is needed. Quote prices only from the reference answers, and say the final price is confirmed after a scope call. Do not promise specific turnaround times that are not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} VAs are billed hourly or on a monthly retainer.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "What can a VA do?",
+      "a": "Admin, inbox, calendar, data entry, customer service, bookkeeping support, and more.",
+      "keywords": "tasks,what do",
+      "priority": 9
+    },
+    {
+      "q": "Do you work in my time zone?",
+      "a": "Yes, we match VAs to your time zone.",
+      "keywords": "time zone,hours",
+      "priority": 9
+    },
+    {
+      "q": "Do you sign NDAs?",
+      "a": "Yes, we sign NDAs on request.",
+      "keywords": "nda,confidentiality",
+      "priority": 9
+    },
+    {
+      "q": "What tools do you use?",
+      "a": "Google Workspace, Microsoft 365, Slack, Asana, Trello, Xero, and more.",
+      "keywords": "tools,software",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bookkeeping?",
+      "a": "Yes, bookkeeping support including Xero and MYOB.",
+      "keywords": "bookkeeping,xero",
+      "priority": 9
+    },
+    {
+      "q": "Do you do social media?",
+      "a": "Yes, scheduling, content, and engagement.",
+      "keywords": "social media",
+      "priority": 8
+    },
+    {
+      "q": "What is your minimum engagement?",
+      "a": "{minimum_note}",
+      "keywords": "minimum,engagement",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer trial hours?",
+      "a": "{trial_note}",
+      "keywords": "trial",
+      "priority": 8
+    },
+    {
+      "q": "How do I onboard?",
+      "a": "We do a scope call, sign an agreement, and match you with a VA.",
+      "keywords": "onboard,start",
+      "priority": 9
+    },
+    {
+      "q": "Can I change VA?",
+      "a": "Yes, we will rematch if it's not the right fit.",
+      "keywords": "change,match",
+      "priority": 8
+    },
+    {
+      "q": "Do you work with real estate?",
+      "a": "Yes, real estate VA support is available.",
+      "keywords": "real estate",
+      "priority": 8
+    },
+    {
+      "q": "Do you do transcription?",
+      "a": "Yes, transcription and minute-taking.",
+      "keywords": "transcription,minutes",
+      "priority": 7
+    },
+    {
+      "q": "Do you do e-commerce support?",
+      "a": "Yes, including Shopify and Amazon.",
+      "keywords": "ecommerce,shopify",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer packages?",
+      "a": "Yes, 10, 20, and 40-hour monthly packages.",
+      "keywords": "package,retainer",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "VA-HR",
+      "label": "VA hourly",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "VA-10",
+      "label": "10-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "10 hour"
+    },
+    {
+      "sku": "VA-20",
+      "label": "20-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "20 hour"
+    },
+    {
+      "sku": "VA-40",
+      "label": "40-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "40 hour"
+    },
+    {
+      "sku": "VA-BOOK",
+      "label": "Bookkeeping VA (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "bookkeeping"
+    },
+    {
+      "sku": "VA-SOCIAL",
+      "label": "Social media VA (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "social media"
+    },
+    {
+      "sku": "VA-EXEC",
+      "label": "Executive assistant (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "executive"
+    },
+    {
+      "sku": "VA-PROJ",
+      "label": "Project rate (per project)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "project"
+    },
+    {
+      "sku": "VA-SETUP",
+      "label": "Onboarding & setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "onboarding"
+    },
+    {
+      "sku": "VA-RUSH",
+      "label": "Rush / after-hours rate (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "rush,after hours"
+    }
+  ]
+}

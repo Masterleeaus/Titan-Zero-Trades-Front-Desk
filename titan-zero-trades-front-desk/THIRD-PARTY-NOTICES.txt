@@ -1,0 +1,296 @@
+Titan Zero Trades: Front Desk: third-party notices
+=================================================
+
+PLUGIN LICENCE
+--------------
+This plugin is licensed under the GNU General Public License, version 2 (GPLv2).
+LICENSE.txt contains the GNU General Public License, version 2, unmodified. Its
+bytes match https://www.gnu.org/licenses/old-licenses/gpl-2.0.txt (checked 2026-10-14).
+
+The plugin is GPLv2 only, not "GPLv2 or later". The reason: the code inherited from
+Appointment Hour Booking 1.5.98 (CodePeople) is declared "GPLv2" by its upstream plugin
+header and readme.txt. Code licensed under GPLv2 only can be distributed only under
+GPLv2, so a work that includes it can be distributed only under GPLv2. The plugin header
+states GPLv2. Of the 108 PHP files, 14 state GPL-2.0-only and 2 state GPLv2; none says
+"or later". readme.txt still says "GPLv2 or later" in three places, to be changed to match.
+
+Upstream attribution is recorded in readme.txt. UPSTREAM.txt records the package lineage
+and hash.
+
+THIRD-PARTY COMPONENTS
+----------------------
+Each component below keeps its own licence. Every licence listed is compatible with the
+GPLv2: MIT, BSD-2-Clause and BSD-3-Clause are permissive licences that the GPLv2 accepts
+in a combined work, and jQuery UI is dual licensed MIT or GPLv2. These notices supplement
+LICENSE.txt. This file introduces no new licence terms.
+
+Summary
+
+  Component                          Version                        Licence          Bundled at
+  ---------------------------------  -----------------------------  ---------------  -----------------------------------------------
+  Papa Parse (jquery.parse build)    5.7.0                          MIT              js/tzfdform-admin-fields/00_jquery.parse.min.js
+  Chart.js                           4.5.1                          MIT              js/chart.js
+  @kurkle/color (inside Chart.js)    0.3.2                          MIT              js/chart.js
+  jQuery Validation                  1.22.1                         MIT              js/jquery.validate.js
+  jQuery UI Cupertino theme CSS      1.14.2                         MIT or GPLv2     css/cupertino/jquery-ui-1.8.20.custom.css
+  jQuery UI date picker languages    1.8.20 (inherited, unchanged) MIT or GPLv2     js/languages/jquery.ui.datepicker-*.js (59 files)
+  rrule                              2.8.1                          BSD-3-Clause    tzfd-calendar/js/rrule.js
+  jQuery.stringify helper            from Appointment Hour Booking  GPLv2           js/jQuery.stringify.js
+                                     1.5.98
+  Calendar and form builder scripts  from Appointment Hour Booking  GPLv2           see section 7
+                                     1.5.98
+  Build tools (not shipped)          prettier 3.9.10,               MIT, BSD-2-      js/src/ (see section 8)
+                                     terser 5.51.2                  Clause
+
+1. PAPA PARSE, jquery.parse BUILD (version 5.7.0)
+----------------------------------------------------------------
+Bundled location: js/tzfdform-admin-fields/00_jquery.parse.min.js
+  Byte-identical to js/fields-admin/00_jquery.parse.min.js in the upstream
+  Appointment Hour Booking 1.5.98 package (checked 2026-10-14).
+  Its header reads "Papa Parse v5.7.0, https://github.com/mholt/PapaParse, License: MIT".
+Readable copy: js/src/00_jquery.parse.src.js
+Project: Papa Parse by Matt Holt. https://www.papaparse.com/ and https://github.com/mholt/PapaParse
+Version status: the bundled build is the upstream papaparse 5.7.0 release, the latest
+  stable release (checked 2026-10-14). Release 5.x has no jQuery wrapper, so the CSV import
+  calls Papa.parse directly (see js/tzfdform-admin.js and js/tzfdform-admin-fields/17_tzfdform.datasource.js).
+Licence: MIT. The bundled file has no licence text. The licence below is the MIT licence
+  text from the papaparse 5.7.0 package. The copyright line shown is that release's; the
+  release that ships must carry its own copyright line.
+
+  The MIT License (MIT)
+  Copyright (c) 2015 Matthew Holt
+  Permission is hereby granted, free of charge, to any person obtaining a copy of
+  this software and associated documentation files (the "Software"), to deal in
+  the Software without restriction, including without limitation the rights to
+  use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
+  the Software, and to permit persons to whom the Software is furnished to do so,
+  subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all
+  copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+  FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
+  COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
+  IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
+  CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+2. CHART.JS 4.5.1
+-----------------
+Bundled location: js/chart.js
+  Byte-identical to dist/chart.umd.js in the chart.js 4.5.1 npm package (checked 2026-10-14).
+Readable copy: js/src/chart.src.js
+Project: https://www.chartjs.org and https://github.com/chartjs/Chart.js
+Version status: 4.5.1 is the latest chart.js release on npm (checked 2026-10-14). The upstream
+  Appointment Hour Booking 1.5.98 package bundled Chart.js 4.4.4 (see its file header), so
+  js/chart.js replaces that copy.
+Licence: MIT. From LICENSE.md in the 4.5.1 package. The file header reads "(c) 2025 Chart.js
+  Contributors"; the package LICENSE.md reads 2014-2024.
+
+  The MIT License (MIT)
+  Copyright (c) 2014-2024 Chart.js Contributors
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+2a. @KURKLE/COLOR 0.3.2 (inside js/chart.js)
+--------------------------------------------
+Bundled as part of js/chart.js (its header reads "@kurkle/color v0.3.2").
+Project: https://github.com/kurkle/color
+Version status: 0.3.2 is the version that Chart.js 4.5.1 embeds. The latest @kurkle/color on
+  npm is 0.6.4 (checked 2026-10-14); this plugin does not ship it.
+Licence: MIT. From LICENSE.md in the @kurkle/color 0.3.2 npm package.
+
+  The MIT License (MIT)
+  Copyright (c) 2018-2021 Jukka Kurkela
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+3. JQUERY VALIDATION 1.22.1
+---------------------------
+Bundled location: js/jquery.validate.js
+Source: dist/jquery.validate.js in the jquery-validation 1.22.1 npm package. This is the
+  latest release on npm (checked 2026-10-14). The file is readable, not minified.
+Project: https://jqueryvalidation.org/ and https://github.com/jquery-validation/jquery-validation
+Licence: MIT, Copyright Jörn Zaefferer. From LICENSE.md in the package.
+Local changes, compared with the npm file (ignoring whitespace):
+  1. The global tzfdformjQuery is used instead of jQuery (wrapper at the top of the file).
+  2. The default errorClass is "tzfdefb_error" instead of "error".
+  3. hideThese() does not clear error text.
+  4. An empty value is not converted to 0 in normalizeAttributeRule().
+The upstream Appointment Hour Booking 1.5.98 package shipped a minified copy of this
+script (see UPSTREAM.txt).
+
+  The MIT License (MIT)
+  Copyright Jörn Zaefferer
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+  THE SOFTWARE.
+
+4. JQUERY UI (Cupertino theme CSS version 1.14.2; date picker languages 1.8.20)
+-----------------------------------------------
+Bundled location:
+  css/cupertino/jquery-ui-1.8.20.custom.css (Cupertino theme CSS, version 1.14.2 from the
+    npm package jquery-ui, file dist/themes/cupertino/jquery-ui.css, plus one rule kept from 1.8.20)
+  js/languages/jquery.ui.datepicker-*.js (59 date picker language files, 1.8.20 from the upstream
+    Appointment Hour Booking 1.5.98 package, unchanged)
+The jQuery UI JavaScript is not bundled: WordPress core supplies it.
+Project: https://jqueryui.com/ and https://github.com/jquery/jquery-ui
+Version status: the bundled CSS is 1.8.20. The latest releases on npm are jquery-ui 1.14.2
+  and jquery-ui-dist 1.13.3, both MIT (checked 2026-10-14).
+Licence: dual licensed, MIT or GPL version 2, as the CSS header states ("Dual licensed under
+  the MIT or GPL Version 2 licenses"). The GPL version 2 text is in LICENSE.txt. The language
+  files carry no licence text. 45 of the 59 language files name their translator on a
+  "Written by" line. None states a jQuery UI version.
+
+5. RRULE 2.8.1
+--------------
+Bundled location: tzfd-calendar/js/rrule.js. Not part of the upstream Appointment Hour Booking
+  package; added for this plugin.
+Source: dist/es5/rrule.js in the rrule 2.8.1 npm package, the latest rrule release on npm
+  (checked 2026-10-14).
+Project: https://github.com/jakubroztocil/rrule (repository named in the npm package).
+Verified: the file matches dist/es5/rrule.js line for line, except for one block appended
+  after the library code. That block begins with the comment "Titan Zero Front Desk: the
+  calendar works in local wall-clock time". It converts local dates to UTC and back, and
+  replaces RRule with the wrapper.
+Licence: BSD-3-Clause. Text from the package's LICENCE file, which includes the
+  python-dateutil notice.
+
+  rrule.js: Library for working with recurrence rules for calendar dates.
+  =======================================================================
+  Copyright 2010, Jakub Roztocil <jakub@roztocil.name> and Lars Schöning
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+      1. Redistributions of source code must retain the above copyright notice,
+         this list of conditions and the following disclaimer.
+      2. Redistributions in binary form must reproduce the above copyright
+         notice, this list of conditions and the following disclaimer in the
+         documentation and/or other materials provided with the distribution.
+      3. Neither the name of The author nor the names of its contributors may
+         be used to endorse or promote products derived from this software
+         without specific prior written permission.
+  THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS "AS IS" AND
+  ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+  WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+  DISCLAIMED. IN NO EVENT SHALL THE AUTHOR AND CONTRIBUTORS BE LIABLE FOR
+  ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  ./rrule.js and ./test/tests.js is based on python-dateutil. LICENCE:
+  python-dateutil - Extensions to the standard Python datetime module.
+  ====================================================================
+  Copyright (c) 2003-2011 - Gustavo Niemeyer <gustavo@niemeyer.net>
+  Copyright (c) 2012 - Tomi Pieviläinen <tomi.pievilainen@iki.fi>
+  All rights reserved.
+  Redistribution and use in source and binary forms, with or without
+  modification, are permitted provided that the following conditions are met:
+      * Redistributions of source code must retain the above copyright notice,
+        this list of conditions and the following disclaimer.
+      * Redistributions in binary form must reproduce the above copyright notice,
+        this list of conditions and the following disclaimer in the documentation
+        and/or other materials provided with the distribution.
+      * Neither the name of the copyright holder nor the names of its
+        contributors may be used to endorse or promote products derived from
+        this software without specific prior written permission.
+  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR
+  CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+  EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+  PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+  PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+  LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+  NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+6. JQUERY.STRINGIFY HELPER (js/jQuery.stringify.js)
+---------------------------------------------------
+Origin: Appointment Hour Booking 1.5.98 by CodePeople. The file is js/jQuery.stringify.js in
+  the WordPress.org package appointment-hour-booking.1.5.98.zip, SHA-256
+  754d42504b19c3df8e4405afb139c66811b785dd833e89f30a96bdf5ba174bc4 (checked 2026-10-14).
+  Project: https://wordpress.org/plugins/appointment-hour-booking/
+Licence: GPLv2, the plugin's licence (LICENSE.txt). The upstream plugin header and readme.txt
+  declare "GPLv2". The upstream file carries no licence notice of its own.
+Changes here: the jQuery alias is renamed from fbuilderjQuery to tzfdformjQuery on three lines
+  (the alias line, the ready call and the closing argument), and a header comment was added.
+  No other code was changed.
+Lineage, probable and not stated by upstream: the serialiser core is close to the SitePoint
+  json-serialization.js example (Craig Buckler, no licence stated; not checked in this
+  pass). The escape table matches json2.js by Douglas Crockford, whose header reads "Public
+  Domain." (json2.js from github.com/douglascrockford/JSON-js, checked 2026-10-14).
+
+7. INHERITED SCRIPTS CHANGED HERE (GPLv2, from Appointment Hour Booking 1.5.98)
+------------------------------------------------------------------------------
+These files come from the upstream GPLv2 package and are licensed under GPLv2 (LICENSE.txt).
+They were renamed and changed for this plugin. GPLv2 section 2(a) requires each changed file
+to carry a prominent notice of the change. The list below records the changes; the notice
+inside each file is a separate task (see REQUESTS in the report).
+
+tzfd-calendar/js/jquery.calendar.js
+  Beautified from the minified upstream file mv/js/jquery.calendar.js (one line, 92,252
+  bytes). The changes below were found by comparing the parse trees of the two files
+  (acorn 8, checked 2026-10-14). The beautified file is not the same code as upstream:
+  - identifiers and strings renamed from cp to tzfd (for example cpwrap to tzfdwrap and
+    cpeoplebrowser to tzfdbrowser);
+  - three eval() calls removed: the date constructor, option.rowsByCategory (now
+    window[option.rowsByCategory]) and option.dayWithColumns (now window[option.dayWithColumns]);
+  - three inline javascript: click handlers in calendar cell objects removed (two "more
+    event" alerts and one void(0) link);
+  - the event dialog that opened an iframe is replaced: when option.dlgiframe is set the
+    event editor opens in a new tab through tzfdOpenInNewTab() (defined in tzfd-calendar/js/Common.js).
+
+js/tzfdform-admin.js
+  Beautified from the minified upstream file js/fbuilder-admin.js (one line, 101,549 bytes).
+  The changes were found the same way:
+  - identifiers, ids and text renamed from fbuilder and cp to tzfdform and tzfd (for example
+    the controls registry and the "helpfbuilder" and "apphourbk_cmadmin" names);
+  - two eval() calls removed; the control objects are created from $.tzfdform.controls;
+  - the placeholder text "available only in commercial version" in the field definitions is
+    replaced by the field's own markup.
+
+Other inherited files:
+  - js/tzfdform-admin-fields/*.js and js/tzfdform-core-*.jquery.js: renamed from the upstream
+    js/fields-admin/ folder and js/fbuilder-pro-*.jquery.js. Their content was not compared line
+    by line in this pass.
+  - js/jquery.validate.js: see section 3. js/jQuery.stringify.js: see section 6.
+  - js/chart.js: replaced by Chart.js 4.5.1, see section 2.
+  - captcha/captcha.php: rewritten as an adapter for includes/class-tzfd-captcha.php. The file
+    has no licence line of its own and is covered by the plugin licence (GPLv2).
+  - tzfd-calendar/css/* and tzfd-calendar/language/*.js: renamed from the upstream mv/ folder.
+    The files checked are byte-identical to their upstream files (calendar.css, main.css and the
+    language files).
+  - Other files from the upstream package (addons/, controllers/elementor/, css/, templates/,
+    the rest of js/ and tzfd-calendar/js/Common.js, jquery.alert.js, tzfdcalendar.js) were
+    renamed or changed. A complete file-by-file list of these changes is not in this release;
+    UPSTREAM.txt records the verified ones.
+
+8. BUILD TOOLS (NOT SHIPPED)
+----------------------------
+js/src/package.json lists prettier 3.9.10 (MIT) and terser 5.51.2 (BSD-2-Clause). They are
+used by js/src/build-tzfdform-public.js to regenerate js/tzfdform-public.js. They are not
+loaded by WordPress and are not included in the shipped files. Licences checked on npm on
+2026-10-14. js/tzfdform-public.js (the minified public bundle) contains the code described in
+sections 3 and 6 and the plugin's own files.
+
+9. PHP LIBRARIES
+----------------
+No PHP libraries are bundled. The plugin has no vendor folder and no composer.json. The quote
+PDF add-on (addons/quotes/quotes-pdf.addon.php) checks for Dompdf, mPDF and TCPDF with
+class_exists() and uses one only when the site already has it installed.

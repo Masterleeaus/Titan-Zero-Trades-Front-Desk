@@ -1,0 +1,392 @@
+{
+  "id": "roofing",
+  "name": "Roofing",
+  "icon": "🏠",
+  "tagline": "Leaks, tiles, gutters, flashing, inspections, storm damage",
+  "version": "1.0.0",
+  "service_types": [
+    "Roof Leak Repair",
+    "Tile & Sheet Replacement",
+    "Gutter & Downpipe",
+    "Roof Inspection",
+    "Storm Damage Repair",
+    "Gutter Guard Installation",
+    "Ridge Capping Repair",
+    "Skylight Replacement",
+    "Metal Roof Restoration",
+    "Roof Painting",
+    "Roof Repointing",
+    "Flashing Repair",
+    "Skylight Installation",
+    "Roof Replacement",
+    "Gutter Replacement",
+    "Storm Damage Tarp",
+    "Solar Panel Roof Fix"
+  ],
+  "staff_skills": [
+    "roof",
+    "leak",
+    "tiles",
+    "gutter",
+    "storm",
+    "ridge capping",
+    "skylights",
+    "metal roofs",
+    "painting"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "roof open to the weather",
+      "ceiling collapsing",
+      "water running down a wall near power",
+      "tree through the roof",
+      "storm damage with a hole in the roof"
+    ],
+    "urgent": [
+      "active leak",
+      "water in the ceiling",
+      "tiles slipping",
+      "gutter overflowing onto walls",
+      "flashing lifted",
+      "ridge capping blown off"
+    ],
+    "routine": [
+      "inspection",
+      "quote",
+      "gutter clean",
+      "repaint roof",
+      "moss",
+      "maintenance",
+      "old roof"
+    ]
+  },
+  "extra_prompt": "You are booking for a licensed roofing company. Ask the roof type (tile, metal, flat, or shingle), its approximate age, and the storey height. Water coming through the ceiling or storm damage is urgent: tell the caller to place a bucket under the leak, move valuables, and keep clear of ceilings that may give way. Never advise anyone to climb onto a roof. Ask about access (ladder or height) and whether scaffold or a crane may be needed. Offer an inspection before quoting full replacements.",
+  "kb": [
+    {
+      "q": "I have a leak in my ceiling. What should I do?",
+      "a": "Place a bucket under the leak and move valuables away. Turn off power to the lights in that room if it is safe. Book a roof leak repair so we can find the source.",
+      "keywords": "leak,ceiling,bucket,water",
+      "priority": 10
+    },
+    {
+      "q": "Do you do roof inspections?",
+      "a": "Yes. An inspection covers tiles or sheets, flashing, gutters and ridges, with photos and a written report.",
+      "keywords": "inspection,report,photos,check",
+      "priority": 9
+    },
+    {
+      "q": "Can you fix a leak without replacing the whole roof?",
+      "a": "Usually yes. Most leaks come from a few tiles, flashing or sealant, and we repair those without a full re-roof.",
+      "keywords": "leak,repair,partial,flashing",
+      "priority": 9
+    },
+    {
+      "q": "Is my old roof safe to walk on?",
+      "a": "No. Please do not walk on an old or damaged roof. We carry the safety equipment to access it.",
+      "keywords": "walk on,safe,access,old roof",
+      "priority": 9
+    },
+    {
+      "q": "Could my roof contain asbestos?",
+      "a": "Homes built before the late 1980s may have asbestos sheeting. We arrange a test and make the roof safe before any work. Do not disturb suspect sheeting yourself.",
+      "keywords": "asbestos,sheet,old,test",
+      "priority": 10
+    },
+    {
+      "q": "Do you replace tiles and sheets?",
+      "a": "Yes. We replace cracked, slipped or missing tiles and corrugated sheets, and we match profiles where we can.",
+      "keywords": "tiles,sheets,replace,match",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean and repair gutters?",
+      "a": "Yes. We clear gutters and downpipes, repair leaks and reattach brackets. Gutter guards can be quoted.",
+      "keywords": "gutter,downpipe,clean,bracket",
+      "priority": 8
+    },
+    {
+      "q": "Do you do storm damage repairs?",
+      "a": "Yes. We attend storm damage, tarp openings where safe, and repair the damage. Your insurer may need our report and photos.",
+      "keywords": "storm,damage,insurance,tarp",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with insurance claims?",
+      "a": "We provide a written report and photos for your insurer. We do not handle the claim itself.",
+      "keywords": "insurance,claim,report,photos",
+      "priority": 8
+    },
+    {
+      "q": "Can you clean moss off my roof?",
+      "a": "Yes. We clean moss and debris, and we can apply a treatment to slow regrowth.",
+      "keywords": "moss,clean,treatment,algae",
+      "priority": 7
+    },
+    {
+      "q": "How long does a roof last?",
+      "a": "It depends on the material and the maintenance. Concrete tile and metal roofs last decades with regular checks. An inspection gives you a realistic life expectancy.",
+      "keywords": "how long,last,life,lifespan",
+      "priority": 7
+    },
+    {
+      "q": "Do you do full re-roofs?",
+      "a": "Yes. We quote full re-roofs with the new underlay, battens, tiles or sheets, and any flashing or ridge work.",
+      "keywords": "re-roof,full,underlay,battens",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint or seal a roof?",
+      "a": "Yes. We clean, prime and paint or seal tile and metal roofs, and we advise which coating suits the material.",
+      "keywords": "paint,seal,coating,restore",
+      "priority": 7
+    },
+    {
+      "q": "Do you work at heights safely?",
+      "a": "Yes. Our crews use fall protection and are trained for roof work. We carry public liability insurance.",
+      "keywords": "safety,heights,fall,insured",
+      "priority": 9
+    },
+    {
+      "q": "Do you do skylight and flashing repair?",
+      "a": "Yes. We repair and replace skylights, chimney flashing and wall flashing, which are common sources of leaks.",
+      "keywords": "skylight,flashing,chimney,leak",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a warranty?",
+      "a": "Yes. Our roof repairs and replacements carry a workmanship warranty. Ask us for the period on your quote.",
+      "keywords": "warranty,workmanship,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What is ridge capping and why does it matter?",
+      "a": "Ridge capping is the cover over the top of the roof. Damaged or missing capping lets water and wildlife in, so it should be repaired promptly.",
+      "keywords": "ridge capping,top,water,wildlife",
+      "priority": 8
+    },
+    {
+      "q": "Can you install solar panels on my roof?",
+      "a": "We can assess the roof and fix any issues first. The solar system itself is installed by a licensed solar installer, and we can coordinate with them.",
+      "keywords": "solar,panels,assess,installer",
+      "priority": 8
+    },
+    {
+      "q": "How do I know if my roof needs replacing?",
+      "a": "Signs include widespread cracked or slipped tiles, rust through sheets, and repeated leaks in several places. An inspection gives you a clear answer and a cost for repairs against replacement.",
+      "keywords": "replace,signs,widespread,inspection",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair roofs after hailstorms?",
+      "a": "Yes. We check for hail damage to tiles, sheets, gutters and flashing, and provide photos and a written report for insurance.",
+      "keywords": "hail,storm,damage,insurance,photos",
+      "priority": 9
+    },
+    {
+      "q": "Why is my roof leaking only when it rains from one direction?",
+      "a": "Wind-driven rain usually finds a weak point on the windward side, such as flashing, ridge capping or a cracked tile. We check that side first.",
+      "keywords": "wind,direction,leak,windward,flashing",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a new skylight?",
+      "a": "Yes. We install new skylights and check the frame, flashing and ceiling opening to avoid leaks after installation.",
+      "keywords": "skylight,install,new,flashing",
+      "priority": 7
+    },
+    {
+      "q": "Do you do roof work for strata buildings?",
+      "a": "Yes. We work with strata managers and body corporates, provide quotes and reports for committee approval, and follow the building's safety rules.",
+      "keywords": "strata,body corporate,committee,building",
+      "priority": 8
+    },
+    {
+      "q": "What is the difference between tile and sheet roofs?",
+      "a": "Tile roofs are heavier and often last longer with the right maintenance. Sheet roofs such as corrugated or Colorbond are lighter and quicker to repair, but can rust or dent.",
+      "keywords": "tile,sheet,difference,colorbond,corrugated",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "RFG-INSP",
+      "label": "Roof inspection with photo report",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "inspection,report,photos,check"
+    },
+    {
+      "sku": "RFG-LEAK",
+      "label": "Roof leak find and repair (labour)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 340,
+      "taxable": 1,
+      "keywords": "leak,repair,find,labour"
+    },
+    {
+      "sku": "RFG-TILE",
+      "label": "Replace roof tile (per tile, supplied)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "tile,replace,single"
+    },
+    {
+      "sku": "RFG-SHEET",
+      "label": "Replace corrugated roof sheet (per sheet)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "sheet,corrugated,replace"
+    },
+    {
+      "sku": "RFG-FLASH",
+      "label": "Flashing repair or replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 210,
+      "taxable": 1,
+      "keywords": "flashing,repair,replace,leak"
+    },
+    {
+      "sku": "RFG-SKY",
+      "label": "Skylight repair or replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "skylight,repair,replace"
+    },
+    {
+      "sku": "RFG-GUT",
+      "label": "Gutter clean (per metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "gutter,clean,metre"
+    },
+    {
+      "sku": "RFG-DOWN",
+      "label": "Downpipe repair or replacement (per metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "downpipe,repair,replace"
+    },
+    {
+      "sku": "RFG-MOSS",
+      "label": "Moss clean and treatment (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 14,
+      "taxable": 1,
+      "keywords": "moss,clean,treatment,m2"
+    },
+    {
+      "sku": "RFG-PAINT",
+      "label": "Roof paint or seal (per m²)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 26,
+      "taxable": 1,
+      "keywords": "paint,seal,coating"
+    },
+    {
+      "sku": "RFG-TARP",
+      "label": "Emergency tarp to storm opening",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 260,
+      "taxable": 1,
+      "keywords": "tarp,storm,emergency,cover"
+    },
+    {
+      "sku": "RFG-ASB",
+      "label": "Asbestos test (sample and report)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "asbestos,test,sample,report"
+    },
+    {
+      "sku": "RFG-SAFE",
+      "label": "Access and safety setup",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "access,safety,scaffold,ladder"
+    },
+    {
+      "sku": "RFG-QUOTE",
+      "label": "Site visit and written quote",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "quote,visit,estimate,free"
+    },
+    {
+      "sku": "RFG-RIDGE",
+      "label": "Ridge capping repair (per metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "ridge capping,repair,metre"
+    },
+    {
+      "sku": "RFG-GUARD",
+      "label": "Gutter guard install (per metre)",
+      "kind": "material",
+      "unit": "ft",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "gutter guard,install,metre"
+    },
+    {
+      "sku": "RFG-METAL",
+      "label": "Metal roof restoration (per m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 32,
+      "taxable": 1,
+      "keywords": "metal roof,restore,m2"
+    },
+    {
+      "sku": "RFG-HAIL",
+      "label": "Hail damage assessment and report",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "hail,damage,assessment,report"
+    },
+    {
+      "sku": "RFG-VALLEY",
+      "label": "Roof valley repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "valley,repair,roof,leak"
+    },
+    {
+      "sku": "RFG-MORT",
+      "label": "Ridge mortar repointing (per metre)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "mortar,repoint,ridge,metre"
+    }
+  ]
+}

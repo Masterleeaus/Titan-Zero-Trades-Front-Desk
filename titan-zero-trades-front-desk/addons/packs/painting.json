@@ -1,0 +1,271 @@
+{
+  "id": "painting",
+  "name": "Painting & Decorating",
+  "icon": "🎨",
+  "tagline": "Interior, exterior, feature walls, wallpaper",
+  "version": "1.0.0",
+  "service_types": [
+    "Interior Painting",
+    "Exterior Painting",
+    "Ceiling Painting",
+    "Wallpaper Installation",
+    "Feature Walls",
+    "Door Painting",
+    "Trim & Skirting",
+    "Deck Staining",
+    "Fence Painting",
+    "Roof Painting",
+    "Rendering",
+    "Texture Coating",
+    "Plaster Repair",
+    "Lead Paint Removal",
+    "Commercial Painting",
+    "Colour Consultation"
+  ],
+  "staff_skills": [
+    "painting",
+    "decorating",
+    "wallpaper",
+    "spray",
+    "brush",
+    "roller",
+    "colour"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "graffiti",
+      "lead paint",
+      "urgent repair",
+      "water damage"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before sale",
+      "before guests"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "repaint",
+      "feature wall",
+      "touch up"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional painting company. Ask about the property type, number of rooms, surface condition, and whether furniture needs moving. Ask about colour preferences and whether paint is supplied. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does painting cost?",
+      "a": "{price_note} Painting is priced by area and condition. Tell us the rooms and we will quote.",
+      "keywords": "cost,price,painting",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply paint?",
+      "a": "Yes, we can supply premium paint, or use yours if you prefer.",
+      "keywords": "paint,supply,products",
+      "priority": 9
+    },
+    {
+      "q": "How many coats do you apply?",
+      "a": "We apply two coats as standard. Dark colours or bare surfaces may need more.",
+      "keywords": "coats,two coats",
+      "priority": 9
+    },
+    {
+      "q": "Do you do prep work?",
+      "a": "Yes, prep includes sanding, filling, and masking.",
+      "keywords": "prep,sanding,filling",
+      "priority": 8
+    },
+    {
+      "q": "How long does interior painting take?",
+      "a": "Most rooms take 1–2 days. Whole homes take longer depending on size.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you move furniture?",
+      "a": "We move small items. Please clear valuables and wall hangings before we arrive.",
+      "keywords": "furniture,move",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint ceilings?",
+      "a": "Yes, we paint ceilings.",
+      "keywords": "ceiling,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you hang wallpaper?",
+      "a": "Yes, we install and remove wallpaper.",
+      "keywords": "wallpaper,hang",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint exteriors?",
+      "a": "Yes, we paint exterior walls, trim, and eaves.",
+      "keywords": "exterior,outside",
+      "priority": 9
+    },
+    {
+      "q": "Do you paint roofs?",
+      "a": "Yes, we paint and restore roofs.",
+      "keywords": "roof,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you stain decks?",
+      "a": "Yes, we clean and stain decks.",
+      "keywords": "deck,stain",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint fences?",
+      "a": "Yes, we paint and stain fences.",
+      "keywords": "fence,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair plaster?",
+      "a": "Yes, we repair cracks and holes before painting.",
+      "keywords": "plaster,repair,crack",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial painting?",
+      "a": "Yes, we service commercial properties. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer colour consultation?",
+      "a": "Yes, we can advise on colours and finishes.",
+      "keywords": "colour,consultation,advice",
+      "priority": 7
+    },
+    {
+      "q": "Can you paint in wet weather?",
+      "a": "Interior work is fine. Exterior work may be delayed by rain.",
+      "keywords": "weather,rain",
+      "priority": 7
+    },
+    {
+      "q": "Do you clean up after?",
+      "a": "Yes, we clean up and remove masking and drop sheets.",
+      "keywords": "clean up,cleanup",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PNT-INT",
+      "label": "Interior painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "interior,paint"
+    },
+    {
+      "sku": "PNT-EXT",
+      "label": "Exterior painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "exterior,paint"
+    },
+    {
+      "sku": "PNT-CEIL",
+      "label": "Ceiling painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "ceiling,paint"
+    },
+    {
+      "sku": "PNT-DOOR",
+      "label": "Door painting (per side)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "door,paint"
+    },
+    {
+      "sku": "PNT-TRIM",
+      "label": "Trim & skirting (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "trim,skirting"
+    },
+    {
+      "sku": "PNT-WALL",
+      "label": "Wallpaper installation (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "wallpaper,install"
+    },
+    {
+      "sku": "PNT-DECK",
+      "label": "Deck staining (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "deck,stain"
+    },
+    {
+      "sku": "PNT-FENCE",
+      "label": "Fence painting (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "fence,paint"
+    },
+    {
+      "sku": "PNT-ROOF",
+      "label": "Roof painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "roof,paint"
+    },
+    {
+      "sku": "PNT-PLASTER",
+      "label": "Plaster repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "plaster,repair"
+    }
+  ]
+}

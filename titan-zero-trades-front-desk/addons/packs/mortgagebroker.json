@@ -1,0 +1,246 @@
+{
+  "id": "mortgagebroker",
+  "name": "Mortgage Brokers",
+  "icon": "🏦",
+  "tagline": "Home loans, refinance, investment, commercial",
+  "version": "1.0.0",
+  "service_types": [
+    "First Home Loan",
+    "Refinance",
+    "Investment Loan",
+    "Home Loan",
+    "Construction Loan",
+    "Bridging Loan",
+    "Commercial Loan",
+    "Asset Finance",
+    "Car Loan",
+    "Personal Loan",
+    "Debt Consolidation",
+    "SMSF Loan",
+    "Loan Pre-Approval",
+    "Rate Review",
+    "Loan Health Check",
+    "Self-Employed Loans"
+  ],
+  "staff_skills": [
+    "mortgage broking",
+    "home loans",
+    "refinance",
+    "investment",
+    "commercial lending",
+    "pre-approval",
+    "self-employed"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "auction tomorrow",
+      "pre-approval needed",
+      "settlement soon",
+      "finance clause"
+    ],
+    "urgent": [
+      "this week",
+      "before auction",
+      "pre-approval",
+      "contract signed"
+    ],
+    "routine": [
+      "quote",
+      "review",
+      "refinance",
+      "consultation",
+      "application"
+    ]
+  },
+  "extra_prompt": "You are booking for a mortgage broker. Ask about the loan purpose, property type, deposit, income type (PAYG or self-employed), and timeline. Ask about existing loans and whether it is an auction purchase. Do not give credit advice in the booking flow. Quote fees only from the reference answers, and say final costs depend on lender and approval. Do not promise a loan approval or specific rate.",
+  "kb": [
+    {
+      "q": "Do you charge a fee?",
+      "a": "{price_note} Most residential home loans are fee-free to you because we're paid by the lender.",
+      "keywords": "fee,cost,price",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pre-approval?",
+      "a": "Yes, we arrange pre-approvals. For auctions, allow 5–10 business days.",
+      "keywords": "pre approval",
+      "priority": 9
+    },
+    {
+      "q": "How much can I borrow?",
+      "a": "It depends on income, debts, and deposit. We'll run a borrowing estimate with you.",
+      "keywords": "how much,borrow",
+      "priority": 9
+    },
+    {
+      "q": "Do you do refinance?",
+      "a": "Yes, including cash-out and rate reduction refinance.",
+      "keywords": "refinance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do self-employed loans?",
+      "a": "Yes, including low-doc and alt-doc options.",
+      "keywords": "self employed,low doc",
+      "priority": 9
+    },
+    {
+      "q": "Do you do investment loans?",
+      "a": "Yes, including interest-only and portfolio lending.",
+      "keywords": "investment",
+      "priority": 9
+    },
+    {
+      "q": "Do you do commercial loans?",
+      "a": "Yes, commercial and asset finance.",
+      "keywords": "commercial,asset",
+      "priority": 8
+    },
+    {
+      "q": "Do you do construction loans?",
+      "a": "Yes, including progress-payment construction loans.",
+      "keywords": "construction",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SMSF lending?",
+      "a": "Yes, for eligible borrowers and properties.",
+      "keywords": "smsf",
+      "priority": 8
+    },
+    {
+      "q": "Do you do debt consolidation?",
+      "a": "Yes, we can consolidate credit cards and personal loans into a home loan where suitable.",
+      "keywords": "consolidate,debt",
+      "priority": 8
+    },
+    {
+      "q": "What documents do I need?",
+      "a": "ID, payslips, bank statements, and existing loan statements. Self-employed clients need tax returns and notices of assessment.",
+      "keywords": "documents,requirements",
+      "priority": 9
+    },
+    {
+      "q": "How long does approval take?",
+      "a": "Typically 3–10 business days for full approval, depending on the lender.",
+      "keywords": "how long,approval",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge for a rate review?",
+      "a": "{rate_review_note}",
+      "keywords": "rate review",
+      "priority": 8
+    },
+    {
+      "q": "Are you licensed?",
+      "a": "Yes, we hold an Australian Credit Licence or are a credit representative.",
+      "keywords": "licensed,credit licence",
+      "priority": 9
+    },
+    {
+      "q": "Do you work with all lenders?",
+      "a": "We work with a wide panel of lenders. Tell us your needs and we'll match lenders.",
+      "keywords": "panel,lenders",
+      "priority": 9
+    },
+    {
+      "q": "Do you do car and personal loans?",
+      "a": "Yes, including car, personal, and equipment finance.",
+      "keywords": "car loan,personal loan",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MB-CONS",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    },
+    {
+      "sku": "MB-PRE",
+      "label": "Pre-approval application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "pre approval"
+    },
+    {
+      "sku": "MB-APP",
+      "label": "Full application lodgement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "application"
+    },
+    {
+      "sku": "MB-REFI",
+      "label": "Refinance",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "refinance"
+    },
+    {
+      "sku": "MB-INV",
+      "label": "Investment loan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "investment"
+    },
+    {
+      "sku": "MB-COMM",
+      "label": "Commercial loan application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "commercial"
+    },
+    {
+      "sku": "MB-ASSET",
+      "label": "Asset finance",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "asset finance"
+    },
+    {
+      "sku": "MB-REVIEW",
+      "label": "Rate / loan health review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "review"
+    },
+    {
+      "sku": "MB-SMSF",
+      "label": "SMSF loan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "smsf"
+    },
+    {
+      "sku": "MB-VAL",
+      "label": "Property valuation (if applicable)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 300,
+      "taxable": 1,
+      "keywords": "valuation"
+    }
+  ]
+}

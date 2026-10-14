@@ -1,0 +1,255 @@
+{
+  "id": "catering",
+  "name": "Catering & Personal Chefs",
+  "icon": "🍽️",
+  "tagline": "Events, private dining, meal prep, corporate",
+  "version": "1.0.0",
+  "service_types": [
+    "Wedding Catering",
+    "Corporate Catering",
+    "Private Dining",
+    "Personal Chef",
+    "Weekly Meal Prep",
+    "Cocktail Parties",
+    "Canapés",
+    "Buffet",
+    "Plated Dinner",
+    "Food Trucks",
+    "BBQ Catering",
+    "Vegan & Vegetarian",
+    "Gluten-Free",
+    "Kids Parties",
+    "Funeral Catering",
+    "Cooking Classes"
+  ],
+  "staff_skills": [
+    "catering",
+    "chef",
+    "menu design",
+    "plating",
+    "meal prep",
+    "canapés",
+    "dietary requirements",
+    "food safety"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "event tomorrow",
+      "caterer cancelled",
+      "urgent booking"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "short notice",
+      "before event"
+    ],
+    "routine": [
+      "booking",
+      "quote",
+      "menu",
+      "tasting",
+      "meal prep"
+    ]
+  },
+  "extra_prompt": "You are booking for a catering or personal chef business. Ask about the event date, location, guest count, service style, and any dietary requirements or allergies. Ask about staff, hire, and cleanup. Quote prices only from the reference answers, and say the final price is confirmed after menu design. Do not promise specific ingredient availability or a final total before menu agreement.",
+  "kb": [
+    {
+      "q": "How much does catering cost?",
+      "a": "{price_note} Catering is priced per person or per event. It depends on menu and service style.",
+      "keywords": "cost,price,catering",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle dietary requirements?",
+      "a": "Yes, we cater to vegetarian, vegan, gluten-free, nut-free, and other requirements.",
+      "keywords": "dietary,vegan,gluten,allergy",
+      "priority": 9
+    },
+    {
+      "q": "Do you do tastings?",
+      "a": "Yes, tastings are available for weddings and larger events.",
+      "keywords": "tasting,sample",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide staff?",
+      "a": "Yes, we can provide chefs, waiters, and bar staff.",
+      "keywords": "staff,waiters",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide plates and cutlery?",
+      "a": "Yes, we can provide crockery, cutlery, glassware, and linen.",
+      "keywords": "plates,cutlery,hire",
+      "priority": 8
+    },
+    {
+      "q": "Do you do plated dinners?",
+      "a": "Yes, we do plated, buffet, and cocktail service.",
+      "keywords": "plated,buffet,cocktail",
+      "priority": 9
+    },
+    {
+      "q": "Do you do personal chef meal prep?",
+      "a": "Yes, we offer weekly meal prep in your home.",
+      "keywords": "meal prep,personal chef",
+      "priority": 9
+    },
+    {
+      "q": "Do you do corporate catering?",
+      "a": "Yes, we do corporate catering. Commercial pricing applies.",
+      "keywords": "corporate,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you do BBQ catering?",
+      "a": "Yes, we do BBQ and outdoor catering.",
+      "keywords": "bbq,barbecue",
+      "priority": 8
+    },
+    {
+      "q": "Do you do food trucks?",
+      "a": "Yes, we can arrange food truck catering.",
+      "keywords": "food truck",
+      "priority": 7
+    },
+    {
+      "q": "Do you handle cleanup?",
+      "a": "Yes, cleanup is included for full-service catering.",
+      "keywords": "cleanup,clean up",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit,booking",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured and food-safe?",
+      "a": "Yes, we are fully insured and follow food safety standards.",
+      "keywords": "insured,food safety",
+      "priority": 9
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "We recommend 4–8 weeks for larger events and 2 weeks for smaller ones.",
+      "keywords": "how far,advance,when",
+      "priority": 8
+    },
+    {
+      "q": "Do you do cooking classes?",
+      "a": "Yes, we run private and group cooking classes.",
+      "keywords": "cooking class",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CAT-CAN",
+      "label": "Canapés (per person, 4 pieces)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "canapes"
+    },
+    {
+      "sku": "CAT-BUFF",
+      "label": "Buffet (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "buffet"
+    },
+    {
+      "sku": "CAT-PLATE",
+      "label": "Plated dinner (per person, 3-course)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "plated"
+    },
+    {
+      "sku": "CAT-BBQ",
+      "label": "BBQ package (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "bbq"
+    },
+    {
+      "sku": "CAT-WAIT",
+      "label": "Wait staff (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "wait staff"
+    },
+    {
+      "sku": "CAT-CHEF",
+      "label": "Chef (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "chef"
+    },
+    {
+      "sku": "CAT-BAR",
+      "label": "Bar staff (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "bar"
+    },
+    {
+      "sku": "CAT-HIRE",
+      "label": "Crockery / cutlery hire (per person)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "hire,crockery"
+    },
+    {
+      "sku": "CAT-MEAL",
+      "label": "Meal prep (per serve)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 16,
+      "taxable": 1,
+      "keywords": "meal prep"
+    },
+    {
+      "sku": "CAT-TASTE",
+      "label": "Tasting (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "tasting"
+    },
+    {
+      "sku": "CAT-CLASS",
+      "label": "Cooking class (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "class"
+    }
+  ]
+}

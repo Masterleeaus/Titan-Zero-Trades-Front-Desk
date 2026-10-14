@@ -1,0 +1,248 @@
+{
+  "id": "optometry",
+  "name": "Optometry",
+  "icon": "👓",
+  "tagline": "Eye tests, glasses, contacts, eye health",
+  "version": "1.0.0",
+  "service_types": [
+    "Eye Test",
+    "Contact Lens Fitting",
+    "Prescription Glasses",
+    "Sunglasses",
+    "Children's Eye Test",
+    "Diabetic Eye Check",
+    "Glaucoma Screening",
+    "Macular Health",
+    "Dry Eye Treatment",
+    "Behavioural Optometry",
+    "Sports Vision",
+    "Safety Glasses",
+    "Eye Health Assessment",
+    "Telehealth Review"
+  ],
+  "staff_skills": [
+    "optometry",
+    "eye testing",
+    "contact lenses",
+    "glasses",
+    "retinal imaging",
+    "paediatrics",
+    "dry eye"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "sudden vision loss",
+      "flashes",
+      "floaters",
+      "eye injury",
+      "red eye",
+      "severe pain"
+    ],
+    "urgent": [
+      "today",
+      "this week",
+      "blurry vision"
+    ],
+    "routine": [
+      "eye test",
+      "glasses",
+      "contacts",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for an optometry practice. Ask about the reason for the visit, last eye test, current glasses or contacts, and health fund. Ask about any sudden vision changes, which may need urgent care. Quote prices only from the reference answers, and say the final price is confirmed after examination. Do not provide clinical advice or promise specific vision outcomes.",
+  "kb": [
+    {
+      "q": "How much is an eye test?",
+      "a": "{price_note} Eye tests are often bulk-billed with Medicare. Private tests are quoted before booking.",
+      "keywords": "cost,price,eye test",
+      "priority": 9
+    },
+    {
+      "q": "Do you bulk bill?",
+      "a": "{bulk_bill_note}",
+      "keywords": "bulk bill,medicare",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, for glasses and contacts, depending on your cover.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do contact lens fittings?",
+      "a": "Yes, including a trial and teaching insertion.",
+      "keywords": "contact lens,contacts",
+      "priority": 9
+    },
+    {
+      "q": "Do you see children?",
+      "a": "Yes, we do children's eye tests.",
+      "keywords": "children,paediatric",
+      "priority": 9
+    },
+    {
+      "q": "Do you do diabetic eye checks?",
+      "a": "Yes, including retinal imaging.",
+      "keywords": "diabetes,retinal",
+      "priority": 9
+    },
+    {
+      "q": "Do you screen for glaucoma?",
+      "a": "Yes, including pressure checks and retinal scans.",
+      "keywords": "glaucoma,pressure",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat dry eye?",
+      "a": "Yes, including IPL and drops.",
+      "keywords": "dry eye",
+      "priority": 8
+    },
+    {
+      "q": "Do you sell glasses?",
+      "a": "Yes, a wide range of frames and lenses.",
+      "keywords": "glasses,frame",
+      "priority": 9
+    },
+    {
+      "q": "Do you sell sunglasses?",
+      "a": "Yes, including prescription sunglasses.",
+      "keywords": "sunglasses",
+      "priority": 8
+    },
+    {
+      "q": "Do you do safety glasses?",
+      "a": "Yes, including prescription safety glasses.",
+      "keywords": "safety glasses",
+      "priority": 8
+    },
+    {
+      "q": "What if I suddenly lose vision?",
+      "a": "This may be an emergency. Call us and, if needed, attend the hospital or an emergency ophthalmologist.",
+      "keywords": "vision loss,emergency",
+      "priority": 9
+    },
+    {
+      "q": "How long is an eye test?",
+      "a": "Usually 30–45 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Limited telehealth is available for reviews.",
+      "keywords": "telehealth",
+      "priority": 7
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Yes, all optometrists are AHPRA registered and insured.",
+      "keywords": "ahpra,registered",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "OPT-TEST",
+      "label": "Comprehensive eye test",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "eye test"
+    },
+    {
+      "sku": "OPT-RET",
+      "label": "Retinal imaging",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "retinal"
+    },
+    {
+      "sku": "OPT-OCT",
+      "label": "OCT scan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "oct"
+    },
+    {
+      "sku": "OPT-CONTACT",
+      "label": "Contact lens fitting",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "contact fitting"
+    },
+    {
+      "sku": "OPT-CONTACT-T",
+      "label": "Contact lens trial",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "contact trial"
+    },
+    {
+      "sku": "OPT-FRAME",
+      "label": "Frame (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 149,
+      "taxable": 1,
+      "keywords": "frame"
+    },
+    {
+      "sku": "OPT-LENS",
+      "label": "Single-vision lenses (pair)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "lens"
+    },
+    {
+      "sku": "OPT-PROG",
+      "label": "Progressive lenses (pair)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "progressive"
+    },
+    {
+      "sku": "OPT-SUN",
+      "label": "Prescription sunglasses",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "sunglasses"
+    },
+    {
+      "sku": "OPT-SAFE",
+      "label": "Prescription safety glasses",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "safety"
+    },
+    {
+      "sku": "OPT-DRY",
+      "label": "Dry eye treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "dry eye"
+    }
+  ]
+}

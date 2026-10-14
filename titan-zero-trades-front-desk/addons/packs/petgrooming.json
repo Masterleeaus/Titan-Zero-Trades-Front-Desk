@@ -1,0 +1,289 @@
+{
+  "id": "petgrooming",
+  "name": "Pet Grooming",
+  "icon": "🐕",
+  "tagline": "Dog and cat grooming, mobile grooming, deshedding",
+  "version": "1.0.0",
+  "service_types": [
+    "Dog Grooming",
+    "Cat Grooming",
+    "Bath & Brush",
+    "Clipping",
+    "Deshedding",
+    "Nail Trim",
+    "Ear Cleaning",
+    "Flea Treatment",
+    "Anal Glands",
+    "Teeth Cleaning",
+    "Puppy Groom",
+    "Breed-Specific Groom",
+    "Mobile Grooming",
+    "Hand Stripping",
+    "Medicated Bath",
+    "Deodorising"
+  ],
+  "staff_skills": [
+    "dog grooming",
+    "cat grooming",
+    "clipping",
+    "bathing",
+    "deshedding",
+    "nail trim",
+    "breed styling",
+    "mobile grooming"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "matted",
+      "fleas",
+      "skin infection",
+      "urgent groom"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before holiday",
+      "before guests"
+    ],
+    "routine": [
+      "regular",
+      "monthly",
+      "booking",
+      "groom",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional pet grooming business. Ask about the pet's breed, size, coat condition, temperament, and any health or skin issues. Ask about vaccination status and whether the pet has been groomed before. Quote prices only from the reference answers, and say the final price is confirmed after seeing the pet. Do not promise a specific grooming outcome for matted coats without assessment.",
+  "kb": [
+    {
+      "q": "How much is dog grooming?",
+      "a": "{price_note} Grooming is priced by breed, size, and coat condition. We confirm after seeing the pet.",
+      "keywords": "cost,price,grooming",
+      "priority": 9
+    },
+    {
+      "q": "Do you groom cats?",
+      "a": "Yes, we groom cats. Some cats may need sedation at a vet.",
+      "keywords": "cat,groom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do mobile grooming?",
+      "a": "Yes, we offer mobile grooming in the local metro area.",
+      "keywords": "mobile,grooming van",
+      "priority": 9
+    },
+    {
+      "q": "Do you do deshedding?",
+      "a": "Yes, we do deshedding treatments for double-coated breeds.",
+      "keywords": "deshed,deshedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you clip nails?",
+      "a": "Yes, we trim nails.",
+      "keywords": "nail,trim",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean ears?",
+      "a": "Yes, we clean ears.",
+      "keywords": "ear,clean",
+      "priority": 8
+    },
+    {
+      "q": "Do you express anal glands?",
+      "a": "Yes, we express anal glands externally.",
+      "keywords": "anal gland",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat fleas?",
+      "a": "Yes, we offer flea and tick treatments.",
+      "keywords": "flea,tick",
+      "priority": 8
+    },
+    {
+      "q": "Do you do medicated baths?",
+      "a": "Yes, we do medicated baths. Bring your vet's recommendation if you have one.",
+      "keywords": "medicated bath,skin",
+      "priority": 8
+    },
+    {
+      "q": "Do you do puppy grooms?",
+      "a": "Yes, we do puppy introductory grooms.",
+      "keywords": "puppy",
+      "priority": 8
+    },
+    {
+      "q": "Do you need vaccinations?",
+      "a": "Yes, pets must be up to date with C5 vaccinations.",
+      "keywords": "vaccination,vaccine,c5",
+      "priority": 9
+    },
+    {
+      "q": "What if my pet is matted?",
+      "a": "Matted coats may need to be shaved. We assess and discuss options before starting.",
+      "keywords": "matted,shave",
+      "priority": 9
+    },
+    {
+      "q": "How long does a groom take?",
+      "a": "Most grooms take 1–3 hours depending on size and coat.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you groom anxious pets?",
+      "a": "Yes, we use gentle handling. Extreme anxiety may need a vet.",
+      "keywords": "anxious,stress",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Yes, booking is recommended. We are often booked weeks ahead.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer breed-specific cuts?",
+      "a": "Yes, we do breed-standard and custom cuts.",
+      "keywords": "breed,cut",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hand stripping?",
+      "a": "Yes, we do hand stripping for wire-coated breeds.",
+      "keywords": "hand strip,stripping",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer teeth cleaning?",
+      "a": "Yes, we offer teeth brushing and breath freshening.",
+      "keywords": "teeth,dental",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PET-SMALL",
+      "label": "Small dog groom",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "small dog"
+    },
+    {
+      "sku": "PET-MED",
+      "label": "Medium dog groom",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "medium dog"
+    },
+    {
+      "sku": "PET-LARGE",
+      "label": "Large dog groom",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "large dog"
+    },
+    {
+      "sku": "PET-GIANT",
+      "label": "Giant dog groom",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "giant dog"
+    },
+    {
+      "sku": "PET-CAT",
+      "label": "Cat groom",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "cat"
+    },
+    {
+      "sku": "PET-BATH",
+      "label": "Bath & brush",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "bath,brush"
+    },
+    {
+      "sku": "PET-DES",
+      "label": "Deshedding treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "deshed"
+    },
+    {
+      "sku": "PET-NAIL",
+      "label": "Nail trim",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 20,
+      "taxable": 1,
+      "keywords": "nail"
+    },
+    {
+      "sku": "PET-FLEA",
+      "label": "Flea treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "flea"
+    },
+    {
+      "sku": "PET-MEDBATH",
+      "label": "Medicated bath",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "medicated"
+    },
+    {
+      "sku": "PET-MAT",
+      "label": "Matting removal surcharge (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "matting"
+    },
+    {
+      "sku": "PET-MOB",
+      "label": "Mobile grooming surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "mobile"
+    }
+  ]
+}

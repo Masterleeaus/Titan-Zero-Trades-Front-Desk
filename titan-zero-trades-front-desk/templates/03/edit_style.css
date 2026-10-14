@@ -1,0 +1,31 @@
+.tzfd_cff_natural{background-color:#f3f6ea; padding:10px;}
+.tzfd_cff_natural #tzfdform{color:inherit;}
+.tzfd_cff_natural #tzfdform h1{color:rgb(255, 255, 255);margin-bottom:0;font-size:200%;font-weight:normal;}
+.tzfd_cff_natural #tzfdform .fields input{border-color:#969696;border-width:1px;border-style:solid;padding:5px 0;background:#FFF;color:#000;}
+
+
+.tzfd_cff_natural #tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+.tzfd_cff_natural #tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+.tzfd_cff_natural #tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+				
+.tzfd_cff_natural #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+.tzfd_cff_natural #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+.tzfd_cff_natural #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+.tzfd_cff_natural #tzfdform .slots div a{background-color: #ededed;padding:4px;}
+.tzfd_cff_natural #tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+.tzfd_cff_natural #tzfdform .pbSubmit{color:#fff;font-size:14px;font-weight:bold;border-radius: 5px;}
+.tzfd_cff_natural #tzfdform .pbSubmit:hover {color: #fff}
+.tzfd_field_service{display:inherit;}
+.tzfd_cff_natural #tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+.tzfd_cff_natural #tzfdform .slots span{color: inherit;}
+.tzfd_cff_natural #tzfdform .usedSlots .tzfd_list {padding: inherit;margin:inherit}
+.tzfd_cff_natural #tzfdform .usedSlots .tzfd_list .d{color: inherit;}
+.tzfd_cff_natural #tzfdform .usedSlots .tzfd_list .t{color: inherit;}
+.tzfd_cff_natural #tzfdform .usedSlots .tzfd_list .tzfd_list_service{color: inherit;}
+.tzfd_cff_natural #tzfdform .usedSlots .tzfd_list .cancel{font-weight:inherit}
+.tzfd_cff_natural #tzfdform .totalCost{color: inherit;}
+.tzfd_cff_natural #tzfdform .totalCost span:not(.n){color: inherit;}
+.tzfd_cff_natural #tzfdform .totalCost span.n{color: inherit;}

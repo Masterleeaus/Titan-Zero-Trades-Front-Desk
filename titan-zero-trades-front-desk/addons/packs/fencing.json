@@ -1,0 +1,268 @@
+{
+  "id": "fencing",
+  "name": "Fencing",
+  "icon": "🚧",
+  "tagline": "Timber, Colorbond, pool fencing, gates, repairs",
+  "version": "1.0.0",
+  "service_types": [
+    "Timber Fencing",
+    "Colorbond Fencing",
+    "Aluminium Fencing",
+    "Glass Fencing",
+    "Pool Fencing",
+    "Security Fencing",
+    "Picket Fencing",
+    "Chain Wire",
+    "Electric Fencing",
+    "Retaining Walls",
+    "Gate Installation",
+    "Fence Repair",
+    "Fence Removal",
+    "Commercial Fencing"
+  ],
+  "staff_skills": [
+    "fencing",
+    "timber",
+    "colorbond",
+    "pool fence",
+    "gates",
+    "posts",
+    "retaining walls"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "storm damage",
+      "pool compliance",
+      "security risk",
+      "fallen fence"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before pool use"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "repair",
+      "replace"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional fencing company. Ask about the fence type, length, height, and purpose (boundary, pool, security). Ask about access, slope, and whether old fencing needs removal. Ask about pool compliance if relevant. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific compliance outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does fencing cost?",
+      "a": "{price_note} Fencing is priced per linear meter including materials and install.",
+      "keywords": "cost,price,fencing",
+      "priority": 9
+    },
+    {
+      "q": "Do you install pool fencing?",
+      "a": "Yes, we install pool fencing that meets current safety standards.",
+      "keywords": "pool fence,safety,compliance",
+      "priority": 9
+    },
+    {
+      "q": "Do you install Colorbond?",
+      "a": "Yes, we supply and install Colorbond fencing.",
+      "keywords": "colorbond,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you install timber fencing?",
+      "a": "Yes, we install timber paling and picket fencing.",
+      "keywords": "timber,paling,picket",
+      "priority": 9
+    },
+    {
+      "q": "Do you install glass fencing?",
+      "a": "Yes, we install frameless and semi-frameless glass fencing.",
+      "keywords": "glass,frameless",
+      "priority": 8
+    },
+    {
+      "q": "Do you install aluminium fencing?",
+      "a": "Yes, we install aluminium fencing and gates.",
+      "keywords": "aluminium,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair fences?",
+      "a": "Yes, we repair storm damage, broken palings, and leaning posts.",
+      "keywords": "repair,damage",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old fencing?",
+      "a": "Yes, we remove and dispose of old fencing.",
+      "keywords": "remove,old fence",
+      "priority": 8
+    },
+    {
+      "q": "Do you install gates?",
+      "a": "Yes, we install driveway and pedestrian gates.",
+      "keywords": "gate,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you install automatic gates?",
+      "a": "Yes, we install automatic gate systems.",
+      "keywords": "automatic gate,motor",
+      "priority": 8
+    },
+    {
+      "q": "Do you build retaining walls?",
+      "a": "Yes, we build timber, concrete, and block retaining walls.",
+      "keywords": "retaining wall",
+      "priority": 8
+    },
+    {
+      "q": "Do you need a permit?",
+      "a": "Some fences and retaining walls need approval. We can advise.",
+      "keywords": "permit,approval",
+      "priority": 8
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "Most residential fences take 1–3 days depending on length.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial fencing?",
+      "a": "Yes, we service commercial properties. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps for the quote. For the work, access is enough.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove green waste?",
+      "a": "Yes, we remove vegetation and old fence materials.",
+      "keywords": "green waste,remove",
+      "priority": 7
+    },
+    {
+      "q": "Can you match existing fencing?",
+      "a": "We try to match existing styles and colours. Some may be discontinued.",
+      "keywords": "match,style,colour",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "FNC-TIMB",
+      "label": "Timber fencing (per linear meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "timber,fence"
+    },
+    {
+      "sku": "FNC-COLOR",
+      "label": "Colorbond fencing (per linear meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "colorbond,fence"
+    },
+    {
+      "sku": "FNC-ALUM",
+      "label": "Aluminium fencing (per linear meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "aluminium,fence"
+    },
+    {
+      "sku": "FNC-GLASS",
+      "label": "Glass pool fencing (per linear meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "glass,pool fence"
+    },
+    {
+      "sku": "FNC-POOL",
+      "label": "Pool fencing (per linear meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "pool fence"
+    },
+    {
+      "sku": "FNC-GATE",
+      "label": "Gate installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "gate,install"
+    },
+    {
+      "sku": "FNC-AUTO",
+      "label": "Automatic gate system",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "automatic gate,motor"
+    },
+    {
+      "sku": "FNC-REPAIR",
+      "label": "Fence repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "FNC-REMOVE",
+      "label": "Fence removal (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "FNC-RETAIN",
+      "label": "Retaining wall (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "retaining wall"
+    }
+  ]
+}

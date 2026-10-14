@@ -1,0 +1,34 @@
+.tzfd_cff_clean #tzfdform{color:#384248;}
+
+.tzfd_cff_clean #tzfdform .fields input{
+border-color:#D7D9DA;border-width:1px;border-style:solid;
+background:#FFF;
+padding-left:5px;
+padding-right:5px;
+}
+
+.tzfd_cff_clean #tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+.tzfd_cff_clean #tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+.tzfd_cff_clean #tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+				
+.tzfd_cff_clean #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+.tzfd_cff_clean #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+.tzfd_cff_clean #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+.tzfd_cff_clean #tzfdform .slots div a{background-color: #ededed;padding:4px;}
+.tzfd_cff_clean #tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+.tzfd_cff_clean #tzfdform .pbSubmit{color:#fff;font-size:14px;background: #0093DA;border-radius: 5px;margin:0 10px 0 0;}
+.tzfd_cff_clean #tzfdform .pbSubmit:hover {color: #fff}
+.tzfd_field_service{display:inherit;}
+.tzfd_cff_clean #tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+.tzfd_cff_clean #tzfdform .slots span{color: inherit;}
+.tzfd_cff_clean #tzfdform .usedSlots .tzfd_list {padding: inherit;margin:inherit}
+.tzfd_cff_clean #tzfdform .usedSlots .tzfd_list .d{color: inherit;}
+.tzfd_cff_clean #tzfdform .usedSlots .tzfd_list .t{color: inherit;}
+.tzfd_cff_clean #tzfdform .usedSlots .tzfd_list .tzfd_list_service{color: inherit;}
+.tzfd_cff_clean #tzfdform .usedSlots .tzfd_list .cancel{font-weight:inherit}
+.tzfd_cff_clean #tzfdform .totalCost{color: inherit;}
+.tzfd_cff_clean #tzfdform .totalCost span:not(.n){color: inherit;}
+.tzfd_cff_clean #tzfdform .totalCost span.n{color: inherit;}

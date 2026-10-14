@@ -1,0 +1,240 @@
+{
+  "id": "eventplanner",
+  "name": "Wedding & Event Planners",
+  "icon": "💍",
+  "tagline": "Weddings, corporate events, parties, styling",
+  "version": "1.0.0",
+  "service_types": [
+    "Wedding Planning",
+    "Wedding Styling",
+    "Wedding Day Coordination",
+    "Corporate Events",
+    "Product Launches",
+    "Birthday Parties",
+    "Engagement Parties",
+    "Anniversaries",
+    "Baby Showers",
+    "Bridal Showers",
+    "Conference Management",
+    "Award Nights",
+    "Styling & Hire",
+    "Vendor Sourcing",
+    "On-the-Day Management",
+    "Destination Weddings"
+  ],
+  "staff_skills": [
+    "event planning",
+    "wedding planning",
+    "styling",
+    "vendor management",
+    "coordination",
+    "corporate events",
+    "budgeting"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding tomorrow",
+      "event this week",
+      "planner cancelled",
+      "urgent"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "before the date",
+      "short notice"
+    ],
+    "routine": [
+      "booking",
+      "quote",
+      "planning",
+      "styling",
+      "consultation"
+    ]
+  },
+  "extra_prompt": "You are booking for a wedding or event planner. Ask about the event type, date, guest count, budget range, and venue. Ask about the level of support wanted (full planning, styling, or on-the-day coordination). Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise specific vendor availability or a fixed total budget outcome.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the event type, guest count, and services you need.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do full wedding planning?",
+      "a": "Yes, we offer full planning, partial planning, and on-the-day coordination.",
+      "keywords": "full planning,wedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you do on-the-day coordination?",
+      "a": "Yes, we offer on-the-day management for couples who have planned the wedding themselves.",
+      "keywords": "on the day,coordination",
+      "priority": 9
+    },
+    {
+      "q": "Do you do styling?",
+      "a": "Yes, we do styling, hire, and set-up.",
+      "keywords": "styling,hire,decor",
+      "priority": 9
+    },
+    {
+      "q": "Do you do corporate events?",
+      "a": "Yes, we plan launches, conferences, award nights, and team events.",
+      "keywords": "corporate,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you find vendors?",
+      "a": "Yes, we source and manage vendors to suit your style and budget.",
+      "keywords": "vendor,supplier",
+      "priority": 9
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "Most weddings book 9–18 months ahead. Corporate events can be shorter.",
+      "keywords": "how far,advance,when",
+      "priority": 8
+    },
+    {
+      "q": "Do you do destination weddings?",
+      "a": "Yes, we plan destination weddings. Travel fees apply.",
+      "keywords": "destination,travel",
+      "priority": 8
+    },
+    {
+      "q": "Do you manage the budget?",
+      "a": "Yes, we build and manage a budget with you and track expenses.",
+      "keywords": "budget,expenses",
+      "priority": 9
+    },
+    {
+      "q": "Do you attend the event?",
+      "a": "Yes, we attend weddings and larger events. Smaller events may only need remote coordination.",
+      "keywords": "attend,on site",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit,booking",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do set-up and pack-down?",
+      "a": "Yes, we manage set-up and pack-down as part of styling and coordination.",
+      "keywords": "setup,packdown",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a free consultation?",
+      "a": "{consult_note}",
+      "keywords": "consult,free",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "EVT-FULL",
+      "label": "Full wedding planning (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "full planning"
+    },
+    {
+      "sku": "EVT-PART",
+      "label": "Partial planning (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "partial"
+    },
+    {
+      "sku": "EVT-OTD",
+      "label": "On-the-day coordination",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "on the day"
+    },
+    {
+      "sku": "EVT-STYLE",
+      "label": "Styling & hire",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "styling"
+    },
+    {
+      "sku": "EVT-CORP",
+      "label": "Corporate event management",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "EVT-PARTY",
+      "label": "Party planning",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "party"
+    },
+    {
+      "sku": "EVT-SETUP",
+      "label": "Set-up & pack-down (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "setup"
+    },
+    {
+      "sku": "EVT-HOUR",
+      "label": "Planning hourly",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "EVT-TRAVEL",
+      "label": "Travel (per km beyond 30km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    },
+    {
+      "sku": "EVT-CONS",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    }
+  ]
+}

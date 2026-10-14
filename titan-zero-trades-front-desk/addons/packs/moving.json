@@ -1,0 +1,268 @@
+{
+  "id": "moving",
+  "name": "Moving & Removals",
+  "icon": "📦",
+  "tagline": "Local, interstate, office moves, packing",
+  "version": "1.0.0",
+  "service_types": [
+    "Local Moving",
+    "Interstate Moving",
+    "Office Moving",
+    "Packing",
+    "Unpacking",
+    "Piano Moving",
+    "Furniture Removal",
+    "Storage",
+    "End of Lease Move",
+    "Senior Moving",
+    "Commercial Relocation",
+    "International Moving",
+    "Vehicle Transport",
+    "Packing Materials"
+  ],
+  "staff_skills": [
+    "moving",
+    "removals",
+    "packing",
+    "furniture",
+    "piano",
+    "storage",
+    "logistics"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "same day move",
+      "urgent move",
+      "eviction",
+      "settlement"
+    ],
+    "urgent": [
+      "tomorrow",
+      "this week",
+      "moving out friday",
+      "end of lease"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "booking",
+      "packing",
+      "storage"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional moving company. Ask about the pickup and delivery addresses, the volume of items, stairs and lift access, and the preferred date. Ask about packing, fragile items, and whether storage is needed. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a fixed price without an inventory or survey.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured for transit and goods in storage.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does a move cost?",
+      "a": "{price_note} Moving is priced by hour plus truck, or by fixed quote after a survey.",
+      "keywords": "cost,price,moving",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply boxes?",
+      "a": "Yes, we supply boxes and packing materials.",
+      "keywords": "boxes,packing materials",
+      "priority": 8
+    },
+    {
+      "q": "Do you pack for me?",
+      "a": "Yes, we offer full and partial packing services.",
+      "keywords": "pack,packing",
+      "priority": 9
+    },
+    {
+      "q": "Do you move pianos?",
+      "a": "Yes, we move pianos with specialist equipment.",
+      "keywords": "piano,move",
+      "priority": 8
+    },
+    {
+      "q": "Do you move pool tables?",
+      "a": "Yes, we move and reassemble pool tables.",
+      "keywords": "pool table,billiard",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer storage?",
+      "a": "Yes, we offer short and long term storage.",
+      "keywords": "storage,store",
+      "priority": 9
+    },
+    {
+      "q": "Do you do office moves?",
+      "a": "Yes, we do office and commercial relocations.",
+      "keywords": "office,commercial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do interstate moves?",
+      "a": "Yes, we do interstate moves.",
+      "keywords": "interstate,long distance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do international moves?",
+      "a": "Yes, we coordinate international moves.",
+      "keywords": "international,overseas",
+      "priority": 8
+    },
+    {
+      "q": "How many movers will come?",
+      "a": "Most jobs send 2–4 movers depending on volume.",
+      "keywords": "how many,movers",
+      "priority": 8
+    },
+    {
+      "q": "What truck size do you use?",
+      "a": "We use trucks sized to your move. Tell us the volume and access.",
+      "keywords": "truck,size",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge for stairs?",
+      "a": "Stairs and long carries may incur a surcharge. Tell us the access.",
+      "keywords": "stairs,access,surcharge",
+      "priority": 8
+    },
+    {
+      "q": "Do you disassemble furniture?",
+      "a": "Yes, we disassemble and reassemble standard furniture.",
+      "keywords": "disassemble,reassemble,furniture",
+      "priority": 8
+    },
+    {
+      "q": "What if something is damaged?",
+      "a": "We are insured and will handle claims per our policy.",
+      "keywords": "damage,claim",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide a receipt?",
+      "a": "Yes, we provide a detailed receipt.",
+      "keywords": "receipt,invoice",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area and interstate. Ask us to confirm.",
+      "keywords": "area,location",
+      "priority": 7
+    },
+    {
+      "q": "How do I book?",
+      "a": "Tell us the addresses, volume, date, and access. We will confirm a time.",
+      "keywords": "book,booking",
+      "priority": 8
+    },
+    {
+      "q": "Do you move plants?",
+      "a": "Yes, we move plants. Some states have biosecurity rules.",
+      "keywords": "plant,move",
+      "priority": 7
+    },
+    {
+      "q": "Do you move safes?",
+      "a": "Yes, we move safes with specialist equipment.",
+      "keywords": "safe,move",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MOV-HR-2",
+      "label": "2 movers + truck (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "movers,truck,hourly"
+    },
+    {
+      "sku": "MOV-HR-3",
+      "label": "3 movers + truck (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "movers,truck,hourly"
+    },
+    {
+      "sku": "MOV-PACK",
+      "label": "Packing service (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "pack,packing"
+    },
+    {
+      "sku": "MOV-UNPACK",
+      "label": "Unpacking service (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "unpack"
+    },
+    {
+      "sku": "MOV-BOX",
+      "label": "Packing box",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 6,
+      "taxable": 1,
+      "keywords": "box,carton"
+    },
+    {
+      "sku": "MOV-TAPE",
+      "label": "Packing tape",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 5,
+      "taxable": 1,
+      "keywords": "tape"
+    },
+    {
+      "sku": "MOV-BUBBLE",
+      "label": "Bubble wrap (per meter)",
+      "kind": "material",
+      "unit": "meter",
+      "unit_price": 2,
+      "taxable": 1,
+      "keywords": "bubble wrap"
+    },
+    {
+      "sku": "MOV-PIANO",
+      "label": "Piano move surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "piano"
+    },
+    {
+      "sku": "MOV-STAIRS",
+      "label": "Stairs / long carry surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "stairs,carry"
+    },
+    {
+      "sku": "MOV-STORAGE",
+      "label": "Storage (per week)",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "storage,store"
+    }
+  ]
+}

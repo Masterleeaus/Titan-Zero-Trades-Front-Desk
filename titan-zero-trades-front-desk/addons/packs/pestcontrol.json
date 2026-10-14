@@ -1,0 +1,396 @@
+{
+  "id": "pestcontrol",
+  "name": "Pest Control",
+  "icon": "🐜",
+  "tagline": "Ants, cockroaches, rodents, termites, bed bugs, wasps",
+  "version": "1.0.0",
+  "service_types": [
+    "Pest Inspection",
+    "General Pest Treatment",
+    "Rodent Control",
+    "Termite Inspection & Treatment",
+    "Wasp & Bee Removal",
+    "Cockroach Treatment",
+    "Ant & Spider Control",
+    "Bird Proofing & Exclusion",
+    "Mosquito & Fly Control",
+    "Pre-Purchase Pest Inspection",
+    "Bed Bug Treatment",
+    "Flea Treatment",
+    "Ongoing Pest Program"
+  ],
+  "staff_skills": [
+    "pest",
+    "rodent",
+    "termite",
+    "insect",
+    "wasp",
+    "birds",
+    "flies",
+    "moisture",
+    "pre-purchase"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wasp nest with allergic reaction",
+      "swarm near children",
+      "rats in the kitchen with food exposed",
+      "bees swarming at the door",
+      "large swarm of flying insects in the house with a person unwell",
+      "stings with breathing difficulty"
+    ],
+    "urgent": [
+      "termites found",
+      "bed bugs",
+      "mice in the bedroom",
+      "cockroach infestation",
+      "wasp nest near entrance",
+      "mice droppings in food storage",
+      "termite activity in a wall",
+      "bird nesting in a roof cavity with food areas nearby"
+    ],
+    "routine": [
+      "ants",
+      "spiders",
+      "pest inspection",
+      "quote",
+      "preventive treatment",
+      "silverfish",
+      "ongoing service",
+      "pre-purchase inspection",
+      "mosquito treatment",
+      "fly control",
+      "bird proofing",
+      "ant nest"
+    ]
+  },
+  "extra_prompt": "You are booking for a licensed pest control company. Ask what pest is involved, where it has been seen, and how long the problem has lasted. Ask whether there are children, pets, or elderly residents, because they affect the treatment plan. Tell the caller not to disturb a nest or spray it themselves. Bee or wasp nests near people, or a stinging risk, are urgent. Treatment depends on inspection, so do not name chemicals or give dosing advice.",
+  "kb": [
+    {
+      "q": "Are your treatments safe for pets and children?",
+      "a": "We choose products suited to the pest and the site. We tell you which areas to keep clear and how long to stay out after treatment.",
+      "keywords": "safe,pets,children,baby,treatment",
+      "priority": 10
+    },
+    {
+      "q": "How long before I can return after a treatment?",
+      "a": "Most treatments need you to stay out of treated rooms until the spray has dried, usually a few hours. Our technician gives you exact instructions on site.",
+      "keywords": "re-enter,return,dry,how long,stay out",
+      "priority": 9
+    },
+    {
+      "q": "How much does an inspection cost?",
+      "a": "{price_note} A standard pest inspection includes a written report with recommended treatment.",
+      "keywords": "inspection,price,cost,report",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a guarantee?",
+      "a": "Yes. {guarantee_note}",
+      "keywords": "guarantee,warranty,return,again",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat termites?",
+      "a": "Yes. We offer termite inspections and treatments, including barrier and bait options. A termite report is provided for buyers and sellers.",
+      "keywords": "termite,inspection,report,barrier,bait",
+      "priority": 9
+    },
+    {
+      "q": "I found a termite mound or live termites. What should I do?",
+      "a": "Do not disturb them or try to treat yourself. Keep the area as it is, and book a termite inspection as soon as possible.",
+      "keywords": "termite,found,mound,disturb",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove rats and mice?",
+      "a": "Yes. We inspect, seal entry points, set bait stations or traps, and check for repeats over the following weeks.",
+      "keywords": "rat,mice,rodent,trap,bait",
+      "priority": 9
+    },
+    {
+      "q": "Can you remove a wasp or bee nest?",
+      "a": "Yes. We remove wasp nests and relocate or remove honey bee swarms where we can. Tell us if anyone in the house has a known sting allergy.",
+      "keywords": "wasp,bee,nest,swarm,remove",
+      "priority": 10
+    },
+    {
+      "q": "Do you handle bed bugs?",
+      "a": "Yes. Bed bug treatment usually needs more than one visit, and we advise on preparing bedding, furniture and clothing.",
+      "keywords": "bed bug,bedbug,treatment,visits",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat cockroaches?",
+      "a": "Yes. We treat cockroaches with gel baits and targeted sprays, and we advise on food storage and cleaning to prevent a return.",
+      "keywords": "cockroach,roach,gel,bait",
+      "priority": 8
+    },
+    {
+      "q": "How often should I have pest control?",
+      "a": "Most homes and businesses benefit from a preventive service every three to six months, depending on the pest pressure.",
+      "keywords": "how often,preventive,schedule,regular",
+      "priority": 7
+    },
+    {
+      "q": "Are ants a serious problem?",
+      "a": "Ants are usually a nuisance rather than a risk, but some species nest in walls. An inspection finds the nest so we can treat it properly.",
+      "keywords": "ants,nest,inspection,species",
+      "priority": 7
+    },
+    {
+      "q": "Do you do spider treatments?",
+      "a": "Yes. We treat spider harbourage areas inside and outside the home, and we can advise on reducing the food and shelter spiders use.",
+      "keywords": "spider,treatment,outside,harbourage",
+      "priority": 7
+    },
+    {
+      "q": "Do you treat outdoor areas?",
+      "a": "Yes. We treat perimeters, eaves, gardens and bins where pests enter or breed.",
+      "keywords": "outdoor,perimeter,eaves,garden",
+      "priority": 7
+    },
+    {
+      "q": "Will I need to prepare the property?",
+      "a": "Usually only light preparation: clear benchtops and food storage, and let the technician know where children and pets are.",
+      "keywords": "prepare,preparation,clear,benchtop",
+      "priority": 7
+    },
+    {
+      "q": "Are your technicians licensed?",
+      "a": "Yes. Our technicians hold the required pest control licences and are trained on the products they use.",
+      "keywords": "licensed,licence,qualified,trained",
+      "priority": 9
+    },
+    {
+      "q": "Do you do commercial pest control?",
+      "a": "Yes. We service restaurants, offices, warehouses and strata, with scheduled visits and a logbook for audits.",
+      "keywords": "commercial,restaurant,office,strata,logbook",
+      "priority": 8
+    },
+    {
+      "q": "What is a pre-purchase pest inspection?",
+      "a": "It is a visual inspection of the property for termites, borers and other pests, with a written report. It helps you decide before you buy.",
+      "keywords": "pre-purchase,inspection,report,buy",
+      "priority": 9
+    },
+    {
+      "q": "Can you stop birds nesting in my roof or eaves?",
+      "a": "Yes. We install bird exclusion netting and mesh and seal entry points. Native birds are protected, so we use humane exclusion rather than removal.",
+      "keywords": "birds,nesting,eaves,netting,exclusion",
+      "priority": 9
+    },
+    {
+      "q": "Can you control mosquitoes around the home?",
+      "a": "We can treat breeding areas and apply a targeted spray. Removing standing water in gutters, pot plates and pet bowls is the most effective step you can take.",
+      "keywords": "mosquito,control,breeding,standing water",
+      "priority": 8
+    },
+    {
+      "q": "Do you control flies?",
+      "a": "Yes. We find the source, such as bins, drains or animal waste, and treat it with a fly control programme.",
+      "keywords": "flies,control,source,drain,bin",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat pests in apartments or units?",
+      "a": "Yes. We coordinate with the strata or building manager, treat common areas and adjoining units where needed, and give written notice to residents.",
+      "keywords": "apartment,unit,strata,building,treat",
+      "priority": 8
+    },
+    {
+      "q": "How can I tell if I have a rodent problem?",
+      "a": "Look for droppings, gnaw marks, scratching in the ceiling or walls, and a musky smell. A visit confirms it and finds the entry points.",
+      "keywords": "rodent,signs,droppings,gnaw,smell",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat moisture and drainage pests?",
+      "a": "Yes. Pests such as silverfish and cockroaches often follow damp areas. We check drainage, ventilation and moisture sources along with the treatment.",
+      "keywords": "moisture,damp,drainage,silverfish",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PST-INSP",
+      "label": "Pest inspection (with written report)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "inspect,check,visit,report"
+    },
+    {
+      "sku": "PST-TRT-1",
+      "label": "General pest treatment (interior)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 175,
+      "taxable": 1,
+      "keywords": "treatment,spray,general,interior"
+    },
+    {
+      "sku": "PST-TRT-O",
+      "label": "Exterior perimeter treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "perimeter,outside,exterior,treatment"
+    },
+    {
+      "sku": "PST-ANT",
+      "label": "Ant nest treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "ant,nest,treatment"
+    },
+    {
+      "sku": "PST-COCK",
+      "label": "Cockroach gel and spray treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "cockroach,roach,gel,treatment"
+    },
+    {
+      "sku": "PST-RAT",
+      "label": "Rodent bait station set-up (per station)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "rat,mouse,bait,station"
+    },
+    {
+      "sku": "PST-RAT-SEAL",
+      "label": "Rodent entry point sealing (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "seal,rodent,entry,hour"
+    },
+    {
+      "sku": "PST-WASP",
+      "label": "Wasp nest removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "wasp,nest,removal"
+    },
+    {
+      "sku": "PST-BEE",
+      "label": "Bee swarm removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "bee,swarm,removal"
+    },
+    {
+      "sku": "PST-TERM",
+      "label": "Termite inspection and report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 295,
+      "taxable": 1,
+      "keywords": "termite,inspection,report"
+    },
+    {
+      "sku": "PST-TERM-T",
+      "label": "Termite barrier treatment (per metre)",
+      "kind": "material",
+      "unit": "ft",
+      "unit_price": 48,
+      "taxable": 1,
+      "keywords": "termite,barrier,treatment,metre"
+    },
+    {
+      "sku": "PST-BED",
+      "label": "Bed bug treatment (per room)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "bed bug,room,treatment"
+    },
+    {
+      "sku": "PST-SPID",
+      "label": "Spider treatment (interior and exterior)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "spider,treatment"
+    },
+    {
+      "sku": "PST-PLAN",
+      "label": "Preventive service plan (per visit)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "plan,preventive,regular,visit"
+    },
+    {
+      "sku": "PST-TRAVEL",
+      "label": "Travel fee outside service area",
+      "kind": "travel",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "travel,distance,outside"
+    },
+    {
+      "sku": "PST-PREPUR",
+      "label": "Pre-purchase pest inspection and report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "pre-purchase,inspection,report"
+    },
+    {
+      "sku": "PST-BIRD",
+      "label": "Bird proofing (per linear metre of ledge)",
+      "kind": "labor",
+      "unit": "ft",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "bird,proofing,ledge,netting"
+    },
+    {
+      "sku": "PST-MOSQ",
+      "label": "Mosquito treatment (breeding areas)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "mosquito,treatment,breeding"
+    },
+    {
+      "sku": "PST-FLY",
+      "label": "Fly control treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "fly,control,treatment"
+    },
+    {
+      "sku": "PST-MOIST",
+      "label": "Moisture and drainage pest check",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "moisture,damp,drainage,check"
+    }
+  ]
+}

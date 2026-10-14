@@ -1,0 +1,292 @@
+{
+  "id": "physiotherapy",
+  "name": "Physiotherapy",
+  "icon": "🩺",
+  "tagline": "Sports, remedial, rehab, dry needling, telehealth",
+  "version": "1.0.0",
+  "service_types": [
+    "Initial Consultation",
+    "Sports Physio",
+    "Remedial Massage",
+    "Dry Needling",
+    "Manual Therapy",
+    "Exercise Prescription",
+    "Post-Op Rehab",
+    "Prehab",
+    "Sports Injury",
+    "Back & Neck",
+    "Shoulder",
+    "Knee",
+    "Ankle",
+    "Pilates",
+    "Women's Health",
+    "Men's Health",
+    "Paediatric",
+    "Home Visits",
+    "Telehealth"
+  ],
+  "staff_skills": [
+    "physiotherapy",
+    "dry needling",
+    "manual therapy",
+    "sports rehab",
+    "pilates",
+    "exercise",
+    "women's health"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "acute injury",
+      "post-op",
+      "severe pain",
+      "can't walk"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "after injury"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "rehab",
+      "booking",
+      "plan",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a physiotherapy clinic. Ask about the injury or condition, how long it has been present, and any scans or doctor's referral. Ask about goals, sport, and whether they prefer in-clinic or telehealth. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise a specific recovery outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does physio cost?",
+      "a": "{price_note} Initial consultations are longer than follow-ups. We confirm before booking.",
+      "keywords": "cost,price,physio",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, if you have physiotherapy cover. We provide HICAPS on-the-spot claiming where available.",
+      "keywords": "health fund,hicaps,rebate",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a doctor's referral?",
+      "a": "No referral is needed for private physio. Referrals are needed for Medicare EPC plans and some insurance.",
+      "keywords": "referral,doctor,medicare",
+      "priority": 9
+    },
+    {
+      "q": "Do you do dry needling?",
+      "a": "Yes, our physios are trained in dry needling.",
+      "keywords": "dry needling,needle",
+      "priority": 9
+    },
+    {
+      "q": "Do you do sports physio?",
+      "a": "Yes, we do sports physio and return-to-sport programs.",
+      "keywords": "sports",
+      "priority": 9
+    },
+    {
+      "q": "Do you do post-op rehab?",
+      "a": "Yes, we do post-operative rehabilitation.",
+      "keywords": "post op,rehab",
+      "priority": 9
+    },
+    {
+      "q": "Do you do prehab?",
+      "a": "Yes, we do pre-surgery preparation.",
+      "keywords": "prehab,pre surgery",
+      "priority": 8
+    },
+    {
+      "q": "Do you do women's health physio?",
+      "a": "Yes, including pelvic floor and prenatal/postnatal care.",
+      "keywords": "women's health,pelvic,prenatal",
+      "priority": 9
+    },
+    {
+      "q": "Do you do men's health physio?",
+      "a": "Yes, including pelvic health and continence.",
+      "keywords": "men's health,pelvic",
+      "priority": 8
+    },
+    {
+      "q": "Do you do paediatric physio?",
+      "a": "Yes, we treat children and babies.",
+      "keywords": "paediatric,children",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, we offer video consultations.",
+      "keywords": "telehealth,video,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in the local metro area.",
+      "keywords": "home visit,mobile",
+      "priority": 8
+    },
+    {
+      "q": "Do you do clinical pilates?",
+      "a": "Yes, we run clinical pilates in one-on-one and small group formats.",
+      "keywords": "pilates,clinical",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Initial consults are 45–60 minutes. Follow-ups are 30 minutes.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions will I need?",
+      "a": "It depends on the condition. We will give you an estimated plan after assessment.",
+      "keywords": "how many,sessions",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Yes, all physios are AHPRA registered and insured.",
+      "keywords": "ahpra,registered,insured",
+      "priority": 9
+    },
+    {
+      "q": "What should I bring?",
+      "a": "Bring scans, reports, shorts, and comfortable clothing.",
+      "keywords": "bring,what to bring",
+      "priority": 8
+    },
+    {
+      "q": "Do you do exercise prescription?",
+      "a": "Yes, we prescribe home exercises via an app.",
+      "keywords": "exercise,home program",
+      "priority": 8
+    },
+    {
+      "q": "Do you do manual therapy?",
+      "a": "Yes, we use manual therapy alongside exercise.",
+      "keywords": "manual therapy",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PHY-INIT",
+      "label": "Initial consultation (45–60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "initial"
+    },
+    {
+      "sku": "PHY-FU",
+      "label": "Follow-up consultation (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "follow up"
+    },
+    {
+      "sku": "PHY-EXT",
+      "label": "Extended follow-up (45 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 125,
+      "taxable": 1,
+      "keywords": "extended"
+    },
+    {
+      "sku": "PHY-DRY",
+      "label": "Dry needling add-on",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "dry needling"
+    },
+    {
+      "sku": "PHY-REM",
+      "label": "Remedial massage (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "remedial"
+    },
+    {
+      "sku": "PHY-PIL",
+      "label": "Clinical pilates (1-on-1)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "pilates"
+    },
+    {
+      "sku": "PHY-PIL-G",
+      "label": "Clinical pilates (group)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "pilates group"
+    },
+    {
+      "sku": "PHY-TELE",
+      "label": "Telehealth consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "telehealth"
+    },
+    {
+      "sku": "PHY-HOME",
+      "label": "Home visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "PHY-REP",
+      "label": "Exercise report / return-to-work",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "report,return to work"
+    },
+    {
+      "sku": "PHY-PACK5",
+      "label": "5-session rehab package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "package"
+    },
+    {
+      "sku": "PHY-CANC",
+      "label": "Late cancellation fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 50,
+      "taxable": 1,
+      "keywords": "cancellation"
+    }
+  ]
+}

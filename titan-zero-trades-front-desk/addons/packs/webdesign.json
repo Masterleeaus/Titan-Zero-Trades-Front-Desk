@@ -1,0 +1,258 @@
+{
+  "id": "webdesign",
+  "name": "Web & Graphic Design",
+  "icon": "🎨",
+  "tagline": "Websites, branding, logos, print, UX",
+  "version": "1.0.0",
+  "service_types": [
+    "Website Design",
+    "Website Development",
+    "E-commerce Store",
+    "Landing Pages",
+    "Logo Design",
+    "Brand Identity",
+    "Graphic Design",
+    "Print Design",
+    "Brochures",
+    "Business Cards",
+    "Packaging Design",
+    "UX/UI Design",
+    "Website Maintenance",
+    "SEO Setup",
+    "WordPress",
+    "Shopify",
+    "Squarespace",
+    "Webflow"
+  ],
+  "staff_skills": [
+    "web design",
+    "web development",
+    "wordpress",
+    "shopify",
+    "graphic design",
+    "logo",
+    "branding",
+    "ux",
+    "ui"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "site down",
+      "launch tomorrow",
+      "urgent fix",
+      "hacked site"
+    ],
+    "urgent": [
+      "this week",
+      "before launch",
+      "before event"
+    ],
+    "routine": [
+      "quote",
+      "website",
+      "logo",
+      "branding",
+      "project"
+    ]
+  },
+  "extra_prompt": "You are booking for a web and graphic design studio. Ask about the project type, scope, deadline, and whether content or branding exists. Ask about platform preferences and hosting. Quote prices only from the reference answers, and say the final price is confirmed after scope is agreed. Do not promise a specific timeline or result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does a website cost?",
+      "a": "{price_note} Websites are priced by page count and features. Tell us your scope and we'll quote.",
+      "keywords": "cost,price,website",
+      "priority": 9
+    },
+    {
+      "q": "Do you do logos?",
+      "a": "Yes, logo and brand identity design are available.",
+      "keywords": "logo,brand",
+      "priority": 9
+    },
+    {
+      "q": "Do you use WordPress?",
+      "a": "Yes, we build on WordPress, Shopify, Squarespace, and Webflow.",
+      "keywords": "wordpress,shopify,squarespace",
+      "priority": 9
+    },
+    {
+      "q": "Do you do e-commerce?",
+      "a": "Yes, including Shopify and WooCommerce stores.",
+      "keywords": "ecommerce,shop,store",
+      "priority": 9
+    },
+    {
+      "q": "Do you host websites?",
+      "a": "We can recommend hosting or manage it for you.",
+      "keywords": "hosting,host",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SEO?",
+      "a": "We do on-page SEO setup. Ongoing SEO is quoted separately.",
+      "keywords": "seo,search",
+      "priority": 9
+    },
+    {
+      "q": "Do you do maintenance?",
+      "a": "Yes, we offer monthly maintenance plans.",
+      "keywords": "maintenance,updates",
+      "priority": 8
+    },
+    {
+      "q": "Do you do copywriting?",
+      "a": "We can work with your copy or recommend a copywriter.",
+      "keywords": "copywriting,copy",
+      "priority": 8
+    },
+    {
+      "q": "How long does a website take?",
+      "a": "Most sites take 4–8 weeks depending on scope and content readiness.",
+      "keywords": "how long,time",
+      "priority": 9
+    },
+    {
+      "q": "Do you do print design?",
+      "a": "Yes, brochures, business cards, packaging, and signage.",
+      "keywords": "print,brochure",
+      "priority": 8
+    },
+    {
+      "q": "How many revisions are included?",
+      "a": "Most packages include two rounds of revisions.",
+      "keywords": "revision,changes",
+      "priority": 8
+    },
+    {
+      "q": "Do you do UX/UI design?",
+      "a": "Yes, for web and mobile apps.",
+      "keywords": "ux,ui,app",
+      "priority": 8
+    },
+    {
+      "q": "Do you need content from me?",
+      "a": "Yes, or we can arrange content creation at an additional cost.",
+      "keywords": "content,text",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note}",
+      "keywords": "payment plan,instalment",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 7
+    },
+    {
+      "q": "Do you do website repair?",
+      "a": "Yes, we fix hacked, broken, or slow sites.",
+      "keywords": "repair,fix,broken",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "WD-LOGO",
+      "label": "Logo design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "logo"
+    },
+    {
+      "sku": "WD-BRAND",
+      "label": "Brand identity package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "brand"
+    },
+    {
+      "sku": "WD-LP",
+      "label": "Landing page",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "landing page"
+    },
+    {
+      "sku": "WD-SITE5",
+      "label": "5-page website",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2800,
+      "taxable": 1,
+      "keywords": "website,5 page"
+    },
+    {
+      "sku": "WD-SITE10",
+      "label": "10-page website",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4800,
+      "taxable": 1,
+      "keywords": "website,10 page"
+    },
+    {
+      "sku": "WD-ECOM",
+      "label": "E-commerce store (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "ecommerce"
+    },
+    {
+      "sku": "WD-HR",
+      "label": "Design hourly",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "WD-MAINT",
+      "label": "Website maintenance (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "maintenance"
+    },
+    {
+      "sku": "WD-SEO",
+      "label": "On-page SEO setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "seo"
+    },
+    {
+      "sku": "WD-PRINT",
+      "label": "Print design (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "print"
+    },
+    {
+      "sku": "WD-COPY",
+      "label": "Copywriting (per page)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "copy"
+    }
+  ]
+}

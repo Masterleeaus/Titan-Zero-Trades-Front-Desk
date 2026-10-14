@@ -1,0 +1,246 @@
+{
+  "id": "dancemusic",
+  "name": "Dance & Music Schools",
+  "icon": "🎵",
+  "tagline": "Dance, singing, instruments, group and private lessons",
+  "version": "1.0.0",
+  "service_types": [
+    "Dance Class",
+    "Private Dance Lesson",
+    "Wedding Dance",
+    "Singing Lessons",
+    "Piano Lessons",
+    "Guitar Lessons",
+    "Violin Lessons",
+    "Drums",
+    "Bass",
+    "Ukulele",
+    "Music Theory",
+    "Exam Prep (AMEB)",
+    "Kindermusik",
+    "Hip Hop",
+    "Ballet",
+    "Contemporary",
+    "Ballroom",
+    "Tap",
+    "Group Music",
+    "Online Lessons"
+  ],
+  "staff_skills": [
+    "dance",
+    "ballet",
+    "hip hop",
+    "ballroom",
+    "piano",
+    "guitar",
+    "voice",
+    "violin",
+    "drums",
+    "music theory"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding this week",
+      "exam tomorrow",
+      "performance tonight"
+    ],
+    "urgent": [
+      "this week",
+      "before exam",
+      "before wedding",
+      "starting now"
+    ],
+    "routine": [
+      "weekly",
+      "term",
+      "lessons",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a dance or music school. Ask about the student's age, experience, goals, and preferred style or instrument. Ask whether they prefer group or private, in-studio or online. Quote prices only from the reference answers, and say the final price is confirmed after enrolment. Do not promise a specific exam or performance result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much are lessons?",
+      "a": "{price_note} Lessons are priced per session, per term, or per term package.",
+      "keywords": "cost,price,lessons",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer private lessons?",
+      "a": "Yes, private and group lessons are available.",
+      "keywords": "private,group",
+      "priority": 9
+    },
+    {
+      "q": "Do you teach adults?",
+      "a": "Yes, we teach children, teens, and adults.",
+      "keywords": "adults,all ages",
+      "priority": 9
+    },
+    {
+      "q": "Do you teach beginners?",
+      "a": "Yes, we welcome beginners at any age.",
+      "keywords": "beginner,new",
+      "priority": 9
+    },
+    {
+      "q": "Do you do wedding dance lessons?",
+      "a": "Yes, we offer wedding dance packages.",
+      "keywords": "wedding dance",
+      "priority": 8
+    },
+    {
+      "q": "Do you prepare for AMEB exams?",
+      "a": "Yes, we prepare students for AMEB and other exams.",
+      "keywords": "ameb,exam",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer online lessons?",
+      "a": "Yes, we offer online lessons via video call.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "How long is a lesson?",
+      "a": "Lessons are usually 30, 45, or 60 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do I need an instrument?",
+      "a": "For instrument lessons, yes. For piano, we can teach on our studio piano or advise on a home keyboard.",
+      "keywords": "instrument,keyboard,piano",
+      "priority": 9
+    },
+    {
+      "q": "What should students wear?",
+      "a": "Comfortable clothing. Dance shoes or socks. Uniforms available for some styles.",
+      "keywords": "wear,clothing,shoes",
+      "priority": 8
+    },
+    {
+      "q": "Do you run concerts?",
+      "a": "Yes, we run annual concerts and showcases.",
+      "keywords": "concert,showcase",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a free trial?",
+      "a": "{trial_note}",
+      "keywords": "trial,free",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you have sibling discounts?",
+      "a": "{discount_note}",
+      "keywords": "sibling,discount",
+      "priority": 7
+    },
+    {
+      "q": "Where are you located?",
+      "a": "We are located in the local metro area. Ask for directions or a map.",
+      "keywords": "location,where",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "DM-GROUP",
+      "label": "Group class (per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "DM-PRIV30",
+      "label": "Private lesson 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "private,30"
+    },
+    {
+      "sku": "DM-PRIV60",
+      "label": "Private lesson 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "private,60"
+    },
+    {
+      "sku": "DM-TERM",
+      "label": "Term fee (per subject)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "term"
+    },
+    {
+      "sku": "DM-WED",
+      "label": "Wedding dance package (5 lessons)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "DM-EXAM",
+      "label": "Exam prep lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "exam"
+    },
+    {
+      "sku": "DM-ONLINE",
+      "label": "Online lesson 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "DM-CONC",
+      "label": "Concert / showcase fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "concert"
+    },
+    {
+      "sku": "DM-UNIFORM",
+      "label": "Uniform / costume",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "uniform,costume"
+    },
+    {
+      "sku": "DM-REG",
+      "label": "Annual registration fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "registration"
+    }
+  ]
+}

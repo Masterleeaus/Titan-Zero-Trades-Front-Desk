@@ -1,0 +1,268 @@
+{
+  "id": "concrete",
+  "name": "Concrete & Paving",
+  "icon": "🧱",
+  "tagline": "Slabs, driveways, paths, exposed aggregate, paving",
+  "version": "1.0.0",
+  "service_types": [
+    "Concrete Slabs",
+    "Driveways",
+    "Paths",
+    "Patios",
+    "Exposed Aggregate",
+    "Stamped Concrete",
+    "Polished Concrete",
+    "Paving",
+    "Retaining Walls",
+    "Footings",
+    "Crossovers",
+    "Concrete Repair",
+    "Concrete Removal",
+    "Commercial Concrete"
+  ],
+  "staff_skills": [
+    "concreting",
+    "paving",
+    "formwork",
+    "reinforcement",
+    "finishing",
+    "slabs",
+    "excavation"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "cracked slab",
+      "sinking",
+      "urgent repair",
+      "trip hazard"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before build"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "replace",
+      "repair"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional concreting and paving company. Ask about the area size, surface type, access, and whether excavation is needed. Ask about reinforcement, finish, and drainage. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or structural outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does concreting cost?",
+      "a": "{price_note} Concreting is priced per square meter including excavation and finishing.",
+      "keywords": "cost,price,concrete",
+      "priority": 9
+    },
+    {
+      "q": "Do you do exposed aggregate?",
+      "a": "Yes, we do exposed aggregate and coloured concrete.",
+      "keywords": "exposed aggregate,colour",
+      "priority": 9
+    },
+    {
+      "q": "Do you do stamped concrete?",
+      "a": "Yes, we do stamped and stencilled concrete.",
+      "keywords": "stamped,stencil",
+      "priority": 8
+    },
+    {
+      "q": "Do you do polished concrete?",
+      "a": "Yes, we do polished and honed concrete.",
+      "keywords": "polished,honed",
+      "priority": 8
+    },
+    {
+      "q": "Do you reinforce slabs?",
+      "a": "Yes, we use mesh and bar reinforcement as required.",
+      "keywords": "reinforcement,mesh,rebar",
+      "priority": 9
+    },
+    {
+      "q": "How long before I can use it?",
+      "a": "Foot traffic in 24–48 hours. Vehicles usually after 7 days.",
+      "keywords": "cure,dry,walk",
+      "priority": 9
+    },
+    {
+      "q": "Do you excavate?",
+      "a": "Yes, we excavate and prepare the base.",
+      "keywords": "excavate,base",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old concrete?",
+      "a": "Yes, we break up and remove old concrete.",
+      "keywords": "remove,old concrete",
+      "priority": 8
+    },
+    {
+      "q": "Do you do paving?",
+      "a": "Yes, we do paving in concrete, brick, and stone.",
+      "keywords": "paving,pavers",
+      "priority": 9
+    },
+    {
+      "q": "Do you build retaining walls?",
+      "a": "Yes, we build concrete and block retaining walls.",
+      "keywords": "retaining wall",
+      "priority": 8
+    },
+    {
+      "q": "Do you do footings?",
+      "a": "Yes, we do footings for extensions and structures.",
+      "keywords": "footing,foundation",
+      "priority": 8
+    },
+    {
+      "q": "Do you need a permit?",
+      "a": "Some driveways and crossovers need council approval. We can advise.",
+      "keywords": "permit,council",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle drainage?",
+      "a": "Yes, we allow for drainage and fall.",
+      "keywords": "drainage,fall,slope",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial work?",
+      "a": "Yes, we service commercial projects. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps for the quote. For the work, access is enough.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair cracked concrete?",
+      "a": "Yes, we repair cracks, spalling, and sinking slabs.",
+      "keywords": "crack,repair",
+      "priority": 8
+    },
+    {
+      "q": "Do you do coloured concrete?",
+      "a": "Yes, we do oxide and coloured concrete.",
+      "keywords": "colour,oxide",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CON-SLAB",
+      "label": "Concrete slab (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "slab,concrete"
+    },
+    {
+      "sku": "CON-EXPO",
+      "label": "Exposed aggregate (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 135,
+      "taxable": 1,
+      "keywords": "exposed aggregate"
+    },
+    {
+      "sku": "CON-STAMP",
+      "label": "Stamped concrete (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "stamped,stencil"
+    },
+    {
+      "sku": "CON-POL",
+      "label": "Polished concrete (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "polished"
+    },
+    {
+      "sku": "CON-PAVE",
+      "label": "Paving (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "paving,pavers"
+    },
+    {
+      "sku": "CON-FOOT",
+      "label": "Footings (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "footing,foundation"
+    },
+    {
+      "sku": "CON-REMOVE",
+      "label": "Concrete removal (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "CON-REPAIR",
+      "label": "Concrete repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "repair,crack"
+    },
+    {
+      "sku": "CON-RETAIN",
+      "label": "Retaining wall (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "retaining wall"
+    },
+    {
+      "sku": "CON-EXCAV",
+      "label": "Excavation (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "excavate,dig"
+    }
+  ]
+}

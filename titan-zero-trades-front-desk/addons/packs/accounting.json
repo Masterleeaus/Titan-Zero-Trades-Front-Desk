@@ -1,0 +1,280 @@
+{
+  "id": "accounting",
+  "name": "Accounting & Tax",
+  "icon": "🧾",
+  "tagline": "Tax returns, bookkeeping, BAS, business advisory",
+  "version": "1.0.0",
+  "service_types": [
+    "Individual Tax Return",
+    "Business Tax Return",
+    "BAS Lodgement",
+    "Bookkeeping",
+    "Payroll",
+    "Company Tax",
+    "Trust Tax",
+    "Partnership Tax",
+    "Self-Managed Super Fund",
+    "Tax Planning",
+    "Business Advisory",
+    "Company Setup",
+    "GST Registration",
+    "ATO Audit Support",
+    "Rental Property Tax",
+    "Capital Gains Tax",
+    "Estate Tax",
+    "Non-Resident Tax"
+  ],
+  "staff_skills": [
+    "accounting",
+    "tax returns",
+    "BAS",
+    "bookkeeping",
+    "payroll",
+    "SMSF",
+    "advisory",
+    "Xero",
+    "MYOB"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "ATO deadline",
+      "tax overdue",
+      "audit notice",
+      "lodgement due"
+    ],
+    "urgent": [
+      "this week",
+      "before deadline",
+      "lodgement",
+      "31 October"
+    ],
+    "routine": [
+      "quote",
+      "return",
+      "bookkeeping",
+      "BAS",
+      "advisory"
+    ]
+  },
+  "extra_prompt": "You are booking for an accounting or tax practice. Ask about the entity type, income sources, prior year returns, and lodgement deadline. Ask about software (Xero, MYOB, QuickBooks) and whether payroll or bookkeeping is needed. Quote prices only from the reference answers, and say the final price is confirmed after document review. Do not provide specific tax advice in the booking flow.",
+  "kb": [
+    {
+      "q": "How much does a tax return cost?",
+      "a": "{price_note} Individual returns are priced from a fixed fee. Complex returns are quoted after review.",
+      "keywords": "cost,price,tax return",
+      "priority": 9
+    },
+    {
+      "q": "Do you do BAS?",
+      "a": "Yes, we lodge BAS monthly, quarterly, or annually.",
+      "keywords": "bas,gst",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bookkeeping?",
+      "a": "Yes, we offer bookkeeping as a standalone or bundled service.",
+      "keywords": "bookkeeping",
+      "priority": 9
+    },
+    {
+      "q": "Do you do payroll?",
+      "a": "Yes, we manage payroll including STP.",
+      "keywords": "payroll,stp",
+      "priority": 9
+    },
+    {
+      "q": "Do you do SMSF?",
+      "a": "Yes, including audits and annual returns.",
+      "keywords": "smsf,super",
+      "priority": 9
+    },
+    {
+      "q": "Do you support Xero and MYOB?",
+      "a": "Yes, we support Xero, MYOB, and QuickBooks.",
+      "keywords": "xero,myob,quickbooks",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim work-from-home expenses?",
+      "a": "Likely yes, if you meet ATO rules. We'll confirm during your return.",
+      "keywords": "work from home,expenses",
+      "priority": 9
+    },
+    {
+      "q": "Do you do rental property tax?",
+      "a": "Yes, including negative gearing and depreciation.",
+      "keywords": "rental,investment property",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle ATO audits?",
+      "a": "Yes, we support clients through ATO reviews and audits.",
+      "keywords": "audit,ato",
+      "priority": 9
+    },
+    {
+      "q": "Do you do tax planning?",
+      "a": "Yes, we run tax planning sessions before 30 June.",
+      "keywords": "tax planning",
+      "priority": 9
+    },
+    {
+      "q": "Do you set up companies and trusts?",
+      "a": "Yes, including ABN, TFN, GST, and ASIC registration.",
+      "keywords": "company,trust,abn",
+      "priority": 9
+    },
+    {
+      "q": "How do I send documents?",
+      "a": "By secure portal, email, or in person. We'll send you a checklist.",
+      "keywords": "documents,upload",
+      "priority": 8
+    },
+    {
+      "q": "When are tax returns due?",
+      "a": "Individuals are due 31 October unless registered with an agent, which extends the date.",
+      "keywords": "due,deadline,31 october",
+      "priority": 9
+    },
+    {
+      "q": "Are you a registered tax agent?",
+      "a": "Yes, we are registered with the Tax Practitioners Board.",
+      "keywords": "registered,tpb,tax agent",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a fixed fee?",
+      "a": "Yes, most returns are fixed fee. Complex matters are quoted after review.",
+      "keywords": "fixed fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you do non-resident tax?",
+      "a": "Yes, we do non-resident and expat returns.",
+      "keywords": "non resident,expat",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer business advisory?",
+      "a": "Yes, including cashflow, structuring, and growth advice.",
+      "keywords": "advisory,business",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "ACC-IND",
+      "label": "Individual tax return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "individual return"
+    },
+    {
+      "sku": "ACC-IND-C",
+      "label": "Complex individual return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "complex return"
+    },
+    {
+      "sku": "ACC-BUS",
+      "label": "Business tax return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "business return"
+    },
+    {
+      "sku": "ACC-BAS",
+      "label": "BAS lodgement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "bas"
+    },
+    {
+      "sku": "ACC-BOOK",
+      "label": "Bookkeeping (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "bookkeeping"
+    },
+    {
+      "sku": "ACC-PAY",
+      "label": "Payroll (per pay run)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "payroll"
+    },
+    {
+      "sku": "ACC-SMSF",
+      "label": "SMSF annual return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "smsf"
+    },
+    {
+      "sku": "ACC-PLAN",
+      "label": "Tax planning session",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "tax planning"
+    },
+    {
+      "sku": "ACC-SETUP",
+      "label": "Company / trust setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "company setup"
+    },
+    {
+      "sku": "ACC-ADV",
+      "label": "Business advisory (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "advisory"
+    },
+    {
+      "sku": "ACC-AUDIT",
+      "label": "ATO audit support (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "audit"
+    },
+    {
+      "sku": "ACC-RENT",
+      "label": "Rental property schedule",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "rental"
+    }
+  ]
+}

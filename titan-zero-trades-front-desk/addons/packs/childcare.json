@@ -1,0 +1,256 @@
+{
+  "id": "childcare",
+  "name": "Childcare & Nannies",
+  "icon": "🍼",
+  "tagline": "Nannies, babysitters, after-school care, night nanny",
+  "version": "1.0.0",
+  "service_types": [
+    "Casual Babysitting",
+    "Regular Nanny",
+    "Live-Out Nanny",
+    "Live-In Nanny",
+    "Night Nanny",
+    "After-School Care",
+    "Before-School Care",
+    "Holiday Care",
+    "Weekend Care",
+    "Overnight Care",
+    "Travel Nanny",
+    "Emergency Care",
+    "Twins & Multiples",
+    "Special Needs Care",
+    "Nanny Share",
+    "Event Childcare"
+  ],
+  "staff_skills": [
+    "childcare",
+    "nanny",
+    "babysitting",
+    "newborn",
+    "toddlers",
+    "special needs",
+    "first aid",
+    "wwcc"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "emergency care",
+      "hospital",
+      "family emergency",
+      "sick child"
+    ],
+    "urgent": [
+      "tonight",
+      "today",
+      "tomorrow",
+      "this week"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "booking",
+      "nanny",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a childcare or nanny agency. Ask about the children's ages, any allergies or medical needs, the home environment, and the hours needed. Ask about pets, routines, and whether the family needs a regular or casual arrangement. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not promise a specific carer without confirming availability.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Rates depend on experience, hours, and the number of children.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Are your carers screened?",
+      "a": "Yes, all carers have police checks, working with children checks, and references.",
+      "keywords": "screened,wwcc,police check",
+      "priority": 9
+    },
+    {
+      "q": "Are they first-aid trained?",
+      "a": "Yes, all carers hold current first aid and CPR.",
+      "keywords": "first aid,cpr",
+      "priority": 9
+    },
+    {
+      "q": "Do you do last-minute care?",
+      "a": "Yes, subject to availability. Call us as early as possible.",
+      "keywords": "last minute,urgent",
+      "priority": 9
+    },
+    {
+      "q": "Do you do overnight care?",
+      "a": "Yes, including night nannies for newborns.",
+      "keywords": "overnight,night nanny",
+      "priority": 9
+    },
+    {
+      "q": "Do you do live-in nannies?",
+      "a": "Yes, live-in and live-out placements.",
+      "keywords": "live in,live out",
+      "priority": 8
+    },
+    {
+      "q": "Do you do after-school care?",
+      "a": "Yes, including school pickups.",
+      "keywords": "after school,pickup",
+      "priority": 9
+    },
+    {
+      "q": "Do you care for newborns?",
+      "a": "Yes, including newborn care specialists.",
+      "keywords": "newborn,baby",
+      "priority": 9
+    },
+    {
+      "q": "Do you care for multiples?",
+      "a": "Yes, including twins and triplets.",
+      "keywords": "twins,multiples",
+      "priority": 8
+    },
+    {
+      "q": "Do you care for children with special needs?",
+      "a": "Yes, experienced carers are available.",
+      "keywords": "special needs,disability",
+      "priority": 9
+    },
+    {
+      "q": "Do you do travel nannies?",
+      "a": "Yes, including domestic and international travel.",
+      "keywords": "travel",
+      "priority": 8
+    },
+    {
+      "q": "Do you do event childcare?",
+      "a": "Yes, including weddings and corporate events.",
+      "keywords": "event,wedding",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured",
+      "priority": 9
+    },
+    {
+      "q": "How do I book a nanny?",
+      "a": "We match a carer to your family, arrange a meet-and-greet, and confirm the booking.",
+      "keywords": "book,match",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,suburb",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CC-BABY",
+      "label": "Casual babysitting (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "babysitting"
+    },
+    {
+      "sku": "CC-NANNY",
+      "label": "Regular nanny (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "nanny"
+    },
+    {
+      "sku": "CC-NIGHT",
+      "label": "Night nanny (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "night nanny"
+    },
+    {
+      "sku": "CC-OVER",
+      "label": "Overnight care",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "CC-AFTER",
+      "label": "After-school care (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "after school"
+    },
+    {
+      "sku": "CC-LIVEIN",
+      "label": "Live-in nanny (per week)",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "live in"
+    },
+    {
+      "sku": "CC-TWINS",
+      "label": "Twins / multiples surcharge (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 10,
+      "taxable": 1,
+      "keywords": "twins"
+    },
+    {
+      "sku": "CC-EVENT",
+      "label": "Event childcare (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "CC-TRAVEL",
+      "label": "Travel nanny (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "travel"
+    },
+    {
+      "sku": "CC-PLACE",
+      "label": "Permanent placement fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "placement"
+    },
+    {
+      "sku": "CC-MEET",
+      "label": "Meet-and-greet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "meet and greet"
+    }
+  ]
+}

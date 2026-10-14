@@ -1,0 +1,254 @@
+{
+  "id": "seniortransport",
+  "name": "Senior Transport & Disability Support",
+  "icon": "🚐",
+  "tagline": "NDIS transport, medical appointments, social outings",
+  "version": "1.0.0",
+  "service_types": [
+    "Medical Appointments",
+    "Hospital Discharge",
+    "Social Outings",
+    "Shopping Trips",
+    "NDIS Transport",
+    "Wheelchair Accessible",
+    "Group Outings",
+    "Airport Transfers",
+    "Day Programs",
+    "Community Access",
+    "Support Work",
+    "Respite Transport",
+    "Companion Travel",
+    "Dialysis Transport",
+    "School Transport",
+    "Aged Care Transport"
+  ],
+  "staff_skills": [
+    "senior transport",
+    "disability support",
+    "wheelchair",
+    "ndis",
+    "support worker",
+    "first aid",
+    "companionship"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hospital now",
+      "urgent appointment",
+      "discharge today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "appointment soon"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "appointment",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a senior transport and disability support service. Ask about the passenger's mobility needs, whether a wheelchair or hoist is needed, the appointment time, and the pickup and drop-off addresses. Ask whether an escort or carer is needed. Ask about NDIS funding if applicable. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not provide medical advice.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on distance, wait time, and mobility needs. We confirm before booking.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept NDIS?",
+      "a": "Yes, we accept NDIS funding (plan, plan-managed, and self-managed).",
+      "keywords": "ndis",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide wheelchair accessible vehicles?",
+      "a": "Yes, wheelchair accessible vehicles are available.",
+      "keywords": "wheelchair,accessible",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with hospital discharge?",
+      "a": "Yes, including pickup from hospital and assistance into the home.",
+      "keywords": "hospital,discharge",
+      "priority": 9
+    },
+    {
+      "q": "Do you wait during appointments?",
+      "a": "Yes, waiting time can be arranged.",
+      "keywords": "wait,waiting",
+      "priority": 9
+    },
+    {
+      "q": "Can a carer accompany the passenger?",
+      "a": "Yes, one carer or companion can travel with the passenger.",
+      "keywords": "carer,companion",
+      "priority": 9
+    },
+    {
+      "q": "Do you do regular bookings?",
+      "a": "Yes, weekly and fortnightly regular bookings.",
+      "keywords": "regular,weekly",
+      "priority": 9
+    },
+    {
+      "q": "Do you do dialysis transport?",
+      "a": "Yes, including early morning runs.",
+      "keywords": "dialysis",
+      "priority": 9
+    },
+    {
+      "q": "Do you do social outings?",
+      "a": "Yes, including shopping, cafes, and events.",
+      "keywords": "social,outing",
+      "priority": 8
+    },
+    {
+      "q": "Do you do airport transfers?",
+      "a": "Yes, including assistance with luggage and check-in.",
+      "keywords": "airport",
+      "priority": 8
+    },
+    {
+      "q": "Are your drivers screened?",
+      "a": "Yes, all drivers have police checks, working with children checks, and first aid.",
+      "keywords": "screened,police check,first aid",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer support work?",
+      "a": "Yes, including companionship and community access.",
+      "keywords": "support work,community access",
+      "priority": 9
+    },
+    {
+      "q": "Do you do group outings?",
+      "a": "Yes, including small group transport.",
+      "keywords": "group",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured and registered where required.",
+      "keywords": "insured,registered",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,suburb",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "ST-LOCAL",
+      "label": "Local trip (under 15km)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "local"
+    },
+    {
+      "sku": "ST-MED",
+      "label": "Medical appointment transport",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "medical"
+    },
+    {
+      "sku": "ST-DIAL",
+      "label": "Dialysis transport",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "dialysis"
+    },
+    {
+      "sku": "ST-WHEEL",
+      "label": "Wheelchair accessible trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "wheelchair"
+    },
+    {
+      "sku": "ST-WAIT",
+      "label": "Wait time (per 30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "wait"
+    },
+    {
+      "sku": "ST-HOSP",
+      "label": "Hospital discharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "hospital"
+    },
+    {
+      "sku": "ST-SOCIAL",
+      "label": "Social outing (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "social"
+    },
+    {
+      "sku": "ST-AIR",
+      "label": "Airport transfer",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "airport"
+    },
+    {
+      "sku": "ST-SUPPORT",
+      "label": "Support work (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "support"
+    },
+    {
+      "sku": "ST-COMP",
+      "label": "Companion travel",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "companion"
+    },
+    {
+      "sku": "ST-NDIS",
+      "label": "NDIS transport (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "ndis"
+    }
+  ]
+}

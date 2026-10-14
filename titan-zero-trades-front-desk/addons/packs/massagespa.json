@@ -1,0 +1,290 @@
+{
+  "id": "massagespa",
+  "name": "Massage & Spa",
+  "icon": "💆",
+  "tagline": "Relaxation, deep tissue, remedial, day spa",
+  "version": "1.0.0",
+  "service_types": [
+    "Relaxation Massage",
+    "Deep Tissue Massage",
+    "Sports Massage",
+    "Remedial Massage",
+    "Hot Stone Massage",
+    "Pregnancy Massage",
+    "Couples Massage",
+    "Aromatherapy",
+    "Reflexology",
+    "Lymphatic Drainage",
+    "Shiatsu",
+    "Thai Massage",
+    "Facials",
+    "Body Treatments",
+    "Day Spa Packages",
+    "Corporate Massage"
+  ],
+  "staff_skills": [
+    "massage",
+    "deep tissue",
+    "remedial",
+    "sports",
+    "hot stone",
+    "reflexology",
+    "aromatherapy",
+    "facials"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "acute pain",
+      "injury",
+      "migraine",
+      "spasm"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "sore back",
+      "this week"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "monthly",
+      "booking",
+      "voucher",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional massage and spa business. Ask about the service, any injuries or medical conditions, pregnancy, and pressure preference. Ask about allergies and modesty preferences. Quote prices only from the reference answers, and say the final price is confirmed in clinic. Do not provide medical advice or promise a therapeutic outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a massage?",
+      "a": "{price_note} Massage is priced by duration and type. We confirm before the session.",
+      "keywords": "cost,price,massage",
+      "priority": 9
+    },
+    {
+      "q": "Do you do deep tissue?",
+      "a": "Yes, we do deep tissue, remedial, and sports massage.",
+      "keywords": "deep tissue,remedial,sports",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pregnancy massage?",
+      "a": "Yes, we do pregnancy massage after the first trimester, with clearance if needed.",
+      "keywords": "pregnancy,prenatal",
+      "priority": 9
+    },
+    {
+      "q": "Do you do couples massage?",
+      "a": "Yes, we offer couples massage in a shared room.",
+      "keywords": "couples,partner",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hot stone?",
+      "a": "Yes, we offer hot stone massage.",
+      "keywords": "hot stone",
+      "priority": 8
+    },
+    {
+      "q": "Do you do remedial massage?",
+      "a": "Yes, we do remedial massage. Rebates may apply with private health.",
+      "keywords": "remedial,health fund",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, if our therapists are registered with your fund. Ask us to confirm.",
+      "keywords": "health fund,rebate,private health",
+      "priority": 9
+    },
+    {
+      "q": "Do you do reflexology?",
+      "a": "Yes, we offer reflexology.",
+      "keywords": "reflexology",
+      "priority": 8
+    },
+    {
+      "q": "Do you do lymphatic drainage?",
+      "a": "Yes, we do lymphatic drainage.",
+      "keywords": "lymphatic,drainage",
+      "priority": 8
+    },
+    {
+      "q": "Do you do Thai or shiatsu?",
+      "a": "Yes, we offer Thai and shiatsu.",
+      "keywords": "thai,shiatsu",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Sessions are 30, 60, or 90 minutes.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "What should I wear?",
+      "a": "Undress to your comfort level. You will be covered with towels at all times.",
+      "keywords": "wear,undress,dress",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers.",
+      "keywords": "voucher,gift",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do corporate massage?",
+      "a": "Yes, we offer corporate and event massage.",
+      "keywords": "corporate,event",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, all therapists are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Mobile massage is available in the local metro area. Ask us to confirm.",
+      "keywords": "mobile,home visit",
+      "priority": 7
+    },
+    {
+      "q": "Do you have male therapists?",
+      "a": "We have male and female therapists. Request when booking.",
+      "keywords": "male,female,therapist",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer day spa packages?",
+      "a": "Yes, we offer day spa and couples packages.",
+      "keywords": "day spa,package",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell us at booking. We may ask for medical clearance before treating.",
+      "keywords": "injury,medical",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MAS-30",
+      "label": "Massage 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "30 min"
+    },
+    {
+      "sku": "MAS-60",
+      "label": "Massage 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "60 min"
+    },
+    {
+      "sku": "MAS-90",
+      "label": "Massage 90 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 155,
+      "taxable": 1,
+      "keywords": "90 min"
+    },
+    {
+      "sku": "MAS-DEEP",
+      "label": "Deep tissue 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 125,
+      "taxable": 1,
+      "keywords": "deep tissue"
+    },
+    {
+      "sku": "MAS-REM",
+      "label": "Remedial 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "remedial"
+    },
+    {
+      "sku": "MAS-PREG",
+      "label": "Pregnancy massage 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "pregnancy"
+    },
+    {
+      "sku": "MAS-COUP",
+      "label": "Couples massage 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "couples"
+    },
+    {
+      "sku": "MAS-STONE",
+      "label": "Hot stone 90 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 175,
+      "taxable": 1,
+      "keywords": "hot stone"
+    },
+    {
+      "sku": "MAS-REF",
+      "label": "Reflexology 45 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "reflexology"
+    },
+    {
+      "sku": "MAS-FAC",
+      "label": "Facial 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "facial"
+    },
+    {
+      "sku": "MAS-BODY",
+      "label": "Body treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "body treatment"
+    },
+    {
+      "sku": "MAS-PACK",
+      "label": "Day spa package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "day spa,package"
+    }
+  ]
+}

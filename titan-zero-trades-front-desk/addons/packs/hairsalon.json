@@ -1,0 +1,293 @@
+{
+  "id": "hairsalon",
+  "name": "Hair Salon",
+  "icon": "💇",
+  "tagline": "Cuts, colour, styling, bridal, treatments",
+  "version": "1.0.0",
+  "service_types": [
+    "Women's Cut & Style",
+    "Men's Cut",
+    "Children's Cut",
+    "Colour",
+    "Highlights",
+    "Balayage",
+    "Blow Dry",
+    "Updo",
+    "Perm",
+    "Keratin Treatment",
+    "Hair Extensions",
+    "Scalp Treatment",
+    "Bridal Hair",
+    "Toner & Gloss",
+    "Wash & Style",
+    "Fringe Trim",
+    "Consultation"
+  ],
+  "staff_skills": [
+    "cutting",
+    "colouring",
+    "balayage",
+    "foils",
+    "styling",
+    "updo",
+    "keratin",
+    "extensions",
+    "barbering"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "bridal hair today",
+      "emergency fix"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "before the weekend",
+      "appointment"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "colour",
+      "cut",
+      "blow dry",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional hair salon. Ask about the service wanted, hair length and history (box dye, previous colour), and preferred stylist if any. Ask about allergies and previous reactions. Quote prices only from the reference answers, and say the final price is confirmed in salon. Do not promise a specific colour result without a consultation.",
+  "kb": [
+    {
+      "q": "Do I need a consultation before colour?",
+      "a": "Yes, colour and lightening services require a consultation first, either in salon or by photo.",
+      "keywords": "consultation,colour,lightening",
+      "priority": 9
+    },
+    {
+      "q": "How much does a colour cost?",
+      "a": "{price_note} Colour is priced by length, thickness, and technique. We confirm after consultation.",
+      "keywords": "cost,price,colour",
+      "priority": 9
+    },
+    {
+      "q": "Do you do balayage?",
+      "a": "Yes, we do balayage, foils, and freehand lightening.",
+      "keywords": "balayage,foils,lightening",
+      "priority": 9
+    },
+    {
+      "q": "Can you fix a bad colour?",
+      "a": "Yes, we do colour corrections. This requires a consultation and may take multiple sessions.",
+      "keywords": "fix,correction,bad colour",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal hair?",
+      "a": "Yes, we do bridal and event hair, including trials and on-site styling.",
+      "keywords": "bridal,wedding,updo",
+      "priority": 9
+    },
+    {
+      "q": "Do you do keratin treatments?",
+      "a": "Yes, we offer keratin and smoothing treatments.",
+      "keywords": "keratin,smoothing",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hair extensions?",
+      "a": "Yes, we supply and install tape, clip-in, and keratin extensions.",
+      "keywords": "extensions,tape,clip in",
+      "priority": 8
+    },
+    {
+      "q": "Do you cut children's hair?",
+      "a": "Yes, we cut children's hair. Ask about our kids' pricing.",
+      "keywords": "children,kids",
+      "priority": 8
+    },
+    {
+      "q": "How long does a colour take?",
+      "a": "Most colours take 2–4 hours depending on technique.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "What products do you use?",
+      "a": "We use professional salon products. Ask about specific brands if you have preferences.",
+      "keywords": "products,brands",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a senior discount?",
+      "a": "{discount_note}",
+      "keywords": "senior,discount",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Yes, we recommend booking. Walk-ins are subject to availability.",
+      "keywords": "book,booking,walk in",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "What if I don't like the result?",
+      "a": "We offer a satisfaction guarantee. {guarantee_note}",
+      "keywords": "guarantee,satisfaction",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers for any amount or service.",
+      "keywords": "voucher,gift card",
+      "priority": 7
+    },
+    {
+      "q": "Do you do men's cuts?",
+      "a": "Yes, we do men's cuts and styling.",
+      "keywords": "men,cut",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured. Certificates available on request.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service for mobile hair?",
+      "a": "Mobile hair is available within the local metro area. Ask us to confirm your suburb.",
+      "keywords": "mobile,area,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you do perms?",
+      "a": "Yes, we do perms and body waves.",
+      "keywords": "perm,wave",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer treatments?",
+      "a": "Yes, we offer scalp and hair treatments.",
+      "keywords": "treatment,scalp",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "HAIR-WCUT",
+      "label": "Women's cut & style",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "women,cut"
+    },
+    {
+      "sku": "HAIR-MCUT",
+      "label": "Men's cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "men,cut"
+    },
+    {
+      "sku": "HAIR-KCUT",
+      "label": "Children's cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "children,kids"
+    },
+    {
+      "sku": "HAIR-BLOW",
+      "label": "Blow dry & style",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "blow dry,style"
+    },
+    {
+      "sku": "HAIR-COL",
+      "label": "Colour (single process)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "colour"
+    },
+    {
+      "sku": "HAIR-FOIL",
+      "label": "Foils / highlights",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "foils,highlights"
+    },
+    {
+      "sku": "HAIR-BAL",
+      "label": "Balayage",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "balayage"
+    },
+    {
+      "sku": "HAIR-UP",
+      "label": "Updo / event styling",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "updo,event"
+    },
+    {
+      "sku": "HAIR-BRID",
+      "label": "Bridal hair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "bridal,wedding"
+    },
+    {
+      "sku": "HAIR-KERA",
+      "label": "Keratin treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "keratin,smoothing"
+    },
+    {
+      "sku": "HAIR-EXT",
+      "label": "Hair extensions (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "extensions"
+    },
+    {
+      "sku": "HAIR-SCALP",
+      "label": "Scalp treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "scalp,treatment"
+    }
+  ]
+}

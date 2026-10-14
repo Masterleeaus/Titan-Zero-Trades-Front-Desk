@@ -1,0 +1,270 @@
+{
+  "id": "podiatry",
+  "name": "Podiatry",
+  "icon": "🦶",
+  "tagline": "Foot care, orthotics, ingrown nails, diabetes care",
+  "version": "1.0.0",
+  "service_types": [
+    "General Foot Care",
+    "Ingrown Nail Treatment",
+    "Fungal Nail Treatment",
+    "Corns & Calluses",
+    "Orthotics",
+    "Diabetic Foot Care",
+    "Sports Podiatry",
+    "Paediatric Podiatry",
+    "Biomechanical Assessment",
+    "Gait Analysis",
+    "Wart Treatment",
+    "Heel Pain",
+    "Plantar Fasciitis",
+    "Nail Surgery",
+    "Vascular Assessment",
+    "Telehealth"
+  ],
+  "staff_skills": [
+    "podiatry",
+    "orthotics",
+    "nail surgery",
+    "diabetes",
+    "biomechanics",
+    "paediatrics",
+    "gait analysis"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "infected",
+      "diabetic ulcer",
+      "severe pain",
+      "urgent"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "pain"
+    ],
+    "routine": [
+      "check-up",
+      "orthotics",
+      "booking",
+      "quote",
+      "routine"
+    ]
+  },
+  "extra_prompt": "You are booking for a podiatry clinic. Ask about the foot concern, medical history (especially diabetes), current footwear, and pain level. Ask whether they need orthotics or nail surgery. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise specific treatment outcomes.",
+  "kb": [
+    {
+      "q": "How much does a visit cost?",
+      "a": "{price_note} Initial and follow-up consultations are priced separately. We confirm before booking.",
+      "keywords": "cost,price,visit",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, if you have podiatry cover. We offer HICAPS where available.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do orthotics?",
+      "a": "Yes, custom and prefabricated orthotics are available.",
+      "keywords": "orthotics",
+      "priority": 9
+    },
+    {
+      "q": "Do you do ingrown nails?",
+      "a": "Yes, including partial nail avulsion (PNA) if needed.",
+      "keywords": "ingrown,ingrown toenail",
+      "priority": 9
+    },
+    {
+      "q": "Do you do diabetic foot care?",
+      "a": "Yes, including diabetic assessments and ulcer care.",
+      "keywords": "diabetes,diabetic",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat fungal nails?",
+      "a": "Yes, including laser and topical treatments.",
+      "keywords": "fungal,fungus",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat warts?",
+      "a": "Yes, including cryotherapy and needling.",
+      "keywords": "wart,verruca",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat heel pain?",
+      "a": "Yes, including plantar fasciitis.",
+      "keywords": "heel,plantar fasciitis",
+      "priority": 9
+    },
+    {
+      "q": "Do you do nail surgery?",
+      "a": "Yes, PNA and total nail avulsion are available.",
+      "keywords": "nail surgery,pna",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat children?",
+      "a": "Yes, paediatric podiatry is available.",
+      "keywords": "children,paediatric",
+      "priority": 8
+    },
+    {
+      "q": "Do you do sports podiatry?",
+      "a": "Yes, including biomechanical and gait analysis.",
+      "keywords": "sports,gait",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in the local metro area.",
+      "keywords": "home visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, for advice and some follow-ups.",
+      "keywords": "telehealth,online",
+      "priority": 7
+    },
+    {
+      "q": "How long is a visit?",
+      "a": "Initial visits are 45–60 minutes. Follow-ups are 30 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do I need a referral?",
+      "a": "No referral is needed for private podiatry. Medicare EPC plans require a GP referral.",
+      "keywords": "referral,gp",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Yes, all podiatrists are AHPRA registered and insured.",
+      "keywords": "ahpra,registered",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "POD-INIT",
+      "label": "Initial consultation (45–60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "initial"
+    },
+    {
+      "sku": "POD-FU",
+      "label": "Follow-up consultation (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "follow up"
+    },
+    {
+      "sku": "POD-GEN",
+      "label": "General foot care",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "general"
+    },
+    {
+      "sku": "POD-ING",
+      "label": "Ingrown nail treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "ingrown"
+    },
+    {
+      "sku": "POD-PNA",
+      "label": "Partial nail avulsion (per toe)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "pna"
+    },
+    {
+      "sku": "POD-ORTH",
+      "label": "Custom orthotics",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "orthotics"
+    },
+    {
+      "sku": "POD-ORTH-P",
+      "label": "Prefabricated orthotics",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "prefab"
+    },
+    {
+      "sku": "POD-DIAB",
+      "label": "Diabetic foot assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "diabetic"
+    },
+    {
+      "sku": "POD-BIO",
+      "label": "Biomechanical assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "biomechanical"
+    },
+    {
+      "sku": "POD-HOME",
+      "label": "Home visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "POD-WART",
+      "label": "Wart treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "wart"
+    },
+    {
+      "sku": "POD-TELE",
+      "label": "Telehealth consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "telehealth"
+    }
+  ]
+}

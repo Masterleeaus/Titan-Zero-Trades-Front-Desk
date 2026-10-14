@@ -1,0 +1,31 @@
+.tzfd_cff_decorative{padding:20px;border-radius: 10px;}
+.tzfd_cff_decorative #tzfdform .fields:not(.section_breaks) label{color: #e51b24}
+.tzfd_cff_decorative #tzfdform h1{color:#002241;margin-bottom:0;text-align: center;margin-top:10px;}
+
+.tzfd_cff_decorative #tzfdform .fields input{border-bottom: #dfddc1;border-left:0px;border-right:0px;border-top:0px;padding:5px 0;background:#FCFAE6;color:#002241}
+
+.tzfd_cff_decorative #tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+.tzfd_cff_decorative #tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+.tzfd_cff_decorative #tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+				
+.tzfd_cff_decorative #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+.tzfd_cff_decorative #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+.tzfd_cff_decorative #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+.tzfd_cff_decorative #tzfdform .slots div a{background-color: #ededed;padding:4px;}
+.tzfd_cff_decorative #tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+.tzfd_cff_decorative #tzfdform .pbSubmit{color:#fff;font-size:14px;font-weight:bold;background: #cc3333;border-color:#FCFAE6;border-width:2px;border-style:solid;border-radius: 5px;}
+.tzfd_cff_decorative #tzfdform .pbSubmit:hover {color: #fff}
+.tzfd_field_service{display:inherit;}
+.tzfd_cff_decorative #tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+.tzfd_cff_decorative #tzfdform .slots span{color: inherit;}
+.tzfd_cff_decorative #tzfdform .usedSlots .tzfd_list {padding: inherit;margin:inherit}
+.tzfd_cff_decorative #tzfdform .usedSlots .tzfd_list .d{color: inherit;}
+.tzfd_cff_decorative #tzfdform .usedSlots .tzfd_list .t{color: inherit;}
+.tzfd_cff_decorative #tzfdform .usedSlots .tzfd_list .tzfd_list_service{color: inherit;}
+.tzfd_cff_decorative #tzfdform .usedSlots .tzfd_list .cancel{font-weight:inherit}
+.tzfd_cff_decorative #tzfdform .totalCost{color: inherit;}
+.tzfd_cff_decorative #tzfdform .totalCost span:not(.n){color: inherit;}
+.tzfd_cff_decorative #tzfdform .totalCost span.n{color: inherit;}

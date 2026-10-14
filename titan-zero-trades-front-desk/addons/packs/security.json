@@ -1,0 +1,268 @@
+{
+  "id": "security",
+  "name": "Security & Alarms",
+  "icon": "🔒",
+  "tagline": "Alarms, CCTV, intercoms, access control, monitoring",
+  "version": "1.0.0",
+  "service_types": [
+    "Alarm Installation",
+    "Alarm Repair",
+    "Alarm Monitoring",
+    "CCTV Installation",
+    "CCTV Repair",
+    "Intercom Installation",
+    "Access Control",
+    "Smart Locks",
+    "Security Cameras",
+    "Motion Sensors",
+    "Panic Buttons",
+    "Back-to-Base",
+    "Alarm Service",
+    "Commercial Security"
+  ],
+  "staff_skills": [
+    "security",
+    "alarms",
+    "cctv",
+    "intercom",
+    "access control",
+    "smart locks",
+    "electrical"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "break-in",
+      "alarm fault",
+      "security risk",
+      "camera down"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before holiday"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "service",
+      "monitor"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional security company. Ask about the property type, entry points, existing system, and monitoring needs. Ask whether it is residential or commercial, and whether cameras, alarms, or intercoms are wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific security outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully licensed and insured. Certificates available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does an alarm cost?",
+      "a": "{price_note} Alarm systems are priced by size and features. Tell us the property and we will quote.",
+      "keywords": "cost,price,alarm",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer monitoring?",
+      "a": "Yes, we offer 24/7 monitoring plans.",
+      "keywords": "monitoring,24/7",
+      "priority": 9
+    },
+    {
+      "q": "Do you install CCTV?",
+      "a": "Yes, we install CCTV systems.",
+      "keywords": "cctv,camera",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair alarms?",
+      "a": "Yes, we repair most alarm systems.",
+      "keywords": "repair,alarm",
+      "priority": 8
+    },
+    {
+      "q": "Do you install intercoms?",
+      "a": "Yes, we install audio and video intercoms.",
+      "keywords": "intercom,audio,video",
+      "priority": 8
+    },
+    {
+      "q": "Do you install access control?",
+      "a": "Yes, we install access control for doors and gates.",
+      "keywords": "access control,door",
+      "priority": 8
+    },
+    {
+      "q": "Do you install smart locks?",
+      "a": "Yes, we install smart locks and keypads.",
+      "keywords": "smart lock,keypad",
+      "priority": 8
+    },
+    {
+      "q": "Do you install panic buttons?",
+      "a": "Yes, we install panic and duress buttons.",
+      "keywords": "panic,duress",
+      "priority": 8
+    },
+    {
+      "q": "Do you service back-to-base alarms?",
+      "a": "Yes, we service back-to-base alarms.",
+      "keywords": "back to base,monitoring",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial security?",
+      "a": "Yes, we do commercial security. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Can I view cameras on my phone?",
+      "a": "Yes, most systems allow remote viewing via an app.",
+      "keywords": "app,phone,remote",
+      "priority": 9
+    },
+    {
+      "q": "How many cameras do I need?",
+      "a": "Most homes need 4–8 cameras. We advise after a site check.",
+      "keywords": "how many,cameras",
+      "priority": 8
+    },
+    {
+      "q": "Do you install sensors?",
+      "a": "Yes, we install motion, door, and window sensors.",
+      "keywords": "sensor,motion,door",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Yes, someone must be home to provide access.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer emergency service?",
+      "a": "Yes, emergency service is available for faults and break-ins.",
+      "keywords": "emergency,urgent",
+      "priority": 9
+    },
+    {
+      "q": "Can you take over an existing system?",
+      "a": "Yes, we can take over and service most existing systems.",
+      "keywords": "takeover,existing",
+      "priority": 8
+    },
+    {
+      "q": "Do you install smoke and flood sensors?",
+      "a": "Yes, we integrate smoke and flood sensors.",
+      "keywords": "smoke,flood,sensor",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "SEC-ALARM",
+      "label": "Alarm system installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "alarm,install"
+    },
+    {
+      "sku": "SEC-CCTV",
+      "label": "CCTV camera installed (per camera)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "cctv,camera"
+    },
+    {
+      "sku": "SEC-INTER",
+      "label": "Intercom installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "intercom"
+    },
+    {
+      "sku": "SEC-ACCESS",
+      "label": "Access control installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "access control"
+    },
+    {
+      "sku": "SEC-SMART",
+      "label": "Smart lock installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "smart lock"
+    },
+    {
+      "sku": "SEC-MON",
+      "label": "Monitoring (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "monitoring"
+    },
+    {
+      "sku": "SEC-SERV",
+      "label": "Alarm service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "service"
+    },
+    {
+      "sku": "SEC-REP",
+      "label": "Alarm repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "SEC-SENSOR",
+      "label": "Sensor installed",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "sensor"
+    },
+    {
+      "sku": "SEC-EMERG",
+      "label": "Emergency call-out",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "emergency,callout"
+    }
+  ]
+}

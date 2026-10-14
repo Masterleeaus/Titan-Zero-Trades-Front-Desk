@@ -1,0 +1,338 @@
+/* =========================================
+   CSS VARIABLES (THEME CONFIGURATION)
+   Modify these values to easily update the design
+   ========================================= */
+#tzfdform {
+    /* Brand Colors */
+    --tzfd-primary: #3995D0;
+    --tzfd-primary-hover: #2a7db3;
+    --tzfd-primary-shadow: rgba(57, 149, 208, 0.3);
+
+    /* Typography Colors */
+    --tzfd-text-main: #1f2937;
+    --tzfd-text-muted: #6b7280;
+    --tzfd-text-disabled: #d1d5db;
+    --tzfd-text-light: #ffffff;
+
+    /* Background Colors */
+    --tzfd-bg-main: #ffffff;
+    --tzfd-bg-secondary: #f9fafb;
+    --tzfd-bg-hover: #f3f4f6;
+    --tzfd-bg-summary: #f8fafc;
+
+    /* Borders and Shadows */
+    --tzfd-border-light: #e5e7eb;
+    --tzfd-border-dark: #d1d5db;
+    --tzfd2-shadow-card: 0 10px 25px rgba(0, 0, 0, 0.05);
+
+    /* Shape and Typography settings */
+    --tzfd2-font-family: 'Inter', -apple-system, sans-serif;
+    --tzfd2-radius-card: 16px;
+    --tzfd2-radius-summary: 12px;
+    --tzfd2-radius-pill: 999px;
+    --tzfd2-radius-circle: 50%;
+}
+
+/* =========================================
+   1. BASE AND CALENDAR CONTAINER
+   ========================================= */
+.tzfd_m6 #tzfdform .ui-datepicker-inline{max-width:calc(100%);}   
+.tzfd_m6 #tzfdform .ui-datepicker table, 
+.tzfd_m6 #tzfdform .ui-datepicker thead, 
+.tzfd_m6 #tzfdform .ui-datepicker tr, 
+.tzfd_m6 #tzfdform .ui-datepicker th, 
+.tzfd_m6 #tzfdform .ui-datepicker td { border: 0px; }
+
+.tzfd_m6 #tzfdform .ui-datepicker {
+    box-shadow: var(--tzfd2-shadow-card); 
+    border: 1px solid var(--tzfd-border-light);
+    border-radius: var(--tzfd2-radius-card); 
+    font-family: var(--tzfd2-font-family);
+    padding: 15px;
+    background: var(--tzfd-bg-main);
+}
+
+.tzfd_m6 #tzfdform .ui-datepicker-header {
+    text-shadow: none; 
+    color: var(--tzfd-text-main); 
+    background: var(--tzfd-bg-main);
+    border-bottom: none; 
+    font-weight: 600; 
+    font-size: 1.4rem; 
+    padding: 10px 0px 20px 0px;
+}
+
+.tzfd_m6 #tzfdform .ui-datepicker th {
+    background: var(--tzfd-bg-main); 
+    font-weight: 600; 
+    color: var(--tzfd-text-muted); 
+    font-size: 0.85rem; 
+    padding-bottom: 15px;
+}
+
+/* Navigation Arrows */
+.tzfd_m6 #tzfdform .ui-datepicker-next, 
+.tzfd_m6 #tzfdform .ui-datepicker-prev {
+    display: inline-block; width: 12px; height: 12px; 
+    border: none; border-top: 2px solid var(--tzfd-text-muted); border-right: 2px solid var(--tzfd-text-muted); 
+    background: none !important; margin: 15px 10px; cursor: pointer;
+    transition: border-color 0.2s ease;
+}
+.tzfd_m6 #tzfdform .ui-datepicker-next:hover, 
+.tzfd_m6 #tzfdform .ui-datepicker-prev:hover { border-color: var(--tzfd-text-main); }
+.tzfd_m6 #tzfdform .ui-datepicker-next { transform: rotate(45deg); }
+.tzfd_m6 #tzfdform .ui-datepicker-prev { transform: rotate(-135deg); }
+.tzfd_m6 #tzfdform .ui-datepicker-next span, 
+.tzfd_m6 #tzfdform .ui-datepicker-prev span { background: none; }
+
+/* =========================================
+   2. CALENDAR DAYS (CIRCLES)
+   ========================================= */
+.tzfd_m6 #tzfdform .ui-datepicker table { border-collapse: collapse; }
+.tzfd_m6 #tzfdform .ui-datepicker-calendar td { text-align: center; padding: 4px; }
+
+/* Base shape for dates (Perfect circle) */
+.tzfd_m6 #tzfdform td a, 
+.tzfd_m6 #tzfdform td span {
+    display: inline-flex !important; 
+    justify-content: center; 
+    align-items: center;
+    width: 36px; height: 36px; 
+    margin: 0 auto; 
+    text-shadow: none; 
+    font-weight: 500;
+    color: var(--tzfd-text-main);
+    border-radius: var(--tzfd2-radius-circle); 
+    transition: all 0.2s ease;
+}
+
+/* Unavailable days */
+.tzfd_m6 #tzfdform .ui-datepicker-unselectable .ui-state-default { 
+    color: var(--tzfd-text-disabled); 
+    background: transparent; 
+}
+
+/* Available days (Hover effect) */
+.tzfd_m6 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default { background: transparent; }
+.tzfd_m6 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover { 
+    background: var(--tzfd-bg-hover); 
+    color: var(--tzfd-text-main);
+}
+
+/* Selected day */
+.tzfd_m6 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active {
+    background: var(--tzfd-primary); 
+    color: var(--tzfd-text-light); 
+    font-weight: 600;
+    box-shadow: 0 4px 10px var(--tzfd-primary-shadow);
+}
+
+/* =========================================
+   3. TIME SLOT BUTTONS (PILLS)
+   ========================================= */
+.tzfd_m6 #tzfdform .slots { text-align: center; padding: 15px 5px 5px; border: 0px; box-shadow: none; }
+.tzfd_m6 #tzfdform .slots div { border-color: transparent; margin: 8px 6px; display: inline-block; }
+.tzfd_m6 #tzfdform .slots div.hide{display:none}
+
+.tzfd_m6 #tzfdform .slots div a {
+    display: block; width: 100%;
+    background: var(--tzfd-bg-main); 
+    color: var(--tzfd-text-main);
+    border: 1px solid var(--tzfd-border-dark); 
+    border-radius: var(--tzfd2-radius-pill); 
+    text-decoration: none; 
+    padding: 10px 20px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+/* Available slot hover */
+.tzfd_m6 #tzfdform .slots div:not(.htmlUsed) a:hover {
+    background: var(--tzfd-bg-main); 
+    border-color: var(--tzfd-primary); 
+    color: var(--tzfd-primary);
+}
+
+/* Booked slot */
+.tzfd_m6 #tzfdform .slots div.htmlUsed a { 
+    border: 1px solid var(--tzfd-border-light); 
+    color: var(--tzfd-text-muted); 
+    background: var(--tzfd-bg-secondary); 
+    cursor: not-allowed; 
+}
+.tzfd_m6 #tzfdform .slots div.htmlUsed a:hover { cursor: not-allowed;}
+.tzfd_m6 #tzfdform .slots .htmlUsed.currentSelection{border:0px}
+.tzfd_m6 #tzfdform .slots .htmlUsed.currentSelection a{background-color: var(--tzfd-primary);color: var(--tzfd-text-light);}
+/* =========================================
+   4. BOTTOM SUMMARY (USED SLOTS ITEMS)
+   ========================================= */
+
+/* The main container for each booked slot */
+.tzfd_m6 #tzfdform .usedSlots .tzfd_list {
+    display: flex;
+    flex-wrap: wrap; 
+    align-items: center;
+    border: 1px solid var(--tzfd-border-light); 
+    background-color: var(--tzfd-bg-summary); 
+    border-radius: var(--tzfd2-radius-summary); 
+    padding: 16px 50px 16px 16px; /* Extra right padding for the absolute cancel button */
+    margin: 15px 0px; 
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+/* Time and Date wrapper - Forces this to take the whole first row */
+.tzfd_m6 #tzfdform .tzfd_list_time {
+    display: flex;
+    flex-basis: 100%; /* Pushes everything else to the next line */
+    gap: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--tzfd-text-main);
+    margin-bottom: 8px; /* Space between time and service name */
+}
+
+/* Highlight the Date with primary color */
+.tzfd_m6 #tzfdform .tzfd_list_time .d {
+    color: var(--tzfd-primary);
+}
+
+/* The service name - Now sits on the second row automatically */
+.tzfd_m6 #tzfdform .tzfd_list_service {
+    flex-basis: auto; /* Takes only the space it needs */
+    font-size: 0.85rem;
+    color: var(--tzfd-text-muted);
+    line-height: 1.4;
+}
+
+/* The quantity badge e.g., "(4)" - Positioned right after the service name */
+.tzfd_m6 #tzfdform .tzfd_list_quantity {
+    background-color: var(--tzfd-bg-main);
+    border: 1px solid var(--tzfd-border-dark);
+    color: var(--tzfd-text-main);
+    font-size: 0.80rem;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: var(--tzfd2-radius-pill);
+    display: inline-block;
+    margin-left: 8px; /* Space between service text and quantity pill */
+}
+
+/* Modern Cancel Button - Replacing the "[Cancel]" text with an icon */
+.tzfd_m6 #tzfdform a.cancel {
+    visibility: visible;
+    position: absolute;
+    right: 16px;
+    top: 16px;
+    font-size: 0; 
+    text-decoration: none;
+    width: 28px;
+    height: 28px;
+    background-color: var(--tzfd-bg-main);
+    border: 1px solid var(--tzfd-border-light);
+    border-radius: var(--tzfd2-radius-circle);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+/* Injecting the "X" icon */
+.tzfd_m6 #tzfdform a.cancel::after {
+    content: "X";
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--tzfd-text-muted);
+}
+
+/* Cancel button hover effect (Red warning state) */
+.tzfd_m6 #tzfdform a.cancel:hover {
+    background-color: #fee2e2; 
+    border-color: #fca5a5;
+}
+
+.tzfd_m6 #tzfdform a.cancel:hover::after {
+    color: #ef4444; 
+}
+
+/* Hide the old pseudo-element */
+.tzfd_m6 #tzfdform a.cancel:before {
+    display: none !important; 
+}
+/* =========================================
+   6. PAGINATION AND SUBMIT BUTTONS
+   ========================================= */
+
+/* Container for pagination to align buttons properly */
+#tzfdform .pbreak {
+    display: flex;
+    justify-content: flex-end; /* Aligns buttons to the right side */
+    align-items: center;
+    gap: 12px; /* Space between buttons */
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--tzfd-border-light);
+}
+
+/* Shared base styles for all form buttons */
+#tzfdform .pbreak .pbPrevious, 
+#tzfdform .pbreak .pbNext, 
+#tzfdform .pbSubmit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    font-family: var(--tzfd2-font-family);
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 8px; /* Slightly squarer than the time pills for contrast */
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+/* Primary Actions: "Next" & "Submit" */
+#tzfdform .pbreak .pbNext, 
+#tzfdform .pbSubmit {
+    background-color: var(--tzfd-primary);
+    color: var(--tzfd-text-light);
+    border: 1px solid var(--tzfd-primary);
+    box-shadow: 0 4px 6px var(--tzfd-primary-shadow);
+}
+
+/* Primary Actions: Hover state */
+#tzfdform .pbreak .pbNext:hover, 
+#tzfdform .pbSubmit:hover {
+    background-color: var(--tzfd-primary-hover);
+    border-color: var(--tzfd-primary-hover);
+    box-shadow: 0 6px 12px var(--tzfd-primary-shadow);
+    transform: translateY(-1px); /* Subtle lift effect on hover */
+}
+
+/* Secondary Action: "Previous" */
+#tzfdform .pbreak .pbPrevious {
+    background-color: var(--tzfd-bg-main);
+    color: var(--tzfd-text-main);
+    border: 1px solid var(--tzfd-border-dark);
+}
+
+/* Secondary Action: Hover state */
+#tzfdform .pbreak .pbPrevious:hover {
+    background-color: var(--tzfd-bg-hover);
+    border-color: var(--tzfd-text-muted);
+}
+/* --- Form Fields (Inputs & Selects) --- */
+.tzfd_m6 #tzfdform input[type="text"],
+.tzfd_m6 #tzfdform input[type="email"],
+.tzfd_m6 #tzfdform textarea,
+.tzfd_m6 #tzfdform select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    font-size: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+    transition: border-color 0.2s ease;
+}

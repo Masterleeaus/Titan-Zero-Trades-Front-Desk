@@ -1,0 +1,265 @@
+{
+  "id": "legal",
+  "name": "Legal & Conveyancing",
+  "icon": "⚖️",
+  "tagline": "Conveyancing, wills, family, business, contracts",
+  "version": "1.0.0",
+  "service_types": [
+    "Conveyancing (Purchase)",
+    "Conveyancing (Sale)",
+    "Wills & Estates",
+    "Probate",
+    "Family Law",
+    "Divorce",
+    "Parenting Plans",
+    "Business Law",
+    "Commercial Leases",
+    "Contracts",
+    "Employment Law",
+    "Criminal Law",
+    "Traffic Law",
+    "Immigration",
+    "Personal Injury",
+    "Power of Attorney"
+  ],
+  "staff_skills": [
+    "conveyancing",
+    "wills",
+    "estates",
+    "family law",
+    "business law",
+    "contracts",
+    "employment",
+    "immigration"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "settlement today",
+      "court tomorrow",
+      "urgent contract",
+      "police interview"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "deadline",
+      "settlement soon"
+    ],
+    "routine": [
+      "quote",
+      "consultation",
+      "will",
+      "contract",
+      "conveyancing"
+    ]
+  },
+  "extra_prompt": "You are booking for a law firm or conveyancer. Ask about the matter type, key dates, and any deadlines. Ask for the property address (for conveyancing) or relevant parties. Do not give legal advice in the booking flow. Quote prices only from the reference answers, and say the final price is confirmed after a conflicts check and initial consultation. Do not promise outcomes.",
+  "kb": [
+    {
+      "q": "How much does conveyancing cost?",
+      "a": "{price_note} Conveyancing fees are fixed for standard purchases and sales. We confirm after review.",
+      "keywords": "cost,price,conveyancing",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a fixed fee?",
+      "a": "Yes, many matters including conveyancing and simple wills are fixed fee.",
+      "keywords": "fixed fee",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a will?",
+      "a": "Yes, a will ensures your estate is distributed as you wish.",
+      "keywords": "will",
+      "priority": 9
+    },
+    {
+      "q": "Do you do probate?",
+      "a": "Yes, we do probate and estate administration.",
+      "keywords": "probate,estate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do family law?",
+      "a": "Yes, including divorce, property settlement, and parenting plans.",
+      "keywords": "family law,divorce",
+      "priority": 9
+    },
+    {
+      "q": "Do you do business law?",
+      "a": "Yes, including contracts, leases, and company matters.",
+      "keywords": "business,commercial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do employment law?",
+      "a": "Yes, for both employers and employees.",
+      "keywords": "employment",
+      "priority": 8
+    },
+    {
+      "q": "Do you do immigration?",
+      "a": "Yes, we assist with visa and immigration matters.",
+      "keywords": "immigration,visa",
+      "priority": 8
+    },
+    {
+      "q": "Do you do criminal or traffic law?",
+      "a": "Yes, we handle criminal and traffic matters.",
+      "keywords": "criminal,traffic",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a free first consultation?",
+      "a": "{consult_note}",
+      "keywords": "consult,free",
+      "priority": 9
+    },
+    {
+      "q": "How do I send documents?",
+      "a": "We accept documents by email, secure portal, or in person.",
+      "keywords": "documents,email",
+      "priority": 8
+    },
+    {
+      "q": "Do you do after-hours appointments?",
+      "a": "{afterhours_note}",
+      "keywords": "after hours",
+      "priority": 7
+    },
+    {
+      "q": "What is your billing structure?",
+      "a": "Fixed fee, hourly, or scale. We confirm upfront.",
+      "keywords": "billing,fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you do power of attorney?",
+      "a": "Yes, including enduring power of attorney and guardianship.",
+      "keywords": "power of attorney",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we hold professional indemnity insurance.",
+      "keywords": "insured,indemnity",
+      "priority": 9
+    },
+    {
+      "q": "How long does conveyancing take?",
+      "a": "Standard settlements run 30–60 days from exchange.",
+      "keywords": "how long,time",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "LEG-CONV-B",
+      "label": "Conveyancing – purchase (fixed)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "conveyancing purchase"
+    },
+    {
+      "sku": "LEG-CONV-S",
+      "label": "Conveyancing – sale (fixed)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1100,
+      "taxable": 1,
+      "keywords": "conveyancing sale"
+    },
+    {
+      "sku": "LEG-WILL",
+      "label": "Will (simple)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "will"
+    },
+    {
+      "sku": "LEG-POA",
+      "label": "Power of attorney",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "poa"
+    },
+    {
+      "sku": "LEG-PROB",
+      "label": "Probate (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "probate"
+    },
+    {
+      "sku": "LEG-FAM",
+      "label": "Family law consultation",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 385,
+      "taxable": 1,
+      "keywords": "family"
+    },
+    {
+      "sku": "LEG-BUS",
+      "label": "Business law consultation",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "business"
+    },
+    {
+      "sku": "LEG-CONTRACT",
+      "label": "Contract review (standard)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "contract"
+    },
+    {
+      "sku": "LEG-LEASE",
+      "label": "Commercial lease review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "lease"
+    },
+    {
+      "sku": "LEG-EMPLOY",
+      "label": "Employment advice",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "employment"
+    },
+    {
+      "sku": "LEG-COURT",
+      "label": "Court attendance",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "court"
+    },
+    {
+      "sku": "LEG-CONS",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "consult"
+    }
+  ]
+}

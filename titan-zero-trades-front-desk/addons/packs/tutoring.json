@@ -1,0 +1,271 @@
+{
+  "id": "tutoring",
+  "name": "Tutoring",
+  "icon": "📚",
+  "tagline": "Maths, English, science, exam prep, online",
+  "version": "1.0.0",
+  "service_types": [
+    "Maths Tutoring",
+    "English Tutoring",
+    "Science Tutoring",
+    "Primary Tutoring",
+    "High School Tutoring",
+    "HSC/VCE Prep",
+    "University Tutoring",
+    "Language Tutoring",
+    "Music Tutoring",
+    "Coding",
+    "Exam Prep",
+    "Homework Help",
+    "Online Tutoring",
+    "In-Home Tutoring",
+    "Special Needs",
+    "Adult Learning"
+  ],
+  "staff_skills": [
+    "tutoring",
+    "maths",
+    "english",
+    "science",
+    "exam prep",
+    "music",
+    "languages",
+    "coding",
+    "special needs"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "exam tomorrow",
+      "assignment due",
+      "urgent help"
+    ],
+    "urgent": [
+      "this week",
+      "before exam",
+      "before test",
+      "starting now"
+    ],
+    "routine": [
+      "weekly",
+      "regular",
+      "term",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tutoring service. Ask about the subject, year level, current school, and specific topics or goals. Ask whether they prefer in-home, online, or at a centre, and their availability. Quote prices only from the reference answers, and say the final price is confirmed after the first session. Do not promise a specific academic result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does tutoring cost?",
+      "a": "{price_note} Tutoring is priced per hour. Tell us the subject and year level and we will confirm.",
+      "keywords": "cost,price,tutoring",
+      "priority": 9
+    },
+    {
+      "q": "Do you do online tutoring?",
+      "a": "Yes, we offer online sessions via video call.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "Do you do in-home tutoring?",
+      "a": "Yes, in-home tutoring is available in the local metro area.",
+      "keywords": "in home,home",
+      "priority": 9
+    },
+    {
+      "q": "What subjects do you cover?",
+      "a": "We cover maths, English, science, languages, music, and coding.",
+      "keywords": "subjects,maths,english",
+      "priority": 9
+    },
+    {
+      "q": "What year levels do you cover?",
+      "a": "We cover primary, high school, and university.",
+      "keywords": "year level,primary,high school",
+      "priority": 9
+    },
+    {
+      "q": "Do you do exam prep?",
+      "a": "Yes, we do exam and test preparation.",
+      "keywords": "exam,test,prep",
+      "priority": 9
+    },
+    {
+      "q": "Are your tutors qualified?",
+      "a": "Yes, our tutors are qualified teachers or subject specialists with background checks.",
+      "keywords": "qualified,teacher,background check",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with homework?",
+      "a": "Yes, we help with homework and assignments.",
+      "keywords": "homework,assignment",
+      "priority": 8
+    },
+    {
+      "q": "Do you tutor special needs students?",
+      "a": "Yes, we have tutors experienced with special needs.",
+      "keywords": "special needs,disability",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Sessions are usually 60 minutes, with 30 and 90 minute options.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "How often should we have sessions?",
+      "a": "Most students have 1–2 sessions per week.",
+      "keywords": "how often,frequency",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer group tutoring?",
+      "a": "Yes, small group tutoring is available at a lower rate.",
+      "keywords": "group,small group",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a trial session?",
+      "a": "{trial_note}",
+      "keywords": "trial,free",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a discount for multiple sessions?",
+      "a": "{discount_note}",
+      "keywords": "discount,package",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured and all tutors have working with children checks.",
+      "keywords": "insured,wwcc,children check",
+      "priority": 9
+    },
+    {
+      "q": "Do you tutor adults?",
+      "a": "Yes, we tutor adults and mature-age students.",
+      "keywords": "adult,mature",
+      "priority": 8
+    },
+    {
+      "q": "Do you tutor university students?",
+      "a": "Yes, we tutor undergraduate and postgraduate students.",
+      "keywords": "university,uni",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer music lessons?",
+      "a": "Yes, we offer music tutoring for several instruments.",
+      "keywords": "music,instrument",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer coding?",
+      "a": "Yes, we tutor coding and programming.",
+      "keywords": "coding,programming",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "TUT-1",
+      "label": "1 hour tutoring (1-on-1)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "1 hour,tutoring"
+    },
+    {
+      "sku": "TUT-1-ONLINE",
+      "label": "1 hour online tutoring",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "TUT-GROUP",
+      "label": "Small group tutoring (per person)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "TUT-5",
+      "label": "5-session package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 400,
+      "taxable": 1,
+      "keywords": "package,5"
+    },
+    {
+      "sku": "TUT-10",
+      "label": "10-session package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "package,10"
+    },
+    {
+      "sku": "TUT-EXAM",
+      "label": "Exam prep intensive (2 hours)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 170,
+      "taxable": 1,
+      "keywords": "exam,prep"
+    },
+    {
+      "sku": "TUT-HW",
+      "label": "Homework help (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "homework"
+    },
+    {
+      "sku": "TUT-UNI",
+      "label": "University tutoring (1 hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 100,
+      "taxable": 1,
+      "keywords": "university"
+    },
+    {
+      "sku": "TUT-ASSESS",
+      "label": "Initial assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "assessment"
+    },
+    {
+      "sku": "TUT-TRAVEL",
+      "label": "Travel fee (per km beyond 15km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

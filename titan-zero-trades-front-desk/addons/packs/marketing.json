@@ -1,0 +1,261 @@
+{
+  "id": "marketing",
+  "name": "Marketing & SEO",
+  "icon": "📈",
+  "tagline": "SEO, Google Ads, social media, content, email",
+  "version": "1.0.0",
+  "service_types": [
+    "SEO",
+    "Local SEO",
+    "Google Ads",
+    "Facebook Ads",
+    "Social Media Management",
+    "Content Marketing",
+    "Email Marketing",
+    "Marketing Strategy",
+    "Copywriting",
+    "Analytics",
+    "Conversion Optimisation",
+    "Marketing Automation",
+    "Lead Generation",
+    "Brand Strategy"
+  ],
+  "staff_skills": [
+    "seo",
+    "google ads",
+    "facebook ads",
+    "social media",
+    "content",
+    "email marketing",
+    "analytics",
+    "copywriting"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "campaign launch",
+      "ads not working",
+      "urgent audit"
+    ],
+    "urgent": [
+      "this week",
+      "before launch",
+      "campaign start"
+    ],
+    "routine": [
+      "quote",
+      "retainer",
+      "audit",
+      "strategy",
+      "content"
+    ]
+  },
+  "extra_prompt": "You are booking for a marketing agency. Ask about the business, industry, target market, current marketing, and budget. Ask what outcome they want (leads, sales, awareness). Quote prices only from the reference answers, and say the final price is confirmed after strategy. Do not promise specific rankings, lead volumes, or ROAS that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} We work on retainers or project fees. Tell us your goals and budget.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do SEO?",
+      "a": "Yes, local and national SEO.",
+      "keywords": "seo",
+      "priority": 9
+    },
+    {
+      "q": "Do you run Google Ads?",
+      "a": "Yes, including setup and management.",
+      "keywords": "google ads,adwords",
+      "priority": 9
+    },
+    {
+      "q": "Do you do Facebook and Instagram ads?",
+      "a": "Yes, including Meta ads and TikTok.",
+      "keywords": "facebook,instagram,meta",
+      "priority": 9
+    },
+    {
+      "q": "Do you manage social media?",
+      "a": "Yes, content, scheduling, and community management.",
+      "keywords": "social media",
+      "priority": 9
+    },
+    {
+      "q": "Do you do email marketing?",
+      "a": "Yes, including Klaviyo, Mailchimp, and HubSpot.",
+      "keywords": "email,klaviyo,mailchimp",
+      "priority": 8
+    },
+    {
+      "q": "Do you write content?",
+      "a": "Yes, blogs, landing pages, and ads.",
+      "keywords": "content,copywriting",
+      "priority": 8
+    },
+    {
+      "q": "How long until I see results?",
+      "a": "Ads can be immediate. SEO usually shows results in 3–6 months.",
+      "keywords": "how long,results",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a free audit?",
+      "a": "{audit_note}",
+      "keywords": "audit,free",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a long contract?",
+      "a": "{contract_note}",
+      "keywords": "contract,term",
+      "priority": 9
+    },
+    {
+      "q": "What is your minimum retainer?",
+      "a": "{minimum_note}",
+      "keywords": "minimum,retainer",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lead generation?",
+      "a": "Yes, including landing pages and funnels.",
+      "keywords": "lead generation,leads",
+      "priority": 8
+    },
+    {
+      "q": "Do you set up tracking?",
+      "a": "Yes, including GA4, Google Tag Manager, and conversion tracking.",
+      "keywords": "tracking,analytics,ga4",
+      "priority": 8
+    },
+    {
+      "q": "Do you do marketing automation?",
+      "a": "Yes, including HubSpot and ActiveCampaign.",
+      "keywords": "automation",
+      "priority": 7
+    },
+    {
+      "q": "Are you a Google Partner?",
+      "a": "{partner_note}",
+      "keywords": "partner,certified",
+      "priority": 7
+    },
+    {
+      "q": "Do you report on results?",
+      "a": "Yes, monthly reporting with a review call.",
+      "keywords": "report,reporting",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MKT-AUDIT",
+      "label": "Marketing audit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "audit"
+    },
+    {
+      "sku": "MKT-SEO",
+      "label": "SEO retainer (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "seo"
+    },
+    {
+      "sku": "MKT-LOCAL",
+      "label": "Local SEO (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "local seo"
+    },
+    {
+      "sku": "MKT-GADS",
+      "label": "Google Ads management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "google ads"
+    },
+    {
+      "sku": "MKT-META",
+      "label": "Meta ads management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "meta,facebook"
+    },
+    {
+      "sku": "MKT-SOCIAL",
+      "label": "Social media management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "social media"
+    },
+    {
+      "sku": "MKT-EMAIL",
+      "label": "Email marketing (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 600,
+      "taxable": 1,
+      "keywords": "email"
+    },
+    {
+      "sku": "MKT-CONTENT",
+      "label": "Content writing (per 1000 words)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "content"
+    },
+    {
+      "sku": "MKT-STRAT",
+      "label": "Marketing strategy session",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "strategy"
+    },
+    {
+      "sku": "MKT-TRACK",
+      "label": "Tracking setup (GA4 + GTM)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "tracking"
+    },
+    {
+      "sku": "MKT-AUTO",
+      "label": "Automation setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "automation"
+    },
+    {
+      "sku": "MKT-FUNNEL",
+      "label": "Funnel build",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "funnel"
+    }
+  ]
+}

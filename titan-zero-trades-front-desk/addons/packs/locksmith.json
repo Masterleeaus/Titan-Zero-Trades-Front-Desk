@@ -1,0 +1,404 @@
+{
+  "id": "locksmith",
+  "name": "Locksmith",
+  "icon": "🔐",
+  "tagline": "Lockouts, rekeying, locks, deadbolts, safes, smart locks",
+  "version": "1.0.0",
+  "service_types": [
+    "Lockout Service",
+    "Lock Repair & Replacement",
+    "Rekeying",
+    "Smart Lock Installation",
+    "Safe Opening & Installation",
+    "Mailbox & Letterbox Locks",
+    "Garage Door Locks",
+    "Key Management Systems",
+    "Emergency Door Opening",
+    "Tenant Changeover Rekey",
+    "Key Cutting",
+    "Master Key Systems",
+    "Car Key Replacement",
+    "Deadbolt Installation",
+    "Access Control Install",
+    "Locksmith Security Audit",
+    "Garage Door Lock Repair",
+    "Key Duplication",
+    "After-Hours Lockout"
+  ],
+  "staff_skills": [
+    "lockout",
+    "rekey",
+    "deadbolt",
+    "smart lock",
+    "safe",
+    "mailbox",
+    "garage",
+    "key management",
+    "emergency",
+    "changeover"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "locked out with child inside",
+      "locked out with someone unsafe inside",
+      "door forced after break-in",
+      "broken glass at the door",
+      "lock damaged and house open",
+      "door left open after break-in with person inside",
+      "forced entry with children at home"
+    ],
+    "urgent": [
+      "locked out",
+      "lock broken",
+      "key snapped in lock",
+      "cannot lock the door",
+      "lost all keys",
+      "garage door lock broken with car inside",
+      "gate lock broken and open",
+      "lost keys for a business premises"
+    ],
+    "routine": [
+      "rekey",
+      "new lock",
+      "change locks",
+      "smart lock",
+      "quote",
+      "safe",
+      "upgrade deadbolt",
+      "rekey after moving in",
+      "letterbox lock",
+      "gate lock",
+      "restricted key system",
+      "lock upgrade"
+    ]
+  },
+  "extra_prompt": "You are booking for a licensed locksmith. First confirm the caller is the property owner or a tenant with authority to be there, and get the address and the lock or vehicle type. Ask whether the caller is locked out or the door is open. Never give instructions for bypassing a lock or entering a property. For vehicle lockouts, ask the make, model and year. If the caller suspects a break-in, tell them to contact emergency services first, and then book the lock repair.",
+  "kb": [
+    {
+      "q": "How long does it take you to reach a lockout?",
+      "a": "We aim to arrive within the time we quote when you book. Emergency lockouts are prioritised, and we will confirm an arrival window with you.",
+      "keywords": "arrival,how long,lockout,time",
+      "priority": 10
+    },
+    {
+      "q": "Will I need ID to get into my home?",
+      "a": "Yes. Our technician checks photo ID and asks for proof you live at the address before opening any lock. This protects you as well.",
+      "keywords": "id,proof,identity,verify",
+      "priority": 10
+    },
+    {
+      "q": "Can you open a car that is locked?",
+      "a": "Yes, we open most vehicles without damage. You will need to show ID and proof that the vehicle is yours.",
+      "keywords": "car,vehicle,locked out,auto",
+      "priority": 9
+    },
+    {
+      "q": "Can you rekey my locks instead of replacing them?",
+      "a": "Yes. Rekeying changes the lock cylinders to a new key, so old keys stop working. It is usually cheaper than replacing the locks.",
+      "keywords": "rekey,rekeying,keys,cheaper",
+      "priority": 9
+    },
+    {
+      "q": "How much does a lockout cost?",
+      "a": "{price_note} A lockout call-out has a fixed fee, plus any work needed to open the lock.",
+      "keywords": "lockout,cost,price,fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you damage the lock when you open it?",
+      "a": "We use non-destructive methods wherever possible. If a lock must be drilled, we tell you first and quote for the replacement.",
+      "keywords": "damage,drill,non-destructive,lock",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a smart lock?",
+      "a": "Yes. We install keypad, fingerprint and app-based smart locks and set up the codes or app access with you.",
+      "keywords": "smart lock,keypad,app,fingerprint",
+      "priority": 9
+    },
+    {
+      "q": "Do you fit deadbolts and security screens?",
+      "a": "Yes. We fit high-security deadbolts and reinforce strike plates and door frames on request.",
+      "keywords": "deadbolt,security,strike plate,reinforce",
+      "priority": 8
+    },
+    {
+      "q": "My key snapped in the lock. Can you help?",
+      "a": "Yes. We can usually remove the broken piece and then cut a new key or rekey the lock.",
+      "keywords": "key snapped,broken key,extract",
+      "priority": 9
+    },
+    {
+      "q": "Do you do key cutting?",
+      "a": "Yes. We cut keys for most standard and high-security locks. Please bring an existing key or the lock details.",
+      "keywords": "key cut,copy,duplicate,spare",
+      "priority": 8
+    },
+    {
+      "q": "Can you change locks after a break-in?",
+      "a": "Yes. We recommend changing or rekeying all locks after a break-in and can fit stronger locks at the same visit.",
+      "keywords": "break in,burglary,change locks,security",
+      "priority": 10
+    },
+    {
+      "q": "Do you work on commercial doors?",
+      "a": "Yes. We service commercial and strata doors, master key systems and access control hardware.",
+      "keywords": "commercial,strata,master key,access",
+      "priority": 8
+    },
+    {
+      "q": "Are your locksmiths licensed?",
+      "a": "Yes. Our locksmiths hold the required security licences and carry identification you can check on arrival.",
+      "keywords": "licensed,licence,security,identification",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a safe opening service?",
+      "a": "Yes. We open and repair safes, and we can supply and install a new safe.",
+      "keywords": "safe,open,repair,install",
+      "priority": 7
+    },
+    {
+      "q": "Can I get a quote before you come?",
+      "a": "Yes. For planned work, give us the number of locks and the door type, and we quote before the visit.",
+      "keywords": "quote,estimate,price,planned",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer after-hours service?",
+      "a": "Yes. Lockout and emergency calls are available after hours, with an after-hours rate shown when you book.",
+      "keywords": "after hours,night,weekend,emergency",
+      "priority": 9
+    },
+    {
+      "q": "Can you fit a lock to a gate?",
+      "a": "Yes. We fit gate locks and latches in timber, steel and aluminium, and we can supply a keyed or keypad option.",
+      "keywords": "gate,lock,latch,steel,keypad",
+      "priority": 8
+    },
+    {
+      "q": "What is a restricted key system?",
+      "a": "A restricted key system uses keys that can only be copied with a signed authority card, so unauthorised copies are not made. It is common for offices, strata and body corporates.",
+      "keywords": "restricted,key system,authority card,copy",
+      "priority": 8
+    },
+    {
+      "q": "Can you rekey the locks after a tenant moves out?",
+      "a": "Yes. A tenant changeover rekey changes the cylinders so that old keys no longer work. We can also check that the locks meet your rental requirements.",
+      "keywords": "tenant,rekey,changeover,rental,move out",
+      "priority": 9
+    },
+    {
+      "q": "Which lock grade should I choose?",
+      "a": "Grade and security level depend on the door and the risk. We assess the door and recommend a lock that suits the level of security you need.",
+      "keywords": "grade,lock,security,recommend",
+      "priority": 8
+    },
+    {
+      "q": "Can you service window locks?",
+      "a": "Yes. We repair and replace window locks and stays, and we can upgrade sliding windows with extra locking points.",
+      "keywords": "window lock,stay,sliding,upgrade",
+      "priority": 7
+    },
+    {
+      "q": "Can you help if I am locked out of a storage unit?",
+      "a": "Yes, we can open most storage unit locks. You will need to show ID and proof that the unit is yours.",
+      "keywords": "storage,unit,locked out,id",
+      "priority": 7
+    },
+    {
+      "q": "Can you make a car key?",
+      "a": "Some car keys can be cut and programmed by us. Modern keys with immobilisers may need dealer programming, and we tell you what we can do before we visit.",
+      "keywords": "car key,immobiliser,programming,dealer",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a door viewer or chain lock?",
+      "a": "Yes. We fit door viewers, chain locks and door stoppers, and we check the door can take the fitting safely.",
+      "keywords": "door viewer,chain lock,fit,security",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "LCK-CALL",
+      "label": "Callout: lockout service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 135,
+      "taxable": 1,
+      "keywords": "lockout,emergency,callout"
+    },
+    {
+      "sku": "LCK-AH",
+      "label": "After-hours lockout surcharge",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "after hours,night,weekend,surcharge"
+    },
+    {
+      "sku": "LCK-REKEY",
+      "label": "Rekey lock (per cylinder)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "rekey,cylinder"
+    },
+    {
+      "sku": "LCK-CYL",
+      "label": "Standard key cylinder",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "cylinder,barrel"
+    },
+    {
+      "sku": "LCK-DEAD",
+      "label": "Deadbolt supply and fit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 185,
+      "taxable": 1,
+      "keywords": "deadbolt,fit,install"
+    },
+    {
+      "sku": "LCK-SMART",
+      "label": "Smart lock supply and install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 285,
+      "taxable": 1,
+      "keywords": "smart lock,keypad,install,app"
+    },
+    {
+      "sku": "LCK-KEY",
+      "label": "Key cutting (per key)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "key,cut,copy,spare"
+    },
+    {
+      "sku": "LCK-SNAP",
+      "label": "Broken key extraction",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "broken key,extract,snapped"
+    },
+    {
+      "sku": "LCK-VEH",
+      "label": "Vehicle lockout",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 135,
+      "taxable": 1,
+      "keywords": "car,vehicle,lockout"
+    },
+    {
+      "sku": "LCK-SAFE",
+      "label": "Safe opening (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "safe,open"
+    },
+    {
+      "sku": "LCK-STRK",
+      "label": "Strike plate and frame reinforcement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "strike plate,frame,reinforce,security"
+    },
+    {
+      "sku": "LCK-MASTER",
+      "label": "Master key system (per door)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "master key,system,door"
+    },
+    {
+      "sku": "LCK-QUOTE",
+      "label": "Security assessment and quote",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "quote,assessment,estimate,free"
+    },
+    {
+      "sku": "LCK-GATE",
+      "label": "Gate lock or latch install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "gate,lock,latch,install"
+    },
+    {
+      "sku": "LCK-RESTR",
+      "label": "Restricted key system (per door)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "restricted,key,system,door"
+    },
+    {
+      "sku": "LCK-TENANT",
+      "label": "Tenant changeover rekey package (up to 3 locks)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "tenant,rekey,changeover,package"
+    },
+    {
+      "sku": "LCK-WIN",
+      "label": "Window lock install (per window)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "window,lock,install"
+    },
+    {
+      "sku": "LCK-MAIL",
+      "label": "Letterbox lock replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "letterbox,mailbox,lock"
+    },
+    {
+      "sku": "LCK-GARAGE",
+      "label": "Garage door lock fit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "garage,door,lock,fit"
+    },
+    {
+      "sku": "LCK-UPG",
+      "label": "Lock grade upgrade assessment",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "upgrade,assessment,grade,free"
+    }
+  ]
+}

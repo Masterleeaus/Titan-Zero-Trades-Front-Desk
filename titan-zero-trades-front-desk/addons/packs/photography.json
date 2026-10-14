@@ -1,0 +1,291 @@
+{
+  "id": "photography",
+  "name": "Photography",
+  "icon": "📷",
+  "tagline": "Weddings, portraits, events, product, real estate",
+  "version": "1.0.0",
+  "service_types": [
+    "Wedding Photography",
+    "Engagement",
+    "Family Portraits",
+    "Newborn",
+    "Maternity",
+    "Corporate Headshots",
+    "Product Photography",
+    "Real Estate",
+    "Event Photography",
+    "Birthday Party",
+    "Pet Photography",
+    "Boudoir",
+    "Fashion",
+    "Commercial",
+    "Videography",
+    "Drone",
+    "Editing"
+  ],
+  "staff_skills": [
+    "photography",
+    "wedding",
+    "portrait",
+    "newborn",
+    "corporate",
+    "product",
+    "real estate",
+    "videography",
+    "drone",
+    "editing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "urgent shoot"
+    ],
+    "urgent": [
+      "this week",
+      "deadline",
+      "before listing",
+      "before launch"
+    ],
+    "routine": [
+      "booking",
+      "session",
+      "portrait",
+      "quote",
+      "package"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional photography business. Ask about the shoot type, date, location, duration, and how many people or items are involved. Ask about usage rights, delivery timelines, and whether editing is included. Quote prices only from the reference answers, and say the final price is confirmed after details are locked in. Do not promise a specific creative outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the shoot type, duration, and deliverables.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do weddings?",
+      "a": "Yes, we shoot weddings and offer full-day packages.",
+      "keywords": "wedding",
+      "priority": 9
+    },
+    {
+      "q": "How many photos do we get?",
+      "a": "It depends on the package. Most sessions deliver 50–200 edited images.",
+      "keywords": "how many,photos",
+      "priority": 9
+    },
+    {
+      "q": "Is editing included?",
+      "a": "Yes, basic editing is included. Advanced retouching is quoted separately.",
+      "keywords": "editing,retouch",
+      "priority": 9
+    },
+    {
+      "q": "How long until we get the photos?",
+      "a": "Standard delivery is {delivery_time}. Rush delivery is available for a fee.",
+      "keywords": "how long,delivery,turnaround",
+      "priority": 9
+    },
+    {
+      "q": "Do you travel?",
+      "a": "Yes, we travel. Travel beyond the local area may incur a fee.",
+      "keywords": "travel,location",
+      "priority": 8
+    },
+    {
+      "q": "Do you do drone photography?",
+      "a": "Yes, we do drone photography with licensed operators.",
+      "keywords": "drone,aerial",
+      "priority": 8
+    },
+    {
+      "q": "Do you do video?",
+      "a": "Yes, we do videography and highlight reels.",
+      "keywords": "video,videography",
+      "priority": 8
+    },
+    {
+      "q": "Do you do product photography?",
+      "a": "Yes, we do product and e-commerce photography.",
+      "keywords": "product,ecommerce",
+      "priority": 8
+    },
+    {
+      "q": "Do you do real estate photography?",
+      "a": "Yes, we do real estate and architectural photography.",
+      "keywords": "real estate,property",
+      "priority": 8
+    },
+    {
+      "q": "Do you do headshots?",
+      "a": "Yes, we do corporate and personal headshots.",
+      "keywords": "headshot,corporate",
+      "priority": 8
+    },
+    {
+      "q": "Do you do newborn shoots?",
+      "a": "Yes, we do newborn and maternity shoots.",
+      "keywords": "newborn,maternity",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a studio?",
+      "a": "Yes, we have a studio. We also shoot on location.",
+      "keywords": "studio",
+      "priority": 8
+    },
+    {
+      "q": "Do you deliver raw files?",
+      "a": "{raw_note}",
+      "keywords": "raw,unedited",
+      "priority": 7
+    },
+    {
+      "q": "What if it rains?",
+      "a": "We reschedule outdoor shoots at no cost if weather is unsuitable.",
+      "keywords": "rain,weather,reschedule",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit,booking fee",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer prints and albums?",
+      "a": "Yes, prints, albums, and wall art are available.",
+      "keywords": "print,album",
+      "priority": 7
+    },
+    {
+      "q": "Do you have a second shooter?",
+      "a": "Yes, a second shooter can be added to wedding packages.",
+      "keywords": "second shooter,assistant",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "PHO-MINI",
+      "label": "Mini session (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "mini,session"
+    },
+    {
+      "sku": "PHO-FAM",
+      "label": "Family portrait session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "family,portrait"
+    },
+    {
+      "sku": "PHO-NEW",
+      "label": "Newborn session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "newborn"
+    },
+    {
+      "sku": "PHO-HEAD",
+      "label": "Corporate headshots (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "headshot"
+    },
+    {
+      "sku": "PHO-WED",
+      "label": "Wedding photography (full day)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "PHO-EVENT",
+      "label": "Event photography (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "PHO-PROD",
+      "label": "Product photography (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "product"
+    },
+    {
+      "sku": "PHO-REST",
+      "label": "Real estate package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "real estate"
+    },
+    {
+      "sku": "PHO-DRONE",
+      "label": "Drone add-on",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "drone"
+    },
+    {
+      "sku": "PHO-VID",
+      "label": "Videography (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 300,
+      "taxable": 1,
+      "keywords": "video"
+    },
+    {
+      "sku": "PHO-EDIT",
+      "label": "Advanced retouching (per image)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "retouch"
+    },
+    {
+      "sku": "PHO-TRAVEL",
+      "label": "Travel fee (per km beyond 30km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

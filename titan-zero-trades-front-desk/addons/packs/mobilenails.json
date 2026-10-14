@@ -1,0 +1,262 @@
+{
+  "id": "mobilenails",
+  "name": "Mobile Nail Technician",
+  "icon": "💅",
+  "tagline": "Mobile manicures, pedicures, gel, acrylic, parties",
+  "version": "1.0.0",
+  "service_types": [
+    "Mobile Manicure",
+    "Mobile Pedicure",
+    "Gel Nails",
+    "Acrylic Nails",
+    "SNS",
+    "Nail Art",
+    "Infills",
+    "Removal",
+    "Nail Repair",
+    "Luxury Pedicure",
+    "Kids Nails",
+    "Bridal Nails",
+    "Group Bookings",
+    "Nursing Home Visits",
+    "Pamper Parties"
+  ],
+  "staff_skills": [
+    "mobile nails",
+    "manicure",
+    "pedicure",
+    "gel",
+    "acrylic",
+    "nail art",
+    "bridal nails"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "urgent"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "before event"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "infills",
+      "party",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a mobile nail technician. Ask about the service, nail condition, location, and whether they want a group booking. Ask about allergies and skin conditions. Ask about access to power and a table. Quote prices only from the reference answers, and say the final price is confirmed on the day. Do not promise a specific result without seeing the nails.",
+  "kb": [
+    {
+      "q": "How much does a mobile manicure cost?",
+      "a": "{price_note} Mobile pricing includes a travel fee. We confirm before booking.",
+      "keywords": "cost,price,manicure",
+      "priority": 9
+    },
+    {
+      "q": "Do you travel to me?",
+      "a": "Yes, we come to your home, office, or venue. Travel fees may apply.",
+      "keywords": "travel,mobile",
+      "priority": 9
+    },
+    {
+      "q": "Do you do gel and acrylic?",
+      "a": "Yes, including gel, acrylic, and SNS.",
+      "keywords": "gel,acrylic",
+      "priority": 9
+    },
+    {
+      "q": "Do you do nail art?",
+      "a": "Yes, including custom nail art.",
+      "keywords": "nail art",
+      "priority": 8
+    },
+    {
+      "q": "Do you do infills?",
+      "a": "Yes, infills and rebalances.",
+      "keywords": "infill",
+      "priority": 9
+    },
+    {
+      "q": "Do you do removals?",
+      "a": "Yes, removal of gel and acrylic.",
+      "keywords": "removal",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pedicures?",
+      "a": "Yes, including luxury pedicures.",
+      "keywords": "pedicure",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal nails?",
+      "a": "Yes, including on-site bridal parties.",
+      "keywords": "bridal,wedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you do kids' nails?",
+      "a": "Yes, kids' nails are available.",
+      "keywords": "kids,children",
+      "priority": 8
+    },
+    {
+      "q": "Do you do nursing homes?",
+      "a": "Yes, we visit nursing homes and retirement villages.",
+      "keywords": "nursing home,aged care",
+      "priority": 8
+    },
+    {
+      "q": "Do you do group bookings?",
+      "a": "Yes, pamper parties and group bookings.",
+      "keywords": "group,party",
+      "priority": 9
+    },
+    {
+      "q": "What do you need on site?",
+      "a": "A table, two chairs, and access to a power point.",
+      "keywords": "table,power,setup",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a minimum booking?",
+      "a": "{minimum_note}",
+      "keywords": "minimum",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,suburb",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MN-MAN",
+      "label": "Mobile manicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "manicure"
+    },
+    {
+      "sku": "MN-PED",
+      "label": "Mobile pedicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "pedicure"
+    },
+    {
+      "sku": "MN-GEL",
+      "label": "Gel nails",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "gel"
+    },
+    {
+      "sku": "MN-ACR",
+      "label": "Acrylic full set",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 100,
+      "taxable": 1,
+      "keywords": "acrylic"
+    },
+    {
+      "sku": "MN-SNS",
+      "label": "SNS / dip powder",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "sns"
+    },
+    {
+      "sku": "MN-INF",
+      "label": "Infill",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "infill"
+    },
+    {
+      "sku": "MN-ART",
+      "label": "Nail art (per nail)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "art"
+    },
+    {
+      "sku": "MN-REM",
+      "label": "Removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "removal"
+    },
+    {
+      "sku": "MN-KIDS",
+      "label": "Kids' nails",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "kids"
+    },
+    {
+      "sku": "MN-BRIDAL",
+      "label": "Bridal nails",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "bridal"
+    },
+    {
+      "sku": "MN-GROUP",
+      "label": "Group booking (per person, min 4)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "MN-TRAVEL",
+      "label": "Travel fee (per km beyond 15km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

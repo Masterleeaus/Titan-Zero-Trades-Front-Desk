@@ -1,0 +1,208 @@
+Titan Zero Trades: Front Desk changelog
+
+= 2.0.1 =
+* Removed the custom CSS editor. Saved custom CSS is no longer output on any page. Saved settings are kept.
+* Added nonce and permission checks to admin actions and to public requests that change data.
+* Moved inline scripts and styles into script and style files that WordPress loads.
+* Removed the upgrade card and the "Powered by AI" line from the booking assistant.
+* Updated Chart.js to 4.5.1.
+* Documented each external service, including Cerebras, and included readable source for the minified scripts.
+* Help page: the list of Settings tabs no longer names Custom CSS or Styles.
+* Uninstall removes chat photos and invitation files from the plugin's own uploads folder, and chat photos that version 2.0.0 saved in the uploads root. Other files in uploads are not touched.
+* Calendar feed: each date range is cached separately, so a different range no longer shows an earlier one.
+* Front Desk admin pages check the edit_pages capability before they open.
+* AI provider calls report a failed response as an error. The provider address must be http or https.
+* Help links point to the titanzero.io support page.
+* Updated jQuery Validation to 1.22.1.
+* Calendar feed and public availability return only the bookings inside the requested date range.
+* iCal feed: a daylight saving setting of No is respected, and cancelled and rejected bookings are left out of the attachment.
+* Local AI server checks run only when an administrator presses the check button, and accept only http or https addresses.
+* Quote links: an unknown or wrong link returns the same 403 response.
+* Report screen: removed the Export to CSV button, which had no action.
+* Report and admin export forms check a nonce before they change anything.
+* Quote approval is refused for drafts, declined or expired quotes, and quotes past their valid-until date.
+* Quote PDFs no longer show internal notes, and declined or expired quotes no longer show the approval block.
+* The dashboard delete link was removed. It did nothing.
+* iCal feed: Australia and New Zealand daylight saving dates are corrected to the Southern Hemisphere rules.
+
+= 2.0.0: brand graphics =
+* Brand pack v1.0.0 graphics: all product graphics are in images/brand/. The Help page shows the feature cards, workflow overview and light, dark and mark logos. The Preset Setup page shows the setup flow. Trade packs show their banner, and the install notice shows the slim banner. Status tags use the status icons, and admin headings use the screen icons. WordPress.org banner and icon are in .wordpress-org/.
+
+= 2.0.0: plugin name =
+* Renamed to Titan Zero Trades: Front Desk. The plugin folder, slug, main file and text domain are now titan-zero-trades-front-desk. Code prefixes (tzfd), database tables and option keys are unchanged, so existing data keeps working.
+
+= 2.0.0: AI settings note =
+* The AI settings page and the readme point to Google AI Studio and Groq as providers where you can create an API key, with a note that limits, prices and terms are set by each provider.
+
+= 2.0.0: Plugin Check fixes =
+* Settings: the booking intake calendar list reads through the calendar helper, so the settings page makes no direct database call.
+* Read-only routing and page checks are marked as such, so Plugin Check accepts them.
+* The intake calendar list and the quote list query are marked as checked: they read fixed tables and bind every value.
+
+= 2.0.0: booking page and client portal =
+* Settings: a new card creates a booking page and a client portal as normal WordPress pages, so they use the active theme's header, footer and fonts. Choose the calendar for the booking page there. Saving again updates the choice and does not make duplicate pages.
+* Client portal: clients enter their email address and get a one-time sign-in link (valid 20 minutes). The link opens a session for 2 hours. The portal lists their bookings and quotes. Upcoming bookings can be changed or cancelled with the same signed links used in booking emails. The reply to a sign-in request is the same whether or not the address has records.
+* Sign-in emails are sent with the site's own mail setup. No data is sent to any outside service.
+
+= 2.0.0: menu changes =
+* The Front Desk submenu is minimised by default. Its items open as a flyout when you point at Front Desk in the WordPress menu, instead of being listed inline.
+* The New booking page is removed from the Front Desk menu. Add a booking from the Calendar screen instead.
+* On Front Desk screens, the WordPress menu is listed in the Front Desk sidebar (a WordPress menu section), so Posts, Pages, Media and the other WordPress links stay available. The WordPress menu itself stays hidden on those screens.
+
+= 2.0.0: guideline round 8 =
+* Calendar: the event editor opens in a new browser tab, not an iframe dialog (guidelines rule 8). If the browser blocks the pop-up, it opens in the current tab. The quick-add on an empty time slot opens the editor at the clicked time.
+* Removed the unused iframe helpers OpenModelWindow and CloseModelWindow from Common.js.
+* Calendar scripts declare their dependencies, so they load in order.
+* jquery.calendar.js, tzfdform-admin.js and jquery.validate.js are readable now. Their syntax trees match the minified originals, apart from the new-tab change above.
+* Renamed js/tzfdform-pro-*.jquery.js to js/tzfdform-core-*.jquery.js. The form builder core is not a Pro feature.
+* Removed the dormant Titan Zero AI hosted preset. The AI page keeps one upgrade card (see the readme).
+* UPSTREAM.txt lists the readable-source files and the upstream files that were removed.
+
+= 2.0.0: review fixes, round 2 =
+* AI chat: the height setting is applied to the message area (200 to 900 px, default 420).
+* AI photos: the help page says the assistant cannot see photos yet. The photo link is saved with the request.
+* Uninstall: chat photos and invitation files are removed on every uninstall. The database and settings still need TZFD_DELETE_DATA_ON_UNINSTALL.
+
+= 2.0.0: review fixes =
+* AI: the default Anthropic model is claude-sonnet-5-5 and the default Groq model is openai/gpt-oss-120b. The previous defaults are retired.
+* AI keys: a key is never stored unencrypted. Without OpenSSL on the server the key is not saved, and the AI page shows it is not set up.
+* AI photos: the assistant is told it cannot see photos. Uploaded photos are deleted with their conversations after the retention period.
+* Calendar invitations (iCal) are named tzfd-booking_*.ics. Uninstall removes only those files, not other plugins' files.
+* Quotes: the add-on is described as deposit tracking. Payments are recorded by hand; no deposit is taken automatically.
+* readme: a FAQ entry explains that this is not an upgrade from Appointment Hour Booking or Titan Front Desk, and that there is no import tool.
+
+= 2.0.0: audit fixes =
+* Help page: the examples for REST routes and webhook headers now match the code.
+* One REST namespace for every endpoint (tzfd/v1). Webhook and missed-call headers are X-TZFD-Secret, X-TZFD-Event, X-TZFD-Event-ID, X-TZFD-Timestamp and X-TZFD-Signature.
+* AI page: it has its own slug and add-on ID, so it no longer opens Preset Setup. It is in the menu on every Front Desk screen.
+* AI setup wizard: trimmed to the steps the free build uses (provider, mode, business basics, finish). The voice, messaging channel, knowledge base, staff, receptionist and go-live steps, which needed services this build does not include, are removed.
+* Settings: the Quote defaults pane explains how to turn on Quotes when that add-on is off, instead of failing.
+* Dashboard: the greeting reads the first name from user meta.
+* CSS editor: the template scan no longer fails when the templates folder is missing.
+* Brand images that nothing in the plugin loads (source files, generated art, marketing and overview images) are removed.
+
+= 2.0.0: second audit fixes =
+* Fixed: the "Open setup wizard" button in the add-on settings pointed to a page that does not exist. It now opens the AI setup wizard.
+* Fixed: the "Open Vertical Packs" link pointed to a page that does not exist. It now opens the Vertical Packs page.
+* Fixed: the "New service" link and the calendar "edit" route loaded a file that is not in the plugin, so the screen was blank. It now opens the calendar editor.
+* Translations: this release ships in English. Translation files are left out until they are checked against the final strings.
+* readme: the external services list now names OpenRouter, Cerebras and Google AI Studio, which the AI settings can send messages to.
+* Removed unused code: two helper functions in the admin menu class that nothing called.
+* Removed the wporg-assets folder from the plugin package. Store images belong in the WordPress.org assets folder, not in the plugin.
+* Translator comment added for the quote-activity message in the admin menu.
+
+= 2.0.0: add-on build-out =
+* Every Front Desk screen shares one layout that follows the 10-screen mock-up: a dark sidebar with the TITAN ZERO / FRONT DESK brand, the workspace name and the menu; a top bar with breadcrumb, search, help, notifications and your avatar; and a page header with the main action. WordPress's own admin menu is hidden on these screens.
+* Stat tiles with coloured edges appear on the Dashboard, Customers, Quotes, Services, Workers & locations and AI screens. Each tile links to the list it counts.
+* Restyled screens: Dashboard (welcome card with set-up progress, four tiles, upcoming bookings, activity and quick actions); Bookings (status tabs, filters, stats and a workflow footer); Customers (stats, filter bar, last activity, next booking and status); Services (catalogue card with address and location columns, filters and a tip); Calendar toolbar (previous, today, next, title, calendar filter, Day, Week and Month, and Manage calendars); Quotes list (status tabs, search and date range, four stats, and a footer with quick actions); Workers & locations (one page with Team, Locations and Equipment & rooms tabs); AI assistant (receptionist status, response behaviour and the booking assistant add-on).
+* AI assistant: the AI page is always in the menu, even before a key is saved. Until a key is saved it shows a set-up banner, and the guided setup runs from its steps.
+* Page banners are off by default, to match the mock-ups. Turn them on with the titan_zero_front_desk_show_page_banners filter.
+* Customers and Services lists show company and city (Customers) and each service's address and location (Services) in the table, so saved details are visible without opening each record.
+* Dashboard: for administrators, the set-up card links to Continue setup. Other users see a note to ask an administrator to run setup until it is finished.
+* Mobile: Front Desk screens stack into one column below 782px wide, and the dashboard cards keep to the page width at phone size.
+* Settings is organised into sections: General, Booking rules, Business hours, Notifications, Payments, Integrations and Advanced, with a list beside the content (stacked on phones). Save changes saves the open section's form; sections with several forms keep a Save button on each.
+* Settings: business and money, payment methods and quote defaults are embedded in their sections, and saving them returns to Settings. Old tab links still open the right section.
+* Add-ons page: grouped into Included features (switches that change how Front Desk behaves), optional add-on cards with View details, and Add-on settings. Save add-on changes reloads the page, so the menu picks up the saved list.
+* AI Booking Assistant (Field service) shows the badges BYO key and Field service on its card.
+* First-run add-ons are Quotes, Preset Setup (Onboarding) and the Dashboard Widget. The setup wizard is no longer switched on by default.
+* Quotes overhaul: every quote action shows a message at the top of the Quotes page, so a save is never silent. Messages cover saved, emailed, marked as sent (no customer email), duplicated, deleted, and the reason an action was refused.
+* Quotes: a quote can be created, edited, duplicated, deleted and sent by anyone with edit_pages (Editors and Administrators). The Price catalog and quote Settings tabs stay with administrators.
+* Quotes: New quote can start from a booking. The customer name, email, service, address and the service's price are filled in from the booking, and a description still gives an AI draft when the AI is set up.
+* Quotes: Save and email to customer saves and emails in one step. Send again emails a quote again. A quote with no line items cannot be emailed. Delete removes any quote that is not approved. Duplicate copies a quote, with its lines, as a new draft.
+* Quotes: approved quotes are read-only and cannot be deleted. Duplicate one to make a changed draft.
+* Quotes: totals, discount and deposit are recalculated on every save, and money is shown in the site currency on the list, the editor, emails and the customer's quote page. A discount shows with a minus sign.
+* Quotes: the list has totals, status filters and search. The editor has line items with kind, quantity, unit, price and tax, and a live total.
+* Quotes: the price catalog refuses a blank label and a SKU that is already used, and an empty catalog can be filled with a starter list.
+* Quotes: Save, send and the other actions use WordPress form security, and reloading the page after an action does not repeat it.
+* Setup: Start setup opens Preset Setup on a fresh install, even with no add-on switched on. Only administrators see the button; other users see a note to ask an administrator.
+* Payments: a new Payments menu item. Record money received by PayPal, bank transfer or cash, optionally against a booking, with a date, reference and note. Totals show what was received today, this month and in total. Remove deletes a payment recorded by mistake.
+* Payment methods: PayPal (email or PayPal.me link), bank transfer (account name, bank, BSB, account number) and cash, each switched on or off with a note for customers, and a default method. The payment instructions card builds the text for confirmations and invoices. Nothing is sent automatically.
+* Business and money: a Settings tab for business name, phone, email, tax number, website and address, and for the currency code, symbol, symbol position and decimal places. Dashboard, Payments, quotes and AI use the saved currency; quotes previously fell back to USD when WooCommerce was not active.
+* Dashboard: top cards for bookings today, value booked today, total payments and quotes to send. Each card links to its screen. The at-a-glance counts no longer repeat them.
+* Locations: a tab on the Workers & locations page, next to Team and Equipment & rooms. The Locations page still opens from its old link. Workers keeps the people, equipment and rooms, the availability preview and the advanced import.
+* Menu: Dashboard, Calendar, Customers, Bookings, Quotes, Services, Workers & locations, AI, Add-ons and Settings. Payments and Upgrade are no longer in the sidebar; their pages still open from their links. Settings tabs show the active tab in brand red.
+* Payment method fix: when the chosen default is switched off, the first method that is on is used, or cash.
+* Calendar: every booking from every calendar, with Day, Week and Month views, previous and next, and a filter for one calendar. Cancelled and rejected bookings stay visible, marked by status. Manage calendars opens the calendar list.
+* Customers: company, street address, city, region, postcode, country, preferred contact, how they found you, and notes. Customer pages show these as labelled sections.
+* Workers and locations: workers and equipment or rooms have a name, role, type, location, phone, email, notes, working days and hours, days off, bookings at the same time, time needed before and after each booking, and the services they offer. Locations have a name, address, phone, timezone and the postcodes they cover. IDs are made from the name. The resource catalogue stays at schema version 1; the new fields are optional.
+* Services: each service has an address and an optional saved location. These are kept apart from the calendar's own settings, so saving a calendar does not remove them.
+* Dashboard: reminder buttons sit on their own row, figures show as cards, and quick links are buttons.
+* One layout for every Front Desk screen (dashboard, calendar, customers, bookings, quotes, services, workers and booking lists), with brand red (#E31B23) for primary buttons and the active menu item. The sidebar and top bar are set out in the first item of this section.
+* Fix: on a customer's page, a booking with no status shows as Confirmed. It showed as Pending before.
+* Reminders for administrators on Front Desk screens: an AI key reminder while no AI key is saved, and a booking speed reminder (Cache Booking Availability) while that add-on is off. Each can be dismissed for 30 days.
+* Menu: the Front Desk menu is now Dashboard, Calendar, Customers, Bookings, Quotes, Services, Workers, AI, Addons, Settings and Upgrade. Every other tool is a tab on the Settings page, and tab pages show the same tab bar.
+* Dashboard: a Start setup button opens the setup wizard (Preset Setup). Bookings lists upcoming bookings across calendars. Services lists the services of every calendar.
+* Booking intake: each calendar can confirm bookings instantly or hold them as requests saved as Pending until an administrator approves them. Set the default and each calendar's mode under Settings, Other settings. Preset Setup asks the same question.
+* Booking passwords are stored as one-way hashes. Passwords saved before this change are upgraded the first time they are used.
+* The [TZFD_FRONT_DESK_LIST] booking list shortcode shows its rows to administrators only.
+* The missed-call endpoint accepts the documented X-TZFD-Secret header.
+* Add-ons: AI Assistant (your own key or a local AI server), Activity Logs, Automatically cancel pending bookings, Cache, Dashboard widget, Email blacklist, FollowUp notifications, Limit the number of appointments per booking, Missed-call text-back, Password for making bookings, Reminder notifications, Single-day selection, SMS and WhatsApp open-chat buttons, iCal export, WebHook settings, Coupons, Quotes with quote PDF export, Vertical Packs.
+* Customers can cancel a booking, after confirming, or move it to another time, through a link in their email. Both links appear only where the form's copy-to-customer option is on, and each link is signed per booking.
+* Status update emails go to the customer when an administrator changes a booking's status. Their subject and body are set on the status update emails settings page.
+* Messaging, sync and payment framework: the outbox, the sync queue, and the base classes for SMS, payment gateway webhooks, hosted captcha, and CRM sync load on every site. A provider adapter from a separate add-on is needed before they send or receive anything; none ships in this build.
+* Brand: the Front Desk menu has the receptionist icon and an icon beside each Front Desk menu item. Each Front Desk screen has a slim banner, the Help page shows the wordmark, and empty lists (Customers, Services, Workers, Calendars, Quotes, AI conversations) show a matching illustration. The full brand pack, including the onboarding graphic, status badges and feature cards, is in images/brand/.
+* Settings: each add-on has a settings block on the Add-ons page. AI has its own tab, with options for Groq, OpenRouter, Cerebras, Google AI Studio and Ollama, your own key, and a link to the paid Titan Zero AI service on the AI page. Keys are stored encrypted.
+* Deactivating the plugin clears its scheduled events. Deleting the plugin clears them too and keeps bookings and settings unless TZFD_DELETE_DATA_ON_UNINSTALL is set to true in wp-config.php.
+* Requires WordPress 6.2 or newer. Database queries pass table names as placeholders.
+* Plugin Check fixes: escaped output, translator comments, WordPress date and URL helpers, enqueued scripts with versions, no hidden files.
+* Removed: the browser AI (WebLLM) mode, which loaded code from esm.run and Hugging Face, and the custom JavaScript editor. Custom CSS is unchanged.
+* Form builder: the field types that were marked as commercial-only now show the same editor preview as the other fields.
+* Rescheduling: a service with no stored ID is matched by its position, so the change link works on default forms.
+* Front Desk sidebar: every section (Calendars, settings tabs, status update emails, Scheduling Preview, Resources, AI Setup, Preset Setup, Vertical Packs, Quotes and its tabs) is listed inline in the expanded sidebar.
+* New installs start with AI Setup and Quotes switched on. Existing sites keep their Add-ons page choices.
+* Help page: rewritten for this build. Searchable FAQ, step-by-step guides, a page reference for each area, and the add-on reference. Support links point to the vendor help site.
+* Add-on names: the setup wizard add-on is "AI Setup Wizard" and the guided setup is "Preset Setup".
+* Vertical packs: extra FAQ entries for HVAC, electrical and cleaning.
+* Help page: a page reference table for each area lists every Front Desk page and what it is for.
+* Dashboard widget (titled "Titan Zero Front Desk"): counts for today, the next 7 days, appointments awaiting approval, and quotes (when the Quotes add-on is on), with quick links to Add booking, Block times, New quote and Calendars. It is on for new installs.
+* Renamed to Titan Zero Front Desk. The plugin folder, slug, text domain, file names and code prefixes all changed. Install it as a new plugin and remove titan-front-desk first. Database tables are now named tzfd_* (the upstream cpappbk_* tables are not read), and option keys are now tzfd_*.
+* Customers: a mini CRM on the Customers page. Add, edit and delete customers. Each customer shows the quotes with the same email and the bookings that contain their email or phone. Deleting a customer keeps their bookings and quotes.
+* AI is optional. AI Setup, the AI booking assistant and AI-drafted quotes appear only after an AI option is chosen and saved under Settings > AI (one of the provider options, your own key, or a local AI server). Without a key, Preset Setup, manual quotes (line items added by hand), bookings, Customers, Add-ons and Settings all work as normal.
+* Quotes without a key: New quote creates a draft with no line items, and the quote editor has an "Add a line item" row.
+* Fixed: quotes did not find the AI Assistant's key, so AI-drafted quotes never reached the provider.
+* "+ New" in the admin bar: New booking, New quote (when Quotes is on), New service (opens the first calendar's editor) and New customer.
+* Plugin Check fixes: output is escaped on every Front Desk screen, database queries are prepared, and form values are sanitised before they are saved. Where WordPress checks the nonce in a shared helper, the code says so.
+* Plugin Check fixes: the layout stylesheet no longer uses a heredoc (its output is unchanged), the quote translator note is in place, and the lineage file is UPSTREAM.txt (it was UPSTREAM.md), so the plugin root has no markdown file.
+* Guidelines: the Upgrade menu item is removed. The AI settings page keeps one upgrade card that links to Titan Zero AI, the only upgrade link.
+* Guidelines: the AI assistant footer says "Upset or urgent requests go to a person". The earlier wording, which said a human agent reviews every request, is removed.
+* Guidelines: AI escalations are emailed to the site administrator. The replies no longer promise a call-back time or a named agent.
+* Guidelines: reminders show only to administrators, only on Front Desk screens. The AI setup reminder no longer appears on other admin pages.
+* Guidelines: Front Desk screens no longer deregister or replace other plugins' script handles. The placeholder script is removed, and the old jQuery UI stylesheet loads under a plugin-specific handle.
+* Guidelines: the lineage file is UPSTREAM.txt, and the readme names that file.
+* Guidelines: the unused jQuery Form copy is removed. WordPress already provides jquery-form.
+* Guidelines: the readme now says what happens to chat photos (the provider gets the link as text, the file is stored in uploads, and it is deleted after the retention period), and describes the Titan Zero AI link on the AI page as a plain link, not a service call.
+* Guidelines: the readme External services section lists every AI provider the plugin can call, with terms links. A new Third-party code section names each bundled library and where its source is.
+* Guidelines: bundled files that nothing loaded are removed (colour and dropdown pickers, CLEditor, jQuery Form, a duplicate validator and other unused helpers). Scripts load through WordPress, and a request for a missing rrule.js file is gone.
+* Guidelines: the legacy script setting prints its scripts and styles in order from WordPress, instead of loading WordPress core files by relative path.
+
+= 1.0.6 =
+* Request custom changes, Request Custom Modifications and Free Support now open an email to support@titanzero.io. The Help links pointed to the vendor help site.
+
+= 1.0.5 =
+* Safer scripts: the booking form and calendar scripts no longer use eval(). Behaviour is unchanged.
+* Direct-access guards added to the two rule classes.
+* Readme and package checked against the WordPress.org plugin guidelines.
+
+= 1.0.3 =
+* Add-on files grouped into folders (core, bookings, messaging, quotes, assistant). Core loads first. The file list is built by TZFD_Addon_Loader, which has tests.
+* No change for customers or settings.
+
+= 1.0.2 =
+* Booking pipeline restructured into agents: intake (worker), booking check, slot check and approver (specialists), pipeline manager (manager policy), run by an orchestrator.
+* Tier rules enforced at every call. A lower-tier agent cannot call a higher one. Tier boundaries tested.
+* Supervisor runs the same steps as a new booking. No change to what customers see.
+
+= 1.0.1 =
+* Pipeline screen under Front Desk. AI assistant bookings are saved to the calendar as pending requests, checked, then approved by staff.
+* Booking manager checks, jobs check (slot still free, under the calendar's capacity lock), approve, reject and check-again actions, event log and hourly supervisor.
+* Fixed: AI assistant bookings were drafts only. A taken slot now returns a clear reply for the assistant.
+
+= 1.0.0 =
+* First release. Merged build: Titan Zero Front Desk core with the Titan Zero Front Desk quotes, coupons, setup wizard and 65 vertical packs.
+* Requires WordPress 6.2 or newer.
+
+= 1.5.98 =
+* Initial Titan Zero Front Desk release, built from an upstream GPLv2 plugin at version 1.5.98 (see UPSTREAM.txt).
+* Includes the upstream schedule calendar view encoding fixes.
+* Brand, text domain, file names, database tables and option keys renamed to Titan Zero Front Desk.
+* Removed the promotional banner, deactivation survey, vendor help links and vendor-hosted AI gateway option.

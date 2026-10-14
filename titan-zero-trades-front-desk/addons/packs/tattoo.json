@@ -1,0 +1,264 @@
+{
+  "id": "tattoo",
+  "name": "Tattoo & Piercing",
+  "icon": "🖋️",
+  "tagline": "Custom tattoos, cover-ups, piercings, removal",
+  "version": "1.0.0",
+  "service_types": [
+    "Custom Tattoo",
+    "Small Tattoo",
+    "Large Tattoo",
+    "Sleeve",
+    "Cover-Up",
+    "Black & Grey",
+    "Colour Tattoo",
+    "Traditional",
+    "Fine Line",
+    "Realism",
+    "Script / Lettering",
+    "Piercing",
+    "Jewellery Change",
+    "Tattoo Removal",
+    "Touch-Up",
+    "Consultation"
+  ],
+  "staff_skills": [
+    "tattoo",
+    "piercing",
+    "cover up",
+    "fine line",
+    "realism",
+    "traditional",
+    "colour",
+    "black and grey"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "infection",
+      "allergic reaction",
+      "embedding",
+      "urgent"
+    ],
+    "urgent": [
+      "this week",
+      "before event",
+      "before holiday"
+    ],
+    "routine": [
+      "booking",
+      "consultation",
+      "quote",
+      "design",
+      "appointment"
+    ]
+  },
+  "extra_prompt": "You are booking for a tattoo or piercing studio. Ask about the design idea, size, placement, and any reference images. Ask about skin conditions, allergies, and medications. Ask whether they want a consultation or are ready to book. Quote prices only from the reference answers, and say the final price is confirmed after consultation and design. Do not give medical advice. Advise that clients must be 18+ for tattoos (unless local law allows otherwise with consent).",
+  "kb": [
+    {
+      "q": "How much does a tattoo cost?",
+      "a": "{price_note} Tattoos are priced by size, detail, and artist. We quote after consultation.",
+      "keywords": "cost,price,tattoo",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a consultation?",
+      "a": "Yes, custom work requires a consultation to discuss design and placement.",
+      "keywords": "consultation,consult",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cover-ups?",
+      "a": "Yes, cover-ups are available after a consultation.",
+      "keywords": "cover up",
+      "priority": 9
+    },
+    {
+      "q": "Do you do fine line?",
+      "a": "Yes, including fine line and micro tattoos.",
+      "keywords": "fine line",
+      "priority": 9
+    },
+    {
+      "q": "Do you do realistic tattoos?",
+      "a": "Yes, including realism and portrait work.",
+      "keywords": "realism,portrait",
+      "priority": 8
+    },
+    {
+      "q": "Do you do colour?",
+      "a": "Yes, including colour and black & grey.",
+      "keywords": "colour,color",
+      "priority": 9
+    },
+    {
+      "q": "How do I prepare?",
+      "a": "Eat, hydrate, sleep well, and avoid alcohol 24 hours before.",
+      "keywords": "prepare,how to prepare",
+      "priority": 9
+    },
+    {
+      "q": "Do you do piercings?",
+      "a": "Yes, including ear, nose, lip, and body piercings.",
+      "keywords": "piercing",
+      "priority": 9
+    },
+    {
+      "q": "Can I bring my own jewellery?",
+      "a": "Only if it is implant-grade and sterile. We supply safe jewellery.",
+      "keywords": "jewellery,jewelry",
+      "priority": 8
+    },
+    {
+      "q": "Do you do removal?",
+      "a": "We offer laser tattoo removal or refer to a specialist.",
+      "keywords": "removal,laser",
+      "priority": 8
+    },
+    {
+      "q": "Is there an age limit?",
+      "a": "Yes, 18+ for tattoos and most piercings. Photo ID required.",
+      "keywords": "age,18",
+      "priority": 9
+    },
+    {
+      "q": "How much is a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do touch-ups?",
+      "a": "Yes, touch-ups are free within {touchup_window} on our work.",
+      "keywords": "touch up",
+      "priority": 8
+    },
+    {
+      "q": "How do I care for it?",
+      "a": "We'll give you aftercare instructions and product.",
+      "keywords": "aftercare,care",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a minimum charge?",
+      "a": "{minimum_note}",
+      "keywords": "minimum",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "TAT-CONS",
+      "label": "Consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    },
+    {
+      "sku": "TAT-HR",
+      "label": "Tattoo hourly",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "TAT-MIN",
+      "label": "Minimum charge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "minimum"
+    },
+    {
+      "sku": "TAT-SMALL",
+      "label": "Small tattoo (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "small"
+    },
+    {
+      "sku": "TAT-HALF",
+      "label": "Half-day session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 700,
+      "taxable": 1,
+      "keywords": "half day"
+    },
+    {
+      "sku": "TAT-FULL",
+      "label": "Full-day session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "full day"
+    },
+    {
+      "sku": "TAT-COVER",
+      "label": "Cover-up (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "cover up"
+    },
+    {
+      "sku": "TAT-PIERCE",
+      "label": "Piercing",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "piercing"
+    },
+    {
+      "sku": "TAT-JEWEL",
+      "label": "Jewellery (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "jewellery"
+    },
+    {
+      "sku": "TAT-REMOVAL",
+      "label": "Laser removal (per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "removal"
+    },
+    {
+      "sku": "TAT-TOUCH",
+      "label": "Touch-up",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "touch up"
+    },
+    {
+      "sku": "TAT-AFTER",
+      "label": "Aftercare product",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "aftercare"
+    }
+  ]
+}

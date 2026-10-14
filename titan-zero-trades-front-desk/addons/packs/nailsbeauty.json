@@ -1,0 +1,324 @@
+{
+  "id": "nailsbeauty",
+  "name": "Nails & Beauty",
+  "icon": "💅",
+  "tagline": "Manicures, pedicures, lashes, brows, waxing, tanning",
+  "version": "1.0.0",
+  "service_types": [
+    "Manicure",
+    "Pedicure",
+    "Gel Nails",
+    "Acrylic Nails",
+    "Shellac",
+    "Nail Art",
+    "Nail Repair",
+    "SNS",
+    "Infills",
+    "Removal",
+    "Waxing",
+    "Eyelash Extensions",
+    "Eyebrow Shaping",
+    "Lash Lift",
+    "Tinting",
+    "Facial",
+    "Spray Tan",
+    "Brow Lamination"
+  ],
+  "staff_skills": [
+    "manicure",
+    "pedicure",
+    "gel",
+    "acrylic",
+    "nail art",
+    "waxing",
+    "lashes",
+    "brows",
+    "spray tan"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "bridal nails today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "before the weekend"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "infills",
+      "wax",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional nails and beauty salon. Ask about the service, nail condition, any allergies, and whether it is for an event. Ask about lash/brow history, patch tests, and skin sensitivities. Quote prices only from the reference answers, and say the final price is confirmed in salon. Do not promise a specific result without consultation.",
+  "kb": [
+    {
+      "q": "How much are gel nails?",
+      "a": "{price_note} Nail pricing depends on the service and length. We confirm in salon.",
+      "keywords": "cost,price,gel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do acrylics?",
+      "a": "Yes, we do acrylic and gel extensions.",
+      "keywords": "acrylic,gel,extensions",
+      "priority": 9
+    },
+    {
+      "q": "Do you do infills?",
+      "a": "Yes, we do infills and rebalances.",
+      "keywords": "infill,rebalance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SNS?",
+      "a": "Yes, we do SNS and dip powder.",
+      "keywords": "sns,dip powder",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove gel or acrylic?",
+      "a": "Yes, we do removals. A removal fee applies.",
+      "keywords": "removal,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you do nail art?",
+      "a": "Yes, we do nail art and custom designs.",
+      "keywords": "nail art,design",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lash extensions?",
+      "a": "Yes, we do classic, hybrid, and volume lashes.",
+      "keywords": "lash,extensions",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lash lifts?",
+      "a": "Yes, we do lash lifts and tints.",
+      "keywords": "lash lift,tint",
+      "priority": 8
+    },
+    {
+      "q": "Do you wax?",
+      "a": "Yes, we do waxing for face and body.",
+      "keywords": "wax,waxing",
+      "priority": 9
+    },
+    {
+      "q": "Do you do eyebrows?",
+      "a": "Yes, we shape, tint, and laminate brows.",
+      "keywords": "brow,eyebrow",
+      "priority": 9
+    },
+    {
+      "q": "Do you do spray tans?",
+      "a": "Yes, we do spray tans.",
+      "keywords": "spray tan",
+      "priority": 8
+    },
+    {
+      "q": "Do you do facials?",
+      "a": "Yes, we do facials and skin treatments.",
+      "keywords": "facial,skin",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a patch test?",
+      "a": "Yes, tinting and lash services require a patch test 24–48 hours before.",
+      "keywords": "patch test,allergy",
+      "priority": 9
+    },
+    {
+      "q": "How long do lashes last?",
+      "a": "Classic lashes last 2–3 weeks before infills.",
+      "keywords": "how long,lashes,last",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Yes, booking is recommended. Walk-ins are subject to availability.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal or event packages?",
+      "a": "Yes, we offer bridal and event packages.",
+      "keywords": "bridal,event,package",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    },
+    {
+      "q": "What if I don't like the result?",
+      "a": "We offer a satisfaction guarantee. {guarantee_note}",
+      "keywords": "guarantee,satisfaction",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mobile nails?",
+      "a": "Mobile service is available in the local metro area. Ask us to confirm.",
+      "keywords": "mobile,area",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "NAIL-MAN",
+      "label": "Manicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "manicure"
+    },
+    {
+      "sku": "NAIL-PED",
+      "label": "Pedicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "pedicure"
+    },
+    {
+      "sku": "NAIL-GEL",
+      "label": "Gel nails",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "gel"
+    },
+    {
+      "sku": "NAIL-ACR",
+      "label": "Acrylic full set",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "acrylic"
+    },
+    {
+      "sku": "NAIL-SNS",
+      "label": "SNS / dip powder",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "sns,dip"
+    },
+    {
+      "sku": "NAIL-INF",
+      "label": "Infill",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "infill"
+    },
+    {
+      "sku": "NAIL-ART",
+      "label": "Nail art (per nail)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "nail art"
+    },
+    {
+      "sku": "NAIL-REM",
+      "label": "Gel/acrylic removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "removal"
+    },
+    {
+      "sku": "NAIL-WAX",
+      "label": "Waxing (per area)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "wax"
+    },
+    {
+      "sku": "NAIL-LASH",
+      "label": "Lash extensions (full set)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "lash"
+    },
+    {
+      "sku": "NAIL-LASHINF",
+      "label": "Lash infill",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "lash infill"
+    },
+    {
+      "sku": "NAIL-BROW",
+      "label": "Brow shape & tint",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "brow,eyebrow"
+    },
+    {
+      "sku": "NAIL-TAN",
+      "label": "Spray tan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "spray tan"
+    },
+    {
+      "sku": "NAIL-FAC",
+      "label": "Facial",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "facial"
+    },
+    {
+      "sku": "NAIL-PATCH",
+      "label": "Patch test",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "patch test"
+    }
+  ]
+}

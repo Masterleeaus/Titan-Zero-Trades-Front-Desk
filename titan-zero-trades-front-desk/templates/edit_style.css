@@ -1,0 +1,26 @@
+#tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+#tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+#tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+
+#tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+#tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+#tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+#tzfdform .slots div a{background-color: #ededed;padding:4px;}
+#tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+#tzfdform .pbSubmit{color:#000;background:#ccc;margin: 10px 10px 0px 0px;padding: 5px 20px;}
+#tzfdform .pbSubmit:hover {color: #000;background:#ccc;}
+#tzfdform .fields  input{color:#000;padding:inherit;}
+.tzfd_field_service{display:inherit;}
+#tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+#tzfdform .slots span{color: inherit;}
+#tzfdform .usedSlots .tzfd_list {padding: inherit;margin:inherit}
+#tzfdform .usedSlots .tzfd_list .d{color: inherit;}
+#tzfdform .usedSlots .tzfd_list .t{color: inherit;}
+#tzfdform .usedSlots .tzfd_list .tzfd_list_service{color: inherit;}
+#tzfdform .usedSlots .tzfd_list .cancel{font-weight:inherit}
+#tzfdform .totalCost{color: inherit;}
+#tzfdform .totalCost span:not(.n){color: inherit;}
+#tzfdform .totalCost span.n{color: inherit;}

@@ -1,0 +1,239 @@
+{
+  "id": "drivinginstructor",
+  "name": "Driving Instructors",
+  "icon": "🚗",
+  "tagline": "Learner lessons, test prep, refresher, logbook",
+  "version": "1.0.0",
+  "service_types": [
+    "Learner Lessons",
+    "Test Preparation",
+    "Logbook Lessons",
+    "Refresher Lessons",
+    "Overseas Licence Conversion",
+    "Defensive Driving",
+    "Automatic Lessons",
+    "Manual Lessons",
+    "Nervous Driver",
+    "Senior Refresher",
+    "Test Car Hire",
+    "Mock Test",
+    "Highway Driving",
+    "Parking Practice",
+    "Night Driving",
+    "Heavy Vehicle"
+  ],
+  "staff_skills": [
+    "driving instruction",
+    "automatic",
+    "manual",
+    "test prep",
+    "defensive driving",
+    "nervous drivers",
+    "heavy vehicle"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "test tomorrow",
+      "car hire needed",
+      "urgent lesson"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "test soon"
+    ],
+    "routine": [
+      "weekly",
+      "block",
+      "test prep",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a driving instructor. Ask about the student's experience, licence type (auto/manual), test date, and preferred pickup location. Ask about any anxiety or special needs. Quote prices only from the reference answers, and say the final price is confirmed on the day. Do not promise a pass on a driving test or any guarantee not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a lesson?",
+      "a": "{price_note} Lessons are priced per hour, with discounts for blocks.",
+      "keywords": "cost,price,lesson",
+      "priority": 9
+    },
+    {
+      "q": "Do you do manual or automatic?",
+      "a": "We teach both manual and automatic. Tell us which licence you're after.",
+      "keywords": "manual,automatic",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide a car for the test?",
+      "a": "Yes, test car hire is available to students who have lessons with us.",
+      "keywords": "test car,car hire",
+      "priority": 9
+    },
+    {
+      "q": "Do you do logbook lessons?",
+      "a": "Yes, we do logbook lessons and sign off required hours.",
+      "keywords": "logbook,hours",
+      "priority": 9
+    },
+    {
+      "q": "Can you help with a test booking?",
+      "a": "Yes, we can help you book the test and coordinate the car and time.",
+      "keywords": "test booking,book test",
+      "priority": 9
+    },
+    {
+      "q": "Do you do mock tests?",
+      "a": "Yes, we run mock tests in the test area.",
+      "keywords": "mock test,practice test",
+      "priority": 9
+    },
+    {
+      "q": "Do you teach overseas licence holders?",
+      "a": "Yes, we help with overseas licence conversion.",
+      "keywords": "overseas,conversion",
+      "priority": 8
+    },
+    {
+      "q": "Do you help nervous drivers?",
+      "a": "Yes, we specialise in nervous and mature-age learners.",
+      "keywords": "nervous,anxious,mature",
+      "priority": 9
+    },
+    {
+      "q": "Do you do refresher lessons?",
+      "a": "Yes, for licensed drivers returning to driving.",
+      "keywords": "refresher,return",
+      "priority": 8
+    },
+    {
+      "q": "Do you do senior assessments?",
+      "a": "Yes, we do senior refresher and assessment lessons.",
+      "keywords": "senior,assessment",
+      "priority": 8
+    },
+    {
+      "q": "What's your pickup area?",
+      "a": "We pick up within the local metro area. Ask us to confirm your suburb.",
+      "keywords": "pickup,area,suburb",
+      "priority": 9
+    },
+    {
+      "q": "How long is a lesson?",
+      "a": "Lessons are usually 1 hour, with 1.5 and 2 hour options.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Are you accredited?",
+      "a": "Yes, all instructors are accredited and have working with children checks.",
+      "keywords": "accredited,wwcc",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer block discounts?",
+      "a": "{discount_note}",
+      "keywords": "block,discount,package",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "DRV-1",
+      "label": "1-hour lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "hour,lesson"
+    },
+    {
+      "sku": "DRV-15",
+      "label": "1.5-hour lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "1.5"
+    },
+    {
+      "sku": "DRV-5",
+      "label": "5-lesson package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "package,5"
+    },
+    {
+      "sku": "DRV-10",
+      "label": "10-lesson package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 680,
+      "taxable": 1,
+      "keywords": "package,10"
+    },
+    {
+      "sku": "DRV-TEST",
+      "label": "Test car hire",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "test car"
+    },
+    {
+      "sku": "DRV-MOCK",
+      "label": "Mock test",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "mock test"
+    },
+    {
+      "sku": "DRV-REF",
+      "label": "Refresher lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "refresher"
+    },
+    {
+      "sku": "DRV-OVER",
+      "label": "Overseas conversion lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "overseas"
+    },
+    {
+      "sku": "DRV-SEN",
+      "label": "Senior refresher lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "senior"
+    },
+    {
+      "sku": "DRV-HWY",
+      "label": "Highway / night lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "highway,night"
+    }
+  ]
+}

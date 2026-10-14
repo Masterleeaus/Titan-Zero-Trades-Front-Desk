@@ -1,0 +1,256 @@
+{
+  "id": "florist",
+  "name": "Florists",
+  "icon": "💐",
+  "tagline": "Weddings, events, gifts, subscriptions, sympathy",
+  "version": "1.0.0",
+  "service_types": [
+    "Wedding Flowers",
+    "Event Flowers",
+    "Bouquets",
+    "Floral Installations",
+    "Bridal Bouquets",
+    "Bridesmaid Flowers",
+    "Buttonholes",
+    "Table Centrepieces",
+    "Sympathy Flowers",
+    "Funeral Flowers",
+    "Birthday Flowers",
+    "Anniversary Flowers",
+    "Valentine's Day",
+    "Mother's Day",
+    "Corporate Flowers",
+    "Flower Subscriptions",
+    "Dried Flowers",
+    "Plant Hire"
+  ],
+  "staff_skills": [
+    "floristry",
+    "wedding flowers",
+    "bouquets",
+    "installations",
+    "styling",
+    "dried flowers",
+    "sympathy"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "funeral tomorrow",
+      "wedding tomorrow",
+      "urgent delivery"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "delivery today"
+    ],
+    "routine": [
+      "order",
+      "quote",
+      "subscription",
+      "wedding",
+      "delivery"
+    ]
+  },
+  "extra_prompt": "You are booking for a florist. Ask about the occasion, date, delivery address, budget, and colour preferences. Ask about allergies and whether specific flowers are wanted. Quote prices only from the reference answers, and say the final price is confirmed once flowers are selected. Do not promise specific flower availability outside the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a bouquet?",
+      "a": "{price_note} Bouquets are priced by size and flower selection.",
+      "keywords": "cost,price,bouquet",
+      "priority": 9
+    },
+    {
+      "q": "Do you deliver?",
+      "a": "Yes, we deliver in the local area. Delivery fees apply.",
+      "keywords": "delivery,deliver",
+      "priority": 9
+    },
+    {
+      "q": "Do you do same-day delivery?",
+      "a": "Yes, same-day delivery is available if ordered before mid-morning.",
+      "keywords": "same day",
+      "priority": 9
+    },
+    {
+      "q": "Do you do wedding flowers?",
+      "a": "Yes, we do wedding flowers and installations.",
+      "keywords": "wedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you do funeral flowers?",
+      "a": "Yes, we do sympathy and funeral flowers.",
+      "keywords": "funeral,sympathy",
+      "priority": 9
+    },
+    {
+      "q": "Can I choose colours?",
+      "a": "Yes, tell us your palette and we will match it.",
+      "keywords": "colours,palette",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer subscriptions?",
+      "a": "Yes, we offer weekly, fortnightly, and monthly subscriptions.",
+      "keywords": "subscription,weekly",
+      "priority": 8
+    },
+    {
+      "q": "Do you do dried flowers?",
+      "a": "Yes, we do dried and preserved arrangements.",
+      "keywords": "dried,preserved",
+      "priority": 8
+    },
+    {
+      "q": "Do you do corporate flowers?",
+      "a": "Yes, we do office and corporate flowers.",
+      "keywords": "corporate,office",
+      "priority": 8
+    },
+    {
+      "q": "Do you do installations?",
+      "a": "Yes, we install floral arches, hanging installations, and large arrangements.",
+      "keywords": "installation,arch",
+      "priority": 8
+    },
+    {
+      "q": "Do you hire vases?",
+      "a": "Yes, we hire vases and containers for events.",
+      "keywords": "hire,vases",
+      "priority": 7
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "What flowers are in season?",
+      "a": "Seasonal availability varies. Tell us your date and we will advise.",
+      "keywords": "seasonal,season",
+      "priority": 8
+    },
+    {
+      "q": "Do you do gift cards?",
+      "a": "Yes, gift cards are available.",
+      "keywords": "gift card,voucher",
+      "priority": 7
+    },
+    {
+      "q": "Can I send a message?",
+      "a": "Yes, we include a handwritten card with your message.",
+      "keywords": "message,card",
+      "priority": 8
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "FLR-SM",
+      "label": "Small bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "small bouquet"
+    },
+    {
+      "sku": "FLR-MED",
+      "label": "Medium bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "medium bouquet"
+    },
+    {
+      "sku": "FLR-LRG",
+      "label": "Large bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "large bouquet"
+    },
+    {
+      "sku": "FLR-BRIDAL",
+      "label": "Bridal bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "bridal"
+    },
+    {
+      "sku": "FLR-BRIDESMAID",
+      "label": "Bridesmaid bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "bridesmaid"
+    },
+    {
+      "sku": "FLR-BUTTON",
+      "label": "Buttonhole",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "buttonhole"
+    },
+    {
+      "sku": "FLR-CENTER",
+      "label": "Table centrepiece",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "centrepiece"
+    },
+    {
+      "sku": "FLR-SYMP",
+      "label": "Sympathy arrangement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "sympathy"
+    },
+    {
+      "sku": "FLR-SUB",
+      "label": "Weekly subscription",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "subscription"
+    },
+    {
+      "sku": "FLR-INSTALL",
+      "label": "Installation (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "installation"
+    },
+    {
+      "sku": "FLR-DEL",
+      "label": "Delivery",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "delivery"
+    }
+  ]
+}

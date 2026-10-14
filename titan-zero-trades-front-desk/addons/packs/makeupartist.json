@@ -1,0 +1,288 @@
+{
+  "id": "makeupartist",
+  "name": "Makeup Artist",
+  "icon": "💄",
+  "tagline": "Bridal, event, editorial, lessons, mobile",
+  "version": "1.0.0",
+  "service_types": [
+    "Bridal Makeup",
+    "Bridal Party",
+    "Special Event",
+    "Photoshoot",
+    "Editorial",
+    "Fashion Show",
+    "Prom",
+    "Engagement",
+    "Makeup Lesson",
+    "Group Booking",
+    "Airbrush Makeup",
+    "Trial",
+    "Mobile Makeup",
+    "SFX",
+    "Natural Look",
+    "Glam"
+  ],
+  "staff_skills": [
+    "makeup",
+    "bridal",
+    "airbrush",
+    "glam",
+    "natural",
+    "special effects",
+    "lessons",
+    "mobile"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "urgent booking"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this weekend",
+      "before photos"
+    ],
+    "routine": [
+      "booking",
+      "trial",
+      "lesson",
+      "quote",
+      "package"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional makeup artist. Ask about the event, date, location, number of people, and desired look. Ask about skin type, allergies, and any sensitivities. Ask whether a trial is wanted. Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise a specific result without seeing the client or a reference photo.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the service, number of people, and travel.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal makeup?",
+      "a": "Yes, bridal makeup is our specialty. Trials available.",
+      "keywords": "bridal,wedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you travel to me?",
+      "a": "Yes, we are mobile and travel to you. Travel fees may apply.",
+      "keywords": "mobile,travel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do trials?",
+      "a": "Yes, trials are available and recommended for bridal.",
+      "keywords": "trial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal parties?",
+      "a": "Yes, we do bridal parties and group bookings.",
+      "keywords": "bridal party,group",
+      "priority": 9
+    },
+    {
+      "q": "Do you do airbrush makeup?",
+      "a": "Yes, we offer airbrush makeup.",
+      "keywords": "airbrush",
+      "priority": 8
+    },
+    {
+      "q": "Do you do makeup lessons?",
+      "a": "Yes, we offer one-on-one and group lessons.",
+      "keywords": "lesson,class",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SFX makeup?",
+      "a": "Yes, we do special effects and Halloween makeup.",
+      "keywords": "sfx,special effects",
+      "priority": 7
+    },
+    {
+      "q": "How long does makeup take?",
+      "a": "Most looks take 45–60 minutes. Bridal takes longer.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "What products do you use?",
+      "a": "We use professional, cruelty-free products. Tell us about allergies.",
+      "keywords": "products,brands,allergy",
+      "priority": 9
+    },
+    {
+      "q": "Do you do eyelashes?",
+      "a": "Yes, strip lashes are included. Individual lashes can be added.",
+      "keywords": "lashes,eyelash",
+      "priority": 8
+    },
+    {
+      "q": "Can you cover tattoos or scars?",
+      "a": "Yes, we offer full coverage. Tell us when booking.",
+      "keywords": "cover,tattoo,scar",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mature skin?",
+      "a": "Yes, we work with all ages and skin types.",
+      "keywords": "mature,older",
+      "priority": 8
+    },
+    {
+      "q": "Do you do male makeup?",
+      "a": "Yes, we do grooming and subtle makeup for men.",
+      "keywords": "male,men",
+      "priority": 7
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit,booking",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do photoshoots?",
+      "a": "Yes, we do photoshoots, editorial, and fashion.",
+      "keywords": "photoshoot,editorial",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "MUA-EVENT",
+      "label": "Event makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "MUA-BRIDAL",
+      "label": "Bridal makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "bridal"
+    },
+    {
+      "sku": "MUA-BRIDAL-TRIAL",
+      "label": "Bridal trial",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "trial"
+    },
+    {
+      "sku": "MUA-PARTY",
+      "label": "Bridal party (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "bridal party"
+    },
+    {
+      "sku": "MUA-PROM",
+      "label": "Prom / formal makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "prom,formal"
+    },
+    {
+      "sku": "MUA-PHOTO",
+      "label": "Photoshoot makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "photoshoot"
+    },
+    {
+      "sku": "MUA-EDIT",
+      "label": "Editorial / fashion makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "editorial,fashion"
+    },
+    {
+      "sku": "MUA-LESSON",
+      "label": "Makeup lesson (2 hours)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "lesson"
+    },
+    {
+      "sku": "MUA-AIR",
+      "label": "Airbrush upgrade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "airbrush"
+    },
+    {
+      "sku": "MUA-LASH",
+      "label": "Individual lashes",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "lashes"
+    },
+    {
+      "sku": "MUA-SFX",
+      "label": "SFX makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "sfx"
+    },
+    {
+      "sku": "MUA-TRAVEL",
+      "label": "Travel fee (per km beyond 20km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

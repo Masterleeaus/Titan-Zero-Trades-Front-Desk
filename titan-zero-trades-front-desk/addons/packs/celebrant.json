@@ -1,0 +1,241 @@
+{
+  "id": "celebrant",
+  "name": "Celebrants & Officiants",
+  "icon": "📜",
+  "tagline": "Weddings, funerals, naming days, vow renewals",
+  "version": "1.0.0",
+  "service_types": [
+    "Wedding Ceremony",
+    "Elopement",
+    "Vow Renewal",
+    "Naming Ceremony",
+    "Funeral & Memorial",
+    "Commitment Ceremony",
+    "Same-Sex Wedding",
+    "Destination Wedding",
+    "Rehearsal",
+    "MC Services",
+    "Legal-Only Wedding",
+    "Interfaith",
+    "Multicultural",
+    "Pet Memorial"
+  ],
+  "staff_skills": [
+    "celebrant",
+    "officiant",
+    "wedding ceremonies",
+    "funerals",
+    "naming ceremonies",
+    "public speaking",
+    "MC"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "funeral tomorrow",
+      "wedding this week",
+      "urgent"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "short notice"
+    ],
+    "routine": [
+      "booking",
+      "quote",
+      "wedding",
+      "ceremony"
+    ]
+  },
+  "extra_prompt": "You are booking for a celebrant or officiant. Ask about the ceremony type, date, venue, guest numbers, and cultural or religious requirements. Ask whether they want a rehearsal, a custom ceremony, or a legal-only ceremony. Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise legal outcomes or lodge paperwork that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Fees depend on the ceremony type, travel, and customisation.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do legal weddings?",
+      "a": "Yes, we are authorised to conduct legal marriages and lodge paperwork.",
+      "keywords": "legal,marriage,paperwork",
+      "priority": 9
+    },
+    {
+      "q": "Do you do funerals?",
+      "a": "Yes, we conduct funerals and memorial services.",
+      "keywords": "funeral,memorial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do naming ceremonies?",
+      "a": "Yes, we do naming days and welcome ceremonies.",
+      "keywords": "naming",
+      "priority": 8
+    },
+    {
+      "q": "Do you write a custom ceremony?",
+      "a": "Yes, we write a personalised ceremony from your story.",
+      "keywords": "custom,personalised",
+      "priority": 9
+    },
+    {
+      "q": "Do you do rehearsals?",
+      "a": "Yes, rehearsals are available and recommended.",
+      "keywords": "rehearsal",
+      "priority": 8
+    },
+    {
+      "q": "Do you travel?",
+      "a": "Yes, we travel. Travel fees may apply beyond the local area.",
+      "keywords": "travel",
+      "priority": 8
+    },
+    {
+      "q": "Do you do multicultural ceremonies?",
+      "a": "Yes, we do interfaith and multicultural ceremonies, including bilingual elements.",
+      "keywords": "multicultural,interfaith,bilingual",
+      "priority": 8
+    },
+    {
+      "q": "Do you do same-sex weddings?",
+      "a": "Yes, we celebrate all couples.",
+      "keywords": "same sex,lgbtq",
+      "priority": 9
+    },
+    {
+      "q": "Do you do elopements?",
+      "a": "Yes, elopements and intimate ceremonies are welcome.",
+      "keywords": "elopement",
+      "priority": 9
+    },
+    {
+      "q": "Do you MC?",
+      "a": "Yes, MC services are available.",
+      "keywords": "mc,emcee",
+      "priority": 7
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "We recommend 6–12 months for weddings, but short-notice bookings are possible.",
+      "keywords": "how far,advance",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note}",
+      "keywords": "deposit",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "What do you need from us?",
+      "a": "We need your documents, story details, and preferred tone for the ceremony.",
+      "keywords": "documents,requirements",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a free consultation?",
+      "a": "{consult_note}",
+      "keywords": "consult,free",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "CEL-WED",
+      "label": "Wedding ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "CEL-ELOPE",
+      "label": "Elopement ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "elopement"
+    },
+    {
+      "sku": "CEL-LEGAL",
+      "label": "Legal-only ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "legal only"
+    },
+    {
+      "sku": "CEL-VOW",
+      "label": "Vow renewal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "vow renewal"
+    },
+    {
+      "sku": "CEL-NAME",
+      "label": "Naming ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 400,
+      "taxable": 1,
+      "keywords": "naming"
+    },
+    {
+      "sku": "CEL-FUN",
+      "label": "Funeral / memorial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "funeral"
+    },
+    {
+      "sku": "CEL-REH",
+      "label": "Rehearsal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "rehearsal"
+    },
+    {
+      "sku": "CEL-MC",
+      "label": "MC services (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "mc"
+    },
+    {
+      "sku": "CEL-CUSTOM",
+      "label": "Custom ceremony writing",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "custom writing"
+    },
+    {
+      "sku": "CEL-TRAVEL",
+      "label": "Travel (per km beyond 30km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ]
+}

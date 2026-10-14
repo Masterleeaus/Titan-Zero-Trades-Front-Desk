@@ -1,0 +1,256 @@
+{
+  "id": "barbershop",
+  "name": "Barbershop",
+  "icon": "💈",
+  "tagline": "Men's cuts, fades, beard trims, hot towel shaves",
+  "version": "1.0.0",
+  "service_types": [
+    "Men's Haircut",
+    "Beard Trim",
+    "Hot Towel Shave",
+    "Fade",
+    "Skin Fade",
+    "Kids Cut",
+    "Senior Cut",
+    "Hair Design",
+    "Beard Colour",
+    "Head Shave",
+    "Line Up",
+    "Moustache Trim",
+    "Scalp Treatment",
+    "Hair Wash",
+    "Grooming Package"
+  ],
+  "staff_skills": [
+    "barbering",
+    "fades",
+    "beard",
+    "shave",
+    "clippers",
+    "styling",
+    "hot towel"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "groom today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "walk in",
+      "before the weekend"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "cut",
+      "beard",
+      "fade"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional barbershop. Ask about the cut style, clipper grade if known, beard or shave needs, and preferred barber. Ask about skin sensitivities. Quote prices only from the reference answers, and say the final price is confirmed in shop. Do not promise a specific style result without consultation.",
+  "kb": [
+    {
+      "q": "Do you take walk-ins?",
+      "a": "Yes, walk-ins are welcome subject to availability. Booking is recommended.",
+      "keywords": "walk in,booking",
+      "priority": 9
+    },
+    {
+      "q": "How much is a haircut?",
+      "a": "{price_note} Cuts are priced by style. We confirm before we start.",
+      "keywords": "cost,price,cut",
+      "priority": 9
+    },
+    {
+      "q": "Do you do skin fades?",
+      "a": "Yes, we do skin fades and all clipper grades.",
+      "keywords": "skin fade,fade",
+      "priority": 9
+    },
+    {
+      "q": "Do you do beard trims?",
+      "a": "Yes, we trim and shape beards.",
+      "keywords": "beard,trim",
+      "priority": 9
+    },
+    {
+      "q": "Do you do hot towel shaves?",
+      "a": "Yes, we do traditional hot towel shaves.",
+      "keywords": "hot towel,shave",
+      "priority": 9
+    },
+    {
+      "q": "Do you cut kids' hair?",
+      "a": "Yes, we cut children's hair.",
+      "keywords": "kids,children",
+      "priority": 8
+    },
+    {
+      "q": "Do you do senior cuts?",
+      "a": "Yes, we offer senior pricing.",
+      "keywords": "senior,discount",
+      "priority": 8
+    },
+    {
+      "q": "Can you colour my beard?",
+      "a": "Yes, we colour beards.",
+      "keywords": "beard colour",
+      "priority": 7
+    },
+    {
+      "q": "How long does a cut take?",
+      "a": "Most cuts take 30–45 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do head shaves?",
+      "a": "Yes, we do head shaves.",
+      "keywords": "head shave",
+      "priority": 8
+    },
+    {
+      "q": "Do you do line ups?",
+      "a": "Yes, we do line ups and edge ups.",
+      "keywords": "line up,edge",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Booking is recommended but walk-ins are welcome.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    },
+    {
+      "q": "What if I don't like the cut?",
+      "a": "We offer a satisfaction guarantee. {guarantee_note}",
+      "keywords": "guarantee,satisfaction",
+      "priority": 8
+    },
+    {
+      "q": "Do you do grooming packages?",
+      "a": "Yes, we offer cut, beard, and shave packages.",
+      "keywords": "package,grooming",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we are fully insured.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mobile barbering?",
+      "a": "Mobile service is available in the local metro area. Ask us to confirm.",
+      "keywords": "mobile,area",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "BAR-CUT",
+      "label": "Men's haircut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "cut"
+    },
+    {
+      "sku": "BAR-FADE",
+      "label": "Skin fade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "fade"
+    },
+    {
+      "sku": "BAR-BEARD",
+      "label": "Beard trim",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "beard"
+    },
+    {
+      "sku": "BAR-SHAVE",
+      "label": "Hot towel shave",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "shave"
+    },
+    {
+      "sku": "BAR-KID",
+      "label": "Kids cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "kids"
+    },
+    {
+      "sku": "BAR-SENIOR",
+      "label": "Senior cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "senior"
+    },
+    {
+      "sku": "BAR-HEAD",
+      "label": "Head shave",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "head shave"
+    },
+    {
+      "sku": "BAR-LINE",
+      "label": "Line up",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "line up"
+    },
+    {
+      "sku": "BAR-PACK",
+      "label": "Cut, beard & shave package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "package,grooming"
+    },
+    {
+      "sku": "BAR-COLOUR",
+      "label": "Beard colour",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "beard colour"
+    }
+  ]
+}

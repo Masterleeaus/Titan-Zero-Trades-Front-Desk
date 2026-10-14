@@ -1,0 +1,268 @@
+{
+  "id": "tiling",
+  "name": "Tiling",
+  "icon": "🔲",
+  "tagline": "Floor, wall, bathroom, kitchen, outdoor tiling",
+  "version": "1.0.0",
+  "service_types": [
+    "Floor Tiling",
+    "Wall Tiling",
+    "Bathroom Tiling",
+    "Kitchen Splashback",
+    "Outdoor Tiling",
+    "Pool Tiling",
+    "Mosaic Tiling",
+    "Tile Repair",
+    "Tile Replacement",
+    "Grout Repair",
+    "Regrouting",
+    "Waterproofing",
+    "Screeding",
+    "Commercial Tiling"
+  ],
+  "staff_skills": [
+    "tiling",
+    "tiler",
+    "grout",
+    "waterproofing",
+    "screeding",
+    "mosaic",
+    "stone"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "loose tiles",
+      "water damage",
+      "trip hazard",
+      "urgent repair"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before guests"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "repair",
+      "regrout"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tiling company. Ask about the area size, tile type, surface, and whether tiles are supplied. Ask about waterproofing, screeding, and removal of old tiles. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a waterproofing outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we are fully insured. Waterproofing is done to standard.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does tiling cost?",
+      "a": "{price_note} Tiling is priced per square meter including adhesive and grout.",
+      "keywords": "cost,price,tiling",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply tiles?",
+      "a": "We can supply tiles, or install tiles you have bought.",
+      "keywords": "supply,tiles",
+      "priority": 9
+    },
+    {
+      "q": "Do you waterproof?",
+      "a": "Yes, we waterproof bathrooms, balconies, and wet areas.",
+      "keywords": "waterproof,wet area",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old tiles?",
+      "a": "Yes, we remove and dispose of old tiles.",
+      "keywords": "remove,old tiles",
+      "priority": 8
+    },
+    {
+      "q": "Do you screed floors?",
+      "a": "Yes, we screed and level floors before tiling.",
+      "keywords": "screed,level",
+      "priority": 8
+    },
+    {
+      "q": "Do you regrout?",
+      "a": "Yes, we regrout and reseal tiles.",
+      "keywords": "regrout,grout",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair loose tiles?",
+      "a": "Yes, we repair and replace loose tiles.",
+      "keywords": "repair,loose",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bathroom tiling?",
+      "a": "Yes, we do full bathroom tiling.",
+      "keywords": "bathroom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do kitchen splashbacks?",
+      "a": "Yes, we do splashbacks in tile, stone, and glass.",
+      "keywords": "splashback,kitchen",
+      "priority": 9
+    },
+    {
+      "q": "Do you do outdoor tiling?",
+      "a": "Yes, we do outdoor and pool tiling.",
+      "keywords": "outdoor,pool",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mosaics?",
+      "a": "Yes, we install mosaic tiles.",
+      "keywords": "mosaic",
+      "priority": 8
+    },
+    {
+      "q": "How long does tiling take?",
+      "a": "A bathroom takes 3–5 days including waterproofing.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial tiling?",
+      "a": "Yes, we do commercial tiling. Commercial is priced separately.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note}",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, but access is needed.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you do stone benchtops?",
+      "a": "We do stone tiling. Benchtop fabrication is quoted separately.",
+      "keywords": "stone,benchtop",
+      "priority": 7
+    },
+    {
+      "q": "How soon can I use the shower?",
+      "a": "Usually 24–48 hours after grouting and sealing.",
+      "keywords": "shower,use,dry",
+      "priority": 8
+    },
+    {
+      "q": "Can you match existing tiles?",
+      "a": "We try to match existing tiles. Some may be discontinued.",
+      "keywords": "match,tile",
+      "priority": 7
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "TIL-FLR",
+      "label": "Floor tiling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "floor,tiling"
+    },
+    {
+      "sku": "TIL-WALL",
+      "label": "Wall tiling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "wall,tiling"
+    },
+    {
+      "sku": "TIL-BATH",
+      "label": "Bathroom tiling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 105,
+      "taxable": 1,
+      "keywords": "bathroom"
+    },
+    {
+      "sku": "TIL-SPLASH",
+      "label": "Kitchen splashback (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "splashback"
+    },
+    {
+      "sku": "TIL-OUT",
+      "label": "Outdoor tiling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "outdoor"
+    },
+    {
+      "sku": "TIL-POOL",
+      "label": "Pool tiling (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "pool"
+    },
+    {
+      "sku": "TIL-WATER",
+      "label": "Waterproofing (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "waterproof"
+    },
+    {
+      "sku": "TIL-SCREED",
+      "label": "Screeding (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "screed,level"
+    },
+    {
+      "sku": "TIL-REGR",
+      "label": "Regrouting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "regrout,grout"
+    },
+    {
+      "sku": "TIL-REP",
+      "label": "Tile repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    }
+  ]
+}

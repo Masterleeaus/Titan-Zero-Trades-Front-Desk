@@ -1,0 +1,269 @@
+{
+  "id": "dental",
+  "name": "Dental",
+  "icon": "🦷",
+  "tagline": "Check-ups, cleaning, fillings, implants, orthodontics",
+  "version": "1.0.0",
+  "service_types": [
+    "Check-up & Clean",
+    "Scale & Clean",
+    "Fillings",
+    "Root Canal",
+    "Crowns",
+    "Bridges",
+    "Dentures",
+    "Implants",
+    "Extractions",
+    "Wisdom Teeth",
+    "Teeth Whitening",
+    "Veneers",
+    "Braces",
+    "Invisalign",
+    "Children's Dentistry",
+    "Emergency Dental",
+    "Cosmetic Dentistry",
+    "Gum Treatment"
+  ],
+  "staff_skills": [
+    "dentistry",
+    "hygiene",
+    "fillings",
+    "root canal",
+    "crowns",
+    "implants",
+    "orthodontics",
+    "veneers",
+    "paediatric"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "toothache",
+      "broken tooth",
+      "abscess",
+      "knocked out tooth",
+      "severe pain"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "pain"
+    ],
+    "routine": [
+      "check-up",
+      "clean",
+      "quote",
+      "booking",
+      "cosmetic"
+    ]
+  },
+  "extra_prompt": "You are booking for a dental practice. Ask about the concern, pain level, last visit, and health fund. Ask whether it is an emergency or routine. Do not give clinical advice in the booking flow. Quote prices only from the reference answers, and say the final price is confirmed after examination. Do not promise treatment outcomes or rebate amounts.",
+  "kb": [
+    {
+      "q": "How much is a check-up?",
+      "a": "{price_note} Check-up and clean pricing is confirmed before your appointment.",
+      "keywords": "cost,price,checkup",
+      "priority": 9
+    },
+    {
+      "q": "Do you do emergency appointments?",
+      "a": "Yes, we keep slots for emergencies. Call as early as possible.",
+      "keywords": "emergency,urgent,pain",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, we offer HICAPS on-the-spot claiming where available.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do payment plans?",
+      "a": "{payment_note}",
+      "keywords": "payment plan,finance",
+      "priority": 9
+    },
+    {
+      "q": "Do you see children?",
+      "a": "Yes, including child dental benefits scheme (CDBS) where eligible.",
+      "keywords": "children,cdbs",
+      "priority": 9
+    },
+    {
+      "q": "Do you do whitening?",
+      "a": "Yes, in-chair and take-home whitening.",
+      "keywords": "whitening,bleach",
+      "priority": 9
+    },
+    {
+      "q": "Do you do implants?",
+      "a": "Yes, single and multiple implants.",
+      "keywords": "implant",
+      "priority": 9
+    },
+    {
+      "q": "Do you do braces and Invisalign?",
+      "a": "Yes, we offer orthodontics and clear aligners.",
+      "keywords": "braces,invisalign,orthodontics",
+      "priority": 9
+    },
+    {
+      "q": "Do you do root canals?",
+      "a": "Yes, we do root canal treatment.",
+      "keywords": "root canal",
+      "priority": 9
+    },
+    {
+      "q": "Do you do extractions?",
+      "a": "Yes, including wisdom teeth.",
+      "keywords": "extraction,wisdom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cosmetic dentistry?",
+      "a": "Yes, including veneers and smile design.",
+      "keywords": "cosmetic,veneer",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer sedation?",
+      "a": "We can refer for sedation or general anaesthetic for complex cases.",
+      "keywords": "sedation,general anaesthetic",
+      "priority": 8
+    },
+    {
+      "q": "What if I have a toothache?",
+      "a": "Call us immediately. We'll triage and book the earliest slot.",
+      "keywords": "toothache,pain",
+      "priority": 9
+    },
+    {
+      "q": "How often should I visit?",
+      "a": "Every 6–12 months for most people.",
+      "keywords": "how often,frequency",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Yes, all dentists are AHPRA registered and insured.",
+      "keywords": "ahpra,registered",
+      "priority": 9
+    }
+  ],
+  "catalog": [
+    {
+      "sku": "DEN-CHK",
+      "label": "Check-up & clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "checkup"
+    },
+    {
+      "sku": "DEN-XRAY",
+      "label": "X-ray (per film)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "xray"
+    },
+    {
+      "sku": "DEN-FILL",
+      "label": "Filling (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "filling"
+    },
+    {
+      "sku": "DEN-ROOT",
+      "label": "Root canal (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "root canal"
+    },
+    {
+      "sku": "DEN-CROWN",
+      "label": "Crown (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "crown"
+    },
+    {
+      "sku": "DEN-EXT",
+      "label": "Extraction (simple)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "extraction"
+    },
+    {
+      "sku": "DEN-WIS",
+      "label": "Wisdom tooth extraction (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "wisdom"
+    },
+    {
+      "sku": "DEN-WHITE",
+      "label": "Teeth whitening",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "whitening"
+    },
+    {
+      "sku": "DEN-VEN",
+      "label": "Veneer (per tooth)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "veneer"
+    },
+    {
+      "sku": "DEN-IMP",
+      "label": "Dental implant (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "implant"
+    },
+    {
+      "sku": "DEN-CLEAR",
+      "label": "Clear aligners (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "invisalign,aligner"
+    },
+    {
+      "sku": "DEN-EMERG",
+      "label": "Emergency appointment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "emergency"
+    }
+  ]
+}

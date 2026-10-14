@@ -329,6 +329,12 @@ if ( ! class_exists( 'TZFD_Quote' ) ) {
             if ( ! $q ) return false;
             if ( '' !== self::approval_refusal( $q ) ) return false;
 
+            // Claim the transition first. Only one concurrent request can move the quote from 'sent' to 'approved'.
+            $claimed = $wpdb->query( $wpdb->prepare(
+                'UPDATE '.$wpdb->prefix.TZFD_Quotes_Engine::T_QUOTES." SET status = 'approved', approved_at = %s WHERE id = %d AND status = 'sent'",
+                current_time('mysql'), $quote_id ) );
+            if ( 1 !== (int) $claimed ) return false;
+
             $ip = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
             $wpdb->insert( $wpdb->prefix.TZFD_Quotes_Engine::T_SIGNATURES, array(
                 'quote_id'       => $quote_id,
@@ -339,10 +345,6 @@ if ( ! class_exists( 'TZFD_Quote' ) ) {
                 'user_agent'     => substr( sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ?? '' ) ), 0, 255 ),
                 'accepted_terms' => ! empty( $signature['terms'] ) ? 1 : 0,
             ) );
-            $wpdb->update( $wpdb->prefix.TZFD_Quotes_Engine::T_QUOTES,
-                array( 'status' => 'approved', 'approved_at' => current_time('mysql') ),
-                array( 'id' => $quote_id ) );
-
             /**
              * Fires when a customer approves a quote. Payment / deposit addons
              * can hook here to charge a card and mark the quote paid.

@@ -2705,18 +2705,21 @@ private function countBookingsFor( $tzfd_date, $slot, $service ) {
             $posted_items[sanitize_key($tzfd_item)] = $this->sanitize( wp_unslash( $tzfd_value ) );
         if (isset($_POST["gotab"]) && sanitize_text_field( wp_unslash( $_POST["gotab"] ?? '' ) ) == '')
         {
-            update_option( 'tzfd_rep_enable', sanitize_text_field($posted_items["tzfd_rep_enable"]));
-            update_option( 'tzfd_rep_days', sanitize_text_field($posted_items["tzfd_rep_days"]));
-            update_option( 'tzfd_rep_hour', sanitize_text_field($posted_items["tzfd_rep_hour"]));
-            update_option( 'tzfd_rep_emails', sanitize_text_field($posted_items["tzfd_rep_emails"]));
-            update_option( 'tzfd_fp_from_email', sanitize_text_field($posted_items["tzfd_fp_from_email"]));
-            // Report subject and body are sent as plain text without placeholder replacement, so they are sanitized directly.
-            update_option( 'tzfd_rep_subject', sanitize_text_field( wp_unslash( $_POST["tzfd_rep_subject"] ?? '' ) ));
-            update_option( 'tzfd_rep_emailformat', sanitize_text_field($posted_items["tzfd_rep_emailformat"]));
-            if ( 'html' === sanitize_text_field( $posted_items["tzfd_rep_emailformat"] ) ) {
-                update_option( 'tzfd_rep_message', wp_kses_post( wp_unslash( $_POST["tzfd_rep_message"] ?? '' ) ));
-            } else {
-                update_option( 'tzfd_rep_message', sanitize_textarea_field( wp_unslash( $_POST["tzfd_rep_message"] ?? '' ) ));
+            // Who receives reports and what they say is an admin decision, not an Editor one.
+            if ( current_user_can( 'manage_options' ) ) {
+                update_option( 'tzfd_rep_enable', sanitize_text_field($posted_items["tzfd_rep_enable"]));
+                update_option( 'tzfd_rep_days', sanitize_text_field($posted_items["tzfd_rep_days"]));
+                update_option( 'tzfd_rep_hour', sanitize_text_field($posted_items["tzfd_rep_hour"]));
+                update_option( 'tzfd_rep_emails', sanitize_text_field($posted_items["tzfd_rep_emails"]));
+                update_option( 'tzfd_fp_from_email', sanitize_text_field($posted_items["tzfd_fp_from_email"]));
+                // Report subject and body are sent as plain text without placeholder replacement, so they are sanitized directly.
+                update_option( 'tzfd_rep_subject', sanitize_text_field( wp_unslash( $_POST["tzfd_rep_subject"] ?? '' ) ));
+                update_option( 'tzfd_rep_emailformat', sanitize_text_field($posted_items["tzfd_rep_emailformat"]));
+                if ( 'html' === sanitize_text_field( $posted_items["tzfd_rep_emailformat"] ) ) {
+                    update_option( 'tzfd_rep_message', wp_kses_post( wp_unslash( $_POST["tzfd_rep_message"] ?? '' ) ));
+                } else {
+                    update_option( 'tzfd_rep_message', sanitize_textarea_field( wp_unslash( $_POST["tzfd_rep_message"] ?? '' ) ));
+                }
             }
         }
         else if (isset($_POST["gotab"]) && sanitize_text_field( wp_unslash( $_POST["gotab"] ?? '' ) ) == 'csvarea')

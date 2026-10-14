@@ -236,7 +236,7 @@ class TZFD_Brand {
     public static function workflow_img() {
         printf(
             '<div class="tzfd-workflow"><img src="%s" alt="%s" width="1600" height="1000" loading="lazy" /></div>',
-            esc_url( self::url( 'images/brand/marketing/workflow-overview-1600x1000.webp' ) ),
+            esc_url( self::url( 'images/brand/marketing/workflow-overview-dark-1600x1000.webp' ) ),
             esc_attr__( 'How bookings move from request to approval', 'titan-zero-trades-front-desk' )
         );
     }

@@ -520,6 +520,9 @@ final class TZFD_Admin_Layout {
 .tzfd-screen .tzfd-banner-warn { background:rgba(217,119,6,.12); color:@ink@; }
 .tzfd-screen .tzfd-activity li { border-bottom-color:@line@; }
 .tzfd-screen .tzfd-steps li::before { border-color:#4a5366; }
+.tzfd-screen a { color:#8ab4ff; }
+.tzfd-screen .button:not(.button-primary) { color:#8ab4ff; border-color:#4a5b8a; }
+.tzfd-screen .button:not(.button-primary):hover, .tzfd-screen .button:not(.button-primary):focus { color:#fff; border-color:#8ab4ff; }
 .tzfd-screen .tzfd-statssection-container, .tzfd-screen .tzfd-orderssection-container, .tzfd-screen .tzfd-graphs { background:@surf@; border-color:@line@; color:@ink@; }
 .tzfd-screen .tzfd-statssection-header, .tzfd-screen .tzfd_field_header, .tzfd-screen .tzfd-breadcrumb { background:@surf2@; color:@ink@; border-color:@line@; }
 .tzfd-screen .tzfd-orders-list thead { background:@surf2@; }

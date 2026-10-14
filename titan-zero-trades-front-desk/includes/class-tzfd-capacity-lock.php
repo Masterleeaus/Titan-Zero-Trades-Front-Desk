@@ -18,7 +18,7 @@ final class TZFD_Capacity_Lock {
 
         // MySQL lock names are limited to 64 characters. Hash the database,
         // site table prefix and calendar ID so names stay isolated and bounded.
-        return 'tzfd-capacity-'.substr(hash('sha256', $database.'|'.$prefix.'|'.$id), 0, 52);
+        return 'tzfd-cap-'.substr(hash('sha256', $database.'|'.$prefix.'|'.$id), 0, 48);
     }
 
     /** Return an opaque release handle, or false when a lock cannot be acquired. */

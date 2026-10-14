@@ -59,6 +59,7 @@
 
         $('#tzfd-quote-decline').on('click', function () {
             var reason = window.prompt(t.declinePrompt);
+            if (reason === null) { return; }
             $.post(cfg.declineUrl, {
                 token: cfg.token,
                 reason: reason || ''

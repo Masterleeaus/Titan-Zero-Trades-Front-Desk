@@ -164,8 +164,8 @@
 							optionsValues = '';
 						for( var index in this.csvData.fields )
 						{
-							optionsTexts += '<option value="' + index + '" ' + ( ( index == this.csvData.text ) ? 'SELECTED' : '' ) + ' >' + this.csvData.fields[ index ] + '</option>';
-							optionsValues += '<option value="' + index + '" ' + ( ( index == this.csvData.value ) ? 'SELECTED' : '' ) + ' >' + this.csvData.fields[ index ] + '</option>';
+							optionsTexts += '<option value="' + index + '" ' + ( ( index == this.csvData.text ) ? 'SELECTED' : '' ) + ' >' + $( '<i>' ).text( this.csvData.fields[ index ] ).html() + '</option>';
+							optionsValues += '<option value="' + index + '" ' + ( ( index == this.csvData.value ) ? 'SELECTED' : '' ) + ' >' + $( '<i>' ).text( this.csvData.fields[ index ] ).html() + '</option>';
 						}
 						
 						str += '<div><label>Select CSV file:<label><input type="file" class="large" name="sCSVLocation" id="sCSVLocation" value="' + this.csvData.file + '" /></div>';

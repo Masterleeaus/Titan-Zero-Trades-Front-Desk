@@ -384,7 +384,7 @@ final class TZFD_Pipeline {
         if ( 1 !== (int) $done ) { return false; }
 
         self::log( $id, $stage, $from, $to, '' !== $actor ? $actor : $stage, $reason );
-        do_action( self::ACTION_MOVED, $id, $from, $to, $stage, (string) $reason );
+        do_action( 'tzfd_pipeline_moved', $id, $from, $to, $stage, (string) $reason );
         return true;
     }
 

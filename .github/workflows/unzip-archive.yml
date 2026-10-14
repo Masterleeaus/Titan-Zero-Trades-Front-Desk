@@ -1,0 +1,57 @@
+name: Unzip archive
+
+# Run manually from the Actions tab (or with `gh workflow run`).
+# Extracts the named zip in the repo root into the repo root and commits the result.
+on:
+  workflow_dispatch:
+    inputs:
+      archive:
+        description: 'Zip file in the repo root to extract'
+        required: true
+        default: 'Titan-Zero-Trades-Front-Desk-2.0.1-FULL-2026-10-14-r5.zip'
+
+permissions:
+  contents: write
+
+jobs:
+  unzip:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Validate archive name
+        env:
+          ARCHIVE: ${{ inputs.archive }}
+        run: |
+          set -euo pipefail
+          case "$ARCHIVE" in
+            */*|*..*|"") echo "Archive must be a plain file name in the repo root"; exit 1 ;;
+          esac
+          test -f "$ARCHIVE" || { echo "Missing $ARCHIVE"; exit 1; }
+
+      - name: Extract archive
+        env:
+          ARCHIVE: ${{ inputs.archive }}
+        run: |
+          set -euo pipefail
+          unzip -q "$ARCHIVE" -d .
+          echo "Extracted:"
+          find . -maxdepth 2 -type d -not -path './.git*' -not -path './.github*' | sort
+
+      - name: Commit extracted files
+        env:
+          ARCHIVE: ${{ inputs.archive }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A -- . ':!.github'
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+            exit 0
+          fi
+          git commit -m "Extract $ARCHIVE into repository" \
+            -m "Co-Authored-By: Claude Haiku 5.5 <noreply@anthropic.com>" \
+            -m "Claude-Session: https://claude.ai/code/session_01C7HbErvCs3jWWxDm3ZFp5X"
+          git push origin HEAD:main

@@ -1,0 +1,363 @@
+{
+  "format": 3,
+  "id": "webdesign",
+  "name": "Web & Graphic Design",
+  "icon": "🎨",
+  "tagline": "Websites, branding, logos, print, UX",
+  "version": "1.1.0",
+  "category": "business",
+  "source_sha256": "c83a4a86a462c94c0792ac3b06b4e0890deac1380fe0ab894caee2d0a721321b",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "office",
+    "quote": "proposal",
+    "staff": "designer",
+    "visit": "meeting"
+  },
+  "service_types": [
+    "Website Design",
+    "Website Development",
+    "E-commerce Store",
+    "Landing Pages",
+    "Logo Design",
+    "Brand Identity",
+    "Graphic Design",
+    "Print Design (Brochures, Business Cards)",
+    "Packaging Design",
+    "UX and UI Design",
+    "Website Maintenance",
+    "On-Page SEO Setup",
+    "WordPress Websites",
+    "Shopify Stores",
+    "Website Repair and Fixes"
+  ],
+  "catalog": [
+    {
+      "sku": "WD-LOGO",
+      "label": "Logo design",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "logo"
+    },
+    {
+      "sku": "WD-BRAND",
+      "label": "Brand identity package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "brand"
+    },
+    {
+      "sku": "WD-LP",
+      "label": "Landing page",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "landing page"
+    },
+    {
+      "sku": "WD-SITE5",
+      "label": "5-page website",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2800,
+      "taxable": 1,
+      "keywords": "website,5 page"
+    },
+    {
+      "sku": "WD-SITE10",
+      "label": "10-page website",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4800,
+      "taxable": 1,
+      "keywords": "website,10 page"
+    },
+    {
+      "sku": "WD-ECOM",
+      "label": "E-commerce store (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "ecommerce"
+    },
+    {
+      "sku": "WD-HR",
+      "label": "Design (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "WD-MAINT",
+      "label": "Website maintenance (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "maintenance"
+    },
+    {
+      "sku": "WD-SEO",
+      "label": "On-page SEO setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "seo"
+    },
+    {
+      "sku": "WD-PRINT",
+      "label": "Print design (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "print"
+    },
+    {
+      "sku": "WD-COPY",
+      "label": "Copywriting (per page)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "copy"
+    }
+  ],
+  "staff_skills": [
+    "web design",
+    "web development",
+    "wordpress",
+    "shopify",
+    "graphic design",
+    "logo design",
+    "branding",
+    "ux and ui",
+    "print design",
+    "on-page seo"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "site down",
+      "hacked site",
+      "checkout not working",
+      "site offline before launch"
+    ],
+    "urgent": [
+      "launch this week",
+      "before event",
+      "urgent fix",
+      "before sale"
+    ],
+    "routine": [
+      "quote",
+      "website",
+      "logo",
+      "branding",
+      "project",
+      "maintenance",
+      "print run"
+    ]
+  },
+  "extra_prompt": "You are booking for a web and graphic design studio. Ask about the project type, scope, deadline, and whether content or branding exists. Ask about platform preferences and hosting. Quote prices only from the reference answers, and say the final price is confirmed after scope is agreed. Do not promise a specific timeline or result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does a website cost?",
+      "a": "{price_note} Websites are priced by page count and features. Tell us your scope and we will send a quote.",
+      "keywords": "cost,price,website",
+      "priority": 9
+    },
+    {
+      "q": "Do you design logos?",
+      "a": "Yes, we design logos and full brand identity packages. Tell us about your business and style, and we will quote the package.",
+      "keywords": "design,logos",
+      "priority": 8
+    },
+    {
+      "q": "Which platforms do you build on?",
+      "a": "We build on WordPress, Shopify, Squarespace and Webflow. We recommend the best platform for your goals before you start.",
+      "keywords": "platforms,build",
+      "priority": 8
+    },
+    {
+      "q": "Do you build e-commerce stores?",
+      "a": "Yes, we build e-commerce stores on Shopify and WooCommerce. Store pricing starts from the rate on your quote.",
+      "keywords": "build,e,commerce,stores",
+      "priority": 8
+    },
+    {
+      "q": "Do you host websites?",
+      "a": "We can recommend hosting or manage it for you. Hosting costs are separate from our design fee.",
+      "keywords": "hosting,host",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SEO?",
+      "a": "We do on-page SEO setup as part of the build. Ongoing SEO is quoted separately.",
+      "keywords": "seo,search",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer maintenance?",
+      "a": "Yes, we offer monthly maintenance plans. Ask us what each plan covers before you join.",
+      "keywords": "maintenance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do copywriting?",
+      "a": "We can work with your copy or recommend a copywriter. Copywriting is priced per page, as listed in our rates.",
+      "keywords": "copywriting,copy",
+      "priority": 8
+    },
+    {
+      "q": "How long does a website take?",
+      "a": "A typical website takes [number] weeks, depending on scope and how quickly content is supplied.",
+      "keywords": "how long,time",
+      "priority": 9
+    },
+    {
+      "q": "Do you do print design?",
+      "a": "Yes, we design brochures, business cards, packaging and signage. Print work is priced per item, as listed in our rates.",
+      "keywords": "print,brochure",
+      "priority": 8
+    },
+    {
+      "q": "How many revisions are included?",
+      "a": "Our packages include [number] rounds of revisions. Extra rounds are quoted separately.",
+      "keywords": "revision,changes",
+      "priority": 8
+    },
+    {
+      "q": "Do you do UX and UI design?",
+      "a": "Yes, we do UX and UI design for websites and mobile apps. We confirm the scope before design starts.",
+      "keywords": "ux,ui,design",
+      "priority": 8
+    },
+    {
+      "q": "Do you need content from me?",
+      "a": "Yes, we need your text and images. We can also arrange content creation at an additional cost.",
+      "keywords": "content,text",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note} We confirm the payment schedule in your quote.",
+      "keywords": "payment plan,instalment",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we hold [insurance type] insurance with [insurer]. Certificates are available on request.",
+      "keywords": "insured,insurance",
+      "priority": 7
+    },
+    {
+      "q": "Do you fix broken websites?",
+      "a": "Yes, we fix hacked, broken and slow websites. Tell us what is happening, and we will advise on the fix and cost before work starts.",
+      "keywords": "fix,broken,websites",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {visit} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {visit} with {business} is on {date}.",
+    "quote_intro": "Here is our proposal for your {job}.",
+    "invoice_note": "Thank you. Invoice terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "project_brief",
+      "label": "Project brief",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "webdesign.rule1",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up proposal after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "webdesign.rule2",
+      "trigger": "project.milestone",
+      "action": "send_invoice",
+      "description": "Send milestone invoice",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Keep client agreements and data handling terms current. Professional indemnity insurance is commonly required for advice and design work. Check any licence that applies to your specific services.",
+    "items": [
+      "Professional indemnity certificate current",
+      "Client agreement signed before work starts"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "projects delivered",
+    "proposal win rate",
+    "client retention"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

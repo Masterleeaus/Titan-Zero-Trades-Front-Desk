@@ -1,0 +1,387 @@
+{
+  "format": 3,
+  "id": "junkremoval",
+  "name": "Junk Removal",
+  "icon": "🗑️",
+  "tagline": "Rubbish removal, cleanouts, e-waste, green waste",
+  "version": "1.1.0",
+  "category": "cleaning_removal",
+  "source_sha256": "ed99d524870e39c188b7bc751308609a8a44157a52d2ad1e0c71c39c2f0e0d94",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "property",
+    "quote": "quote",
+    "staff": "crew member",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Household Junk Removal",
+    "Furniture Removal",
+    "Appliance Removal",
+    "Mattress Removal",
+    "E-Waste Recycling",
+    "Green Waste Removal",
+    "Construction and Renovation Waste",
+    "Garage Cleanout",
+    "Shed and Storage Cleanout",
+    "Hoarding Cleanout",
+    "Estate Cleanout",
+    "Office and Commercial Clear-Out",
+    "Same-Day Junk Removal",
+    "Tip Runs (you load, we haul)",
+    "Tyre Removal"
+  ],
+  "catalog": [
+    {
+      "sku": "JNK-QTR",
+      "label": "Quarter truckload",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "quarter,load"
+    },
+    {
+      "sku": "JNK-HALF",
+      "label": "Half truckload",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "half,load"
+    },
+    {
+      "sku": "JNK-FULL",
+      "label": "Full truckload",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "full,load"
+    },
+    {
+      "sku": "JNK-ITEM",
+      "label": "Single item removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "single,item"
+    },
+    {
+      "sku": "JNK-MATT",
+      "label": "Mattress removal (per mattress)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "mattress"
+    },
+    {
+      "sku": "JNK-APP",
+      "label": "Appliance removal (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "appliance,fridge"
+    },
+    {
+      "sku": "JNK-EWASTE",
+      "label": "E-waste removal (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "e-waste,electronics"
+    },
+    {
+      "sku": "JNK-GREEN",
+      "label": "Green waste (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "green waste,garden"
+    },
+    {
+      "sku": "JNK-STAIRS",
+      "label": "Stairs surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "stairs"
+    },
+    {
+      "sku": "JNK-HOARD",
+      "label": "Hoarding cleanout (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hoarding,cleanout"
+    }
+  ],
+  "staff_skills": [
+    "junk removal",
+    "lifting and loading",
+    "furniture removal",
+    "appliance removal",
+    "e-waste sorting",
+    "green waste",
+    "hoarding cleanouts",
+    "recycling and donation sorting",
+    "truck loading",
+    "stair carries"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "health hazard",
+      "hoarding with health hazard",
+      "sharps or biohazard waste",
+      "eviction deadline today",
+      "storm debris blocking an exit"
+    ],
+    "urgent": [
+      "same-day pickup",
+      "tomorrow pickup",
+      "before inspection",
+      "before settlement or sale",
+      "tenant moving out this week"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "garage cleanout",
+      "furniture removal",
+      "tip run",
+      "booking next week"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional junk removal company. Ask what needs to be removed, the volume, access, and whether items are upstairs or in a basement. Ask about hazardous items, e-waste, and green waste. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise disposal of hazardous items that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "We hold [your insurance type] cover through [your insurer]. A certificate of currency is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does junk removal cost?",
+      "a": "{price_note} Pricing depends on the load size, the items, and access. Tell us what needs to go and we will quote before we book.",
+      "keywords": "cost,price,junk removal",
+      "priority": 9
+    },
+    {
+      "q": "What do you remove?",
+      "a": "We remove household junk, furniture, appliances, mattresses, e-waste, green waste, and construction waste. Ask us about anything unusual before you book.",
+      "keywords": "what,remove,accepted",
+      "priority": 9
+    },
+    {
+      "q": "Do you take mattresses?",
+      "a": "Yes, we remove mattresses at the per-mattress rate in our price list. A recycling fee may apply, and we will show it in your quote.",
+      "keywords": "mattress,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you take appliances?",
+      "a": "Yes, we remove fridges, washing machines, dishwashers, and other large appliances. Tell us about any fridge or freezer when you book so we can plan the carry.",
+      "keywords": "appliance,fridge,washing machine",
+      "priority": 9
+    },
+    {
+      "q": "Do you take e-waste?",
+      "a": "Yes, we take TVs, computers, printers, and other electronics for recycling. Tell us what you have, and we will confirm whether each item can be taken.",
+      "keywords": "e-waste,electronics,tv,computer",
+      "priority": 8
+    },
+    {
+      "q": "Do you take green waste?",
+      "a": "Yes, we remove branches, leaves, lawn clippings, and garden waste. Green waste is charged by the cubic metre.",
+      "keywords": "green waste,garden",
+      "priority": 8
+    },
+    {
+      "q": "Do you take construction waste?",
+      "a": "Yes, we remove building and renovation waste such as timber, plasterboard, and rubble. Tell us the volume so we can quote the load size.",
+      "keywords": "construction,building,rubble",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hoarding cleanouts?",
+      "a": "Yes, we do hoarding and estate cleanouts with care and discretion. These jobs are priced per hour, and we may need a site visit first.",
+      "keywords": "hoarding,estate",
+      "priority": 9
+    },
+    {
+      "q": "Do you recycle?",
+      "a": "Yes, we sort items for recycling and donate usable goods where possible. Tell us if you want certain items kept for donation.",
+      "keywords": "recycle,donate",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer same-day service?",
+      "a": "Same-day junk removal is possible when we have space. Call early in the day, because availability changes quickly.",
+      "keywords": "same day,today",
+      "priority": 9
+    },
+    {
+      "q": "Do you take hazardous waste?",
+      "a": "No, we do not take hazardous waste such as chemicals, asbestos, or liquid paint. Tell us about these items before we arrive so you can arrange safe disposal.",
+      "keywords": "hazardous,asbestos,chemicals",
+      "priority": 9
+    },
+    {
+      "q": "How much can you take?",
+      "a": "We take single items up to full truckloads. Load sizes are quarter, half, and full, and we quote based on what you tell us.",
+      "keywords": "how much,load",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial cleanouts?",
+      "a": "Yes, we do office and commercial clear-outs. Commercial jobs often need out-of-hours access, so tell us your site's access times.",
+      "keywords": "commercial,office",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a receipt?",
+      "a": "Yes, we provide a receipt for every job. Disposal receipts are available on request.",
+      "keywords": "receipt,invoice",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area] and the surrounding suburbs. Send us your suburb and we will confirm it is in range.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps, but we can work with access arranged in advance. Tell us about keys, gates, or codes when you book.",
+      "keywords": "home,present,access",
+      "priority": 7
+    },
+    {
+      "q": "Can you remove items from upstairs?",
+      "a": "Yes, we can carry items from upstairs or a basement. A stairs surcharge applies, and we show it in the quote.",
+      "keywords": "stairs,upstairs",
+      "priority": 8
+    },
+    {
+      "q": "Do you take tyres?",
+      "a": "Yes, we take tyres for a fee. Tell us how many you have so we can quote.",
+      "keywords": "tyre,tire",
+      "priority": 7
+    },
+    {
+      "q": "Do you take paint?",
+      "a": "We take dried paint only. Liquid paint is hazardous waste, and we cannot accept it.",
+      "keywords": "paint,hazardous",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} arrives on {date}. Please clear access and remove any loose items.",
+    "quote_intro": "Here is your quote for the {job}, based on what you told us about the volume and access.",
+    "invoice_note": "Thank you. Disposal receipts are available on request."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 20,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 7,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "property_size",
+      "label": "Number of rooms or volume",
+      "required": true
+    },
+    {
+      "key": "hazard_check",
+      "label": "Any hazardous material or asbestos?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "junkremoval.rule1",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "junkremoval.rule2",
+      "trigger": "booking.created",
+      "action": "confirm_access",
+      "description": "Confirm access details 24 hours before",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Waste carriers may need an EPA permit or registration in some states. Keep disposal records and do not accept hazardous waste without the correct handling plan. Check your EPA rules.",
+    "items": [
+      "Waste carrier permit or registration where required",
+      "Disposal receipts kept per job"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle or truck",
+    "cleaning equipment",
+    "bins or skip"
+  ],
+  "reporting": [
+    "jobs completed",
+    "average job value",
+    "repeat clients"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "white_card"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

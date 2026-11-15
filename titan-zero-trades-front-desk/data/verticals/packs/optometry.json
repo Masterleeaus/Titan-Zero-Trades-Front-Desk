@@ -1,0 +1,363 @@
+{
+  "format": 3,
+  "id": "optometry",
+  "name": "Optometry",
+  "icon": "👓",
+  "tagline": "Eye tests, glasses, contacts, eye health",
+  "version": "1.1.0",
+  "category": "health",
+  "source_sha256": "e0eaba1fc1e5a9a6f53ac5fe3142f5fce579680b77b9235008384faf245dc705",
+  "terminology": {
+    "customer": "patient",
+    "job": "appointment",
+    "site": "clinic",
+    "quote": "estimate",
+    "staff": "optometrist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Eye Test",
+    "Contact Lens Fitting",
+    "Prescription Glasses",
+    "Prescription Sunglasses",
+    "Children's Eye Test",
+    "Diabetic Eye Check",
+    "Glaucoma Screening",
+    "Macular Health Check",
+    "Dry Eye Treatment",
+    "Behavioural Optometry",
+    "Sports Vision",
+    "Prescription Safety Glasses",
+    "Retinal Imaging and OCT Scans",
+    "Telehealth Review"
+  ],
+  "catalog": [
+    {
+      "sku": "OPT-TEST",
+      "label": "Comprehensive eye test",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "eye test"
+    },
+    {
+      "sku": "OPT-RET",
+      "label": "Retinal imaging",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "retinal"
+    },
+    {
+      "sku": "OPT-OCT",
+      "label": "OCT scan (optical coherence tomography)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "oct"
+    },
+    {
+      "sku": "OPT-CONTACT",
+      "label": "Contact lens fitting",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "contact fitting"
+    },
+    {
+      "sku": "OPT-CONTACT-T",
+      "label": "Contact lens trial",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "contact trial"
+    },
+    {
+      "sku": "OPT-FRAME",
+      "label": "Frame (starting price)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 149,
+      "taxable": 1,
+      "keywords": "frame"
+    },
+    {
+      "sku": "OPT-LENS",
+      "label": "Single-vision lenses (pair)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "lens"
+    },
+    {
+      "sku": "OPT-PROG",
+      "label": "Progressive lenses (pair)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "progressive"
+    },
+    {
+      "sku": "OPT-SUN",
+      "label": "Prescription sunglasses",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "sunglasses"
+    },
+    {
+      "sku": "OPT-SAFE",
+      "label": "Prescription safety glasses",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "safety"
+    },
+    {
+      "sku": "OPT-DRY",
+      "label": "Dry eye treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "dry eye"
+    }
+  ],
+  "staff_skills": [
+    "eye testing",
+    "contact lens fitting",
+    "glasses dispensing",
+    "retinal imaging and OCT",
+    "paediatric eye tests",
+    "dry eye treatment",
+    "behavioural optometry",
+    "sports vision",
+    "safety eyewear"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "sudden vision loss",
+      "flashes",
+      "floaters",
+      "eye injury",
+      "red eye",
+      "severe pain"
+    ],
+    "urgent": [
+      "today",
+      "this week",
+      "blurry vision"
+    ],
+    "routine": [
+      "eye test",
+      "glasses",
+      "contacts",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for an optometry practice. Ask about the reason for the visit, last eye test, current glasses or contacts, and health fund. Ask about any sudden vision changes, which may need urgent care. Quote prices only from the reference answers, and say the final price is confirmed after examination. Do not provide clinical advice or promise specific vision outcomes.",
+  "kb": [
+    {
+      "q": "How much is an eye test?",
+      "a": "{price_note} Whether an eye test is bulk billed depends on your Medicare eligibility. We will tell you the fee before the test.",
+      "keywords": "cost,price,eye test",
+      "priority": 9
+    },
+    {
+      "q": "Do you bulk bill?",
+      "a": "{bulk_bill_note} Please bring your Medicare card so we can check eligibility before the test.",
+      "keywords": "bulk bill,medicare",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Some health funds cover glasses and contact lenses, depending on your extras cover. Please check with your fund, and we can provide an itemised receipt.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do contact lens fittings?",
+      "a": "Yes, we fit contact lenses, including a trial pair and teaching you how to insert and remove them. The fitting fee is charged separately from the trial lenses.",
+      "keywords": "contact lens,contacts",
+      "priority": 9
+    },
+    {
+      "q": "Do you see children?",
+      "a": "Yes, we do children's eye tests. Tell us about any concerns you have about your child's vision when you book.",
+      "keywords": "children,paediatric",
+      "priority": 9
+    },
+    {
+      "q": "Do you do diabetic eye checks?",
+      "a": "Yes, we do diabetic eye checks, including retinal imaging. Please bring any recent test results or referral letters with you.",
+      "keywords": "diabetes,retinal",
+      "priority": 9
+    },
+    {
+      "q": "Do you screen for glaucoma?",
+      "a": "Yes, we screen for glaucoma with pressure checks and retinal scans. A screening result may still need a specialist assessment, and we will advise you if so.",
+      "keywords": "glaucoma,pressure",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat dry eye?",
+      "a": "Yes, we offer dry eye treatment, including IPL and drops, depending on your assessment. Dry eye treatment is priced separately from an eye test.",
+      "keywords": "dry eye",
+      "priority": 8
+    },
+    {
+      "q": "Do you sell glasses?",
+      "a": "Yes, we sell a range of frames and lenses. Frames start from the price in our list, and lens prices depend on your prescription.",
+      "keywords": "glasses,frame",
+      "priority": 9
+    },
+    {
+      "q": "Do you sell sunglasses?",
+      "a": "Yes, we make prescription sunglasses as well as standard frames. Tell us your prescription so we can quote the lens options.",
+      "keywords": "sunglasses",
+      "priority": 8
+    },
+    {
+      "q": "Do you do safety glasses?",
+      "a": "Yes, we make prescription safety glasses. Tell us about the workplace and the risks so we can recommend the right lenses.",
+      "keywords": "safety glasses",
+      "priority": 8
+    },
+    {
+      "q": "What if I suddenly lose vision?",
+      "a": "Sudden vision loss can be an emergency. Please call emergency services or go to the nearest hospital straight away, and let us know afterwards so we can follow up.",
+      "keywords": "vision loss,emergency",
+      "priority": 9
+    },
+    {
+      "q": "How long is an eye test?",
+      "a": "Eye tests usually take [number] minutes, depending on the tests needed. We will tell you the expected time when you book.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Limited telehealth reviews are available for some patients. Ask us whether a telehealth review suits your needs.",
+      "keywords": "telehealth",
+      "priority": 7
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Our optometrists hold [your AHPRA registration number]. You can check registration on the AHPRA public register before your visit.",
+      "keywords": "ahpra,registered",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please bring your card and any referral.",
+    "quote_intro": "Here is your estimate. Your practitioner will confirm the plan at your appointment.",
+    "invoice_note": "Thank you. Health fund claims are handled by the practice where applicable."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 30,
+    "buffer_minutes": 10,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 30,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "referral",
+      "label": "Referral or Medicare details (only if the practice needs them)",
+      "required": false
+    },
+    {
+      "key": "clinical_notes_location",
+      "label": "Clinical details stay in the clinical record, not in booking notes",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "optometry.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 48 hours before",
+      "enabled": false
+    },
+    {
+      "id": "optometry.rule2",
+      "trigger": "recall.due",
+      "action": "send_recall",
+      "description": "Send recall reminder when due",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Health practitioners usually need registration (for example with AHPRA where it applies) and current professional indemnity insurance. Keep clinical details in the clinical record, not in general booking fields. Follow your state health privacy rules.",
+    "items": [
+      "Practitioner registration number and expiry",
+      "Professional indemnity certificate current",
+      "Clinical notes kept only in the clinical record"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment room",
+    "equipment"
+  ],
+  "reporting": [
+    "appointments attended",
+    "no-shows",
+    "new patients",
+    "recall due"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

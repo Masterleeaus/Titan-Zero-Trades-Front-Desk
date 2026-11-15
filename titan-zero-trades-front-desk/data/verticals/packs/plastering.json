@@ -1,0 +1,394 @@
+{
+  "format": 3,
+  "id": "plastering",
+  "name": "Plastering & Drywall",
+  "icon": "🏗️",
+  "tagline": "Plasterboard, repairs, cornice, rendering, skimming",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "ecaeef48377d2643751f213aba9e160dd0fa96ae455400194720f06a525fd028",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Plasterboard Installation",
+    "Plaster Repair",
+    "Ceiling Repair",
+    "Cornice Installation",
+    "Cornice Replacement",
+    "Rendering",
+    "Skimming",
+    "Texture Coating",
+    "Water Damage Repair",
+    "Hole Repair",
+    "Crack Repair",
+    "Soundproofing",
+    "Insulation",
+    "Old Plaster Removal",
+    "Commercial Plastering"
+  ],
+  "catalog": [
+    {
+      "sku": "PLS-INST",
+      "label": "Plasterboard install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "plasterboard,install"
+    },
+    {
+      "sku": "PLS-REP",
+      "label": "Plaster repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "PLS-CORN",
+      "label": "Cornice install (per metre)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "cornice"
+    },
+    {
+      "sku": "PLS-REND",
+      "label": "Rendering (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "render,rendering"
+    },
+    {
+      "sku": "PLS-SKIM",
+      "label": "Skim coat (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "skim"
+    },
+    {
+      "sku": "PLS-TEX",
+      "label": "Texture coating (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "texture"
+    },
+    {
+      "sku": "PLS-WATER",
+      "label": "Water damage repair (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "water damage"
+    },
+    {
+      "sku": "PLS-SOUND",
+      "label": "Soundproofing (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "soundproof,acoustic"
+    },
+    {
+      "sku": "PLS-INSUL",
+      "label": "Insulation install (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "insulation"
+    },
+    {
+      "sku": "PLS-REMOVE",
+      "label": "Old plaster removal (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "remove"
+    }
+  ],
+  "staff_skills": [
+    "plastering",
+    "drywall",
+    "plasterboard",
+    "cornice",
+    "rendering",
+    "skimming",
+    "texture coating",
+    "soundproofing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "ceiling sagging or collapsing",
+      "water coming through the ceiling",
+      "active water damage",
+      "mould spreading after a leak"
+    ],
+    "urgent": [
+      "before painters arrive",
+      "before a building inspection",
+      "plaster crumbling off the wall",
+      "crack getting wider"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "repair",
+      "install",
+      "render",
+      "cornice replacement",
+      "texture finish"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional plastering company. Ask about the area size, surface type, and the extent of damage. Ask whether painting is included and whether cornice or texture is wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a finish that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "We hold [licence number] and [insurance details]. Certificates are available on request, so ask us before you book.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does plastering cost?",
+      "a": "{price_note} Plastering is priced per square metre or per repair. We confirm the scope and price after seeing the area.",
+      "keywords": "cost,price,plastering",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair holes?",
+      "a": "Yes, we repair holes, cracks and water damage in plaster and plasterboard. Small holes and cracks are usually quick repairs, and larger damage is quoted after an inspection.",
+      "keywords": "hole,crack,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you install plasterboard?",
+      "a": "Yes, we install plasterboard for walls and ceilings. We quote the job per square metre after measuring the area.",
+      "keywords": "plasterboard,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cornice?",
+      "a": "Yes, we install and replace cornice. Cornice is priced per metre, so tell us the length and profile you need.",
+      "keywords": "cornice",
+      "priority": 8
+    },
+    {
+      "q": "Do you render?",
+      "a": "Yes, we render interior and exterior walls. Rendering is priced per square metre, and we confirm the surface and finish before work starts.",
+      "keywords": "render,rendering",
+      "priority": 9
+    },
+    {
+      "q": "Do you skim coat?",
+      "a": "Yes, we skim coat walls and ceilings for a smooth finish. Skim coating is priced per square metre, and we check the surface before we start.",
+      "keywords": "skim,skim coat",
+      "priority": 8
+    },
+    {
+      "q": "Do you do texture coating?",
+      "a": "Yes, we apply texture coatings. Texture is priced per square metre, and we confirm the finish you want on site.",
+      "keywords": "texture,coating",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair water damage?",
+      "a": "Yes, we repair water-damaged plaster and ceilings. Please fix the source of the water first, and we will assess the damage once the area is dry.",
+      "keywords": "water damage,ceiling",
+      "priority": 9
+    },
+    {
+      "q": "Do you soundproof?",
+      "a": "Yes, we install acoustic plasterboard and insulation for soundproofing. Soundproofing is priced per square metre, and we confirm the system suited to your walls.",
+      "keywords": "soundproof,acoustic",
+      "priority": 8
+    },
+    {
+      "q": "Do you install insulation?",
+      "a": "Yes, we install ceiling and wall insulation. Insulation is priced per square metre, and we confirm the product and thickness on site.",
+      "keywords": "insulation",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint after plastering?",
+      "a": "We can recommend painters, or coordinate with yours. Painting is not included in the plastering price unless your quote says so.",
+      "keywords": "paint,painter",
+      "priority": 7
+    },
+    {
+      "q": "How long does plastering take?",
+      "a": "Most repairs take a day, and full rooms take longer. We give you an estimate of the time when we quote.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial plastering?",
+      "a": "Yes, we do commercial plastering. Commercial work is priced separately, and we confirm the timing around your trading hours.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us for the warranty terms in writing before you book.",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb before you book.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, but we need access to the work area. Tell us about keys, gates and any alarm codes when you book.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "How long before I can paint?",
+      "a": "Painting usually needs to wait 24 to 48 hours after plastering, depending on the weather and the product used. Ask us for the drying time for your job.",
+      "keywords": "paint,dry",
+      "priority": 8
+    },
+    {
+      "q": "Do you fix ceiling cracks?",
+      "a": "Yes, we repair ceiling cracks and sagging. We check whether the cause, such as a roof leak or movement, has been fixed before we repair.",
+      "keywords": "ceiling,crack",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old plaster?",
+      "a": "Yes, we remove old plaster. Removal is priced per square metre, and disposal is confirmed in your quote.",
+      "keywords": "remove,old plaster",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "plastering.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "plastering.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "plastering.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

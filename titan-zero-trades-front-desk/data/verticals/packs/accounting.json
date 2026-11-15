@@ -1,0 +1,406 @@
+{
+  "format": 3,
+  "id": "accounting",
+  "name": "Accounting & Tax",
+  "icon": "🧾",
+  "tagline": "Tax returns, bookkeeping, BAS, business advisory",
+  "version": "1.1.0",
+  "category": "professional",
+  "source_sha256": "6911654659e762ccf86811718df41f2e08b5c66fa2f83cebd986bd970abde989",
+  "terminology": {
+    "customer": "client",
+    "job": "engagement",
+    "site": "office",
+    "quote": "quote",
+    "staff": "accountant",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Individual Tax Return",
+    "Business Tax Return",
+    "BAS Lodgement",
+    "Bookkeeping",
+    "Payroll (Single Touch Payroll)",
+    "Company Tax Return",
+    "Trust Tax Return",
+    "Partnership Tax Return",
+    "SMSF Annual Return",
+    "Tax Planning",
+    "Business Advisory",
+    "Company and Trust Setup",
+    "GST Registration",
+    "ATO Audit Support",
+    "Rental Property Tax",
+    "Capital Gains Tax",
+    "Deceased Estate Return",
+    "Non-Resident Tax Return"
+  ],
+  "catalog": [
+    {
+      "sku": "ACC-IND",
+      "label": "Individual tax return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "individual return"
+    },
+    {
+      "sku": "ACC-IND-C",
+      "label": "Complex individual return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "complex return"
+    },
+    {
+      "sku": "ACC-BUS",
+      "label": "Business tax return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "business return"
+    },
+    {
+      "sku": "ACC-BAS",
+      "label": "BAS lodgement (per statement)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "bas"
+    },
+    {
+      "sku": "ACC-BOOK",
+      "label": "Bookkeeping (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "bookkeeping"
+    },
+    {
+      "sku": "ACC-PAY",
+      "label": "Payroll (per pay run)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "payroll"
+    },
+    {
+      "sku": "ACC-SMSF",
+      "label": "SMSF annual return",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "smsf"
+    },
+    {
+      "sku": "ACC-PLAN",
+      "label": "Tax planning session",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "tax planning"
+    },
+    {
+      "sku": "ACC-SETUP",
+      "label": "Company or trust setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "company setup"
+    },
+    {
+      "sku": "ACC-ADV",
+      "label": "Business advisory (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "advisory"
+    },
+    {
+      "sku": "ACC-AUDIT",
+      "label": "ATO audit support (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "audit"
+    },
+    {
+      "sku": "ACC-RENT",
+      "label": "Rental property schedule (per property)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "rental"
+    }
+  ],
+  "staff_skills": [
+    "individual and business tax returns",
+    "BAS and GST",
+    "bookkeeping",
+    "payroll and STP",
+    "SMSF returns",
+    "tax planning",
+    "business advisory",
+    "ATO audit support",
+    "Xero",
+    "MYOB",
+    "QuickBooks"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "ATO audit notice",
+      "ATO debt notice",
+      "tax overdue",
+      "penalty notice",
+      "lodgement due in 48 hours"
+    ],
+    "urgent": [
+      "lodgement due this week",
+      "BAS due soon",
+      "before deadline",
+      "ATO letter received"
+    ],
+    "routine": [
+      "quote",
+      "return",
+      "bookkeeping",
+      "BAS",
+      "advisory"
+    ]
+  },
+  "extra_prompt": "You are booking for an accounting or tax practice. Ask about the entity type, income sources, prior year returns, and lodgement deadline. Ask about software (Xero, MYOB, QuickBooks) and whether payroll or bookkeeping is needed. Quote prices only from the reference answers, and say the final price is confirmed after document review. Do not provide specific tax advice in the booking flow.",
+  "kb": [
+    {
+      "q": "How much does a tax return cost?",
+      "a": "{price_note} Individual returns are charged at a fixed fee. Complex returns are quoted after we review your documents.",
+      "keywords": "cost,price,tax return",
+      "priority": 9
+    },
+    {
+      "q": "Do you do BAS?",
+      "a": "Yes, we lodge BAS monthly, quarterly, or annually, depending on how your business reports. We confirm the schedule when we set up your account.",
+      "keywords": "bas,gst",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bookkeeping?",
+      "a": "Yes, we offer bookkeeping as a standalone service or bundled with BAS and payroll. It is charged per hour, and we confirm the likely hours after we see your records.",
+      "keywords": "bookkeeping",
+      "priority": 9
+    },
+    {
+      "q": "Do you do payroll?",
+      "a": "Yes, we run payroll and Single Touch Payroll (STP) reporting for your staff. It is charged per pay run, and we confirm your set-up needs at the first meeting.",
+      "keywords": "payroll,stp",
+      "priority": 9
+    },
+    {
+      "q": "Do you do SMSF?",
+      "a": "Yes, we prepare SMSF annual returns. Tell us your fund's name and the year you need lodged, and we will confirm the fee.",
+      "keywords": "smsf,super",
+      "priority": 9
+    },
+    {
+      "q": "Do you support Xero and MYOB?",
+      "a": "Yes, we work in Xero, MYOB, and QuickBooks. Tell us which software you use, and we will arrange access to your records.",
+      "keywords": "xero,myob,quickbooks",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim work-from-home expenses?",
+      "a": "Whether you can claim depends on your circumstances and ATO rules. We check your records with you during your return rather than guessing.",
+      "keywords": "work from home,expenses",
+      "priority": 9
+    },
+    {
+      "q": "Do you do rental property tax?",
+      "a": "Yes, we prepare rental property schedules, including rent, interest, and depreciation details. Bring your rental statements and purchase records to your appointment.",
+      "keywords": "rental,investment property",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle ATO audits?",
+      "a": "Yes, we help you respond to ATO reviews and audits. Send us any notice as soon as it arrives, and we will confirm the deadline with you.",
+      "keywords": "audit,ato",
+      "priority": 9
+    },
+    {
+      "q": "Do you do tax planning?",
+      "a": "Yes, we run tax planning sessions. Bring your year-to-date income and expenses so we can review your position before the year ends.",
+      "keywords": "tax planning",
+      "priority": 9
+    },
+    {
+      "q": "Do you set up companies and trusts?",
+      "a": "Yes, we help set up companies and trusts, including ABN, TFN, GST, and ASIC registration. Tell us the structure you want, and we will confirm each step.",
+      "keywords": "company,trust,abn",
+      "priority": 9
+    },
+    {
+      "q": "Do you do capital gains tax?",
+      "a": "Yes, we calculate capital gains tax on share and property sales. Send us the sale contract and purchase records as soon as you have them.",
+      "keywords": "cgt,capital gains,shares,property",
+      "priority": 9
+    },
+    {
+      "q": "How do I send documents?",
+      "a": "You can send them by secure portal, email, or in person. We will send you a checklist of what we need for your return or BAS.",
+      "keywords": "documents,upload",
+      "priority": 8
+    },
+    {
+      "q": "When are tax returns due?",
+      "a": "Lodgement dates depend on your entity type and whether a registered agent lodges for you. We confirm your due date when we start and tell you what to bring.",
+      "keywords": "due,deadline,lodgement",
+      "priority": 9
+    },
+    {
+      "q": "Are you a registered tax agent?",
+      "a": "Our tax agent registration number is [your TPB tax agent number]. You can check it on the Tax Practitioners Board register before you book.",
+      "keywords": "registered,tpb,tax agent",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a fixed fee?",
+      "a": "{price_note} Most individual returns are fixed fee. Complex matters are quoted after we review the documents.",
+      "keywords": "fixed fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you do non-resident tax?",
+      "a": "Yes, we prepare non-resident and expat returns. Tell us your residency dates and income sources at the first meeting.",
+      "keywords": "non resident,expat",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer business advisory?",
+      "a": "Yes, we advise on cashflow, business structure, and growth. Advisory is charged per hour, and we confirm the scope after the first session.",
+      "keywords": "advisory,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you need my identity documents?",
+      "a": "Yes, we check identity documents before we start, and we keep only what we need. We will tell you which documents to bring.",
+      "keywords": "identity,id,documents",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Let us know as early as you can so we can use the time for another client.",
+      "keywords": "cancel",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} appointment with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} appointment with {business} is on {date}. Please bring the documents listed.",
+    "quote_intro": "Here is the fee proposal for your {job}.",
+    "invoice_note": "Thank you. Payment terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "identity_check",
+      "label": "Identity documents checked (keep only what the law needs)",
+      "required": true
+    },
+    {
+      "key": "tax_year",
+      "label": "Year or period to be lodged",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "accounting.rule1",
+      "trigger": "document.requested",
+      "action": "request_documents",
+      "description": "Request identity documents securely",
+      "enabled": false
+    },
+    {
+      "id": "accounting.rule2",
+      "trigger": "invoice.overdue",
+      "action": "send_overdue_reminder",
+      "description": "Send overdue reminder after 14 days",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Accountants providing tax agent services need registration with the Tax Practitioners Board. Legal practice needs a practising certificate. Mortgage brokers need an Australian credit licence (ASIC). Real estate agents need a licence from the state regulator. Verify each licence before relying on it.",
+    "items": [
+      "Tax agent or practising certificate number",
+      "Australian credit licence number (broking)",
+      "Real estate licence number and expiry (real estate)"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "matters open",
+    "hours billed",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

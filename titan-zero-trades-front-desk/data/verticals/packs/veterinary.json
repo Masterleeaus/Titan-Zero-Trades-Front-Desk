@@ -1,0 +1,388 @@
+{
+  "format": 3,
+  "id": "veterinary",
+  "name": "Veterinary",
+  "icon": "🐾",
+  "tagline": "Vet consults, vaccinations, surgery, dentistry",
+  "version": "1.1.0",
+  "category": "pet",
+  "source_sha256": "17531794cb90dcea51cb5fe902cc3c0fe1da8b19a6ee6c5ae3c292c25ef3e278",
+  "terminology": {
+    "customer": "pet owner",
+    "job": "consultation",
+    "site": "clinic",
+    "quote": "quote",
+    "staff": "veterinarian",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Vet Consultation",
+    "Vaccinations (C5 for Dogs, F3 for Cats)",
+    "Desexing",
+    "Dental Scale and Polish",
+    "Microchipping",
+    "Flea and Worm Treatment",
+    "X-rays and Ultrasound",
+    "Blood Tests",
+    "Surgery",
+    "Emergency Care",
+    "House Calls",
+    "Puppy Preschool",
+    "Senior Pet Checks",
+    "Behaviour Consults",
+    "Euthanasia and Cremation",
+    "Small Animal Care (Rabbits, Guinea Pigs)"
+  ],
+  "catalog": [
+    {
+      "sku": "VET-CONS",
+      "label": "Standard consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "consult"
+    },
+    {
+      "sku": "VET-EMERG",
+      "label": "Emergency consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "emergency"
+    },
+    {
+      "sku": "VET-VAC",
+      "label": "Vaccination (C5 for dogs or F3 for cats)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "vaccination"
+    },
+    {
+      "sku": "VET-DESEX-C",
+      "label": "Desexing (cat)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "desex cat"
+    },
+    {
+      "sku": "VET-DESEX-D",
+      "label": "Desexing (dog)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 520,
+      "taxable": 1,
+      "keywords": "desex dog"
+    },
+    {
+      "sku": "VET-DENT",
+      "label": "Dental scale and polish",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "dental"
+    },
+    {
+      "sku": "VET-CHIP",
+      "label": "Microchipping",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "microchip"
+    },
+    {
+      "sku": "VET-BLOOD",
+      "label": "Blood test (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "blood"
+    },
+    {
+      "sku": "VET-XRAY",
+      "label": "X-ray (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "xray"
+    },
+    {
+      "sku": "VET-HOUSE",
+      "label": "House call fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "house call"
+    },
+    {
+      "sku": "VET-EUTH",
+      "label": "Euthanasia",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "euthanasia"
+    },
+    {
+      "sku": "VET-CREM",
+      "label": "Cremation (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "cremation"
+    }
+  ],
+  "staff_skills": [
+    "veterinary medicine",
+    "surgery",
+    "dentistry",
+    "vaccinations",
+    "emergency triage",
+    "diagnostics",
+    "behaviour",
+    "house calls",
+    "small animal care"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hit by car",
+      "poisoning",
+      "bloat",
+      "seizure",
+      "bleeding",
+      "not breathing"
+    ],
+    "urgent": [
+      "unwell today",
+      "vomiting",
+      "not eating",
+      "limping",
+      "diarrhoea"
+    ],
+    "routine": [
+      "check-up",
+      "vaccination",
+      "quote",
+      "booking",
+      "desexing",
+      "microchipping",
+      "puppy class"
+    ]
+  },
+  "extra_prompt": "You are booking for a veterinary clinic. Ask about the pet's species, age, sex, and symptoms. Ask how long the symptoms have been present and whether the pet is eating and drinking. For emergencies, advise attending immediately. Quote prices only from the reference answers, and say the final price is confirmed after examination. Do not give clinical advice in the booking flow.",
+  "kb": [
+    {
+      "q": "How much is a consultation?",
+      "a": "{price_note} Consultation fees are confirmed before we book you in.",
+      "keywords": "cost,price,consult",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note} Please call us before your visit if you need to talk about costs.",
+      "keywords": "payment plan,finance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do house calls?",
+      "a": "Yes, house calls are available in [your service area]. A house call fee applies, as listed in our rates.",
+      "keywords": "house call,mobile",
+      "priority": 9
+    },
+    {
+      "q": "Do you do emergency care?",
+      "a": "{emergency_note} Outside our hours, we refer you to [nearest emergency hospital].",
+      "keywords": "emergency,after hours",
+      "priority": 9
+    },
+    {
+      "q": "Do you desex pets?",
+      "a": "Yes, we desex cats, dogs and rabbits. Desexing is priced by animal type, as listed in our rates.",
+      "keywords": "desex,neuter,spay",
+      "priority": 9
+    },
+    {
+      "q": "Do you vaccinate?",
+      "a": "Yes, we give C5 vaccines for dogs and F3 vaccines for cats. Your vet confirms the vaccine schedule for your pet's age.",
+      "keywords": "vaccination,vaccine",
+      "priority": 9
+    },
+    {
+      "q": "Do you microchip?",
+      "a": "Yes, we microchip pets and can help with registration. Microchipping is charged at the rate on your quote.",
+      "keywords": "microchip",
+      "priority": 8
+    },
+    {
+      "q": "Do you do dentistry?",
+      "a": "Yes, we do scale and polish and tooth extractions. Your vet examines the mouth first and then gives you a quote.",
+      "keywords": "dentistry,dental",
+      "priority": 9
+    },
+    {
+      "q": "Do you do blood tests?",
+      "a": "Yes, we do in-house blood tests and send samples to [pathology provider] when needed.",
+      "keywords": "blood test,pathology",
+      "priority": 9
+    },
+    {
+      "q": "Do you do x-rays?",
+      "a": "Yes, we offer x-rays and ultrasound at our clinic. Prices start from the rate on your quote.",
+      "keywords": "xray,ultrasound",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat wildlife?",
+      "a": "We treat injured wildlife where possible and refer to wildlife carers when we cannot.",
+      "keywords": "wildlife",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer puppy school?",
+      "a": "Yes, we run puppy preschool and socialisation classes. Ask us for current class dates and prices.",
+      "keywords": "puppy school",
+      "priority": 8
+    },
+    {
+      "q": "Do you do euthanasia?",
+      "a": "Yes, we provide euthanasia, including at home when available. We can also arrange cremation, as listed in our rates.",
+      "keywords": "euthanasia",
+      "priority": 9
+    },
+    {
+      "q": "Do you do behaviour consults?",
+      "a": "Yes, we do behaviour consults for anxiety and aggression. Please bring notes on when the behaviour happens.",
+      "keywords": "behaviour,behavior",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat rabbits and guinea pigs?",
+      "a": "Yes, we treat small animals including rabbits and guinea pigs. Tell us the animal and its symptoms when you book.",
+      "keywords": "rabbit,guinea pig,small animal",
+      "priority": 8
+    },
+    {
+      "q": "Do you do senior pet checks?",
+      "a": "Yes, senior checks can include blood tests and mobility checks. We confirm what is included when you book.",
+      "keywords": "senior,pet,checks",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer health plans?",
+      "a": "{health_plan_note} Ask us what each plan covers before you join.",
+      "keywords": "health plan",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please bring the vaccination record.",
+    "reminder": "Reminder: {business} appointment on {date}.",
+    "quote_intro": "Here is the quote for your pet.",
+    "invoice_note": "Thank you for choosing {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 45,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "pet_details",
+      "label": "Pet name, species, breed and age",
+      "required": true
+    },
+    {
+      "key": "owner_consent",
+      "label": "Owner consent for treatment",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "veterinary.rule1",
+      "trigger": "vaccination.due",
+      "action": "send_vaccination_reminder",
+      "description": "Send vaccination reminder",
+      "enabled": false
+    },
+    {
+      "id": "veterinary.rule2",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Veterinarians must be registered with the state veterinary board. Keep medication and controlled drug records as the board requires. Check your state rules.",
+    "items": [
+      "Veterinarian registration number and expiry",
+      "Controlled drug register kept (where stocked)"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "grooming table",
+    "kennel or run",
+    "vehicle"
+  ],
+  "reporting": [
+    "appointments completed",
+    "rebooking rate",
+    "vaccinations due"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,58 @@
+/* Workspace booking page and client portal presentation presets. */
+.tzfd-booking-builder,.tzfd-portal{--tzfd-builder-radius:14px;--tzfd-builder-border:#d8dee8;--tzfd-builder-surface:#fff;--tzfd-builder-accent:#1769aa;color:inherit}
+.tzfd-booking-builder.tzfd-booking-style-modern,.tzfd-portal.tzfd-portal-style-modern{font-family:inherit}
+.tzfd-booking-builder.tzfd-booking-style-modern .ahb_m2,.tzfd-booking-builder.tzfd-booking-style-modern form,.tzfd-portal.tzfd-portal-style-modern{border-radius:var(--tzfd-builder-radius)}
+.tzfd-booking-builder.tzfd-booking-style-classic,.tzfd-portal.tzfd-portal-style-classic{--tzfd-builder-radius:2px;--tzfd-builder-border:#888;--tzfd-builder-accent:#333}
+.tzfd-booking-builder.tzfd-booking-style-compact,.tzfd-portal.tzfd-portal-style-minimal{--tzfd-builder-radius:6px;--tzfd-builder-border:#e1e5eb;--tzfd-builder-accent:#40536a}
+.tzfd-builder-heading{margin:0 0 1.25rem;font-size:clamp(1.5rem,3vw,2rem);line-height:1.25}
+.tzfd-builder-card.tzfd-booking-builder{padding:clamp(16px,3vw,32px);border:1px solid var(--tzfd-builder-border);border-radius:var(--tzfd-builder-radius);background:var(--tzfd-builder-surface);box-shadow:0 8px 26px rgba(20,35,55,.07)}
+.tzfd-builder-card.tzfd-portal{padding:clamp(18px,3vw,34px);border:1px solid var(--tzfd-builder-border);border-radius:var(--tzfd-builder-radius);background:var(--tzfd-builder-surface);box-shadow:0 8px 26px rgba(20,35,55,.07)}
+.tzfd-builder-compact{font-size:.94em}
+.tzfd-builder-compact form p,.tzfd-builder-compact .tzfd-portal-list li{margin-bottom:.45rem}
+.tzfd-builder-no-heading>.tzfd-builder-heading,.tzfd-builder-no-heading>h2{display:none}
+.tzfd-portal-style-modern .tzfd-portal-list{list-style:none;margin:1rem 0;padding:0;display:grid;gap:.75rem}
+.tzfd-portal-style-modern .tzfd-portal-list li{padding:1rem;border:1px solid var(--tzfd-builder-border);border-radius:var(--tzfd-builder-radius);background:var(--tzfd-builder-surface)}
+.tzfd-portal-style-minimal .tzfd-portal-list{padding-left:1.25rem}
+.tzfd-portal-style-classic .tzfd-portal-list li{padding:.45rem 0;border-bottom:1px solid var(--tzfd-builder-border)}
+.tzfd-booking-portal-links{max-width:760px;margin:1.5rem auto;padding:clamp(20px,4vw,40px);border:1px solid #d8dee8;border-radius:14px;background:#fff;box-shadow:0 8px 26px rgba(20,35,55,.07)}
+.tzfd-booking-portal-links li{margin:.75rem 0}
+.tzfd-portal-builder-admin{max-width:1100px}
+.tzfd-portal-builder-admin .tzfd-builder-choice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:14px 0 20px}
+.tzfd-portal-builder-admin .tzfd-builder-style-option{display:flex;align-items:center;gap:12px;padding:16px;border:1px solid #c3c4c7;border-radius:8px;background:#fff;cursor:pointer}
+.tzfd-portal-builder-admin .tzfd-builder-style-option:has(input:checked){border-color:#2271b1;box-shadow:0 0 0 1px #2271b1}
+.tzfd-portal-builder-admin .tzfd-builder-swatch{display:inline-block;width:52px;height:42px;border:1px solid #c3c4c7;border-radius:8px;background:linear-gradient(#dbeafe 0 9px,#fff 9px 100%);box-shadow:inset 0 -15px #f1f5f9}
+.tzfd-portal-builder-admin .tzfd-swatch-classic{border-radius:0;background:linear-gradient(#ddd 0 7px,#fff 7px 100%);box-shadow:inset 0 -14px #eee}
+.tzfd-portal-builder-admin .tzfd-swatch-compact{border-radius:4px;background:repeating-linear-gradient(#fff 0 8px,#e5e7eb 8px 10px)}
+.tzfd-portal-builder-admin .tzfd-builder-toggles{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 30px}
+.tzfd-portal-builder-admin .tzfd-builder-toggle{display:inline-flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid #dcdcde;border-radius:8px;background:#fff;cursor:pointer}
+.tzfd-portal-builder-admin .tzfd-builder-toggle input{position:absolute;opacity:0;width:1px;height:1px}
+.tzfd-portal-builder-admin .tzfd-builder-toggle-track{width:36px;height:20px;border-radius:12px;background:#8c8f94;position:relative;flex:none;transition:background .15s}
+.tzfd-portal-builder-admin .tzfd-builder-toggle-track:after{content:"";position:absolute;width:14px;height:14px;top:3px;left:3px;border-radius:50%;background:#fff;transition:transform .15s}
+.tzfd-portal-builder-admin .tzfd-builder-toggle input:checked+.tzfd-builder-toggle-track{background:#2271b1}
+.tzfd-portal-builder-admin .tzfd-builder-toggle input:checked+.tzfd-builder-toggle-track:after{transform:translateX(16px)}
+.tzfd-portal-builder-admin .tzfd-builder-toggle input:focus-visible+.tzfd-builder-toggle-track{outline:2px solid #2271b1;outline-offset:2px}
+@media(max-width:700px){.tzfd-portal-builder-admin .tzfd-builder-choice-grid{grid-template-columns:1fr}.tzfd-portal-builder-admin .tzfd-builder-toggles{display:grid}}
+/* The admin theme sets light text; these option cards and toggles have white backgrounds, so their text must be dark. */
+.tzfd-portal-builder-admin .tzfd-builder-style-option,.tzfd-portal-builder-admin .tzfd-builder-toggle,.tzfd-portal-builder-admin .tzfd-builder-style-option *,.tzfd-portal-builder-admin .tzfd-builder-toggle *{color:#1d2327}
+.tzfd-portal-builder-admin .tzfd-builder-style-option strong,.tzfd-portal-builder-admin .tzfd-builder-toggle strong{color:#1d2327}
+.tzfd-booking-builder input[type=text],.tzfd-booking-builder input[type=email],.tzfd-booking-builder input[type=tel],.tzfd-booking-builder input[type=number],.tzfd-booking-builder select,.tzfd-booking-builder textarea,.tzfd-portal input[type=email]{max-width:100%;border:1px solid var(--tzfd-builder-border);border-radius:var(--tzfd-builder-radius);padding:.65em .8em}
+.tzfd-booking-builder button,.tzfd-booking-builder input[type=submit],.tzfd-portal button,.tzfd-portal input[type=submit]{border-radius:var(--tzfd-builder-radius);padding:.7em 1.1em}
+.tzfd-booking-style-classic input,.tzfd-booking-style-classic select,.tzfd-booking-style-classic textarea,.tzfd-portal-style-classic input{box-shadow:none}
+.tzfd-booking-style-compact input,.tzfd-booking-style-compact select,.tzfd-booking-style-compact textarea{padding:.4em .55em}
+.tzfd-portal-builder-admin .tzfd-builder-hero{display:block;max-width:100%;height:auto;border-radius:12px;border:1px solid #c3c4c7;margin:0 0 20px}
+.tzfd-portal-builder-admin .tzfd-builder-colour-option{flex-direction:column;align-items:flex-start;gap:10px}
+.tzfd-portal-builder-admin .tzfd-builder-colour-previews{display:flex;align-items:flex-end;gap:10px;width:100%}
+.tzfd-portal-builder-admin .tzfd-builder-colour-previews img{display:block;height:auto;border:1px solid #c3c4c7;border-radius:6px;background:#f6f7f7}
+.tzfd-portal-builder-admin .tzfd-builder-colour-desktop{width:68%}
+.tzfd-portal-builder-admin .tzfd-builder-colour-mobile{width:26%}
+/* Colour templates for the public booking and portal wrappers. Light adds no colours, so the default look is unchanged. */
+.tzfd-booking-builder.tzfd-portal-theme-light,.tzfd-portal.tzfd-portal-theme-light{color:inherit}
+.tzfd-booking-builder.tzfd-portal-theme-navy,.tzfd-portal.tzfd-portal-theme-navy{--tzfd-builder-bg:#0f1f38;--tzfd-builder-text:#f2f5fa;--tzfd-builder-surface:#1a2e4f;--tzfd-builder-border:#33507a;--tzfd-builder-accent:#9cc9f5;--tzfd-builder-field:#0b1830;--tzfd-builder-button:#9cc9f5;--tzfd-builder-button-text:#0f1f38}
+.tzfd-booking-builder.tzfd-portal-theme-slate,.tzfd-portal.tzfd-portal-theme-slate{--tzfd-builder-bg:#2b3541;--tzfd-builder-text:#f1f4f7;--tzfd-builder-surface:#3a4655;--tzfd-builder-border:#5a6779;--tzfd-builder-accent:#b5dcff;--tzfd-builder-field:#222b36;--tzfd-builder-button:#cfe4f7;--tzfd-builder-button-text:#1f2933}
+.tzfd-booking-builder.tzfd-portal-theme-navy,.tzfd-portal.tzfd-portal-theme-navy,.tzfd-booking-builder.tzfd-portal-theme-slate,.tzfd-portal.tzfd-portal-theme-slate{background:var(--tzfd-builder-bg);color:var(--tzfd-builder-text)}
+.tzfd-booking-builder.tzfd-portal-theme-navy h1,.tzfd-booking-builder.tzfd-portal-theme-navy h2,.tzfd-booking-builder.tzfd-portal-theme-navy h3,.tzfd-booking-builder.tzfd-portal-theme-navy p,.tzfd-booking-builder.tzfd-portal-theme-navy li,.tzfd-booking-builder.tzfd-portal-theme-navy label,.tzfd-booking-builder.tzfd-portal-theme-navy strong,.tzfd-portal.tzfd-portal-theme-navy h1,.tzfd-portal.tzfd-portal-theme-navy h2,.tzfd-portal.tzfd-portal-theme-navy h3,.tzfd-portal.tzfd-portal-theme-navy p,.tzfd-portal.tzfd-portal-theme-navy li,.tzfd-portal.tzfd-portal-theme-navy label,.tzfd-portal.tzfd-portal-theme-navy strong,.tzfd-booking-builder.tzfd-portal-theme-slate h1,.tzfd-booking-builder.tzfd-portal-theme-slate h2,.tzfd-booking-builder.tzfd-portal-theme-slate h3,.tzfd-booking-builder.tzfd-portal-theme-slate p,.tzfd-booking-builder.tzfd-portal-theme-slate li,.tzfd-booking-builder.tzfd-portal-theme-slate label,.tzfd-booking-builder.tzfd-portal-theme-slate strong,.tzfd-portal.tzfd-portal-theme-slate h1,.tzfd-portal.tzfd-portal-theme-slate h2,.tzfd-portal.tzfd-portal-theme-slate h3,.tzfd-portal.tzfd-portal-theme-slate p,.tzfd-portal.tzfd-portal-theme-slate li,.tzfd-portal.tzfd-portal-theme-slate label,.tzfd-portal.tzfd-portal-theme-slate strong{color:inherit}
+.tzfd-builder-card:is(.tzfd-booking-builder,.tzfd-portal):is(.tzfd-portal-theme-navy,.tzfd-portal-theme-slate){background:var(--tzfd-builder-surface)}
+.tzfd-booking-builder.tzfd-portal-theme-navy a,.tzfd-portal.tzfd-portal-theme-navy a,.tzfd-booking-builder.tzfd-portal-theme-slate a,.tzfd-portal.tzfd-portal-theme-slate a{color:var(--tzfd-builder-accent)}
+.tzfd-booking-builder.tzfd-portal-theme-navy :is(input:not([type=radio]):not([type=checkbox]):not([type=submit]),select,textarea),.tzfd-portal.tzfd-portal-theme-navy :is(input:not([type=radio]):not([type=checkbox]):not([type=submit]),select,textarea),.tzfd-booking-builder.tzfd-portal-theme-slate :is(input:not([type=radio]):not([type=checkbox]):not([type=submit]),select,textarea),.tzfd-portal.tzfd-portal-theme-slate :is(input:not([type=radio]):not([type=checkbox]):not([type=submit]),select,textarea){background:var(--tzfd-builder-field);color:var(--tzfd-builder-text);border-color:var(--tzfd-builder-border)}
+.tzfd-booking-builder.tzfd-portal-theme-navy :is(button,input[type=submit]),.tzfd-portal.tzfd-portal-theme-navy :is(button,input[type=submit]),.tzfd-booking-builder.tzfd-portal-theme-slate :is(button,input[type=submit]),.tzfd-portal.tzfd-portal-theme-slate :is(button,input[type=submit]){background:var(--tzfd-builder-button);color:var(--tzfd-builder-button-text);border-color:var(--tzfd-builder-button)}
+.tzfd-booking-builder.tzfd-portal-theme-navy :is(input[type=radio],input[type=checkbox]),.tzfd-portal.tzfd-portal-theme-navy :is(input[type=radio],input[type=checkbox]),.tzfd-booking-builder.tzfd-portal-theme-slate :is(input[type=radio],input[type=checkbox]),.tzfd-portal.tzfd-portal-theme-slate :is(input[type=radio],input[type=checkbox]){accent-color:var(--tzfd-builder-accent)}

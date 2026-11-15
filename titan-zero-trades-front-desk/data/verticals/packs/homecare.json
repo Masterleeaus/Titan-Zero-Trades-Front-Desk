@@ -1,0 +1,411 @@
+{
+  "format": 3,
+  "id": "homecare",
+  "name": "Home Care & Aged Care",
+  "icon": "\ud83e\uddd1\u200d\u2695\ufe0f",
+  "tagline": "Personal care, domestic help, companionship, respite",
+  "version": "1.1.0",
+  "category": "care",
+  "source_sha256": "70525a5a6e85b11344a5e98eab5b9d1b0fcbdc8b59449ad9d6145d426af6889a",
+  "terminology": {
+    "customer": "client",
+    "job": "visit",
+    "site": "home",
+    "quote": "quote",
+    "staff": "carer",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Personal care (showering, dressing, grooming)",
+    "Domestic assistance (cleaning and laundry)",
+    "Meal preparation",
+    "Companionship and social support",
+    "Medication prompting (as directed by a health provider)",
+    "Transport to appointments and shopping",
+    "Shopping assistance",
+    "Respite care for family carers",
+    "Overnight care",
+    "Live-in care",
+    "Dementia support",
+    "Post-hospital support",
+    "Registered nurse visits",
+    "24/7 care",
+    "Weekend and public holiday care"
+  ],
+  "catalog": [
+    {
+      "sku": "HC-1",
+      "label": "Home care, per hour, Monday to Friday",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "hourly,care"
+    },
+    {
+      "sku": "HC-1-WE",
+      "label": "Home care, per hour, weekend",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "weekend"
+    },
+    {
+      "sku": "HC-1-PH",
+      "label": "Home care, per hour, public holiday",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 105,
+      "taxable": 1,
+      "keywords": "public holiday"
+    },
+    {
+      "sku": "HC-PC",
+      "label": "Personal care, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "personal care"
+    },
+    {
+      "sku": "HC-DOM",
+      "label": "Domestic assistance, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "domestic"
+    },
+    {
+      "sku": "HC-COMP",
+      "label": "Companionship, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "companionship"
+    },
+    {
+      "sku": "HC-MEAL",
+      "label": "Meal preparation, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "meal"
+    },
+    {
+      "sku": "HC-TRANS",
+      "label": "Transport, per trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "transport"
+    },
+    {
+      "sku": "HC-OVER",
+      "label": "Overnight care",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "HC-RESPITE",
+      "label": "Respite care, per day",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "respite"
+    },
+    {
+      "sku": "HC-NURSE",
+      "label": "Registered nurse, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "nurse"
+    },
+    {
+      "sku": "HC-ASSESS",
+      "label": "Initial in-home assessment (free)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "assessment"
+    }
+  ],
+  "staff_skills": [
+    "personal care",
+    "domestic assistance",
+    "companionship",
+    "medication prompting",
+    "dementia support",
+    "respite care",
+    "overnight care",
+    "meal preparation",
+    "transport and appointments",
+    "care planning"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "hospital discharge due today",
+      "fall with injury",
+      "urgent care needed",
+      "carer unavailable for a shift"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "starting now",
+      "carer cancelled"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "ongoing",
+      "plan",
+      "package",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional home care and aged care provider. Ask about the care needs, mobility, medical conditions, and any dementia or behavioural support needs. Ask about the home environment, access, and whether the client receives a government package. Quote prices only from the reference answers, and say the final price is confirmed after an assessment. Do not provide clinical advice or promise a specific care outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does home care cost?",
+      "a": "{price_note} Home care is priced per hour, and the rate depends on the day and the type of care. Tell us the care needs and hours required.",
+      "keywords": "cost,price,hourly,rate",
+      "priority": 10
+    },
+    {
+      "q": "Do you provide personal care?",
+      "a": "Yes, we provide help with showering, dressing, grooming, and toileting. We agree on the level of help during the in-home assessment.",
+      "keywords": "personal care,showering,dressing,grooming",
+      "priority": 10
+    },
+    {
+      "q": "Do you do domestic help?",
+      "a": "Yes, we do cleaning, laundry, and meal preparation. We agree on the tasks together and write them into the care plan.",
+      "keywords": "domestic,cleaning,laundry,meals",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide companionship?",
+      "a": "Yes, we provide companionship and social support, including outings and visits. Tell us what you enjoy when we meet.",
+      "keywords": "companionship,social,outings,visits",
+      "priority": 9
+    },
+    {
+      "q": "Can you help with medication?",
+      "a": "Yes, we can prompt and assist with medication as directed by your health provider. Tell us the routine when you book.",
+      "keywords": "medication,prompt,health provider",
+      "priority": 10
+    },
+    {
+      "q": "Do you provide transport?",
+      "a": "Yes, we provide transport to appointments and shopping. Tell us the destinations and times when you book.",
+      "keywords": "transport,appointments,shopping",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide dementia care?",
+      "a": "Yes, we provide dementia support. Tell us about the person's needs, and we will confirm which carers have the right training.",
+      "keywords": "dementia,training,support",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide overnight care?",
+      "a": "Yes, we provide overnight and sleepover care. The overnight rate is listed separately in your quote.",
+      "keywords": "overnight,sleepover,rate",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide respite?",
+      "a": "Yes, we provide short-term respite for family carers. Tell us how long you need a break for, and we will check availability.",
+      "keywords": "respite,family carer,break",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide nursing care?",
+      "a": "Yes, registered nurse visits are available for clinical care. Tell us what the nurse needs to do so we can quote the right time.",
+      "keywords": "nurse,clinical,visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you do post-hospital care?",
+      "a": "Yes, we provide post-hospital support. Tell us the discharge plan so the carer can follow it.",
+      "keywords": "hospital,discharge,support",
+      "priority": 9
+    },
+    {
+      "q": "Are your carers screened?",
+      "a": "Carer screening checks are [list screening checks held]. We confirm which checks each carer holds before their first visit.",
+      "keywords": "screening,checks,carers,police",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept government packages?",
+      "a": "We can talk to you about Home Care Packages and NDIS funding. Tell us your funding details, and we will confirm what we can provide.",
+      "keywords": "home care package,ndis,funding",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide live-in care?",
+      "a": "Yes, live-in care is available. Tell us the hours and tasks you need, and we will quote the arrangement.",
+      "keywords": "live-in,hours,quote",
+      "priority": 8
+    },
+    {
+      "q": "Can I choose my carer?",
+      "a": "We match carers to your needs and preferences. We try to keep the same carers where we can, so you have continuity.",
+      "keywords": "choose,carer,match,continuity",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,policy,fee",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. We can send certificates before care starts.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide 24/7 care?",
+      "a": "24/7 care is available through overnight and live-in arrangements. Tell us the hours you need, and we will confirm availability.",
+      "keywords": "24/7,overnight,live-in,availability",
+      "priority": 8
+    },
+    {
+      "q": "How do I start?",
+      "a": "We do a free in-home assessment, then match a carer and create a care plan with you. Call us to book the assessment.",
+      "keywords": "start,assessment,care plan,free",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [service area] and nearby suburbs. Tell us your suburb when you call, and we will confirm whether we cover it.",
+      "keywords": "areas,suburb,service area",
+      "priority": 8
+    },
+    {
+      "q": "Can you arrange care at short notice?",
+      "a": "Sometimes. Tell us when care is needed, and we will check which carers are free and let you know the earliest start.",
+      "keywords": "short notice,urgent,earliest,start",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit on {date}.",
+    "quote_intro": "Here is the quote for the support you asked about.",
+    "invoice_note": "Thank you. Your statement is available on request."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "care_needs",
+      "label": "Care needs summary",
+      "required": true
+    },
+    {
+      "key": "emergency_contact",
+      "label": "Emergency contact",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "homecare.rule1",
+      "trigger": "visit.missed",
+      "action": "alert_coordinator",
+      "description": "Alert coordinator and log the missed visit",
+      "enabled": false
+    },
+    {
+      "id": "homecare.rule2",
+      "trigger": "worker.check_expiry",
+      "action": "remind_staff_record",
+      "description": "Remind coordinator 30 days before a check expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Working With Children Checks apply to childcare and any work with children. Aged and disability support has worker screening and registration rules (for example through the NDIS Quality and Safeguards Commission or the Aged Care Quality and Safety Commission). Keep client health details restricted to staff who need them.",
+    "items": [
+      "Working With Children Check number and expiry for each worker",
+      "Worker screening or NDIS screening check current",
+      "Care needs held in restricted fields"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "staff room",
+    "equipment"
+  ],
+  "reporting": [
+    "visits delivered",
+    "missed visits",
+    "staff hours"
+  ],
+  "staff_record_types": [
+    "working_with_children",
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

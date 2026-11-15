@@ -1,0 +1,53 @@
+.tzfd-wizard-enabled .tzfd-wizard-header {padding:16px 20px;margin:14px 0;background:#172b46;border-radius:10px;color:#fff}
+.tzfd-wizard-steps {display:flex;flex-wrap:wrap;gap:12px;list-style:none;padding:0;margin:0}
+.tzfd-wizard-steps li {padding:8px 13px;color:var(--tz-muted,#b5c8dc);border:1px solid var(--tz-border,#284867);border-radius:30px}
+.tzfd-wizard-steps li.is-current {background:var(--tz-accent,#00cfe8);color:var(--tz-on-accent,#06152e);font-weight:700;border-color:var(--tz-accent,#00cfe8)}
+.tzfd-wizard-smart {padding:14px 18px;margin:12px 0;background:var(--tz-panel,#0c2040);border:1px solid var(--tz-border,#284867);color:var(--tz-text,#edf7ff);border-radius:8px;max-width:850px}
+.tzfd-wizard-smart h3 {margin:0 0 8px}
+.tzfd-wizard-smart textarea {display:block;box-sizing:border-box;width:100%;max-width:740px;margin:12px 0}
+.tzfd-wizard-smart .button {margin-right:8px}
+.tzfd-wizard-choice {display:block;margin:7px 0;overflow-wrap:anywhere}
+.tzfd-wizard-feedback {margin:10px 0 0;color:var(--tz-muted,#b5c8dc)}
+.tzfd-wizard-navigation {display:flex;gap:10px;align-items:center;margin:18px 0;padding:12px 0;border-top:1px solid var(--tz-border,#284867)}
+.tzfd-wizard-enabled [hidden] {display:none!important}
+.tzfd-wizard-review {margin-top:14px;font-weight:600}
+@media(max-width:650px){.tzfd-wizard-steps{flex-direction:column}.tzfd-wizard-header{padding:12px}}
+.tzfd-wizard-validation{color:#9f2727;font-weight:600;margin:0}
+.tzfd-wizard-review-list{display:grid;grid-template-columns:minmax(100px,1fr) minmax(150px,2fr);gap:6px 15px;margin:12px 0 0;font-weight:400}
+.tzfd-wizard-review-list dt{font-weight:600;color:var(--tz-muted,#b5c8dc)}
+.tzfd-wizard-review-list dd{margin:0;overflow-wrap:anywhere}
+.tzfd-wizard-steps li[aria-current="step"]{outline:2px solid #9dd7ff;outline-offset:2px}
+.tzfd-wizard-enabled input:focus-visible,.tzfd-wizard-enabled button:focus-visible{outline:2px solid #145fab;outline-offset:2px}
+@media(max-width:650px){.tzfd-wizard-review-list{grid-template-columns:1fr}.tzfd-wizard-review-list dd{margin-bottom:9px}}
+
+/* Never expose the vendor booking submit button before review. */
+.tzfd-wizard-enabled button.pbSubmit[hidden] {display:none!important}
+.tzfd-wizard-enabled .tzfd-wizard-navigation button {min-height:38px}
+.tzfd-wizard-enabled .tzfd-wizard-validation:not(:empty) {padding:8px 12px;border-left:3px solid #a12727;background:var(--tz-field,#10294b)}
+
+/* Pass 197: review contrast and contextual actions on dark branded surfaces. */
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review,
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review strong,
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review-list dt,
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review-list dd {color:#f1f7ff!important;opacity:1!important;}
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review-list dt {color:#c8dcf1!important;}
+.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review-list {grid-template-columns:minmax(130px,1fr) minmax(0,1.5fr);gap:9px 18px;}
+.tzfd-wizard-enabled .tzfd-wizard-navigation {flex-wrap:wrap;background:#172b46;border:1px solid #395675;border-radius:10px;padding:12px 16px;color:#f1f7ff;}
+.tzfd-wizard-enabled .tzfd-wizard-navigation button[type=submit],
+.tzfd-wizard-enabled .tzfd-wizard-navigation input[type=submit] {background:linear-gradient(110deg,#00cfe8,#087eea);color:#06152e;border:0;font-weight:700;min-height:42px;}
+@media(max-width:650px){.tzfd-wizard-enabled .tzfd-wizard-header .tzfd-wizard-review-list{grid-template-columns:1fr;}}
+
+/* Pass 198: review labels and the real Save action stay legible and adjacent. */
+.tzfd-screen .tzfd-wizard-header .tzfd-wizard-review-list dt,
+.tzfd-screen .tzfd-wizard-header .tzfd-wizard-review-list dd,
+.tzfd-screen .tzfd-wizard-header .tzfd-wizard-review strong { color:#f3f8ff!important; opacity:1!important; text-shadow:none!important; }
+.tzfd-screen .tzfd-wizard-header .tzfd-wizard-review-list dt { color:#c6def4!important; }
+.tzfd-screen .tzfd-wizard-header + .tzfd-wizard-navigation { margin-top:0!important; margin-bottom:18px!important; }
+.tzfd-screen .tzfd-wizard-navigation button[type=submit] { display:inline-flex; align-items:center; justify-content:center; min-width:145px; }
+.tzfd-screen .tzfd-wizard-review-list { max-width:780px; }
+
+/* Smart fill buttons use the Front Desk theme colours instead of WordPress's blue button colours. */
+.tzfd-wizard-smart .button {background:var(--tz-field,#10294b);border:1px solid var(--tz-accent,#00cfe8);color:var(--tz-accent,#00cfe8);border-radius:999px;padding:6px 16px;font-weight:600;box-shadow:none}
+.tzfd-wizard-smart .button:hover,.tzfd-wizard-smart .button:focus {background:var(--tz-accent,#00cfe8);border-color:var(--tz-accent,#00cfe8);color:var(--tz-on-accent,#06152e)}
+.tzfd-wizard-smart .button:focus-visible {outline:2px solid var(--tz-accent,#00cfe8);outline-offset:2px}
+.tzfd-wizard-smart .button:disabled {opacity:.55;cursor:not-allowed}

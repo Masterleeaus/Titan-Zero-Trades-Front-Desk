@@ -1,0 +1,99 @@
+/* Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15. */
+.tz_fd_field_service{display:inherit;--comment:In order to hide the select set display to -none;}
+.tz_fd_m5 #tzfdform .fields  label{color:#000}
+.tz_fd_m5 #tzfdform .fields  input{color:#000;padding:inherit;font-weight:inherit;background-color:inherit;border-color:inherit;border-width:1px;border-style:solid;}
+.tz_fd_m5 #tzfdform .ui-datepicker-header{background-color:inherit;color:#000;padding:10px 0px;}
+.tz_fd_m5 #tzfdform .ui-datepicker-prev {width: 20px;height: 20px;border-top: 2px solid #000;border-right: 2px solid #000;}
+.tz_fd_m5 #tzfdform .ui-datepicker-next{width: 20px;height: 20px;border-top: 2px solid #000;border-right: 2px solid #000;}
+
+.tz_fd_m5 #tzfdform .ui-datepicker th{background:#fff;color:inherit}	
+.tz_fd_m5 #tzfdform .ui-datepicker-unselectable .ui-state-default {color:#AAAAAA;}
+				
+.tz_fd_m5 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{background:#3995D0}					
+.tz_fd_m5 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{background:#ddd}
+.tz_fd_m5 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: #FFF; background: #66CCFF}
+.tz_fd_m5 #tzfdform .slots{text-align:center}
+.tz_fd_m5 #tzfdform .slots span{color: inherit;}
+.tz_fd_m5 #tzfdform .slots div a {
+    border-width:1px;
+    border-color:#66CCFF;	
+    border-style:solid;	
+	background: #f8f8f8; 
+	color: #000;
+	padding:8px 12px;
+}
+.tz_fd_m5 #tzfdform .slots div:not(.htmlUsed)  a:hover {
+	background:#66CCFF;
+	color:#fff;
+}
+.tz_fd_m5 #tzfdform .slots div.htmlUsed a{
+	border:1px solid #ccc;
+}
+.tz_fd_m5 #tzfdform .slots div.currentSelection.htmlUsed a {
+    color: #fff; background: #3995D0 !important;
+}
+.tz_fd_m5 #tzfdform .slots div.currentSelection a {
+    color: #fff; background: #3995D0 !important;
+}
+
+.tz_fd_m5 #tzfdform .usedSlots .tz_fd_list {background-color:#f4f4f4;color: inherit;border-color:#ccc;border-width:1px;border-style:dashed; padding: 10px;margin:10px 10px 10px 0px;position: relative;}
+.tz_fd_m5 #tzfdform .usedSlots .tz_fd_list .d{color: inherit;}
+.tz_fd_m5 #tzfdform .usedSlots .tz_fd_list .t{color: inherit;}
+.tz_fd_m5 #tzfdform .usedSlots .tz_fd_list .tz_fd_list_service{color: inherit;}
+.tz_fd_m5 #tzfdform .usedSlots .tz_fd_list .cancel{font-weight:inherit}
+.tz_fd_m5 #tzfdform .totalCost{color: inherit;}
+.tz_fd_m5 #tzfdform .totalCost span:not(.n){color: inherit;}
+.tz_fd_m5 #tzfdform .totalCost span.n{color: inherit;}
+
+/* --- Form Fields (Inputs & Selects) --- */
+.tz_fd_m5 #tzfdform input[type="text"],
+.tz_fd_m5 #tzfdform input[type="email"],
+.tz_fd_m5 #tzfdform textarea,
+.tz_fd_m5 #tzfdform select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    font-size: 15px;
+    margin-bottom: 15px;
+    box-sizing: border-box; /* Ensures padding doesn't break width */
+    transition: border-color 0.2s ease;
+}
+
+.tz_fd_m5 #tzfdform input:not(.pbSubmit):focus,
+.tz_fd_m5 #tzfdform select:focus,
+.tz_fd_m5 #tzfdform textarea:focus {
+    border-color: #0073aa; /* Focus color */
+    outline: none;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(0, 115, 170, 0.1);
+}
+
+/* Labels */
+.tz_fd_m5 #tzfdform label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #444;
+}
+
+/* --- Submit Button --- */
+.tz_fd_m5 #tzfdform .pbSubmit {
+    background-color: #0073aa; /* Primary Button Color */
+    color: #ffffff !important;
+    border: none;
+    padding: 14px 30px !important;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50px; /* Pill shape */
+    cursor: pointer;
+    width: 100%; /* Full width button */
+    margin-top: 10px;
+    transition: background 0.3s ease, transform 0.1s ease;
+}
+
+.tz_fd_m5 #tzfdform .pbSubmit:hover {
+    background-color: #005177;
+    transform: translateY(-1px);
+}

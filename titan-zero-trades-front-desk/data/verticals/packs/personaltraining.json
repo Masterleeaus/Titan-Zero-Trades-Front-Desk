@@ -1,0 +1,383 @@
+{
+  "format": 3,
+  "id": "personaltraining",
+  "name": "Personal Training",
+  "icon": "🏋️",
+  "tagline": "One-on-one, group, online, nutrition coaching",
+  "version": "1.1.0",
+  "category": "fitness",
+  "source_sha256": "b025bdb7b67780622ff05d5cda43365ac1dc709deda07e866333f92aecc7c482",
+  "terminology": {
+    "customer": "client",
+    "job": "session",
+    "site": "gym",
+    "quote": "quote",
+    "staff": "trainer",
+    "visit": "session"
+  },
+  "service_types": [
+    "One-on-One Personal Training",
+    "Partner Training",
+    "Small Group Training",
+    "Online Coaching",
+    "Nutrition Coaching",
+    "Strength Training",
+    "Weight Loss Training",
+    "HIIT",
+    "Mobility Training",
+    "Pre and Postnatal Training",
+    "Senior Fitness",
+    "Sports Conditioning",
+    "Boxing and Pad Work",
+    "Yoga",
+    "Pilates",
+    "Exercise-Based Rehab",
+    "Body Composition Scan",
+    "Standalone Program Design"
+  ],
+  "catalog": [
+    {
+      "sku": "PT-1",
+      "label": "One-on-one PT session (per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "1 on 1,pt"
+    },
+    {
+      "sku": "PT-5",
+      "label": "5-session PT package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 425,
+      "taxable": 1,
+      "keywords": "package,5"
+    },
+    {
+      "sku": "PT-10",
+      "label": "10-session PT package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 800,
+      "taxable": 1,
+      "keywords": "package,10"
+    },
+    {
+      "sku": "PT-PARTNER",
+      "label": "Partner session (2 people, per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "partner"
+    },
+    {
+      "sku": "PT-GROUP",
+      "label": "Small group session (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "PT-ONLINE",
+      "label": "Online coaching (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "PT-NUTR",
+      "label": "Nutrition coaching (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "nutrition"
+    },
+    {
+      "sku": "PT-PROG",
+      "label": "Standalone program design (one-off)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "program"
+    },
+    {
+      "sku": "PT-BODY",
+      "label": "Body composition scan (one-off)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "scan,body composition"
+    },
+    {
+      "sku": "PT-CONSULT",
+      "label": "Initial consultation (one-off)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "consult"
+    }
+  ],
+  "staff_skills": [
+    "personal training",
+    "strength and conditioning",
+    "HIIT",
+    "nutrition coaching",
+    "mobility",
+    "boxing",
+    "yoga",
+    "pilates",
+    "pre and postnatal",
+    "senior fitness",
+    "exercise rehab"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "chest pain during exercise",
+      "dizziness or fainting during training",
+      "race or competition in a few days",
+      "injury flare-up needing clearance"
+    ],
+    "urgent": [
+      "sore after an injury",
+      "event in two weeks",
+      "starting this week",
+      "wants to start today"
+    ],
+    "routine": [
+      "weekly sessions",
+      "monthly package",
+      "transformation goal",
+      "program quote",
+      "online coaching",
+      "nutrition plan"
+    ]
+  },
+  "extra_prompt": "You are booking for a personal training business. Ask about goals, current fitness level, injuries or medical conditions, and availability. Ask whether they prefer one-on-one, partner, or group. Quote prices only from the reference answers, and say the final price is confirmed after the first session. Do not provide medical advice or promise a specific result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does PT cost?",
+      "a": "{price_note} PT is priced per session or per package. Tell us your goals and availability, and we will confirm the price that applies to you.",
+      "keywords": "cost,price,pt",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a first consultation?",
+      "a": "{consult_note} We use the first session to learn your goals, health history and current fitness level. We then plan your training from there.",
+      "keywords": "free,consultation,first session",
+      "priority": 9
+    },
+    {
+      "q": "Do you do online coaching?",
+      "a": "Yes, we offer online programming and video sessions. Your program is built around your goals, equipment and schedule.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "Do you do nutrition coaching?",
+      "a": "Yes, we offer nutrition coaching alongside training. It is priced per month, and we confirm the scope when we set up your plan.",
+      "keywords": "nutrition,diet",
+      "priority": 8
+    },
+    {
+      "q": "Do you train at my home?",
+      "a": "Yes, mobile PT is available in the local metro area. Ask us to confirm your suburb and what equipment you have at home.",
+      "keywords": "mobile,home",
+      "priority": 8
+    },
+    {
+      "q": "Do you train at a gym?",
+      "a": "Yes, we train at partner gyms and outdoor locations. Tell us which location suits you when you book, and we will confirm the address.",
+      "keywords": "gym,outdoor",
+      "priority": 8
+    },
+    {
+      "q": "Do you do small group training?",
+      "a": "Yes, small groups of 2 to 6 people are available. Group sessions are priced per person, so you only pay for your own place.",
+      "keywords": "group,small group",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pre/post natal training?",
+      "a": "Yes, we train pre and postnatal clients with written clearance from your health provider. Tell us about your pregnancy or recent birth when you book.",
+      "keywords": "pre natal,post natal,pregnancy",
+      "priority": 8
+    },
+    {
+      "q": "Do you train seniors?",
+      "a": "Yes, we train seniors and offer falls-prevention programs. Sessions start with a review of your mobility and any conditions your doctor has discussed with you.",
+      "keywords": "senior,older",
+      "priority": 8
+    },
+    {
+      "q": "Do you do boxing?",
+      "a": "Yes, we offer boxing sessions with pad work. Tell us your experience level when you book, and we will confirm what equipment is supplied.",
+      "keywords": "boxing,pad",
+      "priority": 8
+    },
+    {
+      "q": "Do you do yoga or pilates?",
+      "a": "Yes, one-on-one and small group yoga and pilates sessions are available. Tell us your experience level so we can match you with the right session.",
+      "keywords": "yoga,pilates",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rehab?",
+      "a": "Yes, we offer exercise-based rehab. We do not replace physiotherapy, so if you have a diagnosed injury we may ask for clearance from your physio or doctor first.",
+      "keywords": "rehab,injury",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions per week?",
+      "a": "Most clients train two to three times per week, though this depends on your goals and recovery. We will suggest a frequency during your consultation.",
+      "keywords": "how many,per week,frequency",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer packages?",
+      "a": "Yes, we offer 5-session and 10-session packages. Ask us about the validity period for each package before you buy.",
+      "keywords": "package,bundle",
+      "priority": 8
+    },
+    {
+      "q": "What if I need to cancel?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please tell us as early as you can, and we will help you move the session.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you certified?",
+      "a": "Our trainers hold [your qualification or certification] and [your insurance details]. Ask us for copies before you book.",
+      "keywords": "certified,qualified,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer body composition scans?",
+      "a": "Yes, we offer body composition scans and progress tracking. A scan is taken at the start, and it can be repeated to track your progress over time.",
+      "keywords": "body composition,scan",
+      "priority": 7
+    },
+    {
+      "q": "Can I get a program without training?",
+      "a": "Yes, we offer standalone program design. You receive a written program that you can follow on your own, and we can review it with you.",
+      "keywords": "program,design",
+      "priority": 7
+    },
+    {
+      "q": "How do I book my first session?",
+      "a": "Contact us with your goals, availability and any injuries. We will then confirm a time for your initial consultation and answer any questions first.",
+      "keywords": "book,booking,first session,consultation",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell us at booking if you have an injury or medical condition. We may ask for clearance from your health provider before your first session.",
+      "keywords": "injury,medical",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. See you there.",
+    "quote_intro": "Here is the quote for the program you asked about.",
+    "invoice_note": "Thank you for training with {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "health_screen",
+      "label": "Health screening completed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "personaltraining.rule1",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up missed session",
+      "enabled": false
+    },
+    {
+      "id": "personaltraining.rule2",
+      "trigger": "membership.renewal_due",
+      "action": "send_renewal",
+      "description": "Send renewal reminder",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Fitness instructors should keep first aid and public liability insurance current. Keep health screening records for clients where the service offers them.",
+    "items": [
+      "First aid certificate current",
+      "Public liability insurance current",
+      "Health screening records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "studio or gym space",
+    "equipment"
+  ],
+  "reporting": [
+    "sessions delivered",
+    "member retention",
+    "cancellations"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

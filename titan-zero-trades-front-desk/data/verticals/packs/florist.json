@@ -1,0 +1,370 @@
+{
+  "format": 3,
+  "id": "florist",
+  "name": "Florists",
+  "icon": "\ud83d\udc90",
+  "tagline": "Weddings, events, gifts, subscriptions, sympathy",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "8f80cc1a23dab63a76c86f734896820030ed680365d30e03fa61d72e4b940573",
+  "terminology": {
+    "customer": "customer",
+    "job": "order",
+    "site": "shop",
+    "quote": "quote",
+    "staff": "florist",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Bridal bouquets",
+    "Bridesmaid bouquets",
+    "Buttonholes",
+    "Wedding flowers and installations",
+    "Event flowers",
+    "Table centrepieces",
+    "Floral arches and installations",
+    "Sympathy and funeral flowers",
+    "Birthday flowers",
+    "Anniversary flowers",
+    "Valentine's Day flowers",
+    "Mother's Day flowers",
+    "Corporate office flowers",
+    "Weekly flower subscriptions",
+    "Dried and preserved arrangements",
+    "Vase and container hire"
+  ],
+  "catalog": [
+    {
+      "sku": "FLR-SM",
+      "label": "Small bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "small bouquet"
+    },
+    {
+      "sku": "FLR-MED",
+      "label": "Medium bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "medium bouquet"
+    },
+    {
+      "sku": "FLR-LRG",
+      "label": "Large bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "large bouquet"
+    },
+    {
+      "sku": "FLR-BRIDAL",
+      "label": "Bridal bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "bridal"
+    },
+    {
+      "sku": "FLR-BRIDESMAID",
+      "label": "Bridesmaid bouquet",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "bridesmaid"
+    },
+    {
+      "sku": "FLR-BUTTON",
+      "label": "Buttonhole",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "buttonhole"
+    },
+    {
+      "sku": "FLR-CENTER",
+      "label": "Table centrepiece",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "centrepiece"
+    },
+    {
+      "sku": "FLR-SYMP",
+      "label": "Sympathy arrangement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "sympathy"
+    },
+    {
+      "sku": "FLR-SUB",
+      "label": "Weekly flower subscription",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "subscription"
+    },
+    {
+      "sku": "FLR-INSTALL",
+      "label": "Floral installation, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "installation"
+    },
+    {
+      "sku": "FLR-DEL",
+      "label": "Delivery, local area",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "delivery"
+    }
+  ],
+  "staff_skills": [
+    "bridal bouquets",
+    "wedding installations",
+    "event styling",
+    "sympathy arrangements",
+    "dried and preserved flowers",
+    "subscriptions and delivery",
+    "colour matching",
+    "vase and container setup"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "funeral tomorrow",
+      "wedding tomorrow",
+      "urgent same-day delivery for a funeral",
+      "missed delivery for an event"
+    ],
+    "urgent": [
+      "delivery today",
+      "order for tomorrow",
+      "order for this week",
+      "changed event date"
+    ],
+    "routine": [
+      "order",
+      "quote",
+      "subscription",
+      "wedding enquiry",
+      "delivery booking",
+      "gift card"
+    ]
+  },
+  "extra_prompt": "You are booking for a florist. Ask about the occasion, date, delivery address, budget, and colour preferences. Ask about allergies and whether specific flowers are wanted. Quote prices only from the reference answers, and say the final price is confirmed once flowers are selected. Do not promise specific flower availability outside the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a bouquet?",
+      "a": "{price_note} Bouquets are priced by size and the flowers you choose. Tell us the size and budget, and we will suggest options.",
+      "keywords": "price,cost,bouquet,size",
+      "priority": 10
+    },
+    {
+      "q": "Do you deliver?",
+      "a": "Yes, we deliver in the local area. A delivery fee applies and is shown before you pay.",
+      "keywords": "delivery,local,fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you do same-day delivery?",
+      "a": "Same-day delivery is available for orders placed before [cut-off time]. Tell us the address and time when you order.",
+      "keywords": "same day,delivery,cut-off",
+      "priority": 9
+    },
+    {
+      "q": "Do you do wedding flowers?",
+      "a": "Yes, we make bridal and bridesmaid bouquets, buttonholes, and wedding installations. We usually meet first to plan colours and styles.",
+      "keywords": "wedding,bridal,bridesmaid",
+      "priority": 9
+    },
+    {
+      "q": "Do you do funeral flowers?",
+      "a": "Yes, we make sympathy and funeral arrangements. Tell us the service details and any flowers or colours the family prefers.",
+      "keywords": "funeral,sympathy,tribute",
+      "priority": 9
+    },
+    {
+      "q": "Can I choose colours?",
+      "a": "Yes, tell us your colour palette and we will match it as closely as the season allows.",
+      "keywords": "colour,palette,match",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer subscriptions?",
+      "a": "Yes, we offer weekly, fortnightly, and monthly flower subscriptions. Ask us how to change or pause an order.",
+      "keywords": "subscription,weekly,fortnightly,monthly",
+      "priority": 8
+    },
+    {
+      "q": "Do you do dried flowers?",
+      "a": "Yes, we make dried and preserved arrangements that keep their shape without water, so they suit a long-lasting display.",
+      "keywords": "dried,preserved,arrangement",
+      "priority": 7
+    },
+    {
+      "q": "Do you do corporate flowers?",
+      "a": "Yes, we supply office and corporate flowers, including regular arrangements for reception areas and events.",
+      "keywords": "corporate,office,reception",
+      "priority": 8
+    },
+    {
+      "q": "Do you do installations?",
+      "a": "Yes, we install floral arches, hanging installations, and large arrangements. Installation is charged per hour on top of the flowers.",
+      "keywords": "installation,arch,hanging",
+      "priority": 8
+    },
+    {
+      "q": "Do you hire vases?",
+      "a": "Yes, we hire vases and containers for events. Hire fees and any deposit are shown in your quote.",
+      "keywords": "vase,hire,container,event",
+      "priority": 7
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,policy,fee",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. Certificates are available on request.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 9
+    },
+    {
+      "q": "What flowers are in season?",
+      "a": "Seasonal availability changes through the year. Tell us your date, and we will advise which flowers are available.",
+      "keywords": "season,availability,date",
+      "priority": 7
+    },
+    {
+      "q": "Do you do gift cards?",
+      "a": "Yes, gift cards are available. Contact us for the values we offer and how to redeem them.",
+      "keywords": "gift card,voucher,redeem",
+      "priority": 7
+    },
+    {
+      "q": "Can I send a message with my flowers?",
+      "a": "Yes, we include a handwritten card with your message. Tell us the wording when you place the order.",
+      "keywords": "card,message,handwritten",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "guest_numbers",
+      "label": "Number of guests or attendees",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "florist.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "florist.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Catering needs food safety supervision and a council food business registration. Serving alcohol needs a licence. Venues usually require public liability insurance from the event provider.",
+    "items": [
+      "Food safety supervisor certificate (catering)",
+      "Council food registration (catering)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

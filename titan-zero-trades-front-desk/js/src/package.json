@@ -1,0 +1,14 @@
+{
+  "name": "titan-zero-trades-front-desk-js-build",
+  "version": "3.0.10",
+  "private": true,
+  "description": "Build tools that regenerate the minified and formatted JavaScript in ../ from readable sources. Not loaded by WordPress.",
+  "scripts": {
+    "build:public": "node build-tzfdform-public.js",
+    "check:public": "node build-tzfdform-public.js --check"
+  },
+  "devDependencies": {
+    "prettier": "3.9.10",
+    "terser": "5.51.2"
+  }
+}

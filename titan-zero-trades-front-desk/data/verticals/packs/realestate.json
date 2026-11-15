@@ -1,0 +1,361 @@
+{
+  "format": 3,
+  "id": "realestate",
+  "name": "Real Estate Agents",
+  "icon": "🏡",
+  "tagline": "Sales, rentals, property management, appraisals",
+  "version": "1.1.0",
+  "category": "professional",
+  "source_sha256": "217e2cb76fe7eca3c3f4c5ec90b783706d7a774c014dec2ca72157dd9db3cf5b",
+  "terminology": {
+    "customer": "client",
+    "job": "listing",
+    "site": "office",
+    "quote": "quote",
+    "staff": "agent",
+    "visit": "inspection"
+  },
+  "service_types": [
+    "Residential Property Sales",
+    "Property Appraisal",
+    "Auction Campaigns",
+    "Private Treaty Sales",
+    "Off-Market Sales",
+    "Property Management",
+    "Tenant Finding",
+    "Routine Inspections",
+    "Rent Collection",
+    "Lease Renewal and Rent Review",
+    "Vacating Inspection",
+    "Bond Lodgement",
+    "Buyer Advocacy",
+    "Landlord Representation",
+    "Rural and Acreage Sales",
+    "Commercial Property Sales and Leasing",
+    "Off-the-Plan Purchases",
+    "First Home Buyer Support"
+  ],
+  "catalog": [
+    {
+      "sku": "RE-APP",
+      "label": "Property appraisal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "appraisal"
+    },
+    {
+      "sku": "RE-COMM",
+      "label": "Sales commission (% of sale price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "commission"
+    },
+    {
+      "sku": "RE-MKTG",
+      "label": "Marketing package (from)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "marketing"
+    },
+    {
+      "sku": "RE-AUC",
+      "label": "Auctioneer fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 800,
+      "taxable": 1,
+      "keywords": "auction"
+    },
+    {
+      "sku": "RE-MGT",
+      "label": "Property management (% of rent)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "management"
+    },
+    {
+      "sku": "RE-LET",
+      "label": "Letting fee (1 week rent)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "letting"
+    },
+    {
+      "sku": "RE-LEASE",
+      "label": "Lease preparation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "lease"
+    },
+    {
+      "sku": "RE-INSP",
+      "label": "Routine inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "inspection"
+    },
+    {
+      "sku": "RE-VACATE",
+      "label": "Vacating inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "vacate"
+    },
+    {
+      "sku": "RE-ADV",
+      "label": "Buyer advocacy (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "buyer advocacy"
+    }
+  ],
+  "staff_skills": [
+    "residential sales",
+    "property appraisals",
+    "auctions",
+    "property management",
+    "tenant finding",
+    "marketing",
+    "negotiation",
+    "tenancy compliance",
+    "buyer advocacy"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water leak at a rental",
+      "urgent repair needed at a rental",
+      "tenant without power or hot water",
+      "tenant reports a safety hazard"
+    ],
+    "urgent": [
+      "auction this week",
+      "settlement in days",
+      "tenant lease ending soon",
+      "tenant complaint"
+    ],
+    "routine": [
+      "appraisal request",
+      "quote for management",
+      "sale enquiry",
+      "routine inspection",
+      "lease renewal"
+    ]
+  },
+  "extra_prompt": "You are booking for a real estate agency. Ask whether it is a sale, purchase, or rental matter. For sales, ask about the property, timeline, and reason for selling. For rentals, ask about the property, current tenancy, and management needs. Quote fees only from the reference answers, and say final fees are confirmed in the agency agreement. Do not give legal advice or promise a sale price.",
+  "kb": [
+    {
+      "q": "What are your commission rates?",
+      "a": "{price_note} Commission is confirmed in the agency agreement after appraisal. We do not quote a fee until we have seen the property and discussed your goals.",
+      "keywords": "commission,fee,rate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do free appraisals?",
+      "a": "{appraisal_note} We confirm what the appraisal includes before you book it.",
+      "keywords": "appraisal,free",
+      "priority": 9
+    },
+    {
+      "q": "Do you do auctions?",
+      "a": "Yes, we run auction and private treaty campaigns. We explain both options so you can choose the one that suits the property and your timeline.",
+      "keywords": "auction",
+      "priority": 9
+    },
+    {
+      "q": "What are your management fees?",
+      "a": "{management_note} Management fees are a percentage of rent plus letting fees, and the exact figures are set out in your management agreement.",
+      "keywords": "management fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you find tenants?",
+      "a": "Yes, our tenant finding includes advertising, screening and reference checks. We confirm the tenant selection steps when we set up your management agreement.",
+      "keywords": "tenant,find tenant",
+      "priority": 9
+    },
+    {
+      "q": "How often are inspections?",
+      "a": "Routine inspections are usually every three to six months. The schedule is confirmed in your management agreement.",
+      "keywords": "inspection,routine",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle repairs?",
+      "a": "Yes, we coordinate repairs and maintenance with your approval. We will ask before spending above any limit set in your agreement.",
+      "keywords": "repairs,maintenance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rent reviews?",
+      "a": "Yes, we can carry out market rent reviews. We confirm how often they happen when we set up your management agreement.",
+      "keywords": "rent review",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle bond?",
+      "a": "Yes, we lodge and manage bonds with the bond authority. Bond details are recorded for both the owner and the tenant.",
+      "keywords": "bond",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial property?",
+      "a": "Yes, we handle sales and leasing of commercial property. Commercial matters are quoted separately from residential work.",
+      "keywords": "commercial",
+      "priority": 8
+    },
+    {
+      "q": "Do you do rural property?",
+      "a": "Yes, we handle acreage and rural sales. Tell us the land size and any key features when you enquire.",
+      "keywords": "rural,acreage",
+      "priority": 7
+    },
+    {
+      "q": "Do you help first home buyers?",
+      "a": "Yes, we explain the buying process and tell you about government grants you may be eligible for. We do not give financial or legal advice, so please speak to the right adviser for that.",
+      "keywords": "first home",
+      "priority": 9
+    },
+    {
+      "q": "How long does a sale take?",
+      "a": "Timing depends on the market and the property. We give you an estimated timeframe after the appraisal.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Are you licensed?",
+      "a": "Our agents hold [licence number] and [insurance details]. Ask us for copies before you sign an agency agreement.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer buyer advocacy?",
+      "a": "Yes, we can represent buyers in a purchase. Our buyer advocacy fee starts from the amount shown on our price list, and the final fee is set out in your agreement.",
+      "keywords": "buyer advocacy",
+      "priority": 7
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Agency agreements run for [agreement term] days. The cancellation terms are set out in the agreement before you sign.",
+      "keywords": "cancel,agreement",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} appointment with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} appointment with {business} is on {date}. Please bring the documents listed.",
+    "quote_intro": "Here is the fee proposal for your {job}.",
+    "invoice_note": "Thank you. Payment terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "property_address",
+      "label": "Property address",
+      "required": true
+    },
+    {
+      "key": "owner_contact",
+      "label": "Owner or buyer contact",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "realestate.rule1",
+      "trigger": "document.requested",
+      "action": "request_documents",
+      "description": "Request identity documents securely",
+      "enabled": false
+    },
+    {
+      "id": "realestate.rule2",
+      "trigger": "invoice.overdue",
+      "action": "send_overdue_reminder",
+      "description": "Send overdue reminder after 14 days",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Accountants providing tax agent services need registration with the Tax Practitioners Board. Legal practice needs a practising certificate. Mortgage brokers need an Australian credit licence (ASIC). Real estate agents need a licence from the state regulator. Verify each licence before relying on it.",
+    "items": [
+      "Tax agent or practising certificate number",
+      "Australian credit licence number (broking)",
+      "Real estate licence number and expiry (real estate)"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "matters open",
+    "hours billed",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

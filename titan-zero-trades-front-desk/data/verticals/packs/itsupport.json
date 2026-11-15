@@ -1,0 +1,383 @@
+{
+  "format": 3,
+  "id": "itsupport",
+  "name": "IT & Tech Support",
+  "icon": "\ud83d\udcbb",
+  "tagline": "Computer repair, networks, cybersecurity, cloud",
+  "version": "1.1.0",
+  "category": "business",
+  "source_sha256": "cc0cca1a087c7a1302265567530abbb6b06da2b0f481397d7218b5a5a082cbbb",
+  "terminology": {
+    "customer": "client",
+    "job": "ticket",
+    "site": "office",
+    "quote": "proposal",
+    "staff": "technician",
+    "visit": "meeting"
+  },
+  "service_types": [
+    "Computer repair (desktop and laptop)",
+    "Virus and malware removal",
+    "Data recovery (where the drive allows)",
+    "Network setup",
+    "Wi-Fi setup and optimisation",
+    "Printer setup",
+    "Microsoft 365 setup",
+    "Google Workspace setup",
+    "Cloud migration",
+    "Backup setup",
+    "Cybersecurity audit",
+    "Server support",
+    "Managed IT plans",
+    "Smart home setup",
+    "Remote support",
+    "Onsite support",
+    "Mac support"
+  ],
+  "catalog": [
+    {
+      "sku": "IT-REMOTE",
+      "label": "Remote support, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "remote"
+    },
+    {
+      "sku": "IT-ONSITE",
+      "label": "Onsite support, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "onsite"
+    },
+    {
+      "sku": "IT-DIAG",
+      "label": "Diagnostic fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "diagnostic"
+    },
+    {
+      "sku": "IT-VIRUS",
+      "label": "Virus removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "virus"
+    },
+    {
+      "sku": "IT-DATA",
+      "label": "Data recovery, from",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "data recovery"
+    },
+    {
+      "sku": "IT-NET",
+      "label": "Network setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "network"
+    },
+    {
+      "sku": "IT-WIFI",
+      "label": "Wi-Fi setup and optimisation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "wifi"
+    },
+    {
+      "sku": "IT-365",
+      "label": "Microsoft 365 setup, per user",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "microsoft 365"
+    },
+    {
+      "sku": "IT-BACKUP",
+      "label": "Backup setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "backup"
+    },
+    {
+      "sku": "IT-SEC",
+      "label": "Security audit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "security audit"
+    },
+    {
+      "sku": "IT-MGD",
+      "label": "Managed IT plan, per user per month",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "managed"
+    },
+    {
+      "sku": "IT-SMART",
+      "label": "Smart home setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "smart home"
+    }
+  ],
+  "staff_skills": [
+    "Windows support",
+    "Mac support",
+    "networking and Wi-Fi",
+    "cybersecurity",
+    "Microsoft 365 and Google Workspace",
+    "cloud and backups",
+    "data recovery",
+    "server support",
+    "printers",
+    "smart home setup"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "server down",
+      "ransomware",
+      "data loss",
+      "hacked",
+      "network down",
+      "business down"
+    ],
+    "urgent": [
+      "computer not starting",
+      "email not working",
+      "printer offline",
+      "slow computer",
+      "Wi-Fi dropping out",
+      "today",
+      "tomorrow"
+    ],
+    "routine": [
+      "quote",
+      "setup",
+      "upgrade",
+      "maintenance",
+      "support"
+    ]
+  },
+  "extra_prompt": "You are booking for an IT support company. Ask about the device or system, the fault, when it started, and whether it is business or residential. Ask about backups and whether data loss is a risk. Quote prices only from the reference answers, and say the final price is confirmed after diagnosis. Do not promise data recovery or a security outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} We charge per hour or per job. Tell us the issue, and we will quote before we start.",
+      "keywords": "price,hourly,per job,quote",
+      "priority": 10
+    },
+    {
+      "q": "Do you offer remote support?",
+      "a": "Yes, remote support is available for most software issues. Hardware faults may need an onsite visit.",
+      "keywords": "remote,software,hardware,onsite",
+      "priority": 9
+    },
+    {
+      "q": "Do you do onsite visits?",
+      "a": "Yes, onsite support is available in [service area]. Onsite time is charged per hour, as shown in your quote.",
+      "keywords": "onsite,visit,hourly,quote",
+      "priority": 9
+    },
+    {
+      "q": "Can you recover lost data?",
+      "a": "We attempt data recovery. The result depends on the condition of the drive, so we cannot promise a full recovery.",
+      "keywords": "data recovery,lost,drive,condition",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove viruses?",
+      "a": "Yes, we remove viruses and malware and harden the system afterwards. Tell us what you noticed, such as pop-ups or a slow computer.",
+      "keywords": "virus,malware,pop-ups,slow",
+      "priority": 9
+    },
+    {
+      "q": "Do you set up networks?",
+      "a": "Yes, we set up wired and Wi-Fi networks, including printers and devices that need to connect.",
+      "keywords": "network,wifi,printer,devices",
+      "priority": 8
+    },
+    {
+      "q": "Do you support Macs?",
+      "a": "Yes, we support Windows, Mac, and Linux computers.",
+      "keywords": "mac,windows,linux,support",
+      "priority": 8
+    },
+    {
+      "q": "Do you do managed IT?",
+      "a": "Yes, we offer monthly managed IT plans for businesses. We confirm what each plan includes before you sign up.",
+      "keywords": "managed IT,monthly,plan,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you do cybersecurity audits?",
+      "a": "Yes, we run security audits and review your setup for weak points. You receive a written list of findings and suggested fixes.",
+      "keywords": "cybersecurity,audit,weak points,fixes",
+      "priority": 8
+    },
+    {
+      "q": "Do you do cloud migration?",
+      "a": "Yes, we move businesses to Microsoft 365 and Google Workspace. We plan the move to limit downtime for your staff.",
+      "keywords": "cloud,migration,microsoft 365,google",
+      "priority": 8
+    },
+    {
+      "q": "Do you do backups?",
+      "a": "Yes, we set up local and cloud backups. We also show you how to check that a backup has run.",
+      "keywords": "backup,local,cloud,check",
+      "priority": 9
+    },
+    {
+      "q": "How long does a repair take?",
+      "a": "Many repairs are finished the same day, and others take a few business days. We confirm the timing when we diagnose the problem.",
+      "keywords": "how long,repair,same day,diagnose",
+      "priority": 8
+    },
+    {
+      "q": "Do you do smart home setup?",
+      "a": "Yes, we set up smart speakers, cameras, and hubs, and connect them to your Wi-Fi.",
+      "keywords": "smart home,speakers,cameras,hubs",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer emergency support?",
+      "a": "Yes, emergency support is available for businesses. Ask us about the response times in your service agreement.",
+      "keywords": "emergency,business,response,agreement",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. Certificates are available on request.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [service area] onsite, and we support clients remotely in [remote service areas].",
+      "keywords": "areas,onsite,remote,service area",
+      "priority": 8
+    },
+    {
+      "q": "Do you back up my data before a repair?",
+      "a": "We recommend a backup before any repair. If one is not available, tell us so we can talk through the risks first.",
+      "keywords": "backup,before repair,risk,data",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {visit} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {visit} with {business} is on {date}.",
+    "quote_intro": "Here is our proposal for your {job}.",
+    "invoice_note": "Thank you. Invoice terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "project_brief",
+      "label": "Project brief",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "itsupport.rule1",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up proposal after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "itsupport.rule2",
+      "trigger": "project.milestone",
+      "action": "send_invoice",
+      "description": "Send milestone invoice",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Keep client agreements and data handling terms current. Professional indemnity insurance is commonly required for advice and design work. Check any licence that applies to your specific services.",
+    "items": [
+      "Professional indemnity certificate current",
+      "Client agreement signed before work starts"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "projects delivered",
+    "proposal win rate",
+    "client retention"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,373 @@
+{
+  "format": 3,
+  "id": "barbershop",
+  "name": "Barbershop",
+  "icon": "💈",
+  "tagline": "Men's cuts, fades, beard trims, hot towel shaves",
+  "version": "1.1.0",
+  "category": "personal_care",
+  "source_sha256": "04013a3450f2d9770851b4f4b4e7ffa422aa77d13f7edc66325c5b6c38fed111",
+  "terminology": {
+    "customer": "client",
+    "job": "appointment",
+    "site": "shop",
+    "quote": "quote",
+    "staff": "barber",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Men's Haircut",
+    "Skin Fade",
+    "Beard Trim",
+    "Hot Towel Shave",
+    "Head Shave",
+    "Line Up",
+    "Kids Cut",
+    "Senior Cut",
+    "Beard Colour",
+    "Moustache Trim",
+    "Hair Design",
+    "Scalp Treatment",
+    "Hair Wash",
+    "Grooming Package"
+  ],
+  "catalog": [
+    {
+      "sku": "BAR-CUT",
+      "label": "Men's haircut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "cut"
+    },
+    {
+      "sku": "BAR-FADE",
+      "label": "Skin fade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "fade"
+    },
+    {
+      "sku": "BAR-BEARD",
+      "label": "Beard trim",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "beard"
+    },
+    {
+      "sku": "BAR-SHAVE",
+      "label": "Hot towel shave",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "shave"
+    },
+    {
+      "sku": "BAR-KID",
+      "label": "Kids cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "kids"
+    },
+    {
+      "sku": "BAR-SENIOR",
+      "label": "Senior cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "senior"
+    },
+    {
+      "sku": "BAR-HEAD",
+      "label": "Head shave",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "head shave"
+    },
+    {
+      "sku": "BAR-LINE",
+      "label": "Line up",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "line up"
+    },
+    {
+      "sku": "BAR-PACK",
+      "label": "Cut, beard and shave package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "package,grooming"
+    },
+    {
+      "sku": "BAR-COLOUR",
+      "label": "Beard colour",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "beard colour"
+    }
+  ],
+  "staff_skills": [
+    "men's barbering",
+    "skin fades",
+    "clipper cutting",
+    "beard trimming",
+    "hot towel shaves",
+    "line ups",
+    "scissor work",
+    "beard colour",
+    "skin sensitivity awareness"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "groom today",
+      "photo shoot today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "walk in",
+      "before the weekend",
+      "before an event"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "cut",
+      "beard",
+      "fade",
+      "line up"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional barbershop. Ask about the cut style, clipper grade if known, beard or shave needs, and preferred barber. Ask about skin sensitivities. Quote prices only from the reference answers, and say the final price is confirmed in shop. Do not promise a specific style result without consultation.",
+  "kb": [
+    {
+      "q": "Do you take walk-ins?",
+      "a": "Walk-ins are welcome, subject to availability. Booking is recommended if you have a set time in mind.",
+      "keywords": "walk in,booking",
+      "priority": 9
+    },
+    {
+      "q": "How much is a haircut?",
+      "a": "{price_note} Cuts are priced by service. We confirm the price with you before we start.",
+      "keywords": "cost,price,cut",
+      "priority": 9
+    },
+    {
+      "q": "Do you do skin fades?",
+      "a": "Yes, we do skin fades and all clipper grades. Tell us the length you want on top and at the sides so we can match it.",
+      "keywords": "skin fade,fade",
+      "priority": 9
+    },
+    {
+      "q": "Do you do beard trims?",
+      "a": "Yes, we trim and shape beards to your preferred style. Tell us whether you want it lined up, shortened, or kept at a set length.",
+      "keywords": "beard,trim",
+      "priority": 9
+    },
+    {
+      "q": "Do you do hot towel shaves?",
+      "a": "Yes, we do traditional hot towel shaves. Tell us about any skin sensitivity so we can adjust the products and the heat.",
+      "keywords": "hot towel,shave",
+      "priority": 9
+    },
+    {
+      "q": "Do you cut kids' hair?",
+      "a": "Yes, we cut children's hair. Let us know the child's age and the style you want so the barber can plan the cut.",
+      "keywords": "kids,children",
+      "priority": 8
+    },
+    {
+      "q": "Do you do senior cuts?",
+      "a": "Yes, we offer a senior cut. The price is on our price list, and we confirm it when you book.",
+      "keywords": "senior,discount",
+      "priority": 8
+    },
+    {
+      "q": "Can you colour my beard?",
+      "a": "Yes, we colour beards. Tell us if you have any allergies or have reacted to hair colour before, so we can check first.",
+      "keywords": "beard colour",
+      "priority": 7
+    },
+    {
+      "q": "How long does a cut take?",
+      "a": "Most cuts take 30–45 minutes. Shaves and packages take longer, so allow extra time when you book.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do head shaves?",
+      "a": "Yes, we do head shaves with clippers or a razor, depending on the finish you want.",
+      "keywords": "head shave",
+      "priority": 8
+    },
+    {
+      "q": "Do you do line ups?",
+      "a": "Yes, we do line ups and edge ups around the hairline, temples, and neckline. You can ask for a line up between cuts.",
+      "keywords": "line up,edge",
+      "priority": 8
+    },
+    {
+      "q": "How do I book?",
+      "a": "Book by [booking method, e.g. online or phone]. Tell us your preferred barber and the service so we can find a time.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers. Ask the shop for the current voucher values and how long they are valid.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    },
+    {
+      "q": "What if I don't like the cut?",
+      "a": "{guarantee_note} Tell your barber before you leave, so they can adjust it while you are still in the chair.",
+      "keywords": "guarantee,satisfaction",
+      "priority": 8
+    },
+    {
+      "q": "Do you do grooming packages?",
+      "a": "Yes, we offer a cut, beard, and shave package. The package price is on our price list.",
+      "keywords": "package,grooming",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [insurance type and provider] cover. Ask us for a certificate if you need one for your records.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do patch tests?",
+      "a": "Yes, we can run a patch test before a colour or product service. Book it at least [number] days before your appointment.",
+      "keywords": "patch test,allergy,colour",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Let us know as early as you can so the chair can be offered to someone else.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mobile barbering?",
+      "a": "Mobile service is available in [your local area]. Call us with your address, and we will confirm whether we can reach you.",
+      "keywords": "mobile,area",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please arrive a few minutes early.",
+    "quote_intro": "Here is your quote for the services you asked about.",
+    "invoice_note": "Thank you for visiting {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "allergies_patch_test",
+      "label": "Allergies or patch test needed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "barbershop.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    },
+    {
+      "id": "barbershop.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up no-show with rebooking link",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tattooing and skin penetration services are regulated by state health departments and usually need registration. Hair and beauty work needs infection control. Massage practitioners may need registration with a recognised body. Check your state rules.",
+    "items": [
+      "Practitioner registration or certificate current",
+      "Infection control and sterilisation records",
+      "Allergy and patch test records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment chair or room",
+    "equipment station"
+  ],
+  "reporting": [
+    "appointments completed",
+    "no-shows",
+    "rebooking rate",
+    "average ticket"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

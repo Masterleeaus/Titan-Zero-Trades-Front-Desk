@@ -1,0 +1,37 @@
+/* Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15. */
+.tz_fd_cff_clean #tzfdform{color:#384248;font-family: "MuseoSans-100" "Lucida Grande","Lucida Sans Unicode",Verdana,"Jamrul",sans-serif;text-shadow:0px 1px 0px #fff;}
+.tz_fd_cff_clean #tzfdform .fields.section_breaks label,
+.tz_fd_cff_clean #tzfdform .fform span,
+.tz_fd_cff_clean #tzfdform .uh{color:#0093DA;}
+
+.tz_fd_cff_clean #tzfdform select,
+.tz_fd_cff_clean #tzfdform textarea,
+.tz_fd_cff_clean #tzfdform input[type=text],
+.tz_fd_cff_clean #tzfdform input[type=file]{
+border: solid 1px #D7D9DA;
+background:#FFF;
+padding-left:5px;
+padding-right:5px;
+}
+.tz_fd_cff_clean #tzfdform .large{
+width: calc( 100% - 10px ) !important;
+width: -webkit-calc( 100% - 10px ) !important;
+width: -moz-calc( 100% - 10px ) !important;
+}
+
+.tz_fd_cff_clean #tzfdform .captcha,
+.tz_fd_cff_clean #tzfdform .fields:not(.section_breaks){padding: 10px;margin-bottom:10px;background:#EBECEC;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;}
+.tz_fd_cff_clean #tzfdform fieldset,
+.tz_fd_cff_clean #tzfdform legend{-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;border-color:#EBECEC;}
+.tz_fd_cff_clean #tzfdform legend{background: #EBECEC;border:0;}
+
+@media screen and (min-width: 740px){
+.tz_fd_cff_clean #tzfdform .fields.column2{float:left;width:calc( 49.9% - 20px );width:-webkit-calc( 49.9% - 20px );width:-moz-calc( 49.9% - 20px );}
+.tz_fd_cff_clean #tzfdform .fields.column3{float:left;width:calc( 33.3% - 20px );width:-webkit-calc( 33.3% - 20px );width:-moz-calc( 33.3% - 20px );}
+.tz_fd_cff_clean #tzfdform .fields.column4{float:left;width:calc( 24.9% - 20px );width:-webkit-calc( 24.9% - 20px );width:-moz-calc( 24.9% - 20px );}
+}
+
+.tz_fd_cff_clean #tzfdform .pbSubmit,
+.tz_fd_cff_clean #tzfdform .pbPrevious,
+.tz_fd_cff_clean #tzfdform .pbNext{color:#fff;font-size:14px;background: #0093DA;-webkit-border-radius: 5px;-moz-border-radius: 5px;border-radius: 5px;margin:0 10px 0 0;}
+.tz_fd_cff_clean #tzfdform .r{color:rgb(255,0,0);}

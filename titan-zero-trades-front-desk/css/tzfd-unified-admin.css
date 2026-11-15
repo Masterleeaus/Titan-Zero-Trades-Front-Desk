@@ -1,0 +1,26 @@
+/* Titan Zero Front Desk unified administration system — Pass 188.
+   Scoped to Front Desk admin routes only; never affects public booking templates. */
+body.tzfd-screen { --tz-bg:#06152e; --tz-panel:#0c2040; --tz-field:#10294b; --tz-text:#edf7ff; --tz-muted:#b5c8dc; --tz-border:#284867; --tz-accent:#00cfe8; --tzfd-border:var(--tz-border); --tzfd-blue:var(--tz-accent); --tzfd-text-muted:var(--tz-muted); color:var(--tz-text); }
+body.tzfd-screen #wpcontent,body.tzfd-screen #wpbody,body.tzfd-screen #wpbody-content {background:var(--tz-bg);color:var(--tz-text)}
+body.tzfd-screen #wpbody-content {box-sizing:border-box;min-width:0;}
+body.tzfd-screen #wpbody-content .wrap,body.tzfd-screen .tzfd-page {max-width:100%;min-width:0;box-sizing:border-box;}
+body.tzfd-screen .tzfd-section-container,body.tzfd-screen .tzfd-statssection-container,body.tzfd-screen .tzfd-pwizard .tzfd-section-container,body.tzfd-screen .tzfd-card,body.tzfd-screen .tzfd-adintsection-container {background:var(--tz-panel)!important;color:var(--tz-text);border:1px solid var(--tz-border);border-radius:12px;box-sizing:border-box;min-width:0;}
+body.tzfd-screen .tzfd-statssection-header,body.tzfd-screen .tzfd-section-header {background:var(--tz-field);color:var(--tz-text);border-color:var(--tz-border)}
+body.tzfd-screen .tzfd-section-container *,body.tzfd-screen .tzfd-card * {box-sizing:border-box;}
+body.tzfd-screen .tzfd-page-head {align-items:center;gap:12px 20px;}
+body.tzfd-screen .tzfd-brand-lockup img {display:block;max-width:min(230px,100%);height:auto;}
+body.tzfd-screen .tzfd-page-actions {max-width:100%;}
+body.tzfd-screen .form-builder,body.tzfd-screen .form-builder .ui-sortable,body.tzfd-screen .tzfd-builder-panel {height:auto!important;min-height:0!important;max-height:none!important;}
+body.tzfd-screen .tzfd-new-calendar {max-width:100%;}
+body.tzfd-screen .tzfd-calendars-list,body.tzfd-screen .tzfd-orders-list {max-width:100%;}
+body.tzfd-screen .tzfd-table-scroll {max-width:100%;overflow-x:auto;}
+body.tzfd-screen input:not([type=checkbox]):not([type=radio]):not([type=submit]),body.tzfd-screen select,body.tzfd-screen textarea {max-width:100%;background:var(--tz-field);color:var(--tz-text);border-color:var(--tz-border);}
+body.tzfd-screen input:focus-visible,body.tzfd-screen select:focus-visible,body.tzfd-screen textarea:focus-visible,body.tzfd-screen button:focus-visible,body.tzfd-screen a:focus-visible {outline:2px solid #00d6e9;outline-offset:2px;}
+body.tzfd-screen .button-primary,body.tzfd-screen input[type=submit].button-primary {background:linear-gradient(110deg,#00cfe8,#087eea);border-color:#088cc8;color:#04152c;text-shadow:none;}
+body.tzfd-screen .button-primary:hover {background:linear-gradient(110deg,#00e0ee,#1266d8);color:#04152c;}
+body.tzfd-screen .widefat,body.tzfd-screen .wp-list-table {border-color:var(--tz-border);}
+body.tzfd-screen .widefat td,body.tzfd-screen .widefat th {border-bottom-color:var(--tz-border);}
+body.tzfd-screen .description,body.tzfd-screen .tzfd-muted {color:var(--tz-muted);}
+body.tzfd-screen .tzfd-pwizard .tzfd-section {background:transparent;}
+@media(max-width:782px){body.tzfd-screen .tzfd-page-head {flex-direction:column;align-items:stretch;}body.tzfd-screen .tzfd-section-container,body.tzfd-screen .tzfd-statssection-container {margin-right:0;width:100%;}body.tzfd-screen .tzfd-page-actions {width:100%;}body.tzfd-screen .tzfd-page-actions .button {white-space:normal;}}
+@media(prefers-reduced-motion:reduce){body.tzfd-screen *,body.tzfd-screen *::before,body.tzfd-screen *::after {scroll-behavior:auto!important;transition-duration:.01ms!important;}}

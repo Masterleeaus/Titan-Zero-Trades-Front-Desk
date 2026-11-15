@@ -1,0 +1,24 @@
+/* Pass 200: scoped, contrast-safe Front Desk administration design system. */
+body.tzfd-screen {--tzfd-bg:#06152e;--tzfd-panel:#102b4a;--tzfd-panel-alt:#172f4e;--tzfd-text:#edf7ff;--tzfd-muted:#bfd2e5;--tzfd-edge:#365777;--tzfd-accent:#00cfe8;}
+body.tzfd-screen #wpcontent {background:var(--tzfd-bg);}
+body.tzfd-screen #wpbody-content {padding-top:0!important;}
+body.tzfd-screen #wpbody-content>.wrap,body.tzfd-screen .tzfd-admin-page {margin-top:12px;max-width:100%;box-sizing:border-box;}
+body.tzfd-screen .wrap h1,body.tzfd-screen .wrap h2,body.tzfd-screen .wrap h3,body.tzfd-screen .wrap label,body.tzfd-screen .wrap legend {color:var(--tzfd-text);}
+body.tzfd-screen .wrap p,body.tzfd-screen .wrap li,body.tzfd-screen .wrap dt,body.tzfd-screen .wrap dd,body.tzfd-screen .wrap summary {color:var(--tzfd-muted);}
+body.tzfd-screen .wrap input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]),body.tzfd-screen .wrap select,body.tzfd-screen .wrap textarea {background:var(--tzfd-panel)!important;color:var(--tzfd-text)!important;border:1px solid var(--tzfd-edge)!important;}
+body.tzfd-screen .wrap input::placeholder,body.tzfd-screen .wrap textarea::placeholder {color:#b5cce0!important;opacity:1;}
+body.tzfd-screen .wrap input:focus-visible,body.tzfd-screen .wrap select:focus-visible,body.tzfd-screen .wrap textarea:focus-visible {outline:2px solid var(--tzfd-accent);outline-offset:2px;}
+body.tzfd-screen .wrap .notice p,body.tzfd-screen .wrap .notice li {color:#15263b;}
+body.tzfd-screen .wrap .notice h2 {color:#15263b;}
+body.tzfd-screen .wrap .widefat,body.tzfd-screen .wrap .wp-list-table {background:var(--tzfd-panel-alt);color:var(--tzfd-text);border-color:var(--tzfd-edge);}
+body.tzfd-screen .wrap .widefat th,body.tzfd-screen .wrap .widefat td,body.tzfd-screen .wrap .widefat td a {color:var(--tzfd-text);border-color:var(--tzfd-edge);}
+body.tzfd-screen .wrap .widefat thead th,body.tzfd-screen .wrap .widefat tfoot th {background:#203c5a;}
+body.tzfd-screen .tzfd-pipeline-stages {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px;margin:20px 0;}
+body.tzfd-screen .tzfd-pipeline-stage {display:flex;gap:12px;padding:16px;background:var(--tzfd-panel-alt);border:1px solid var(--tzfd-edge);border-radius:12px;min-width:0;}
+body.tzfd-screen .tzfd-pipeline-stage strong {color:var(--tzfd-text);font-size:14px;}
+body.tzfd-screen .tzfd-pipeline-stage p {margin:6px 0 0;line-height:1.5;}
+body.tzfd-screen .tzfd-stage-number {color:var(--tzfd-accent);font-weight:800;font-size:18px;}
+body.tzfd-screen .tzfd-pipeline-help summary {cursor:pointer;color:var(--tzfd-text)!important;font-weight:600;}
+body.tzfd-screen .tzfd-pipeline-metrics {display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:12px 0 24px;padding:0;}
+body.tzfd-screen .tzfd-pipeline-metrics li {padding:10px 14px;border:1px solid var(--tzfd-edge);background:var(--tzfd-panel-alt);border-radius:8px;}
+@media(max-width:782px){body.tzfd-screen .wrap {margin-left:10px;margin-right:10px;}body.tzfd-screen .tzfd-pipeline-stages {grid-template-columns:1fr;}}

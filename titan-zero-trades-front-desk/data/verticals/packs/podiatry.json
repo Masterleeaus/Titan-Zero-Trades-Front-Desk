@@ -1,0 +1,384 @@
+{
+  "format": 3,
+  "id": "podiatry",
+  "name": "Podiatry",
+  "icon": "🦶",
+  "tagline": "Foot care, orthotics, ingrown nails, diabetes care",
+  "version": "1.1.0",
+  "category": "health",
+  "source_sha256": "4a23f98e942f7c34e4be6ecc6a594e911e410eeb57c7768a02f52529469e23b8",
+  "terminology": {
+    "customer": "patient",
+    "job": "appointment",
+    "site": "clinic",
+    "quote": "estimate",
+    "staff": "podiatrist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "General Foot Care",
+    "Ingrown Nail Treatment",
+    "Partial Nail Avulsion",
+    "Fungal Nail Treatment",
+    "Corns and Calluses",
+    "Custom and Prefabricated Orthotics",
+    "Diabetic Foot Care",
+    "Sports Podiatry",
+    "Paediatric Podiatry",
+    "Biomechanical and Gait Assessment",
+    "Wart Treatment",
+    "Heel Pain and Plantar Fasciitis",
+    "Nail Surgery",
+    "Telehealth Consultations",
+    "Home Visits"
+  ],
+  "catalog": [
+    {
+      "sku": "POD-INIT",
+      "label": "Initial consultation (45–60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "initial"
+    },
+    {
+      "sku": "POD-FU",
+      "label": "Follow-up consultation (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "follow up"
+    },
+    {
+      "sku": "POD-GEN",
+      "label": "General foot care",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "general"
+    },
+    {
+      "sku": "POD-ING",
+      "label": "Ingrown nail treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "ingrown"
+    },
+    {
+      "sku": "POD-PNA",
+      "label": "Partial nail avulsion (per toe)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "pna"
+    },
+    {
+      "sku": "POD-ORTH",
+      "label": "Custom orthotics",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "orthotics"
+    },
+    {
+      "sku": "POD-ORTH-P",
+      "label": "Prefabricated orthotics",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "prefab"
+    },
+    {
+      "sku": "POD-DIAB",
+      "label": "Diabetic foot assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "diabetic"
+    },
+    {
+      "sku": "POD-BIO",
+      "label": "Biomechanical assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "biomechanical"
+    },
+    {
+      "sku": "POD-HOME",
+      "label": "Home visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "POD-WART",
+      "label": "Wart treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "wart"
+    },
+    {
+      "sku": "POD-TELE",
+      "label": "Telehealth consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "telehealth"
+    }
+  ],
+  "staff_skills": [
+    "podiatry",
+    "orthotics",
+    "nail surgery",
+    "diabetic foot care",
+    "biomechanics",
+    "paediatric podiatry",
+    "gait analysis",
+    "wart treatment"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "infected toe or foot",
+      "open diabetic foot ulcer",
+      "severe foot pain",
+      "red or hot foot with fever"
+    ],
+    "urgent": [
+      "pain getting worse",
+      "ingrown nail causing pain",
+      "cracked or bleeding skin",
+      "needs seeing before a trip"
+    ],
+    "routine": [
+      "routine check-up",
+      "orthotics fitting",
+      "booking",
+      "quote",
+      "nail care",
+      "wart follow-up"
+    ]
+  },
+  "extra_prompt": "You are booking for a podiatry clinic. Ask about the foot concern, medical history (especially diabetes), current footwear, and pain level. Ask whether they need orthotics or nail surgery. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise specific treatment outcomes.",
+  "kb": [
+    {
+      "q": "How much does a visit cost?",
+      "a": "{price_note} Initial and follow-up consultations are priced separately. We confirm the fee before you book.",
+      "keywords": "cost,price,visit",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, if you have podiatry cover with your health fund. We offer HICAPS claiming where available, so ask us at booking.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do orthotics?",
+      "a": "Yes, we offer custom and prefabricated orthotics. Custom orthotics are made after an assessment, and prefabricated orthotics can be fitted at a visit.",
+      "keywords": "orthotics",
+      "priority": 9
+    },
+    {
+      "q": "Do you do ingrown nails?",
+      "a": "Yes, we treat ingrown nails, including partial nail avulsion (PNA) where needed. We explain the options and get your consent before any procedure.",
+      "keywords": "ingrown,ingrown toenail",
+      "priority": 9
+    },
+    {
+      "q": "Do you do diabetic foot care?",
+      "a": "Yes, we offer diabetic foot assessments and ulcer care. Please tell us at booking if you have diabetes, as it changes how we assess your feet.",
+      "keywords": "diabetes,diabetic",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat fungal nails?",
+      "a": "Yes, we treat fungal nails with laser and topical treatments. Results vary, so we discuss the likely timeframe at your assessment.",
+      "keywords": "fungal,fungus",
+      "priority": 9
+    },
+    {
+      "q": "Do you treat warts?",
+      "a": "Yes, we treat warts with cryotherapy and needling. We explain the options and the likely number of sessions before treatment starts.",
+      "keywords": "wart,verruca",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat heel pain?",
+      "a": "Yes, we treat heel pain, including plantar fasciitis. We look at your footwear and gait as part of the plan.",
+      "keywords": "heel,plantar fasciitis",
+      "priority": 9
+    },
+    {
+      "q": "Do you do nail surgery?",
+      "a": "Yes, partial nail avulsion (PNA) and total nail avulsion are available. We discuss the procedure, aftercare and consent with you before booking.",
+      "keywords": "nail surgery,pna",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat children?",
+      "a": "Yes, paediatric podiatry is available for children. Please bring a parent or guardian to the appointment.",
+      "keywords": "children,paediatric",
+      "priority": 8
+    },
+    {
+      "q": "Do you do sports podiatry?",
+      "a": "Yes, we offer sports podiatry, including biomechanical and gait analysis. Tell us your sport and how often you train.",
+      "keywords": "sports,gait",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in the local metro area. Ask us to confirm your suburb, and we confirm the home visit fee at booking.",
+      "keywords": "home visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, telehealth is available for advice and some follow-up visits. Hands-on assessments and treatment need an in-person visit.",
+      "keywords": "telehealth,online",
+      "priority": 7
+    },
+    {
+      "q": "How long is a visit?",
+      "a": "Initial visits are 45 to 60 minutes. Follow-up visits are 30 minutes.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do I need a referral?",
+      "a": "No referral is needed for private podiatry. Some plans, such as Medicare EPC, need a GP referral, so check your plan first.",
+      "keywords": "referral,gp",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as early as you can.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Our podiatrists hold [registration number] and [insurance details]. Ask us for copies before you book.",
+      "keywords": "ahpra,registered",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please bring your card and any referral.",
+    "quote_intro": "Here is your estimate. Your practitioner will confirm the plan at your appointment.",
+    "invoice_note": "Thank you. Health fund claims are handled by the practice where applicable."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 30,
+    "buffer_minutes": 10,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 30,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "referral",
+      "label": "Referral or Medicare details (only if the practice needs them)",
+      "required": false
+    },
+    {
+      "key": "clinical_notes_location",
+      "label": "Clinical details stay in the clinical record, not in booking notes",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "podiatry.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 48 hours before",
+      "enabled": false
+    },
+    {
+      "id": "podiatry.rule2",
+      "trigger": "recall.due",
+      "action": "send_recall",
+      "description": "Send recall reminder when due",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Health practitioners usually need registration (for example with AHPRA where it applies) and current professional indemnity insurance. Keep clinical details in the clinical record, not in general booking fields. Follow your state health privacy rules.",
+    "items": [
+      "Practitioner registration number and expiry",
+      "Professional indemnity certificate current",
+      "Clinical notes kept only in the clinical record"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment room",
+    "equipment"
+  ],
+  "reporting": [
+    "appointments attended",
+    "no-shows",
+    "new patients",
+    "recall due"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

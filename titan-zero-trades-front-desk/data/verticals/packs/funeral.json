@@ -1,0 +1,369 @@
+{
+  "format": 3,
+  "id": "funeral",
+  "name": "Funeral Services",
+  "icon": "\ud83d\udd4a\ufe0f",
+  "tagline": "Funeral homes, cremation, burial, memorials",
+  "version": "1.1.0",
+  "category": "funeral",
+  "source_sha256": "fdd565ac9e02871915e424762c4280f8578ef6b05dac3f89a7ee8b79db344f64",
+  "terminology": {
+    "customer": "family",
+    "job": "arrangement",
+    "site": "chapel",
+    "quote": "funeral quote",
+    "staff": "funeral director",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Funeral service",
+    "Direct cremation",
+    "Cremation with service",
+    "Burial service",
+    "Graveside service",
+    "Memorial service",
+    "Prepaid funeral plans",
+    "Repatriation (domestic and international)",
+    "Casket selection",
+    "Urn selection",
+    "Floral tributes",
+    "Order of service booklets",
+    "Death notices",
+    "Grief support referrals",
+    "Pet cremation"
+  ],
+  "catalog": [
+    {
+      "sku": "FUN-DIRECT",
+      "label": "Direct cremation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3200,
+      "taxable": 1,
+      "keywords": "direct cremation"
+    },
+    {
+      "sku": "FUN-CREM",
+      "label": "Cremation with service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 6500,
+      "taxable": 1,
+      "keywords": "cremation"
+    },
+    {
+      "sku": "FUN-BURIAL",
+      "label": "Burial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8500,
+      "taxable": 1,
+      "keywords": "burial"
+    },
+    {
+      "sku": "FUN-MEM",
+      "label": "Memorial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "memorial"
+    },
+    {
+      "sku": "FUN-CASK",
+      "label": "Casket, from",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "casket"
+    },
+    {
+      "sku": "FUN-URN",
+      "label": "Urn, from",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "urn"
+    },
+    {
+      "sku": "FUN-FLOR",
+      "label": "Floral tribute, from",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "flowers"
+    },
+    {
+      "sku": "FUN-ORDER",
+      "label": "Order of service booklets, per 50",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "order of service"
+    },
+    {
+      "sku": "FUN-NOTICE",
+      "label": "Death notice (newspaper placement)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "notice"
+    },
+    {
+      "sku": "FUN-REPAT",
+      "label": "Repatriation, from",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "repatriation"
+    },
+    {
+      "sku": "FUN-PET",
+      "label": "Pet cremation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "pet"
+    },
+    {
+      "sku": "FUN-PREPAID",
+      "label": "Prepaid funeral plan, from",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "prepaid"
+    }
+  ],
+  "staff_skills": [
+    "funeral directing",
+    "arranging and coordinating",
+    "cremation",
+    "burial",
+    "repatriation",
+    "grief support",
+    "ceremony planning",
+    "first call and transfers"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "death just occurred",
+      "hospital release needed",
+      "urgent funeral booking",
+      "first call needed"
+    ],
+    "urgent": [
+      "funeral this week",
+      "funeral next week",
+      "family travelling in",
+      "service date needs confirming"
+    ],
+    "routine": [
+      "prepaid plan enquiry",
+      "pre-planning",
+      "quote request",
+      "consultation",
+      "order of service"
+    ]
+  },
+  "extra_prompt": "You are booking for a funeral service. Be warm, respectful, and unhurried. Ask about the deceased's name, the family's wishes, whether it is burial or cremation, and whether a service is wanted. Ask about cultural or religious requirements. Quote prices only from the reference answers, and say the final price is confirmed at arrangement. Do not provide legal or estate advice.",
+  "kb": [
+    {
+      "q": "How much does a funeral cost?",
+      "a": "{price_note} Costs depend on the type of service, the casket, and the location. We confirm the full amount with you at the arrangement meeting.",
+      "keywords": "cost,price,funeral,arrangement",
+      "priority": 10
+    },
+    {
+      "q": "What is a direct cremation?",
+      "a": "A direct cremation is a cremation without a formal service beforehand. We can arrange a gathering afterwards if the family wants one.",
+      "keywords": "direct cremation,no service,gathering",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer prepaid funerals?",
+      "a": "Yes, we offer prepaid and pre-arranged funeral plans. Ask us what the plan covers and how payments work before you sign anything.",
+      "keywords": "prepaid,plan,pre-arranged,payment",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle repatriation?",
+      "a": "Yes, we arrange domestic and international repatriation. Timing and costs depend on the destination, and we confirm them in writing.",
+      "keywords": "repatriation,overseas,transfer",
+      "priority": 9
+    },
+    {
+      "q": "Can we have a viewing?",
+      "a": "Yes, viewings can be arranged at our facility or at a chapel. Let us know your preferred time when you call.",
+      "keywords": "viewing,chapel,facility",
+      "priority": 8
+    },
+    {
+      "q": "Do you arrange culturally specific funerals?",
+      "a": "Yes, we work with religious and cultural traditions. We ask about these at the first meeting so the service reflects your family's wishes.",
+      "keywords": "culture,religious,tradition,service",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with the death certificate?",
+      "a": "Yes, we guide you through the paperwork needed for the funeral, including what the death certificate requires.",
+      "keywords": "death certificate,paperwork,documents",
+      "priority": 9
+    },
+    {
+      "q": "Do you arrange graveside services?",
+      "a": "Yes, we coordinate graveside and chapel services. We confirm the cemetery or chapel booking with you before the day.",
+      "keywords": "graveside,cemetery,chapel",
+      "priority": 8
+    },
+    {
+      "q": "Do you supply flowers?",
+      "a": "Yes, we can arrange floral tributes. Tell us the colours or flowers the family prefers, and we will confirm the cost first.",
+      "keywords": "flowers,tribute,colour",
+      "priority": 8
+    },
+    {
+      "q": "Do you do memorial services?",
+      "a": "Yes, memorial services without a casket are available. They can be held at a chapel, a venue of your choice, or another place.",
+      "keywords": "memorial,without casket,venue",
+      "priority": 8
+    },
+    {
+      "q": "Can we personalise the service?",
+      "a": "Yes, we help plan a personalised service with music, readings, and photo tributes. Bring your ideas to the arrangement meeting.",
+      "keywords": "personalise,music,readings,photos",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer grief support?",
+      "a": "Yes, we can refer you to grief support services and share resources. Ask us for the details when you call.",
+      "keywords": "grief,support,referral,resources",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pet cremation?",
+      "a": "Yes, we offer pet cremation. Tell us about your pet, and we will confirm the process and cost.",
+      "keywords": "pet,cremation,animal",
+      "priority": 8
+    },
+    {
+      "q": "Are you available 24/7?",
+      "a": "Call [24-hour phone number] at any time. We will talk you through the next steps, day or night.",
+      "keywords": "24/7,after hours,call,phone",
+      "priority": 9
+    },
+    {
+      "q": "Can we pay in instalments?",
+      "a": "{payment_note} Ask us what payment options are available before we start the arrangements.",
+      "keywords": "instalments,payment,plan",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Dear {customer}, we have booked your appointment with {business} for {date}. We are sorry for your loss.",
+    "reminder": "Reminder: your appointment with {business} is on {date}.",
+    "quote_intro": "Here is the quote for the arrangements you asked about. You can ask us to explain any item.",
+    "invoice_note": "Thank you for trusting {business} at this time."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 30,
+    "quote_validity_days": 7,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "deceased_details",
+      "label": "Name of the person who has died",
+      "required": true
+    },
+    {
+      "key": "next_of_kin",
+      "label": "Next of kin contact",
+      "required": true
+    },
+    {
+      "key": "burial_or_cremation",
+      "label": "Burial or cremation preference",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "funeral.rule1",
+      "trigger": "enquiry.received",
+      "action": "acknowledge_enquiry",
+      "description": "Acknowledge enquiry promptly and offer a call-back",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Funeral directors must follow state rules on death certificates, cremation and burial permits, and the handling of remains. Keep family records private and within your retention rules. Check your state regulator for requirements.",
+    "items": [
+      "Funeral director licence or registration number",
+      "Permit or authority kept for each cremation or burial",
+      "Family records held within retention rules"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "chapel",
+    "hearse",
+    "vehicle"
+  ],
+  "reporting": [
+    "arrangements completed",
+    "enquiries",
+    "outstanding balances"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

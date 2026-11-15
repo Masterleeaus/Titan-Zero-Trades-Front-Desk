@@ -1,0 +1,33 @@
+/* Pass 195: Front Desk admin contrast and layout correction.
+   Load after all legacy styles. Scoped to plugin screens. */
+body.tzfd-screen { --tz-accent:#00cfe8; --tz-accent-hover:#087eea; --tz-on-accent:#06152e; }
+/* Keep native WP admin positioning intact: no fixed heights or translated shells. */
+body.tzfd-screen #wpbody-content { padding-top:0; min-width:0; }
+body.tzfd-screen #wpbody-content > .wrap { margin-top:10px; }
+body.tzfd-screen #wpbody-content .tzfd-page-head { clear:both; position:relative; top:auto; transform:none; }
+body.tzfd-screen #wpbody-content .tzfd-page { min-width:0; overflow-wrap:anywhere; }
+/* A light surface always has dark foregrounds, including legacy nested spans. */
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid,.tzfd-new-calendar) :is(th,td,span,label,a,p,small,strong,div) { color:#172334; }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) { background-color:#fff; color:#172334; }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) :is(input,textarea,select) { color:#172334; background:#fff; }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) :is(input,textarea)::placeholder { color:#566477; opacity:1; }
+/* Do not recolour dark branded cards: only explicit white/light surfaces. */
+body.tzfd-screen #wpbody-content [style*="background: white"],
+body.tzfd-screen #wpbody-content [style*="background:#fff"],
+body.tzfd-screen #wpbody-content [style*="background: #fff"],
+body.tzfd-screen #wpbody-content [style*="background-color: white"],
+body.tzfd-screen #wpbody-content [style*="background-color:#fff"] { color:#172334 !important; }
+body.tzfd-screen #wpbody-content [style*="background: white"] :is(span,small,p,label,a,strong),
+body.tzfd-screen #wpbody-content [style*="background:#fff"] :is(span,small,p,label,a,strong),
+body.tzfd-screen #wpbody-content [style*="background: #fff"] :is(span,small,p,label,a,strong) { color:#172334 !important; }
+body.tzfd-screen #wpbody-content input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]),
+body.tzfd-screen #wpbody-content select,
+body.tzfd-screen #wpbody-content textarea { background:#fff !important; color:#172334 !important; border-color:#7b8796 !important; -webkit-text-fill-color:#172334; }
+body.tzfd-screen #wpbody-content input::placeholder,body.tzfd-screen #wpbody-content textarea::placeholder {color:#566477 !important;opacity:1;}
+body.tzfd-screen #wpbody-content select option {background:#fff;color:#172334;}
+/* Calendar header on white background must not inherit white heading text. */
+body.tzfd-screen #wpbody-content .ui-datepicker-title,
+body.tzfd-screen #wpbody-content .fc-toolbar-title,
+body.tzfd-screen #wpbody-content .fc-col-header-cell-cushion {color:#172334 !important;}
+body.tzfd-screen #wpbody-content .fc .fc-button-primary {background:#087eea;color:#fff;border-color:#087eea;}
+@media(max-width:782px){body.tzfd-screen #wpbody-content .tzfd-page-head{flex-wrap:wrap;}body.tzfd-screen #wpbody-content .fc{max-width:100%;overflow-x:auto;}}

@@ -1,0 +1,38 @@
+/* Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15. */
+.tz_fd_field_service{display:inherit;--comment:In order to hide the select set display to -none;}
+.tz_fd_m3 #tzfdform .fields  label{color:#000}
+.tz_fd_m3 #tzfdform .fields  input{color:#000;padding:inherit;font-weight:inherit;background-color:inherit;border-color:inherit;border-width:1px;border-style:solid;}
+.tz_fd_m3 #tzfdform .ui-datepicker-header{background-color:inherit;color:#000}
+.tz_fd_m3 #tzfdform .ui-datepicker-prev {width: 30px;height: 30px;border-top: 2px solid #000;border-right: 2px solid #000;margin:20px 10px;}
+.tz_fd_m3 #tzfdform .ui-datepicker-next{width: 30px;height: 30px;border-top: 2px solid #000;border-right: 2px solid #000;margin:20px 10px;}
+
+.tz_fd_m3 #tzfdform .ui-datepicker th{background:#fff;color:inherit}	
+.tz_fd_m3 #tzfdform .ui-datepicker-unselectable .ui-state-default {color:#AAAAAA;background-color:inherit;}
+				
+.tz_fd_m3 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{background:#3995D0}					
+.tz_fd_m3 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{background:#ddd}
+.tz_fd_m3 #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: #FFF; background: #66CCFF}
+.tz_fd_m3 #tzfdform .slots div a {
+    border-width:1px;
+    border-color:#66CCFF;	
+    border-style:solid;	
+	background: #f8f8f8; 
+	color: #000;
+	padding:8px 12px;
+}
+.tz_fd_m3 #tzfdform .slots div:not(.htmlUsed)  a:hover {
+	background:#66CCFF;
+	color:#fff;
+}
+.tz_fd_m3 #tzfdform .pbSubmit {background-color: #ccc;color: #000;margin: 10px 10px 0px 0px;padding: 5px 20px;}
+.tz_fd_m3 #tzfdform .pbSubmit:hover {background-color: #ccc;color: #000;}
+.tz_fd_m3 #tzfdform .slots{padding: 20px 10px 10px}
+.tz_fd_m3 #tzfdform .slots span{color: inherit;}
+.tz_fd_m3 #tzfdform .usedSlots .tz_fd_list {margin-top:5px;}
+.tz_fd_m3 #tzfdform .usedSlots .tz_fd_list .d{color: inherit;}
+.tz_fd_m3 #tzfdform .usedSlots .tz_fd_list .t{color: inherit;}
+.tz_fd_m3 #tzfdform .usedSlots .tz_fd_list .tz_fd_list_service{color: inherit;}
+
+.tz_fd_m3 #tzfdform .totalCost{color: inherit;}
+.tz_fd_m3 #tzfdform .totalCost span:not(.n){color: inherit;}
+.tz_fd_m3 #tzfdform .totalCost span.n{color: inherit;}

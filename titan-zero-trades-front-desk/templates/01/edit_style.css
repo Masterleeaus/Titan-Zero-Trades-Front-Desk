@@ -1,0 +1,29 @@
+/* Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15. */
+.tz_fd_cff_letter{border-color:#C4C4C4;border-width:2px;border-style:solid; padding:10px;}
+.tz_fd_cff_letter #tzfdform .ui-datepicker-header{color:#e0e0e0;background-color: #000;}
+
+.tz_fd_cff_letter #tzfdform .ui-datepicker th{background-color:inherit;color:inherit}
+
+.tz_fd_cff_letter #tzfdform .ui-datepicker-unselectable .ui-state-default { color: #b4b3b3;background-color: #f4f4f4;}
+				
+.tz_fd_cff_letter #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default.ui-state-active{color:#e0e0e0;background:#6eafbf;}					
+.tz_fd_cff_letter #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default{color:#666666;background:#dedede;}
+.tz_fd_cff_letter #tzfdform td:not(.ui-datepicker-unselectable) a.ui-state-default:hover{color: inherit; background: #f7f7f7;}
+
+.tz_fd_cff_letter #tzfdform .slots div a{background-color: #ededed;padding:4px;}
+.tz_fd_cff_letter #tzfdform .slots div:not(.htmlUsed)  a:hover{background-color: #f7f7f7;}
+
+.tz_fd_cff_letter #tzfdform .pbSubmit{color:#fff;font-size:13px;font-weight:bold;margin: 10px 10px 0px 0px;padding: 5px 20px;}
+.tz_fd_cff_letter #tzfdform .pbSubmit:hover {color: inherit}
+.tz_fd_cff_letter #tzfdform .fields  input{color:#000;padding:inherit;}
+.tz_fd_field_service{display:inherit;}
+.tz_fd_cff_letter #tzfdform .slots{border-color:#888;border-width:1px;border-style:solid;width: 100%;padding: 10px;}
+.tz_fd_cff_letter #tzfdform .slots span{color: inherit;}
+.tz_fd_cff_letter #tzfdform .usedSlots .tz_fd_list {margin-top:5px;}
+.tz_fd_cff_letter #tzfdform .usedSlots .tz_fd_list .d{color: inherit;}
+.tz_fd_cff_letter #tzfdform .usedSlots .tz_fd_list .t{color: inherit;}
+.tz_fd_cff_letter #tzfdform .usedSlots .tz_fd_list .tz_fd_list_service{color: inherit;}
+
+.tz_fd_cff_letter #tzfdform .totalCost{color: inherit;}
+.tz_fd_cff_letter #tzfdform .totalCost span:not(.n){color: inherit;}
+.tz_fd_cff_letter #tzfdform .totalCost span.n{color: inherit;}

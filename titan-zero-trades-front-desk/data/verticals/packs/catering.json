@@ -1,0 +1,375 @@
+{
+  "format": 3,
+  "id": "catering",
+  "name": "Catering & Personal Chefs",
+  "icon": "🍽️",
+  "tagline": "Events, private dining, meal prep, corporate",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "5149cfeefb6ffb2736f11fa32e6cbd3b6e5448cf436fb7158328324df96a0b59",
+  "terminology": {
+    "customer": "client",
+    "job": "function",
+    "site": "venue",
+    "quote": "quote",
+    "staff": "chef",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Wedding Catering",
+    "Corporate Catering",
+    "Private Dining",
+    "Personal Chef",
+    "Weekly Meal Prep",
+    "Cocktail Parties",
+    "Canapés",
+    "Buffet Service",
+    "Plated Dinner",
+    "Food Truck Catering",
+    "BBQ Catering",
+    "Vegan and Vegetarian Menus",
+    "Gluten-Free Menus",
+    "Kids Parties",
+    "Funeral Catering",
+    "Cooking Classes"
+  ],
+  "catalog": [
+    {
+      "sku": "CAT-CAN",
+      "label": "Canapés (per person, 4 pieces)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "canapes"
+    },
+    {
+      "sku": "CAT-BUFF",
+      "label": "Buffet (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "buffet"
+    },
+    {
+      "sku": "CAT-PLATE",
+      "label": "Plated dinner (per person, 3-course)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "plated"
+    },
+    {
+      "sku": "CAT-BBQ",
+      "label": "BBQ package (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "bbq"
+    },
+    {
+      "sku": "CAT-WAIT",
+      "label": "Wait staff (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "wait staff"
+    },
+    {
+      "sku": "CAT-CHEF",
+      "label": "Chef (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "chef"
+    },
+    {
+      "sku": "CAT-BAR",
+      "label": "Bar staff (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "bar"
+    },
+    {
+      "sku": "CAT-HIRE",
+      "label": "Crockery and cutlery hire (per person)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "hire,crockery"
+    },
+    {
+      "sku": "CAT-MEAL",
+      "label": "Meal prep (per serve)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 16,
+      "taxable": 1,
+      "keywords": "meal prep"
+    },
+    {
+      "sku": "CAT-TASTE",
+      "label": "Tasting (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "tasting"
+    },
+    {
+      "sku": "CAT-CLASS",
+      "label": "Cooking class (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "class"
+    }
+  ],
+  "staff_skills": [
+    "event catering",
+    "personal chef",
+    "menu design",
+    "plated service",
+    "buffet service",
+    "canapés",
+    "meal prep",
+    "dietary requirements",
+    "food safety"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "event tomorrow",
+      "caterer cancelled",
+      "urgent booking"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "short notice",
+      "before event"
+    ],
+    "routine": [
+      "booking",
+      "quote",
+      "menu",
+      "tasting",
+      "meal prep"
+    ]
+  },
+  "extra_prompt": "You are booking for a catering or personal chef business. Ask about the event date, location, guest count, service style, and any dietary requirements or allergies. Ask about staff, hire, and cleanup. Quote prices only from the reference answers, and say the final price is confirmed after menu design. Do not promise specific ingredient availability or a final total before menu agreement.",
+  "kb": [
+    {
+      "q": "How much does catering cost?",
+      "a": "{price_note} Catering is priced per person or per event, and it depends on the menu and service style. We confirm the final number once the menu is agreed.",
+      "keywords": "cost,price,catering",
+      "priority": 9
+    },
+    {
+      "q": "Do you handle dietary requirements?",
+      "a": "Yes, we cater for vegetarian, vegan, gluten-free, nut-free, and other dietary needs. Tell us about any allergies when you book.",
+      "keywords": "dietary,vegan,gluten,allergy",
+      "priority": 9
+    },
+    {
+      "q": "Do you do tastings?",
+      "a": "Tastings are available for weddings and larger events. Tasting is priced per person, so tell us how many people will attend.",
+      "keywords": "tasting,sample",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide staff?",
+      "a": "Yes, we can provide chefs, wait staff, and bar staff. Staff are charged per hour, so tell us your start and finish times.",
+      "keywords": "staff,waiters",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide plates and cutlery?",
+      "a": "Yes, we can hire crockery, cutlery, glassware, and linen. Hire is charged per person, so give us your guest numbers.",
+      "keywords": "plates,cutlery,hire",
+      "priority": 8
+    },
+    {
+      "q": "Do you do plated dinners?",
+      "a": "Yes, we do plated, buffet, and cocktail service. Tell us which style suits your event and we will recommend a menu.",
+      "keywords": "plated,buffet,cocktail",
+      "priority": 9
+    },
+    {
+      "q": "Do you do personal chef meal prep?",
+      "a": "Yes, we offer weekly meal prep in your home. Tell us your dietary needs, the number of serves, and the days you want the meals.",
+      "keywords": "meal prep,personal chef",
+      "priority": 9
+    },
+    {
+      "q": "Do you do corporate catering?",
+      "a": "Yes, we do corporate catering with commercial pricing. Send us the date, headcount, and any dietary needs for the group.",
+      "keywords": "corporate,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you do BBQ catering?",
+      "a": "Yes, we do BBQ and outdoor catering. Tell us whether the venue has power, water, and space for cooking.",
+      "keywords": "bbq,barbecue",
+      "priority": 8
+    },
+    {
+      "q": "Do you do food trucks?",
+      "a": "Yes, we can arrange food truck catering. Tell us the location and whether you need a fixed or mobile service.",
+      "keywords": "food truck",
+      "priority": 7
+    },
+    {
+      "q": "Do you handle cleanup?",
+      "a": "Cleanup is included for full-service catering. For other services, ask us what cleanup is included when you book.",
+      "keywords": "cleanup,clean up",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit. Let us know as soon as you can if your plans change.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note} The deposit secures your event date. Ask us how much it is before you confirm.",
+      "keywords": "deposit,booking",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured and food-safe?",
+      "a": "We hold [insurance details] and follow [food safety supervisor details]. Ask us for certificates before your event.",
+      "keywords": "insured,food safety",
+      "priority": 9
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "We recommend 4–8 weeks for larger events and 2 weeks for smaller ones. Short notice is possible, subject to availability.",
+      "keywords": "how far,advance,when",
+      "priority": 8
+    },
+    {
+      "q": "Do you do cooking classes?",
+      "a": "Yes, we run private and group cooking classes. Pricing is per person, so tell us how many people will join.",
+      "keywords": "cooking class",
+      "priority": 7
+    },
+    {
+      "q": "Do you travel for events?",
+      "a": "Yes, we can travel to your venue. Tell us the location so we can confirm any travel costs before you book.",
+      "keywords": "travel,location,venue",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "guest_numbers",
+      "label": "Number of guests or attendees",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "catering.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "catering.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Catering needs food safety supervision and a council food business registration. Serving alcohol needs a licence. Venues usually require public liability insurance from the event provider.",
+    "items": [
+      "Food safety supervisor certificate (catering)",
+      "Council food registration (catering)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

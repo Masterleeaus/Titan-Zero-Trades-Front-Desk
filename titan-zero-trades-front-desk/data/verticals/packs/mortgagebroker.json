@@ -1,0 +1,360 @@
+{
+  "format": 3,
+  "id": "mortgagebroker",
+  "name": "Mortgage Brokers",
+  "icon": "🏦",
+  "tagline": "Home loans, refinance, investment, commercial",
+  "version": "1.1.0",
+  "category": "professional",
+  "source_sha256": "e4d5bcdcc914d77b08de0d20027762bd18163bf18ecc78a740e73c49a5f0c3a6",
+  "terminology": {
+    "customer": "client",
+    "job": "application",
+    "site": "office",
+    "quote": "quote",
+    "staff": "broker",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "First Home Loan",
+    "Home Loan",
+    "Refinance",
+    "Investment Property Loan",
+    "Construction Loan",
+    "Bridging Loan",
+    "Commercial Loan",
+    "Asset Finance",
+    "Car Loan",
+    "Personal Loan",
+    "Debt Consolidation",
+    "SMSF Loan",
+    "Loan Pre-Approval",
+    "Rate Review",
+    "Self-Employed Home Loan",
+    "Property Valuation (arranged)"
+  ],
+  "catalog": [
+    {
+      "sku": "MB-CONS",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    },
+    {
+      "sku": "MB-PRE",
+      "label": "Pre-approval application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "pre approval"
+    },
+    {
+      "sku": "MB-APP",
+      "label": "Full application lodgement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "application"
+    },
+    {
+      "sku": "MB-REFI",
+      "label": "Refinance application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "refinance"
+    },
+    {
+      "sku": "MB-INV",
+      "label": "Investment loan application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "investment"
+    },
+    {
+      "sku": "MB-COMM",
+      "label": "Commercial loan application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "commercial"
+    },
+    {
+      "sku": "MB-ASSET",
+      "label": "Asset finance application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "asset finance"
+    },
+    {
+      "sku": "MB-REVIEW",
+      "label": "Loan health review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "review"
+    },
+    {
+      "sku": "MB-SMSF",
+      "label": "SMSF loan application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "smsf"
+    },
+    {
+      "sku": "MB-VAL",
+      "label": "Property valuation (if applicable)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 300,
+      "taxable": 1,
+      "keywords": "valuation"
+    }
+  ],
+  "staff_skills": [
+    "home loans",
+    "first home buyers",
+    "refinance",
+    "investment loans",
+    "commercial lending",
+    "asset finance",
+    "pre-approval",
+    "self-employed borrowers",
+    "SMSF lending",
+    "credit assessment"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "auction tomorrow",
+      "pre-approval needed",
+      "settlement soon",
+      "finance clause"
+    ],
+    "urgent": [
+      "this week",
+      "before auction",
+      "pre-approval",
+      "contract signed"
+    ],
+    "routine": [
+      "quote",
+      "review",
+      "refinance",
+      "consultation",
+      "application"
+    ]
+  },
+  "extra_prompt": "You are booking for a mortgage broker. Ask about the loan purpose, property type, deposit, income type (PAYG or self-employed), and timeline. Ask about existing loans and whether it is an auction purchase. Do not give credit advice in the booking flow. Quote fees only from the reference answers, and say final costs depend on lender and approval. Do not promise a loan approval or specific rate.",
+  "kb": [
+    {
+      "q": "Do you charge a fee?",
+      "a": "{price_note} Our fee structure is [your fee structure], and we explain any lender or broker fee in writing before you proceed.",
+      "keywords": "fee,cost,price",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pre-approval?",
+      "a": "Yes, we arrange loan pre-approvals. For auctions, allow [number] business days for the pre-approval to come through.",
+      "keywords": "pre approval",
+      "priority": 9
+    },
+    {
+      "q": "How much can I borrow?",
+      "a": "It depends on your income, debts, and deposit. We will run a borrowing estimate with you before you apply.",
+      "keywords": "how much,borrow",
+      "priority": 9
+    },
+    {
+      "q": "Do you do refinance?",
+      "a": "Yes, we help with refinances, including rate reductions and cash-out options where lenders offer them. We compare your current loan with options from our lenders.",
+      "keywords": "refinance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do self-employed loans?",
+      "a": "Yes, we help self-employed borrowers, including low-doc and alt-doc options where lenders offer them. You will usually need recent tax returns or notices of assessment.",
+      "keywords": "self employed,low doc",
+      "priority": 9
+    },
+    {
+      "q": "Do you do investment loans?",
+      "a": "Yes, we arrange investment property loans, including interest-only options where lenders offer them. Tell us about your current property holdings when you call.",
+      "keywords": "investment",
+      "priority": 9
+    },
+    {
+      "q": "Do you do commercial loans?",
+      "a": "Yes, we arrange commercial loans and asset finance. Commercial lending often needs more documents, which we will confirm with you.",
+      "keywords": "commercial,asset",
+      "priority": 8
+    },
+    {
+      "q": "Do you do construction loans?",
+      "a": "Yes, we arrange construction loans, which are often paid in progress payments as work is completed. Tell us your build timeline and builder details.",
+      "keywords": "construction",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SMSF lending?",
+      "a": "Yes, we arrange SMSF loans for eligible borrowers and properties. Eligibility depends on your fund's structure, so we check it with you first.",
+      "keywords": "smsf",
+      "priority": 8
+    },
+    {
+      "q": "Do you do debt consolidation?",
+      "a": "Yes, we can consolidate credit cards and personal loans into a home loan where suitable. We check whether it saves you money before you commit.",
+      "keywords": "consolidate,debt",
+      "priority": 8
+    },
+    {
+      "q": "What documents do I need?",
+      "a": "ID, payslips, bank statements, and existing loan statements. Self-employed clients need tax returns and notices of assessment.",
+      "keywords": "documents,requirements",
+      "priority": 9
+    },
+    {
+      "q": "How long does approval take?",
+      "a": "Approval time depends on the lender and how complete your documents are. We will tell you the expected timeframe for your application.",
+      "keywords": "how long,approval",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge for a rate review?",
+      "a": "{rate_review_note} We confirm any rate review fee in writing before we start.",
+      "keywords": "rate review",
+      "priority": 8
+    },
+    {
+      "q": "Are you licensed?",
+      "a": "We operate under [your Australian Credit Licence number] or as a credit representative of [licensee name]. You can check these details on the ASIC register before you apply.",
+      "keywords": "licensed,credit licence",
+      "priority": 9
+    },
+    {
+      "q": "Do you work with all lenders?",
+      "a": "We work with a panel of [number] lenders. Tell us your needs and we will match you with lenders on our panel.",
+      "keywords": "panel,lenders",
+      "priority": 9
+    },
+    {
+      "q": "Do you do car and personal loans?",
+      "a": "Yes, we arrange car, personal, and equipment finance. Tell us the loan amount and purpose so we can compare options.",
+      "keywords": "car loan,personal loan",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} appointment with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} appointment with {business} is on {date}. Please bring the documents listed.",
+    "quote_intro": "Here is the fee proposal for your {job}.",
+    "invoice_note": "Thank you. Payment terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "identity_check",
+      "label": "Identity documents checked (keep only what the law needs)",
+      "required": true
+    },
+    {
+      "key": "income_summary",
+      "label": "Income and liabilities summary",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "mortgagebroker.rule1",
+      "trigger": "document.requested",
+      "action": "request_documents",
+      "description": "Request identity documents securely",
+      "enabled": false
+    },
+    {
+      "id": "mortgagebroker.rule2",
+      "trigger": "invoice.overdue",
+      "action": "send_overdue_reminder",
+      "description": "Send overdue reminder after 14 days",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Accountants providing tax agent services need registration with the Tax Practitioners Board. Legal practice needs a practising certificate. Mortgage brokers need an Australian credit licence (ASIC). Real estate agents need a licence from the state regulator. Verify each licence before relying on it.",
+    "items": [
+      "Tax agent or practising certificate number",
+      "Australian credit licence number (broking)",
+      "Real estate licence number and expiry (real estate)"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "matters open",
+    "hours billed",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

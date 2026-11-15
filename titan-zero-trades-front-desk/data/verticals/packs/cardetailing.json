@@ -1,0 +1,390 @@
+{
+  "format": 3,
+  "id": "cardetailing",
+  "name": "Mobile Car Detailing",
+  "icon": "🚙",
+  "tagline": "Wash, detail, ceramic coating, interior, fleet",
+  "version": "1.1.0",
+  "category": "vehicle",
+  "source_sha256": "3a0fad13484f3748e4549b376e0c961238c8a44d30ff0467acf282d8cb8fbc89",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "location",
+    "quote": "quote",
+    "staff": "detailer",
+    "visit": "session"
+  },
+  "service_types": [
+    "Basic Wash",
+    "Full Detail",
+    "Interior Detail",
+    "Exterior Detail",
+    "Paint Correction",
+    "Ceramic Coating",
+    "Engine Bay Clean",
+    "Headlight Restoration",
+    "Odour Removal",
+    "Pet Hair Removal",
+    "Leather Clean and Condition",
+    "Fleet Detailing",
+    "Pre-Sale Detail",
+    "New Car Protection"
+  ],
+  "catalog": [
+    {
+      "sku": "CD-WASH",
+      "label": "Hand wash & vacuum",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "wash"
+    },
+    {
+      "sku": "CD-INT",
+      "label": "Interior detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "interior"
+    },
+    {
+      "sku": "CD-EXT",
+      "label": "Exterior detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "exterior"
+    },
+    {
+      "sku": "CD-FULL",
+      "label": "Full detail",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 380,
+      "taxable": 1,
+      "keywords": "full detail"
+    },
+    {
+      "sku": "CD-PC",
+      "label": "Paint correction (per stage)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "paint correction"
+    },
+    {
+      "sku": "CD-CER",
+      "label": "Ceramic coating (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "ceramic"
+    },
+    {
+      "sku": "CD-PET",
+      "label": "Pet hair removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "pet hair"
+    },
+    {
+      "sku": "CD-OD",
+      "label": "Odour treatment (ozone or enzyme)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "odour"
+    },
+    {
+      "sku": "CD-ENG",
+      "label": "Engine bay clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "engine bay"
+    },
+    {
+      "sku": "CD-HEAD",
+      "label": "Headlight restoration (pair)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "headlight"
+    },
+    {
+      "sku": "CD-LEATHER",
+      "label": "Leather clean & condition",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "leather"
+    },
+    {
+      "sku": "CD-FLEET",
+      "label": "Fleet detailing (per vehicle)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "fleet"
+    }
+  ],
+  "staff_skills": [
+    "hand washing",
+    "machine polishing",
+    "paint correction",
+    "ceramic coating",
+    "interior cleaning",
+    "leather care",
+    "odour removal",
+    "headlight restoration",
+    "fleet detailing",
+    "mobile service"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "vomit in car",
+      "pet accident in car",
+      "spill on seats",
+      "car needed today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before sale",
+      "before guests"
+    ],
+    "routine": [
+      "regular",
+      "monthly",
+      "detail",
+      "quote",
+      "booking"
+    ]
+  },
+  "extra_prompt": "You are booking for a mobile car detailing service. Ask about the vehicle make, model, size, condition, and what needs attention. Ask whether it is a daily driver, a show car, or pre-sale. Ask about water and power access at the location. Quote prices only from the reference answers, and say the final price is confirmed after seeing the car. Do not promise specific results for severe paint defects without inspection.",
+  "kb": [
+    {
+      "q": "How much does detailing cost?",
+      "a": "{price_note} Pricing depends on vehicle size and condition. We confirm after inspecting the car.",
+      "keywords": "cost,price,detail",
+      "priority": 9
+    },
+    {
+      "q": "Do you come to me?",
+      "a": "Yes, we are a mobile service. We need access to water and power, or we can bring our own.",
+      "keywords": "mobile,come to me",
+      "priority": 9
+    },
+    {
+      "q": "Do you do ceramic coating?",
+      "a": "Yes, including paint preparation before the coating goes on. We quote from the price list, and the final cost depends on the car.",
+      "keywords": "ceramic,coating",
+      "priority": 9
+    },
+    {
+      "q": "Do you do paint correction?",
+      "a": "Yes, we offer single and multi-stage correction. Severe paint defects are assessed on inspection, so results are confirmed after we look at the paint.",
+      "keywords": "paint correction,polish",
+      "priority": 9
+    },
+    {
+      "q": "Do you do interior detailing?",
+      "a": "Yes, including steam, shampoo, and leather care. Tell us about stains or odours so we can plan the work.",
+      "keywords": "interior",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove pet hair?",
+      "a": "Yes, pet hair removal is available as an add-on to any detail. Tell us what type of pet, so we bring the right tools.",
+      "keywords": "pet hair",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove odours?",
+      "a": "Yes, we treat odours with ozone or enzyme treatments, depending on the source. We confirm the treatment after we inspect the car.",
+      "keywords": "odour,odor",
+      "priority": 8
+    },
+    {
+      "q": "Do you do engine bay cleaning?",
+      "a": "Yes, engine bay cleaning is available. We only work on the engine bay once the engine has cooled and the car is safe to work on.",
+      "keywords": "engine bay",
+      "priority": 8
+    },
+    {
+      "q": "Do you restore headlights?",
+      "a": "Yes, we restore headlights, priced per pair. Results depend on how far the lens has yellowed, so we confirm after inspecting them.",
+      "keywords": "headlight",
+      "priority": 8
+    },
+    {
+      "q": "Do you do fleet vehicles?",
+      "a": "Yes, we detail fleet vehicles per vehicle, including ongoing fleet contracts. Tell us how many vehicles you have and how often they need work.",
+      "keywords": "fleet",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pre-sale details?",
+      "a": "Yes, we do pre-sale details to help the car present well for buyers. Tell us your sale date so we can plan the work.",
+      "keywords": "pre sale",
+      "priority": 9
+    },
+    {
+      "q": "How long does a detail take?",
+      "a": "A wash takes about 1 hour. Paint correction and ceramic coating can take a full day or longer.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do boats and caravans?",
+      "a": "We can quote boats and caravans on request. Tell us the size and condition so we can give you a sensible estimate.",
+      "keywords": "boat,caravan",
+      "priority": 7
+    },
+    {
+      "q": "Do you bring water and power?",
+      "a": "Yes. If you do not have water or power at the location, we bring our own.",
+      "keywords": "water,power",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [insurance type and amount] cover. Ask us for a certificate before the visit.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb before you book.",
+      "keywords": "area,suburb",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to be there while you work?",
+      "a": "You do not have to stay for the whole job, but we need access to the car and a clear place to work. Tell us if you prefer to stay.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to clear the car first?",
+      "a": "Please remove valuables and personal items before we arrive, so we can clean every surface properly.",
+      "keywords": "clear,valuables,prep",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} with {business} is on {date}. Please bring your licence or learner permit.",
+    "quote_intro": "Here is your quote for the {job} package.",
+    "invoice_note": "Thank you. Please keep this invoice for your records."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "licence_class",
+      "label": "Licence class or learner permit status",
+      "required": false
+    },
+    {
+      "key": "vehicle_details",
+      "label": "Vehicle make and model",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "cardetailing.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Remind learner 24 hours before the lesson",
+      "enabled": false
+    },
+    {
+      "id": "cardetailing.rule2",
+      "trigger": "booking.cancelled",
+      "action": "offer_reschedule",
+      "description": "Offer a reschedule",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Car detailing uses chemicals that have disposal rules for waste water. Check the environmental and council rules for your area.",
+    "items": [
+      "Chemical and waste disposal notes",
+      "Public liability certificate",
+      "Business insurance details"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "training car",
+    "dual controls",
+    "booking bay"
+  ],
+  "reporting": [
+    "sessions delivered",
+    "cancellations",
+    "course progress"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

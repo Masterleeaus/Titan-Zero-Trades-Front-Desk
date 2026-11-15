@@ -1,0 +1,33 @@
+/* Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15. */
+.tz_fd_m #tzfdform .ui-datepicker table, .tz_fd_m #tzfdform .ui-datepicker thead, .tz_fd_m #tzfdform .ui-datepicker tr, .tz_fd_m #tzfdform .ui-datepicker th, .tz_fd_m #tzfdform .ui-datepicker td {border: 0px;}
+.tz_fd_m #tzfdform .ui-datepicker{box-shadow:none;font:inherit}
+.tz_fd_m #tzfdform .ui-datepicker-header{background:none;padding:0px}
+.tz_fd_m #tzfdform .ui-datepicker-header{text-shadow:none;color:inherit}
+.tz_fd_m #tzfdform .ui-datepicker-calendar .ui-state-default{background:none;box-shadow: none;}
+.tz_fd_m #tzfdform .ui-datepicker-calendar .ui-state-active{box-shadow:none;text-shadow:none;color:#2271b3;border:0px solid}
+.tz_fd_m #tzfdform .ui-datepicker thead{background:none}
+
+.tz_fd_m #tzfdform .dfield.fapp{display: flex;flex-wrap: wrap;}
+.tz_fd_m #tzfdform .fieldCalendarService,.tz_fd_m #tzfdform .usedSlots ,.tz_fd_m #tzfdform .usedSlots,.tz_fd_m #tzfdform .totalCost{width: 100%;}  
+.tz_fd_m #tzfdform .fieldCalendar,#tzfdform .slotsCalendar{
+    width: auto;
+    display: inline-flex;
+    flex: 1;
+    
+}
+@media (max-width: 767px) {
+ .tz_fd_m #tzfdform .dfield.fapp{display: block}
+ .tz_fd_m #tzfdform .slots{margin:0px;padding:0px}
+
+.tz_fd_m #tzfdform .ui-datepicker-header{padding:0px 3%}
+}
+.tz_fd_m #tzfdform .ui-datepicker-inline{max-width:calc(97%);}   
+.tz_fd_m #tzfdform .slots{border:0px;box-shadow:none;}	
+
+.tz_fd_m #tzfdform .ui-datepicker-next,.tz_fd_m #tzfdform .ui-datepicker-prev {display: inline-block;width:18px !important;height:18px !important;margin:10px !important;border-top: 2px solid #000;border-right: 2px solid #000;background:none !important;}
+.tz_fd_m #tzfdform .ui-datepicker-next {transform: rotate(45deg);}
+.tz_fd_m #tzfdform .ui-datepicker-prev {transform: rotate(-135deg);}
+
+#tzfdform .ui-state-default, #tzfdform .ui-widget-content .ui-state-default, #tzfdform .ui-widget-header .ui-state-default, #tzfdform .ui-button, #tzfdform html .ui-button.ui-state-disabled:hover, #tzfdform html .ui-button.ui-state-disabled:active{border:inherit;font-weight:bold}
+#tzfdform .ui-state-active, #tzfdform .ui-widget-content .ui-state-active, #tzfdform .ui-widget-header .ui-state-active, #tzfdform a.ui-button:active, #tzfdform .ui-button:active, #tzfdform .ui-button.ui-state-active:hover{border:inherit;font-weight:bold}
+

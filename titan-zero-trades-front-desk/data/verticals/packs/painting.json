@@ -1,0 +1,395 @@
+{
+  "format": 3,
+  "id": "painting",
+  "name": "Painting & Decorating",
+  "icon": "🎨",
+  "tagline": "Interior, exterior, feature walls, wallpaper",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "d970099013e7d714e91ce60de4c56e63714b7e6780c595b14c639db617659cc2",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Interior Painting",
+    "Exterior Painting",
+    "Ceiling Painting",
+    "Wallpaper Installation",
+    "Feature Walls",
+    "Door Painting",
+    "Trim and Skirting Painting",
+    "Deck Staining",
+    "Fence Painting",
+    "Roof Painting",
+    "Texture Coating",
+    "Plaster Repair",
+    "Lead Paint Removal (assessed first)",
+    "Commercial Painting",
+    "Colour Consultation"
+  ],
+  "catalog": [
+    {
+      "sku": "PNT-INT",
+      "label": "Interior painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "interior,paint"
+    },
+    {
+      "sku": "PNT-EXT",
+      "label": "Exterior painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "exterior,paint"
+    },
+    {
+      "sku": "PNT-CEIL",
+      "label": "Ceiling painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "ceiling,paint"
+    },
+    {
+      "sku": "PNT-DOOR",
+      "label": "Door painting (per side)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "door,paint"
+    },
+    {
+      "sku": "PNT-TRIM",
+      "label": "Trim & skirting (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "trim,skirting"
+    },
+    {
+      "sku": "PNT-WALL",
+      "label": "Wallpaper installation (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "wallpaper,install"
+    },
+    {
+      "sku": "PNT-DECK",
+      "label": "Deck staining (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "deck,stain"
+    },
+    {
+      "sku": "PNT-FENCE",
+      "label": "Fence painting (per meter)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "fence,paint"
+    },
+    {
+      "sku": "PNT-ROOF",
+      "label": "Roof painting (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "roof,paint"
+    },
+    {
+      "sku": "PNT-PLASTER",
+      "label": "Plaster repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "plaster,repair"
+    }
+  ],
+  "staff_skills": [
+    "interior painting",
+    "exterior painting",
+    "ceilings",
+    "wallpaper hanging",
+    "feature walls",
+    "plaster repair",
+    "deck staining",
+    "colour consultation",
+    "surface preparation",
+    "spray and roller finishing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "graffiti",
+      "lead paint",
+      "urgent repair",
+      "water damage"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before sale",
+      "before guests"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "repaint",
+      "feature wall",
+      "touch up"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional painting company. Ask about the property type, number of rooms, surface condition, and whether furniture needs moving. Ask about colour preferences and whether paint is supplied. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "We hold [your licence number, if applicable] and [your insurance type] cover through [your insurer]. A certificate of currency is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does painting cost?",
+      "a": "{price_note} Painting is priced by area and condition. Tell us the rooms and we will quote.",
+      "keywords": "cost,price,painting",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply paint?",
+      "a": "Yes, we can supply the paint for your job, or use the paint you have chosen. Tell us the brand and finish you prefer, and we will confirm the cost in the quote.",
+      "keywords": "paint,supply,products",
+      "priority": 9
+    },
+    {
+      "q": "How many coats do you apply?",
+      "a": "We apply two coats as standard. Dark colours or bare surfaces may need an extra coat, and we will tell you before we start.",
+      "keywords": "coats,two coats",
+      "priority": 9
+    },
+    {
+      "q": "Do you do prep work?",
+      "a": "Yes, prep includes sanding, filling, and masking. We check the surface condition before quoting so the price includes the prep needed.",
+      "keywords": "prep,sanding,filling",
+      "priority": 8
+    },
+    {
+      "q": "How long does interior painting take?",
+      "a": "Most rooms take [number] day(s), and whole homes take longer depending on size and condition. We give an estimated timeframe in the quote.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you move furniture?",
+      "a": "We move small items. Please clear valuables and wall hangings before we arrive.",
+      "keywords": "furniture,move",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint ceilings?",
+      "a": "Yes, we paint ceilings on their own or as part of an interior job. Ceiling work is priced per square metre.",
+      "keywords": "ceiling,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you hang wallpaper?",
+      "a": "Yes, we install and remove wallpaper. Tell us the room size and the wall condition so we can quote.",
+      "keywords": "wallpaper,hang",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint exteriors?",
+      "a": "Yes, we paint exterior walls, trim, and eaves. Exterior work depends on the weather, so we will confirm the schedule with you.",
+      "keywords": "exterior,outside",
+      "priority": 9
+    },
+    {
+      "q": "Do you paint roofs?",
+      "a": "Yes, we paint and restore roofs. Roof painting is priced per square metre, and we check the roof's condition first.",
+      "keywords": "roof,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you stain decks?",
+      "a": "Yes, we clean and stain decks. Deck staining is priced per square metre, and we check the timber condition before quoting.",
+      "keywords": "deck,stain",
+      "priority": 8
+    },
+    {
+      "q": "Do you paint fences?",
+      "a": "Yes, we paint and stain fences. Fence painting is priced per metre of fence.",
+      "keywords": "fence,paint",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair plaster?",
+      "a": "Yes, we repair cracks and holes before painting. Plaster repair is charged per hour, and we give a likely time when we quote.",
+      "keywords": "plaster,repair,crack",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial painting?",
+      "a": "Yes, we service commercial properties. Commercial jobs are priced separately, and we may need to work outside business hours.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Please ask us about the warranty terms for your job before you book.",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area] and the surrounding suburbs. Ask us to confirm your suburb before you book.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer colour consultation?",
+      "a": "Yes, we can advise on colours and finishes. Bring samples or photos of the room so we can suggest a palette.",
+      "keywords": "colour,consultation,advice",
+      "priority": 7
+    },
+    {
+      "q": "Can you paint in wet weather?",
+      "a": "Interior work can go ahead in wet weather. Exterior work may be delayed by rain, so we will reschedule if needed.",
+      "keywords": "weather,rain",
+      "priority": 7
+    },
+    {
+      "q": "Do you clean up after?",
+      "a": "Yes, we clean up and remove masking and drop sheets. We leave the work area clean, apart from the new paint.",
+      "keywords": "clean up,cleanup",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "painting.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "painting.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "painting.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

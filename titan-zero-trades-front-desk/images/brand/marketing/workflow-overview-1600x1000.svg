@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+<title id="title">Titan Zero Trades: Front Desk workflow</title>
+<desc id="desc">Front desk, back-office and operations teams share one customer workflow, from enquiry to quote to confirmed booking.</desc>
+<defs>
+  <linearGradient id="card" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#fff"/><stop offset="1" stop-color="#fcfcfd"/></linearGradient>
+  <filter id="shadow" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="14" stdDeviation="18" flood-color="#16202b" flood-opacity=".08"/></filter>
+</defs>
+<rect width="1600" height="1000" fill="#F7F8FA"/>
+<text x="92" y="104" fill="#D71920" font-family="Arial,sans-serif" font-size="24" font-weight="800" letter-spacing="5">TITAN ZERO TRADES: FRONT DESK</text>
+<text x="90" y="198" fill="#202832" font-family="Arial,sans-serif" font-size="58" font-weight="800">One workspace for the whole business.</text>
+<text x="92" y="251" fill="#66717A" font-family="Arial,sans-serif" font-size="27">Front desk, back-office and operations teams share one customer workflow.</text>
+<g filter="url(#shadow)">
+  <rect x="90" y="330" width="440" height="520" rx="26" fill="url(#card)"/>
+  <rect x="580" y="330" width="440" height="520" rx="26" fill="url(#card)"/>
+  <rect x="1070" y="330" width="440" height="520" rx="26" fill="url(#card)"/>
+</g>
+<g font-family="Arial,sans-serif">
+  <circle cx="152" cy="401" r="31" fill="#FCE8E9"/><path d="M140 400a12 12 0 0 1 24 0v9a4 4 0 0 1-4 4h-3v-12h3a4 4 0 0 1 4 4m-28-5v9a4 4 0 0 0 4 4h3v-12h-3a4 4 0 0 0-4 4" fill="none" stroke="#D71920" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="202" y="409" fill="#D71920" font-size="20" font-weight="800" letter-spacing="2">FRONT DESK</text>
+  <text x="134" y="496" fill="#202832" font-size="34" font-weight="800">Capture an enquiry</text>
+  <rect x="134" y="540" width="352" height="190" rx="18" fill="#F3F5F7"/>
+  <text x="164" y="586" fill="#28313A" font-size="20" font-weight="700">New customer enquiry</text>
+  <text x="164" y="625" fill="#707C86" font-size="18">Call · message · website</text>
+  <path d="M164 661h286m-286 26h214" stroke="#D2D8DE" stroke-width="10" stroke-linecap="round"/>
+  <rect x="134" y="762" width="178" height="48" rx="13" fill="#E31B23"/><text x="150" y="793" fill="#fff" font-size="17" font-weight="700">Open customer</text>
+
+  <circle cx="642" cy="401" r="31" fill="#FCE8E9"/><path d="M630 385h16l12 12v28h-28zM646 385v13h12m-21 7h14m-14 7h14" fill="none" stroke="#D71920" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="692" y="409" fill="#D71920" font-size="20" font-weight="800" letter-spacing="2">BACK OFFICE</text>
+  <text x="624" y="496" fill="#202832" font-size="34" font-weight="800">Prepare the next step</text>
+  <rect x="624" y="540" width="352" height="190" rx="18" fill="#F3F5F7"/>
+  <text x="654" y="586" fill="#28313A" font-size="20" font-weight="700">Quote summary</text>
+  <path d="M654 609h290" stroke="#D2D8DE" stroke-width="2"/>
+  <text x="654" y="650" fill="#707C86" font-size="18">Scope and service details</text>
+  <text x="654" y="687" fill="#707C86" font-size="18">Review before sending</text>
+  <rect x="624" y="762" width="145" height="48" rx="13" fill="#E31B23"/><text x="652" y="793" fill="#fff" font-size="17" font-weight="700">Send quote</text>
+
+  <circle cx="1132" cy="401" r="31" fill="#FCE8E9"/><rect x="1119" y="388" width="26" height="27" rx="4" fill="none" stroke="#D71920" stroke-width="3"/><path d="M1125 383v10m14-10v10m-20 3h26m-19 9h12" stroke="#D71920" stroke-width="3" stroke-linecap="round"/>
+  <text x="1182" y="409" fill="#D71920" font-size="20" font-weight="800" letter-spacing="2">OPERATIONS HUB</text>
+  <text x="1114" y="496" fill="#202832" font-size="34" font-weight="800">Schedule and confirm</text>
+  <rect x="1114" y="540" width="352" height="190" rx="18" fill="#F3F5F7"/>
+  <text x="1144" y="586" fill="#28313A" font-size="20" font-weight="700">Appointment options</text>
+  <rect x="1144" y="619" width="128" height="46" rx="12" fill="#fff" stroke="#D7DDE2" stroke-width="2"/><text x="1160" y="648" fill="#707C86" font-size="16">Tue · 10:30</text>
+  <rect x="1287" y="619" width="145" height="46" rx="12" fill="#FCE8E9" stroke="#E31B23" stroke-width="2"/><text x="1303" y="648" fill="#B81219" font-size="16">Wed · 2:00</text>
+  <text x="1144" y="701" fill="#707C86" font-size="17">Availability checked before confirmation</text>
+  <rect x="1114" y="762" width="185" height="48" rx="13" fill="#202832"/><text x="1142" y="793" fill="#fff" font-size="17" font-weight="700">Confirm booking</text>
+</g>
+<path d="M92 903h1416" stroke="#E1E5E9" stroke-width="2"/>
+<text x="92" y="948" fill="#78838D" font-family="Arial,sans-serif" font-size="18">Shared customer records · connected work · one Titan Zero Trades: Front Desk</text>
+</svg>

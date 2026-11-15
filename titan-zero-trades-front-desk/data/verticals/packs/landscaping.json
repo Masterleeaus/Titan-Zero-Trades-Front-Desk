@@ -1,0 +1,539 @@
+{
+  "format": 3,
+  "id": "landscaping",
+  "name": "Landscaping & Lawn",
+  "icon": "🌿",
+  "tagline": "Lawn mowing, garden maintenance, hedging, irrigation, tree work",
+  "version": "1.1.0",
+  "category": "outdoor",
+  "source_sha256": "490bcd44c8bfbdc983dcba58e763b81af940cf3ea6e9ffc047461612ce759603",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "property",
+    "quote": "quote",
+    "staff": "crew member",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Lawn Mowing and Edging",
+    "Fortnightly or Weekly Garden Maintenance",
+    "Hedge and Shrub Trimming",
+    "Hedge Removal",
+    "Sprinkler and Irrigation Repair",
+    "Drip Irrigation Installation",
+    "Small Tree Pruning",
+    "Tree Removal (safe access only)",
+    "Lawn Fertilising",
+    "Weed Control",
+    "Turf Supply and Laying",
+    "New Lawn Seeding",
+    "Garden Bed Makeover",
+    "New Garden Bed Planting",
+    "Mulching",
+    "Leaf Clearing",
+    "Garden Clean-Up",
+    "Storm Clean-Up",
+    "Lawn Edging",
+    "Garden Watering While Away"
+  ],
+  "catalog": [
+    {
+      "sku": "LSC-MOW-S",
+      "label": "Mow and edge (small lawn, up to 200 m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "mow,lawn,edge,small"
+    },
+    {
+      "sku": "LSC-MOW-M",
+      "label": "Mow and edge (medium lawn, 200–500 m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "mow,lawn,edge,medium"
+    },
+    {
+      "sku": "LSC-MOW-L",
+      "label": "Mow and edge (large lawn, over 500 m²)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "mow,lawn,edge,large"
+    },
+    {
+      "sku": "LSC-HEDGE",
+      "label": "Hedge trimming (per metre)",
+      "kind": "labor",
+      "unit": "m",
+      "unit_price": 12,
+      "taxable": 1,
+      "keywords": "hedge,trim,metre"
+    },
+    {
+      "sku": "LSC-GCLEAN",
+      "label": "Garden clean-up (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "clean up,garden,hour"
+    },
+    {
+      "sku": "LSC-MULCH",
+      "label": "Mulch supply and spread (per m²)",
+      "kind": "material",
+      "unit": "m2",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "mulch,spread,bed"
+    },
+    {
+      "sku": "LSC-TURF",
+      "label": "Turf supply and lay (per m²)",
+      "kind": "material",
+      "unit": "m2",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "turf,lay,lawn"
+    },
+    {
+      "sku": "LSC-SPRK",
+      "label": "Sprinkler head replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "sprinkler,head,replace,irrigation"
+    },
+    {
+      "sku": "LSC-DRIP",
+      "label": "Drip irrigation zone install",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "drip,irrigation,zone,install"
+    },
+    {
+      "sku": "LSC-TREE-S",
+      "label": "Small tree prune (under 4 m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "tree,prune,small"
+    },
+    {
+      "sku": "LSC-TREE-R",
+      "label": "Tree removal (small, safe access)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 480,
+      "taxable": 1,
+      "keywords": "tree,removal,small"
+    },
+    {
+      "sku": "LSC-GREEN",
+      "label": "Green waste removal (per load)",
+      "kind": "fee",
+      "unit": "load",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "green waste,removal,load"
+    },
+    {
+      "sku": "LSC-VISIT",
+      "label": "Garden site visit and quote",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "quote,visit,estimate,free"
+    },
+    {
+      "sku": "LSC-TRAVEL",
+      "label": "Travel fee outside service area",
+      "kind": "travel",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "travel,distance,outside"
+    },
+    {
+      "sku": "LSC-FERT",
+      "label": "Lawn fertilising (per m²)",
+      "kind": "material",
+      "unit": "m2",
+      "unit_price": 2.5,
+      "taxable": 1,
+      "keywords": "fertilise,lawn,m2,feed"
+    },
+    {
+      "sku": "LSC-WEED",
+      "label": "Weed control (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 3.5,
+      "taxable": 1,
+      "keywords": "weed,control,treatment,m2"
+    },
+    {
+      "sku": "LSC-LEAF",
+      "label": "Leaf clearing (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "leaf,clear,hour"
+    },
+    {
+      "sku": "LSC-BED",
+      "label": "Garden bed makeover (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "garden bed,makeover,m2"
+    },
+    {
+      "sku": "LSC-WATER",
+      "label": "Garden watering visit (while away)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "water,away,visit,sprinkler"
+    },
+    {
+      "sku": "LSC-EDGE",
+      "label": "Garden edging (per metre)",
+      "kind": "labor",
+      "unit": "m",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "edging,metre,garden"
+    }
+  ],
+  "staff_skills": [
+    "mowing and edging",
+    "hedge trimming",
+    "irrigation repair",
+    "drip irrigation",
+    "small tree pruning",
+    "turf laying",
+    "weed control",
+    "fertilising",
+    "mulching",
+    "green waste handling",
+    "garden makeovers",
+    "storm clean-up"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "tree on house",
+      "tree on power line",
+      "fallen tree blocking driveway",
+      "gas line exposed",
+      "flooding from broken sprinkler main",
+      "large tree branch down on a car or house",
+      "tree falling onto power lines"
+    ],
+    "urgent": [
+      "storm damage to garden",
+      "large branch hanging over roof",
+      "burst irrigation pipe",
+      "sprinkler flooding the lawn",
+      "garden flooding after rain",
+      "sprinkler broken and running",
+      "large weed patch spreading onto neighbour property"
+    ],
+    "routine": [
+      "mow the lawn",
+      "trim hedges",
+      "garden clean up",
+      "mulch",
+      "new lawn",
+      "quote",
+      "fortnightly service",
+      "fertilise lawn",
+      "weed control",
+      "garden makeover",
+      "turf install",
+      "leaf clearing",
+      "watering while away"
+    ]
+  },
+  "extra_prompt": "You are booking for a landscaping and lawn care company. Ask the approximate lawn or garden size, backyard access (gate, side path), whether green waste should be removed, and whether there are sprinklers or irrigation to avoid. Ask whether the job is one-off or recurring (weekly, fortnightly, monthly). For tree work, ask the tree's height and whether it is near power lines, a building, or a fence. Route large tree jobs and anything near power lines to an on-site assessment.",
+  "kb": [
+    {
+      "q": "Do you offer one-off mowing or only regular service?",
+      "a": "Both. We offer one-off mows, fortnightly and weekly plans, and seasonal clean-ups. Tell us how often you want the lawn kept, and we will recommend a plan.",
+      "keywords": "mow,one off,regular,weekly,fortnightly",
+      "priority": 9
+    },
+    {
+      "q": "Do you take away the green waste?",
+      "a": "Yes, clippings, cuttings, and garden waste are removed from site by default. Tell us if you would rather leave them for mulching. Green waste removal is charged per load.",
+      "keywords": "green waste,clippings,removal,rubbish",
+      "priority": 8
+    },
+    {
+      "q": "Do you work on steep or uneven blocks?",
+      "a": "Yes. For steep or hard-to-reach areas we use a suitable mower or hand tools. We quote the extra time before we start.",
+      "keywords": "steep,slope,hill,uneven",
+      "priority": 7
+    },
+    {
+      "q": "Can you fix my sprinklers?",
+      "a": "Yes. We check and repair sprinkler heads, valves, and timers. We can also install a new zone or a drip irrigation system.",
+      "keywords": "sprinkler,irrigation,repair,drip",
+      "priority": 9
+    },
+    {
+      "q": "Do you do tree removal?",
+      "a": "We prune and remove trees that are safe to work on. Trees near power lines are referred to a licensed arborist or the network operator. Tell us the tree's height and what it is near when you book.",
+      "keywords": "tree,removal,prune,arborist",
+      "priority": 9
+    },
+    {
+      "q": "Is there a fee for a quote?",
+      "a": "Our garden site visit and quote are listed at no charge. Larger design projects may carry a fee, and we will confirm it before the visit.",
+      "keywords": "quote,free,site visit,estimate",
+      "priority": 8
+    },
+    {
+      "q": "Do you trim hedges?",
+      "a": "Yes. We trim hedges and shrubs to shape and height. We can also remove the green waste on the same visit.",
+      "keywords": "hedge,shrub,trim,shape",
+      "priority": 8
+    },
+    {
+      "q": "Can you lay turf or sow new lawn?",
+      "a": "Yes. We prepare the soil, then lay turf or sow seed. Ask us for the best option for your site and sun exposure.",
+      "keywords": "turf,lawn,seed,new lawn,sow",
+      "priority": 8
+    },
+    {
+      "q": "How often should I mow?",
+      "a": "Most lawns need mowing every one to two weeks in spring and summer, and less often in winter. Our fortnightly plan suits most gardens.",
+      "keywords": "how often,frequency,fortnightly,weekly",
+      "priority": 7
+    },
+    {
+      "q": "Do you use chemicals on the lawn?",
+      "a": "We can apply fertiliser or weed control on request. Tell us about pets or children in the garden so we can choose the right product and timing.",
+      "keywords": "chemical,fertiliser,weed,spray,pets",
+      "priority": 7
+    },
+    {
+      "q": "Do you clean up after storms?",
+      "a": "Yes. We clear fallen branches and debris from gardens and driveways. Anything touching a house or power line needs an emergency call first.",
+      "keywords": "storm,clean up,branches,debris",
+      "priority": 9
+    },
+    {
+      "q": "Do you work with my bins and green waste on collection day?",
+      "a": "We can leave the garden tidy for collection day. Please put the bins out by the usual time, and tell us if the bins need moving.",
+      "keywords": "bins,collection,waste,council",
+      "priority": 6
+    },
+    {
+      "q": "Do you plant new gardens?",
+      "a": "Yes. We plant shrubs, perennials and seasonal colour, and mulch the beds. We can recommend plants that suit your climate and sun exposure.",
+      "keywords": "plant,garden bed,mulch,shrubs",
+      "priority": 7
+    },
+    {
+      "q": "Do you do a regular gardening plan?",
+      "a": "Yes. Regular plans include mowing, edging, hedge trimming and garden clean-up on an agreed schedule.",
+      "keywords": "regular,plan,maintenance,schedule",
+      "priority": 8
+    },
+    {
+      "q": "Are your team insured?",
+      "a": "We hold [your insurance type] cover through [your insurer]. A certificate of currency is available on request.",
+      "keywords": "insured,insurance,liability,certificate",
+      "priority": 9
+    },
+    {
+      "q": "How do I cancel or move a visit?",
+      "a": "Please give {cancellation_notice} to move or cancel a visit. Shorter notice may be charged a call-out fee.",
+      "keywords": "cancel,move,reschedule,notice",
+      "priority": 6
+    },
+    {
+      "q": "Do you do rubbish and garden waste removal only?",
+      "a": "Yes. If you only need the garden waste or old timber removed, book a clean-up or removal visit and we will quote by the load.",
+      "keywords": "removal,only,rubbish,load",
+      "priority": 6
+    },
+    {
+      "q": "When is the best time to fertilise my lawn?",
+      "a": "Most lawns benefit from fertiliser in spring and early autumn. The right product depends on the grass type, so we check the lawn before recommending one.",
+      "keywords": "fertilise,when,spring,autumn,grass",
+      "priority": 8
+    },
+    {
+      "q": "How do I stop weeds coming back?",
+      "a": "Remove weeds with their roots, keep the lawn thick and healthy, and treat the area at the right time. We can set up a weed control plan that treats the timing and cause, not just the top growth.",
+      "keywords": "weeds,stop,return,control,roots",
+      "priority": 8
+    },
+    {
+      "q": "Can you take out an old garden bed?",
+      "a": "Yes. We remove plants, edging and soil, and we can dispose of the green waste and rubble.",
+      "keywords": "garden bed,remove,old,edging",
+      "priority": 7
+    },
+    {
+      "q": "Can you water the garden when I am away?",
+      "a": "Yes. We can visit to check the sprinklers, hand-water pots and garden beds, and send you a short note after each visit.",
+      "keywords": "water,away,holiday,sprinkler,pot",
+      "priority": 8
+    },
+    {
+      "q": "Do you do leaf clearing in autumn?",
+      "a": "Yes. We clear leaves from lawns, garden beds, and driveways, and remove the waste from site. Leaf clearing is charged per hour.",
+      "keywords": "leaf,autumn,clear,remove",
+      "priority": 8
+    },
+    {
+      "q": "What type of lawn suits my area?",
+      "a": "It depends on sun, shade, traffic and the local climate. Tell us where the lawn is and how it is used, and we recommend the grass that will suit.",
+      "keywords": "lawn type,grass,suit,shade,sun",
+      "priority": 8
+    },
+    {
+      "q": "Can you install a garden edge or small retaining wall?",
+      "a": "Yes for garden edging. For retaining walls over a set height, we refer you to a builder or an engineer and can coordinate the landscaping around it.",
+      "keywords": "edging,retaining wall,refer,engineer",
+      "priority": 7
+    },
+    {
+      "q": "Do you use mulch on garden beds?",
+      "a": "Yes. We mulch beds to hold moisture and keep weeds down. Tell us whether you prefer pine bark, wood chip or a decorative stone.",
+      "keywords": "mulch,bark,wood chip,stone,beds",
+      "priority": 7
+    },
+    {
+      "q": "How much does garden clean-up cost?",
+      "a": "{price_note} Garden clean-up is charged per hour, and green waste removal is charged per load. We confirm the total before work starts.",
+      "keywords": "cost,price,clean-up",
+      "priority": 9
+    },
+    {
+      "q": "Do you charge a travel fee?",
+      "a": "Yes, a travel fee applies outside our service area. We confirm the fee when you ask for a quote.",
+      "keywords": "travel,area,fee",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} will be at your {site_label} on {date}.",
+    "quote_intro": "Here is your quote for the {job}, based on the area and access we discussed.",
+    "invoice_note": "Thank you for your business. Recurring services are invoiced as agreed."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 20,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "property_size",
+      "label": "Area or size of property",
+      "required": false
+    },
+    {
+      "key": "service_frequency",
+      "label": "One-off or recurring",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "landscaping.rule1",
+      "trigger": "job.completed",
+      "action": "offer_plan",
+      "description": "Offer recurring service plan",
+      "enabled": false
+    },
+    {
+      "id": "landscaping.rule2",
+      "trigger": "season.changed",
+      "action": "send_seasonal_reminder",
+      "description": "Send seasonal service reminder",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tree removal, work near powerlines and some pool work can need council permits or specific licences. Pool barrier inspections apply in many states. Check local council and state rules for the work you do.",
+    "items": [
+      "Council permits recorded where needed",
+      "Pool barrier inspection records kept (if pool work)",
+      "Chemical use and waste disposal recorded"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "mower or trimmer",
+    "pressure equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "recurring service clients",
+    "average job value"
+  ],
+  "staff_record_types": [
+    "white_card",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  },
+  "interaction_slug": "landscaping-gardening"
+}

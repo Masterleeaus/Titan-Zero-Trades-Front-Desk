@@ -1,0 +1,395 @@
+{
+  "format": 3,
+  "id": "tiling",
+  "name": "Tiling",
+  "icon": "🔲",
+  "tagline": "Floor, wall, bathroom, kitchen, outdoor tiling",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "ae0aa2594f9d915e88d0dffa5692683f7fe8cb0e5bc686a5d61228cbc2705610",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Floor Tiling",
+    "Wall Tiling",
+    "Bathroom Tiling",
+    "Kitchen Splashbacks",
+    "Outdoor and Patio Tiling",
+    "Pool Tiling",
+    "Mosaic Tiling",
+    "Tile Repair and Replacement",
+    "Regrouting and Resealing",
+    "Waterproofing Wet Areas",
+    "Floor Screeding and Levelling",
+    "Stone Tiling",
+    "Commercial Tiling",
+    "Tile Removal"
+  ],
+  "catalog": [
+    {
+      "sku": "TIL-FLR",
+      "label": "Floor tiling (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "floor,tiling"
+    },
+    {
+      "sku": "TIL-WALL",
+      "label": "Wall tiling (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "wall,tiling"
+    },
+    {
+      "sku": "TIL-BATH",
+      "label": "Bathroom tiling (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 105,
+      "taxable": 1,
+      "keywords": "bathroom"
+    },
+    {
+      "sku": "TIL-SPLASH",
+      "label": "Kitchen splashback (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "splashback"
+    },
+    {
+      "sku": "TIL-OUT",
+      "label": "Outdoor tiling (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "outdoor"
+    },
+    {
+      "sku": "TIL-POOL",
+      "label": "Pool tiling (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "pool"
+    },
+    {
+      "sku": "TIL-WATER",
+      "label": "Waterproofing (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "waterproof"
+    },
+    {
+      "sku": "TIL-SCREED",
+      "label": "Screeding (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "screed,level"
+    },
+    {
+      "sku": "TIL-REGR",
+      "label": "Regrouting (per square metre)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "regrout,grout"
+    },
+    {
+      "sku": "TIL-REP",
+      "label": "Tile repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    }
+  ],
+  "staff_skills": [
+    "floor tiling",
+    "wall tiling",
+    "waterproofing",
+    "screeding",
+    "mosaic",
+    "stone tiling",
+    "grouting and sealing",
+    "tile removal"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water leaking through tiles",
+      "water damage",
+      "loose tiles creating a trip hazard",
+      "urgent repair needed"
+    ],
+    "urgent": [
+      "before inspection",
+      "before guests",
+      "before move-in",
+      "this week",
+      "today",
+      "tomorrow"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "repair",
+      "regrout",
+      "reseal",
+      "tile supply"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tiling company. Ask about the area size, tile type, surface, and whether tiles are supplied. Ask about waterproofing, screeding, and removal of old tiles. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a waterproofing outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we hold [licence type] licence [licence number] and [insurer] insurance. Certificates are available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does tiling cost?",
+      "a": "{price_note} Tiling is priced per square metre. Your quote shows exactly what is included, such as adhesive and grout.",
+      "keywords": "cost,price,tiling",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply tiles?",
+      "a": "We can supply tiles or install tiles you have already bought. Tell us the tile size and type so we can check the quantity before ordering.",
+      "keywords": "supply,tiles",
+      "priority": 9
+    },
+    {
+      "q": "Do you waterproof wet areas?",
+      "a": "Yes, we waterproof bathrooms, balconies and other wet areas before tiling. Waterproofing is priced per square metre, as listed on your quote.",
+      "keywords": "waterproof,wet,areas",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove old tiles?",
+      "a": "Yes, we remove old tiles and dispose of them. Tell us the floor or wall area so we can include removal in your quote.",
+      "keywords": "remove,old tiles",
+      "priority": 8
+    },
+    {
+      "q": "Do you screed floors?",
+      "a": "Yes, we screed and level floors before tiling. A level base helps the tiles sit flat.",
+      "keywords": "screed,level",
+      "priority": 8
+    },
+    {
+      "q": "Do you regrout?",
+      "a": "Yes, we regrout and reseal tiles. Regrouting is priced per square metre, as listed on your quote.",
+      "keywords": "regrout,grout",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair loose tiles?",
+      "a": "Yes, we repair and replace loose or cracked tiles. We match the tile where we can, but some tiles may no longer be available.",
+      "keywords": "repair,loose",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bathroom tiling?",
+      "a": "Yes, we do full bathroom tiling. A bathroom takes [number] days including waterproofing, depending on size and layout.",
+      "keywords": "bathroom",
+      "priority": 9
+    },
+    {
+      "q": "Do you do kitchen splashbacks?",
+      "a": "Yes, we do splashbacks in tile or stone. Tell us the wall size and tile choice so we can quote.",
+      "keywords": "splashback,kitchen",
+      "priority": 9
+    },
+    {
+      "q": "Do you do outdoor and pool tiling?",
+      "a": "Yes, we do outdoor, patio and pool tiling. Outdoor areas need slip-resistant, weather-rated tiles, and we advise on the right type.",
+      "keywords": "outdoor,pool,tiling",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mosaic tiling?",
+      "a": "Yes, we install mosaic tiles. Small tiles take longer to lay, so mosaic work is quoted per square metre.",
+      "keywords": "mosaic,tiling",
+      "priority": 8
+    },
+    {
+      "q": "How long does tiling take?",
+      "a": "A typical bathroom takes [number] days, including waterproofing. Your quote shows the timing for your specific job.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial tiling?",
+      "a": "Yes, we do commercial tiling. Commercial work is priced separately after a site visit.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us what the warranty covers before you book.",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area]. Ask us to confirm your suburb before booking.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "No, but someone must be able to give access. Let us know in the access notes if you have a key, gate code or pets.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you do stone benchtops?",
+      "a": "We do stone tiling. Benchtop fabrication is quoted separately after a measure and site check.",
+      "keywords": "stone,benchtop",
+      "priority": 7
+    },
+    {
+      "q": "How soon can I use the shower?",
+      "a": "Usually [number] hours after grouting and sealing, depending on the products used. We tell you when the area is ready.",
+      "keywords": "shower,use,dry",
+      "priority": 8
+    },
+    {
+      "q": "Can you match existing tiles?",
+      "a": "We try to match existing tiles, but some may be discontinued. Bring a sample when you enquire.",
+      "keywords": "match,tile",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "tiling.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "tiling.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "tiling.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

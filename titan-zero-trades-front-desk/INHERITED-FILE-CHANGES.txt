@@ -1,0 +1,349 @@
+INHERITED FILE CHANGES
+======================
+Titan Zero Front Desk derives from Appointment Hour Booking 1.5.98 (CodePeople, GPLv2).
+This file records, for each upstream file, whether the plugin keeps it, renames it, changes it or removes it.
+Checked on 2026-11-15 by comparing each upstream file with the plugin file under the same or renamed path.
+Line counts are the number of differing lines reported by diff, with line endings ignored.
+
+A. RENAMED AND CHANGED (upstream path => plugin path, changed lines)
+  README.txt => readme.txt  (1042 lines)
+  addons/applimit.addon.php => addons/bookings/applimit.addon.php  (86 lines)
+  addons/auto-cancel-pending-status.addon.php => addons/bookings/auto-cancel-pending-status.addon.php  (129 lines)
+  addons/base.addon.php => addons/core/base.addon.php  (42 lines)
+  addons/cache.addon.php => addons/core/cache.addon.php  (199 lines)
+  addons/calendarless-interface.addon.php => addons/bookings/calendarless-interface.addon.php  (365 lines)
+  addons/dashboard-box.addon.php => addons/bookings/dashboard-box.addon.php  (420 lines)
+  addons/email-blacklist.addon.php => addons/messaging/email-blacklist.addon.php  (101 lines)
+  addons/followup.addon.php => addons/messaging/followup.addon.php  (98 lines)
+  addons/icalexport.addon.php => addons/bookings/icalexport.addon.php  (880 lines)
+  addons/logs.addon.php => addons/core/logs.addon.php  (150 lines)
+  addons/password.addon.php => addons/core/password.addon.php  (133 lines)
+  addons/reminder.addon.php => addons/messaging/reminder.addon.php  (143 lines)
+  addons/sms-button.addon.php => addons/messaging/sms-button.addon.php  (88 lines)
+  addons/status_update_emails.addon.php => includes/class-tzfd-status-update-emails.php  (386 lines)
+  addons/twiliosms.addon.php => includes/class-tzfd-twilio-sms.php  (111 lines)
+  addons/webhook.addon.php => addons/messaging/webhook.addon.php  (98 lines)
+  addons/whatsapp-button.addon.php => addons/messaging/whatsapp-button.addon.php  (89 lines)
+  app-booking-plugin.php => titan-zero-front-desk.php  (657 lines)
+  classes/cp-base-class.inc.php => classes/tzfd-base-class.inc.php  (231 lines)
+  cp-addons.inc.php => tzfd-addons.inc.php  (476 lines)
+  cp-admin-int-add-booking.inc.php => tzfd-admin-int-add-booking.inc.php  (463 lines)
+  cp-admin-int-block-times.inc.php => tzfd-admin-int-block-times.inc.php  (261 lines)
+  cp-admin-int-list.inc.php => tzfd-admin-int-list.inc.php  (366 lines)
+  cp-admin-int-message-list.inc.php => tzfd-admin-int-message-list.inc.php  (704 lines)
+  cp-admin-int-report.inc.php => tzfd-admin-int-report.inc.php  (639 lines)
+  cp-admin-int-schedule.inc.php => tzfd-admin-int-schedule.inc.php  (267 lines)
+  cp-admin-int.inc.php => tzfd-admin-int.inc.php  (891 lines)
+  cp-full-stats.inc.php => tzfd-full-stats.inc.php  (231 lines)
+  cp-help.inc.php => tzfd-help.inc.php  (850 lines)
+  cp-main-class.inc.php => tzfd-main-class.inc.php  (3892 lines)
+  cp-public-int.inc.php => tzfd-public-int.inc.php  (74 lines)
+  cp-publish-wizzard.inc.php => tzfd-publish-wizzard.inc.php  (165 lines)
+  cp-settings.inc.php => tzfd-settings.inc.php  (754 lines)
+  js/fbuilder-admin.js => js/tzfdform-admin.js  (2111 lines)
+  js/fbuilder-loader-admin.php => js/tzfdform-loader-admin.php  (64 lines)
+  js/fbuilder-loader-public.php => js/tzfdform-loader-public.php  (106 lines)
+  js/fbuilder-pro-admin.jquery.js => js/tzfdform-core-admin.jquery.js  (215 lines)
+  js/fbuilder-pro-public.jquery.js => js/tzfdform-core-public.jquery.js  (123 lines)
+  js/fbuilder-public.js => js/tzfdform-public.js  (12 lines)
+  js/fields-admin/0000_professional_message.js => js/tzfdform-admin-fields/0000_professional_message.js  (3 lines)
+  js/fields-admin/0001_category.professional.form.js => js/tzfdform-admin-fields/0001_category.professional.form.js  (4 lines)
+  js/fields-admin/000_category.form.js => js/tzfdform-admin-fields/000_category.form.js  (2 lines)
+  js/fields-admin/001_category.ds.js => js/tzfdform-admin-fields/001_category.ds.js  (2 lines)
+  js/fields-admin/003_category.containers.js => js/tzfdform-admin-fields/003_category.containers.js  (2 lines)
+  js/fields-admin/00_jquery.parse.min.js => js/tzfdform-admin-fields/00_jquery.parse.min.js  (11 lines)
+  js/fields-admin/01_fbuilder.femail.js => js/tzfdform-admin-fields/01_tzfdform.femail.js  (16 lines)
+  js/fields-admin/01_fbuilder.ftext.js => js/tzfdform-admin-fields/01_tzfdform.ftext.js  (22 lines)
+  js/fields-admin/02_fbuilder.fapp.js => js/tzfdform-admin-fields/02_tzfdform.fapp.js  (106 lines)
+  js/fields-admin/03_fbuilder.acceptance.js => js/tzfdform-admin-fields/03_tzfdform.acceptance.js  (22 lines)
+  js/fields-admin/03_fbuilder.fcurrency.js => js/tzfdform-admin-fields/03_tzfdform.fcurrency.js  (12 lines)
+  js/fields-admin/03_fbuilder.fnumber.js => js/tzfdform-admin-fields/03_tzfdform.fnumber.js  (12 lines)
+  js/fields-admin/04_fbuilder.fdate.js => js/tzfdform-admin-fields/04_tzfdform.fdate.js  (12 lines)
+  js/fields-admin/05_fbuilder.ftextarea.js => js/tzfdform-admin-fields/05_tzfdform.ftextarea.js  (12 lines)
+  js/fields-admin/06_fbuilder.fcheck.js => js/tzfdform-admin-fields/06_tzfdform.fcheck.js  (12 lines)
+  js/fields-admin/07_fbuilder.fradio.js => js/tzfdform-admin-fields/07_tzfdform.fradio.js  (12 lines)
+  js/fields-admin/08_fbuilder.fdropdown.js => js/tzfdform-admin-fields/08_tzfdform.fdropdown.js  (12 lines)
+  js/fields-admin/09_fbuilder.ffile.js => js/tzfdform-admin-fields/09_tzfdform.ffile.js  (12 lines)
+  js/fields-admin/10_fbuilder.fpassword.js => js/tzfdform-admin-fields/10_tzfdform.fpassword.js  (12 lines)
+  js/fields-admin/11_fbuilder.fphone.js => js/tzfdform-admin-fields/11_tzfdform.fphone.js  (12 lines)
+  js/fields-admin/12_fbuilder.fcommentarea.js => js/tzfdform-admin-fields/12_tzfdform.fcommentarea.js  (12 lines)
+  js/fields-admin/13_fbuilder.fhidden.js => js/tzfdform-admin-fields/13_tzfdform.fhidden.js  (12 lines)
+  js/fields-admin/14_fbuilder.fsectionbreak.js => js/tzfdform-admin-fields/14_tzfdform.fsectionbreak.js  (12 lines)
+  js/fields-admin/15_fbuilder.fpagebreak.js => js/tzfdform-admin-fields/15_tzfdform.fpagebreak.js  (12 lines)
+  js/fields-admin/16_fbuilder.fsummary.js => js/tzfdform-admin-fields/16_tzfdform.fsummary.js  (12 lines)
+  js/fields-admin/17_fbuilder.datasource.js => js/tzfdform-admin-fields/17_tzfdform.datasource.js  (166 lines)
+  js/fields-admin/18_fbuilder.ftext.ds.js => js/tzfdform-admin-fields/18_tzfdform.ftext.ds.js  (12 lines)
+  js/fields-admin/19_fbuilder.femail.ds.js => js/tzfdform-admin-fields/19_tzfdform.femail.ds.js  (12 lines)
+  js/fields-admin/20_fbuilder.ftextarea.ds.js => js/tzfdform-admin-fields/20_tzfdform.ftextarea.ds.js  (12 lines)
+  js/fields-admin/21_fbuilder.fcheck.ds.js => js/tzfdform-admin-fields/21_tzfdform.fcheck.ds.js  (12 lines)
+  js/fields-admin/22_fbuilder.fradio.ds.js => js/tzfdform-admin-fields/22_tzfdform.fradio.ds.js  (12 lines)
+  js/fields-admin/23_fbuilder.fphone.ds.js => js/tzfdform-admin-fields/23_tzfdform.fphone.ds.js  (12 lines)
+  js/fields-admin/26_fbuilder.fdropdown.ds.js => js/tzfdform-admin-fields/26_tzfdform.fdropdown.ds.js  (12 lines)
+  js/fields-admin/27_fbuilder.fhidden.ds.js => js/tzfdform-admin-fields/27_tzfdform.fhidden.ds.js  (12 lines)
+  js/fields-admin/28_fbuilder.fcontainer.js => js/tzfdform-admin-fields/28_tzfdform.fcontainer.js  (12 lines)
+  js/fields-admin/29_fbuilder.ffieldset.fc.js => js/tzfdform-admin-fields/29_tzfdform.ffieldset.fc.js  (12 lines)
+  js/fields-admin/30_fbuilder.fdiv.fc.js => js/tzfdform-admin-fields/30_tzfdform.fdiv.fc.js  (12 lines)
+  js/fields-admin/31_fbuilder.fmedia.js => js/tzfdform-admin-fields/31_tzfdform.fmedia.js  (10 lines)
+  js/fields-admin/32_fbuilder.fbutton.js => js/tzfdform-admin-fields/32_tzfdform.fbutton.js  (12 lines)
+  js/fields-admin/33_fbuilder.fnumber.ds.js => js/tzfdform-admin-fields/33_tzfdform.fnumber.ds.js  (16 lines)
+  js/fields-admin/34_fbuilder.fhtml.js => js/tzfdform-admin-fields/34_tzfdform.fhtml.js  (12 lines)
+  js/fields-admin/36_fbuilder.fcurrency.ds.js => js/tzfdform-admin-fields/36_tzfdform.fcurrency.ds.js  (16 lines)
+  js/fields-public/01_fbuilder.ftext.js => js/tzfdform-public-fields/01_tzfdform.ftext.js  (8 lines)
+  js/fields-public/03_fbuilder.femail.js => js/tzfdform-public-fields/03_tzfdform.femail.js  (10 lines)
+  js/fields-public/35_fbuilder.fapp.js => js/tzfdform-public-fields/35_tzfdform.fapp.js  (296 lines)
+  js/fields-public/37_fbuilder.acceptance.js => js/tzfdform-public-fields/37_tzfdform.acceptance.js  (42 lines)
+  mv/js/multiview.js => tzfd-calendar/js/tzfdcalendar.js  (187 lines)
+  templates/01/config.ini => templates/01/config.json  (12 lines)
+  templates/02/config.ini => templates/02/config.json  (12 lines)
+  templates/03/config.ini => templates/03/config.json  (12 lines)
+  templates/04/config.ini => templates/04/config.json  (12 lines)
+  templates/05/config.ini => templates/05/config.json  (12 lines)
+  templates/06/config.ini => templates/06/config.json  (12 lines)
+  templates/07/config.ini => templates/07/config.json  (12 lines)
+  templates/08/config.ini => templates/08/config.json  (12 lines)
+  templates/09/config.ini => templates/09/config.json  (12 lines)
+  templates/10/config.ini => templates/10/config.json  (12 lines)
+  templates/11/config.ini => templates/11/config.json  (12 lines)
+  templates/12/config.ini => templates/12/config.json  (12 lines)
+
+B. IDENTICAL UNDER ANOTHER NAME
+0
+  images/cp_form.gif => images/tz_fd_form.gif
+  mv/css/images/icons.png => tzfd-calendar/css/images/icons_black.png
+  mv/language/multiview_lang_cs_CZ.js => tzfd-calendar/language/tz_fd_calendar_lang_cs_CZ.js
+  mv/language/multiview_lang_da_DK.js => tzfd-calendar/language/tz_fd_calendar_lang_da_DK.js
+  mv/language/multiview_lang_de_DE.js => tzfd-calendar/language/tz_fd_calendar_lang_de_DE.js
+  mv/language/multiview_lang_du_DU.js => tzfd-calendar/language/tz_fd_calendar_lang_nl_NL.js
+  mv/language/multiview_lang_en_GB.js => tzfd-calendar/language/tz_fd_calendar_lang_en_GB.js
+  mv/language/multiview_lang_es_ES.js => tzfd-calendar/language/tz_fd_calendar_lang_es_ES.js
+  mv/language/multiview_lang_fr_FR.js => tzfd-calendar/language/tz_fd_calendar_lang_fr_FR.js
+  mv/language/multiview_lang_it_IT.js => tzfd-calendar/language/tz_fd_calendar_lang_it_IT.js
+  mv/language/multiview_lang_nb_NO.js => tzfd-calendar/language/tz_fd_calendar_lang_nb_NO.js
+  mv/language/multiview_lang_nl_NL.js => tzfd-calendar/language/tz_fd_calendar_lang_nl_NL.js
+  mv/language/multiview_lang_pl_PL.js => tzfd-calendar/language/tz_fd_calendar_lang_pl_PL.js
+  mv/language/multiview_lang_pt_BR.js => tzfd-calendar/language/tz_fd_calendar_lang_pt_BR.js
+  mv/language/multiview_lang_pt_PT.js => tzfd-calendar/language/tz_fd_calendar_lang_pt_PT.js
+  mv/language/multiview_lang_ru_RU.js => tzfd-calendar/language/tz_fd_calendar_lang_ru_RU.js
+  mv/language/multiview_lang_sk_SK.js => tzfd-calendar/language/tz_fd_calendar_lang_sk_SK.js
+  mv/language/multiview_lang_sl_SI.js => tzfd-calendar/language/tz_fd_calendar_lang_sl_SI.js
+  mv/language/multiview_lang_sv_SE.js => tzfd-calendar/language/tz_fd_calendar_lang_sv_SE.js
+
+C. REMOVED FROM THE PLUGIN (upstream path, no counterpart found by content or name)
+  addons/admin-calendar-frontend.addon.php
+  addons/ahb-pdf.addon.php
+  addons/ahb_uppercase.addon.php
+  addons/authnet.addon.php
+  addons/auto-fill-fields.addon.php
+  addons/auto-select-time.addon.php
+  addons/cancellation.addon.php
+  addons/capacity-override.addon.php
+  addons/cff-integration.addon.php
+  addons/clickatell.addon.php
+  addons/coupons.addon.php
+  addons/credits-purchase.addon.php
+  addons/cryptocom.addon.php
+  addons/custom-statuses.addon.php
+  addons/deposits.addon.php
+  addons/double-opt-in.addon.php
+  addons/edition.addon.php
+  addons/flowcl.add-on.php
+  addons/frontend-lists.addon.php
+  addons/google-calendar-api.addon.php
+  addons/google-maps-address.addon.php
+  addons/icalimport.addon.php
+  addons/lookup-data.addon.php
+  addons/mailchimp.addon.php
+  addons/mmdsmart-sms.addon.php
+  addons/mollie.addon.php
+  addons/payment_methods_order.addon.php
+  addons/paypal.addon.php
+  addons/paypalpro.addon.php
+  addons/qrcode.addon.php
+  addons/razorpay.addon.php
+  addons/recaptcha.addon.php
+  addons/redsys-bizum.addon.php
+  addons/redsys.addon.php
+  addons/remove_ignore_old_bookings.addon.php
+  addons/revolut.addon.php
+  addons/sagepay.addon.php
+  addons/sagepayments.addon.php
+  addons/salesforce.addon.php
+  addons/schedule-calendar-contents.addon.php
+  addons/share-booked-times.addon.php
+  addons/signature.addon.php
+  addons/skrill.addon.php
+  addons/smsbroadcast.addon.php
+  addons/square-checkout.addon.php
+  addons/square.addon.php
+  addons/stripe.addon.php
+  addons/targetpay.ideal.addon.php
+  addons/text-em-all.addon.php
+  addons/timezoneconversion.addon.php
+  addons/turnstile.addon.php
+  addons/uploads.addon.php
+  addons/user-calendar-creation.addon.php
+  addons/user-read-only-access.addon.php
+  addons/user-registration.addon.php
+  addons/woocommerce.addon.php
+  addons/woocommercebilling.add-on.php
+  addons/worldpay.addon.php
+  addons/zoom.addon.php
+  banner.php
+  captcha/font-1.ttf
+  captcha/font-2.ttf
+  captcha/font-3.ttf
+  captcha/font-4.ttf
+  cp-feedback.php
+  css/colorpicker.css
+  css/cupertino/images/ui-bg_flat_15_cd0a0a_40x100.png
+  css/genstyle.css
+  csseditor.inc.php
+  images/selecting-templates.png
+  js/excanvas.min.js
+  js/jquery.caret.js
+  js/nope.js
+  languages/appointment-hour-booking-ES.mo
+  languages/appointment-hour-booking-ES.po
+  languages/appointment-hour-booking-af.mo
+  languages/appointment-hour-booking-af.po
+  languages/appointment-hour-booking-ar.mo
+  languages/appointment-hour-booking-ar.po
+  languages/appointment-hour-booking-az.mo
+  languages/appointment-hour-booking-az.po
+  languages/appointment-hour-booking-be_BY.mo
+  languages/appointment-hour-booking-be_BY.po
+  languages/appointment-hour-booking-bg_BG.mo
+  languages/appointment-hour-booking-bg_BG.po
+  languages/appointment-hour-booking-bn_IN.mo
+  languages/appointment-hour-booking-bn_IN.po
+  languages/appointment-hour-booking-bs_BA.mo
+  languages/appointment-hour-booking-bs_BA.po
+  languages/appointment-hour-booking-ca.mo
+  languages/appointment-hour-booking-ca.po
+  languages/appointment-hour-booking-ckb.mo
+  languages/appointment-hour-booking-ckb.po
+  languages/appointment-hour-booking-cs_CZ.mo
+  languages/appointment-hour-booking-cs_CZ.po
+  languages/appointment-hour-booking-da_DK.mo
+  languages/appointment-hour-booking-da_DK.po
+  languages/appointment-hour-booking-de_CH.mo
+  languages/appointment-hour-booking-de_CH.po
+  languages/appointment-hour-booking-de_DE.mo
+  languages/appointment-hour-booking-de_DE.po
+  languages/appointment-hour-booking-el.mo
+  languages/appointment-hour-booking-el.po
+  languages/appointment-hour-booking-eo_EO.mo
+  languages/appointment-hour-booking-eo_EO.po
+  languages/appointment-hour-booking-es_ES.mo
+  languages/appointment-hour-booking-es_ES.po
+  languages/appointment-hour-booking-et.mo
+  languages/appointment-hour-booking-et.po
+  languages/appointment-hour-booking-eu.mo
+  languages/appointment-hour-booking-eu.po
+  languages/appointment-hour-booking-fa_IR.mo
+  languages/appointment-hour-booking-fa_IR.po
+  languages/appointment-hour-booking-fi.mo
+  languages/appointment-hour-booking-fi.po
+  languages/appointment-hour-booking-fr_CA.mo
+  languages/appointment-hour-booking-fr_CA.po
+  languages/appointment-hour-booking-fr_FR.mo
+  languages/appointment-hour-booking-fr_FR.po
+  languages/appointment-hour-booking-ga_IE.mo
+  languages/appointment-hour-booking-ga_IE.po
+  languages/appointment-hour-booking-gl_ES.mo
+  languages/appointment-hour-booking-gl_ES.po
+  languages/appointment-hour-booking-he_IL.mo
+  languages/appointment-hour-booking-he_IL.po
+  languages/appointment-hour-booking-hi_IN.mo
+  languages/appointment-hour-booking-hi_IN.po
+  languages/appointment-hour-booking-hr.mo
+  languages/appointment-hour-booking-hr.po
+  languages/appointment-hour-booking-hu_HU.mo
+  languages/appointment-hour-booking-hu_HU.po
+  languages/appointment-hour-booking-hy_AM.mo
+  languages/appointment-hour-booking-hy_AM.po
+  languages/appointment-hour-booking-id_ID.mo
+  languages/appointment-hour-booking-id_ID.po
+  languages/appointment-hour-booking-it_IT.mo
+  languages/appointment-hour-booking-it_IT.po
+  languages/appointment-hour-booking-ja.mo
+  languages/appointment-hour-booking-ja.po
+  languages/appointment-hour-booking-ka_GE.mo
+  languages/appointment-hour-booking-ka_GE.po
+  languages/appointment-hour-booking-ko_KR.mo
+  languages/appointment-hour-booking-ko_KR.po
+  languages/appointment-hour-booking-lt_LT.mo
+  languages/appointment-hour-booking-lt_LT.po
+  languages/appointment-hour-booking-lv.mo
+  languages/appointment-hour-booking-lv.po
+  languages/appointment-hour-booking-mk_MK.mo
+  languages/appointment-hour-booking-mk_MK.po
+  languages/appointment-hour-booking-ml_IN.mo
+  languages/appointment-hour-booking-ml_IN.po
+  languages/appointment-hour-booking-ms_MY.mo
+  languages/appointment-hour-booking-ms_MY.po
+  languages/appointment-hour-booking-mt_MT.mo
+  languages/appointment-hour-booking-mt_MT.po
+  languages/appointment-hour-booking-nb_NO.mo
+  languages/appointment-hour-booking-nb_NO.po
+  languages/appointment-hour-booking-nl_BE.mo
+  languages/appointment-hour-booking-nl_BE.po
+  languages/appointment-hour-booking-nl_NL.mo
+  languages/appointment-hour-booking-nl_NL.po
+  languages/appointment-hour-booking-pa_IN.mo
+  languages/appointment-hour-booking-pa_IN.po
+  languages/appointment-hour-booking-pl_PL.mo
+  languages/appointment-hour-booking-pl_PL.po
+  languages/appointment-hour-booking-pt_BR.mo
+  languages/appointment-hour-booking-pt_BR.po
+  languages/appointment-hour-booking-pt_PT.mo
+  languages/appointment-hour-booking-pt_PT.po
+  languages/appointment-hour-booking-ro_RO.mo
+  languages/appointment-hour-booking-ro_RO.po
+  languages/appointment-hour-booking-ru_RU.mo
+  languages/appointment-hour-booking-ru_RU.po
+  languages/appointment-hour-booking-sk_SK.mo
+  languages/appointment-hour-booking-sk_SK.po
+  languages/appointment-hour-booking-sl_SI.mo
+  languages/appointment-hour-booking-sl_SI.po
+  languages/appointment-hour-booking-sq.mo
+  languages/appointment-hour-booking-sq.po
+  languages/appointment-hour-booking-sr_RS.mo
+  languages/appointment-hour-booking-sr_RS.po
+  languages/appointment-hour-booking-sv_SE.mo
+  languages/appointment-hour-booking-sv_SE.po
+  languages/appointment-hour-booking-ta.mo
+  languages/appointment-hour-booking-ta.po
+  languages/appointment-hour-booking-th.mo
+  languages/appointment-hour-booking-th.po
+  languages/appointment-hour-booking-tl.mo
+  languages/appointment-hour-booking-tl.po
+  languages/appointment-hour-booking-tr_TR.mo
+  languages/appointment-hour-booking-tr_TR.po
+  languages/appointment-hour-booking-uk.mo
+  languages/appointment-hour-booking-uk.po
+  languages/appointment-hour-booking-zh_CN.mo
+  languages/appointment-hour-booking-zh_CN.po
+  languages/appointment-hour-booking-zh_TW.mo
+  languages/appointment-hour-booking-zh_TW.po
+  mv/css/images/cal.gif
+  mv/css/images/combined.gif
+  mv/css/images/dropdown.png
+  mv/css/images/icons_beige.png
+  mv/css/images/icons_blue.png
+  mv/css/images/icons_green.png
+  mv/css/images/icons_orange.png
+  mv/css/images/icons_white.png
+  mv/css/images/icons_yellow.png
+  mv/css/images/source.png
+  mv/js/images/buttons.gif
+  mv/js/images/toolbar.gif
+  mv/js/jquery.cleditor.css
+  mv/js/jquery.cleditor.js
+  mv/js/jquery.colorselect.js
+  mv/js/jquery.dropdown.js
+  mv/js/jquery.form.js
+  mv/js/jquery.validate.js
+  mv/js/multiview.public.js
+  mv/js/repeat.js
+  mv/js/widget.admin.js

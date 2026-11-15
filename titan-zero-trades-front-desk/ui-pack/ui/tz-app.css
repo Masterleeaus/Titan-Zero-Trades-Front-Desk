@@ -1,0 +1,353 @@
+/*
+ * Titan Zero UI pack: Front Desk. File: ui/tz-app.css
+ * Every rule is scoped to .tz-app, the wrapper the pack prints around this app's admin screens.
+ * Loaded only on this app's own admin pages. No external fonts or scripts.
+ * Contrast (WCAG 2.2): text on white and on the dark surface is checked per token; see INTEGRATION.md.
+ */
+
+:root {
+  /* App brand (primary colour). */
+  --tz-app-accent: #0E7490;
+  --tz-app-on-accent: #FFFFFF;
+  --tz-app-accent-text: #0E7490;
+
+  /* Neutral ramp. */
+  --tz-app-n-50: #f8fafc;
+  --tz-app-n-100: #f1f5f9;
+  --tz-app-n-200: #e2e8f0;
+  --tz-app-n-300: #cbd5e1;
+  --tz-app-n-400: #94a3b8;
+  --tz-app-n-500: #64748b;
+  --tz-app-n-600: #475569;
+  --tz-app-n-700: #334155;
+  --tz-app-n-800: #1e293b;
+  --tz-app-n-900: #0f172a;
+
+  /* Surfaces and text, light theme. Text is #0f172a on white (17.9:1) and #475569 muted (7.6:1). */
+  --tz-app-page: #f8fafc;
+  --tz-app-surface: #ffffff;
+  --tz-app-surface-2: #f1f5f9;
+  --tz-app-border: #e2e8f0;
+  --tz-app-text: #0f172a;
+  --tz-app-muted: #475569;
+  --tz-app-focus: #0E7490;
+
+  /* Status tones, light theme. */
+  --tz-app-ok-bg: #dcfce7;
+  --tz-app-ok-fg: #166534;
+  --tz-app-warn-bg: #fef3c7;
+  --tz-app-warn-fg: #92400e;
+  --tz-app-bad-bg: #fee2e2;
+  --tz-app-bad-fg: #991b1b;
+  --tz-app-info-bg: #dbeafe;
+  --tz-app-info-fg: #1e40af;
+  --tz-app-neutral-bg: #e2e8f0;
+  --tz-app-neutral-fg: #334155;
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --tz-app-accent: #358AA2;
+    --tz-app-on-accent: #0F172A;
+    --tz-app-accent-text: #358AA2;
+    --tz-app-n-50: #0f172a;
+    --tz-app-n-100: #1e293b;
+    --tz-app-n-200: #334155;
+    --tz-app-n-300: #475569;
+    --tz-app-n-400: #64748b;
+    --tz-app-n-500: #94a3b8;
+    --tz-app-n-600: #cbd5e1;
+    --tz-app-n-700: #e2e8f0;
+    --tz-app-n-800: #f1f5f9;
+    --tz-app-n-900: #f8fafc;
+    --tz-app-page: #0f172a;
+    --tz-app-surface: #1e293b;
+    --tz-app-surface-2: #273549;
+    --tz-app-border: #334155;
+    --tz-app-text: #f8fafc;
+    --tz-app-muted: #94a3b8;
+    --tz-app-focus: #358AA2;
+    --tz-app-ok-bg: #14532d;
+    --tz-app-ok-fg: #bbf7d0;
+    --tz-app-warn-bg: #78350f;
+    --tz-app-warn-fg: #fde68a;
+    --tz-app-bad-bg: #7f1d1d;
+    --tz-app-bad-fg: #fecaca;
+    --tz-app-info-bg: #1e3a8a;
+    --tz-app-info-fg: #bfdbfe;
+    --tz-app-neutral-bg: #334155;
+    --tz-app-neutral-fg: #e2e8f0;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --tz-app-accent: #358AA2;
+  --tz-app-on-accent: #0F172A;
+  --tz-app-accent-text: #358AA2;
+  --tz-app-n-50: #0f172a;
+  --tz-app-n-100: #1e293b;
+  --tz-app-n-200: #334155;
+  --tz-app-n-300: #475569;
+  --tz-app-n-400: #64748b;
+  --tz-app-n-500: #94a3b8;
+  --tz-app-n-600: #cbd5e1;
+  --tz-app-n-700: #e2e8f0;
+  --tz-app-n-800: #f1f5f9;
+  --tz-app-n-900: #f8fafc;
+  --tz-app-page: #0f172a;
+  --tz-app-surface: #1e293b;
+  --tz-app-surface-2: #273549;
+  --tz-app-border: #334155;
+  --tz-app-text: #f8fafc;
+  --tz-app-muted: #94a3b8;
+  --tz-app-focus: #358AA2;
+  --tz-app-ok-bg: #14532d;
+  --tz-app-ok-fg: #bbf7d0;
+  --tz-app-warn-bg: #78350f;
+  --tz-app-warn-fg: #fde68a;
+  --tz-app-bad-bg: #7f1d1d;
+  --tz-app-bad-fg: #fecaca;
+  --tz-app-info-bg: #1e3a8a;
+  --tz-app-info-fg: #bfdbfe;
+  --tz-app-neutral-bg: #334155;
+  --tz-app-neutral-fg: #e2e8f0;
+  color-scheme: dark;
+}
+
+/* Logo variants follow the same theme rules as the colour tokens. */
+.tz-app .tz-app-logo--dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .tz-app .tz-app-logo--light { display: none; }
+  :root:not([data-theme="light"]) .tz-app .tz-app-logo--dark { display: block; }
+}
+:root[data-theme="dark"] .tz-app .tz-app-logo--light { display: none; }
+:root[data-theme="dark"] .tz-app .tz-app-logo--dark { display: block; }
+
+/* Shell */
+.tz-app,
+.tz-app * { box-sizing: border-box; }
+
+.tz-app {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tz-app-text);
+  background: var(--tz-app-page);
+  border-radius: 14px;
+  padding: 16px;
+  margin: 12px 0 24px;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  -webkit-text-size-adjust: 100%;
+}
+.tz-app img { max-width: 100%; height: auto; }
+.tz-app .wrap { margin: 0; padding: 0; }
+.tz-app h1 { font-size: 1.6rem; line-height: 1.2; margin: 0 0 4px; color: var(--tz-app-text); font-weight: 700; }
+.tz-app h2 { font-size: 1.1rem; margin: 0 0 8px; color: var(--tz-app-text); }
+.tz-app h3 { font-size: 1rem; margin: 0 0 6px; color: var(--tz-app-text); }
+
+.tz-app .tz-app-head {
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 14px; background: var(--tz-app-surface); border: 1px solid var(--tz-app-border); border-radius: 12px;
+}
+.tz-app .tz-app-brand { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.tz-app .tz-app-icon img { display: block; width: 44px; height: 44px; border-radius: 10px; }
+.tz-app .tz-app-wordmark img { display: block; height: 34px; width: auto; }
+.tz-app .tz-app-site { margin: 0; color: var(--tz-app-muted); font-size: .875rem; }
+
+/* Navigation: horizontal pills that scroll on phones and iPads. */
+.tz-app .tz-app-nav { margin: 12px 0 4px; }
+.tz-app .tz-app-nav ul {
+  display: flex; gap: 8px; list-style: none; margin: 0; padding: 2px 0 6px;
+  overflow-x: auto; -webkit-overflow-scrolling: touch;
+}
+.tz-app .tz-app-nav li { flex: 0 0 auto; }
+.tz-app .tz-app-nav a {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 8px 16px;
+  border-radius: 999px; border: 1px solid var(--tz-app-border); background: var(--tz-app-surface);
+  color: var(--tz-app-text); text-decoration: none; font-weight: 600; font-size: .9rem; white-space: nowrap;
+}
+.tz-app .tz-app-nav a:hover { border-color: var(--tz-app-accent-text); }
+.tz-app .tz-app-nav a.is-current {
+  background: var(--tz-app-accent); border-color: var(--tz-app-accent); color: var(--tz-app-on-accent);
+}
+
+.tz-app a:focus-visible,
+.tz-app button:focus-visible,
+.tz-app input:focus-visible,
+.tz-app select:focus-visible,
+.tz-app textarea:focus-visible { outline: 3px solid var(--tz-app-focus); outline-offset: 2px; }
+
+.tz-app .tz-app-page-head { margin: 12px 0 8px; }
+.tz-app .tz-app-lead { margin: 0; color: var(--tz-app-muted); }
+.tz-app .tz-app-dash > h2 { margin-top: 8px; }
+
+/* Stat tiles (dashboard) and the restyled plugin tiles. */
+.tz-app .tz-app-stats,
+.tz-app .tzfd-stats {
+  list-style: none; margin: 12px 0; padding: 0; display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+.tz-app .tz-app-stat {
+  background: var(--tz-app-surface); border: 1px solid var(--tz-app-border);
+  border-left: 5px solid var(--tz-tone, var(--tz-app-accent)); border-radius: 12px;
+  padding: 12px 14px; min-width: 0;
+}
+.tz-app .tz-app-stat a { color: inherit; text-decoration: none; display: block; }
+.tz-app .tz-app-stat-value { display: block; font-size: 1.7rem; font-weight: 700; line-height: 1.1; font-variant-numeric: tabular-nums; color: var(--tz-app-text); }
+.tz-app .tz-app-stat-label { display: block; font-weight: 600; margin-top: 4px; color: var(--tz-app-text); }
+.tz-app .tz-app-stat-sub { display: block; color: var(--tz-app-muted); font-size: .85rem; }
+.tz-app .tz-app-stat.is-unavailable .tz-app-stat-value { color: var(--tz-app-muted); }
+.tz-app .tz-tone-ink { --tz-tone: var(--tz-app-n-500); }
+.tz-app .tz-tone-info { --tz-tone: var(--tz-app-info-fg); }
+.tz-app .tz-tone-ok { --tz-tone: var(--tz-app-ok-fg); }
+.tz-app .tz-tone-warn { --tz-tone: var(--tz-app-warn-fg); }
+.tz-app .tz-tone-bad { --tz-tone: var(--tz-app-bad-fg); }
+.tz-app .tz-tone-neutral { --tz-tone: var(--tz-app-n-500); }
+.tz-app .tz-tone-accent { --tz-tone: var(--tz-app-accent); }
+
+/* Cards and sections */
+.tz-app .tz-app-card,
+.tz-app .tzfd-card,
+.tz-app .tz-card {
+  background: var(--tz-app-surface); border: 1px solid var(--tz-app-border); border-radius: 12px;
+  padding: 14px 16px; margin: 12px 0; min-width: 0; color: var(--tz-app-text);
+}
+.tz-app .tz-app-card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 8px; }
+.tz-app .tz-app-card-head h2,
+.tz-app .tz-app-card-head h3 { margin: 0; }
+
+/* Tables. On phones each row becomes a block labelled from data-label. */
+.tz-app .tz-app-table-wrap,
+.tz-app .tzfd-table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border: 1px solid var(--tz-app-border); border-radius: 10px; }
+.tz-app .tz-app-table { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.tz-app .tz-app-table th,
+.tz-app .tz-app-table td { padding: 10px 12px; text-align: left; vertical-align: top; border-bottom: 1px solid var(--tz-app-border); }
+.tz-app .tz-app-table th { background: var(--tz-app-surface-2); color: var(--tz-app-muted); font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
+.tz-app .tz-app-table tbody tr:last-child td { border-bottom: 0; }
+.tz-app .tz-app-table td a,
+.tz-app .tz-app-table a { color: var(--tz-app-accent-text); font-weight: 600; }
+
+.tz-app table.widefat,
+.tz-app .widefat {
+  border: 1px solid var(--tz-app-border); border-radius: 10px; background: var(--tz-app-surface);
+  box-shadow: none; color: var(--tz-app-text); width: 100%;
+}
+.tz-app table.widefat th,
+.tz-app table.widefat td { padding: 10px 12px; color: var(--tz-app-text); }
+.tz-app table.widefat thead th { background: var(--tz-app-surface-2); color: var(--tz-app-muted); }
+
+@media (max-width: 640px) {
+  .tz-app .tz-app-table thead { display: none; }
+  .tz-app .tz-app-table,
+  .tz-app .tz-app-table tbody,
+  .tz-app .tz-app-table tr,
+  .tz-app .tz-app-table td { display: block; width: 100%; }
+  .tz-app .tz-app-table tr { padding: 8px 0; border-bottom: 1px solid var(--tz-app-border); }
+  .tz-app .tz-app-table tr:last-child { border-bottom: 0; }
+  .tz-app .tz-app-table td { border: 0; padding: 3px 12px; }
+  .tz-app .tz-app-table td::before {
+    content: attr(data-label); display: block; font-size: .72rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .03em; color: var(--tz-app-muted);
+  }
+}
+
+/* Status badges */
+.tz-app .tz-app-badge {
+  display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 999px;
+  font-size: .8rem; font-weight: 700; line-height: 1.3; white-space: nowrap;
+  background: var(--tz-app-neutral-bg); color: var(--tz-app-neutral-fg);
+}
+.tz-app .tz-app-badge--ink,
+.tz-app .tz-app-badge--neutral { background: var(--tz-app-neutral-bg); color: var(--tz-app-neutral-fg); }
+.tz-app .tz-app-badge--info { background: var(--tz-app-info-bg); color: var(--tz-app-info-fg); }
+.tz-app .tz-app-badge--ok { background: var(--tz-app-ok-bg); color: var(--tz-app-ok-fg); }
+.tz-app .tz-app-badge--warn { background: var(--tz-app-warn-bg); color: var(--tz-app-warn-fg); }
+.tz-app .tz-app-badge--bad { background: var(--tz-app-bad-bg); color: var(--tz-app-bad-fg); }
+
+/* Detail summary */
+.tz-app .tz-app-detail dl { display: grid; grid-template-columns: minmax(120px, 220px) minmax(0, 1fr); margin: 0; }
+.tz-app .tz-app-detail .tz-app-dl-row { display: contents; }
+.tz-app .tz-app-detail dt { padding: 8px 12px 8px 0; color: var(--tz-app-muted); font-weight: 600; border-bottom: 1px solid var(--tz-app-border); }
+.tz-app .tz-app-detail dd { margin: 0; padding: 8px 0; border-bottom: 1px solid var(--tz-app-border); overflow-wrap: anywhere; color: var(--tz-app-text); }
+
+/* Empty and unavailable states */
+.tz-app .tz-app-empty { padding: 18px; text-align: center; color: var(--tz-app-muted); background: var(--tz-app-surface-2); border-radius: 10px; }
+.tz-app .tz-app-empty strong { display: block; color: var(--tz-app-text); margin-bottom: 4px; }
+
+/* Buttons and form controls (restyled, behaviour unchanged) */
+.tz-app .button,
+.tz-app .tzfd-btn,
+.tz-app .tz-btn {
+  min-height: 44px; display: inline-flex; align-items: center; border-radius: 10px;
+  font-weight: 600; padding: 8px 16px; font-size: .9rem; line-height: 1.2; text-decoration: none;
+}
+.tz-app .button-primary,
+.tz-app .tzfd-btn-primary,
+.tz-app .tz-btn-primary { background: var(--tz-app-accent); border-color: var(--tz-app-accent); color: var(--tz-app-on-accent); }
+.tz-app .button-secondary,
+.tz-app .tzfd-btn-secondary,
+.tz-app .tz-btn-secondary { background: var(--tz-app-surface); border-color: var(--tz-app-border); color: var(--tz-app-text); }
+.tz-app input[type="text"],
+.tz-app input[type="search"],
+.tz-app input[type="number"],
+.tz-app input[type="email"],
+.tz-app input[type="date"],
+.tz-app select,
+.tz-app textarea {
+  min-height: 44px; max-width: 100%; border-radius: 10px; padding: 8px 10px;
+  border: 1px solid var(--tz-app-border); background: var(--tz-app-surface); color: var(--tz-app-text);
+}
+
+.tz-app .notice,
+.tz-app .tz-notice { border-radius: 10px; box-shadow: none; background: var(--tz-app-surface); color: var(--tz-app-text); }
+.tz-app .notice-error { border-left-color: var(--tz-app-bad-fg); }
+.tz-app .notice-success { border-left-color: var(--tz-app-ok-fg); }
+.tz-app .notice-warning { border-left-color: var(--tz-app-warn-fg); }
+.tz-app .tzfd-muted,
+.tz-app .description { color: var(--tz-app-muted); }
+
+/* Restyled plugin tabs (existing markup, unchanged). */
+.tz-app .tzfd-tabs,
+.tz-app .nav-tab-wrapper { display: flex; flex-wrap: wrap; gap: 8px; border-bottom: 0; padding: 4px 0 8px; overflow-x: auto; }
+.tz-app .tzfd-tabs a,
+.tz-app .nav-tab {
+  display: inline-flex; align-items: center; min-height: 44px; padding: 6px 14px; border-radius: 999px;
+  border: 1px solid var(--tz-app-border); background: var(--tz-app-surface); color: var(--tz-app-text);
+  text-decoration: none; white-space: nowrap; font-weight: 600;
+}
+.tz-app .tzfd-tabs a.is-active,
+.tz-app .nav-tab-active { background: var(--tz-app-accent); border-color: var(--tz-app-accent); color: var(--tz-app-on-accent); }
+
+@media (max-width: 640px) {
+  .tz-app { padding: 16px; }
+  .tz-app h1,
+  .tz-app .tz-app-page-head h1 { font-size: 1.35rem; }
+  .tz-app .tz-app-stat-value { font-size: 1.4rem; }
+  .tz-app .tz-app-head { padding: 10px 12px; }
+  .tz-app .tz-app-detail dl { grid-template-columns: 1fr; }
+  .tz-app .tz-app-detail dt { border-bottom: 0; padding-bottom: 0; }
+}
+@media (max-width: 960px) {
+  .tz-app .tz-app-nav a { padding: 10px 14px; }
+}
+
+/* Front Desk theme: the pack surfaces follow the plugin's dark theme on its own admin screens. */
+body.tzfd-screen .tz-app {
+  --tz-app-page: var(--tz-bg,#06152e);
+  --tz-app-surface: var(--tz-panel,#0c2040);
+  --tz-app-surface-2: var(--tz-field,#10294b);
+  --tz-app-border: var(--tz-border,#284867);
+  --tz-app-text: var(--tz-text,#edf7ff);
+  --tz-app-muted: var(--tz-muted,#b5c8dc);
+  --tz-app-focus: var(--tz-accent,#00cfe8);
+  --tz-app-accent: var(--tz-accent,#00cfe8);
+  --tz-app-accent-text: var(--tz-accent,#00cfe8);
+  --tz-app-on-accent: var(--tz-on-accent,#06152e);
+  color-scheme: dark;
+}
+body.tzfd-screen .tz-app .tzfd-empty-text,
+body.tzfd-screen .tzfd-empty-text { color: var(--tz-muted,#b5c8dc); padding: 18px 0; margin: 0; }

@@ -1,0 +1,399 @@
+{
+  "format": 3,
+  "id": "flooring",
+  "name": "Flooring",
+  "icon": "\ud83e\udeb5",
+  "tagline": "Timber, laminate, vinyl, tile, carpet installation",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "c3fdf4b5a35fa957418637bdb800eaa512d2dd2d3ed93b8c996425418d123865",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Timber flooring supply and install",
+    "Engineered timber flooring",
+    "Laminate flooring supply and install",
+    "Vinyl flooring supply and install",
+    "Tile flooring supply and install",
+    "Carpet supply and install",
+    "Bamboo flooring",
+    "Cork flooring",
+    "Epoxy garage and commercial floors",
+    "Floor sanding and staining",
+    "Floor polishing",
+    "Floor levelling",
+    "Underlay supply and install",
+    "Old floor removal and disposal",
+    "Floor repairs (boards and tiles)",
+    "Commercial flooring"
+  ],
+  "catalog": [
+    {
+      "sku": "FLR-TIMB",
+      "label": "Timber flooring, supplied and installed, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "timber,install"
+    },
+    {
+      "sku": "FLR-LAM",
+      "label": "Laminate flooring, supplied and installed, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "laminate,install"
+    },
+    {
+      "sku": "FLR-VIN",
+      "label": "Vinyl flooring, supplied and installed, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "vinyl,install"
+    },
+    {
+      "sku": "FLR-TILE",
+      "label": "Tile flooring, supplied and installed, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "tile,install"
+    },
+    {
+      "sku": "FLR-CARP",
+      "label": "Carpet, supplied and installed, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "carpet,install"
+    },
+    {
+      "sku": "FLR-SAND",
+      "label": "Floor sanding, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "sand,sanding"
+    },
+    {
+      "sku": "FLR-POL",
+      "label": "Floor polishing, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "polish,polishing"
+    },
+    {
+      "sku": "FLR-LEVEL",
+      "label": "Floor levelling, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "level,levelling"
+    },
+    {
+      "sku": "FLR-REM",
+      "label": "Old floor removal, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 20,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "FLR-EPOX",
+      "label": "Epoxy flooring, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "epoxy,garage"
+    }
+  ],
+  "staff_skills": [
+    "timber flooring",
+    "engineered timber",
+    "laminate",
+    "vinyl",
+    "tile",
+    "carpet",
+    "sanding and staining",
+    "polishing",
+    "subfloor levelling",
+    "underlay",
+    "epoxy floors",
+    "floor removal"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "water damage to floor",
+      "flooding",
+      "floor lifting after leak",
+      "loose floor causing a trip hazard"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before move-in",
+      "before inspection",
+      "before tenants move in"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "sand and polish",
+      "replace",
+      "repair"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional flooring company. Ask about the floor type, area size, subfloor condition, and whether old flooring needs removal. Ask about access, moisture, and whether furniture needs moving. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. Certificates are available on request before the job.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 10
+    },
+    {
+      "q": "How much does flooring cost?",
+      "a": "{price_note} Flooring is priced per square metre, including supply and install. Tell us the room sizes and the floor type you want.",
+      "keywords": "cost,price,square metre,quote",
+      "priority": 10
+    },
+    {
+      "q": "What floor types do you install?",
+      "a": "We install timber, engineered timber, laminate, vinyl, tile, carpet, bamboo, cork, and epoxy floors.",
+      "keywords": "types,timber,laminate,vinyl,tile",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old flooring?",
+      "a": "Yes, we remove and dispose of old flooring. Removal is priced per square metre and shown in your quote.",
+      "keywords": "remove,old floor,dispose",
+      "priority": 8
+    },
+    {
+      "q": "Do you level the subfloor?",
+      "a": "Yes, we check the subfloor and level it where needed before installation. Levelling is quoted separately once we know the condition.",
+      "keywords": "subfloor,level,levelling",
+      "priority": 8
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "The time depends on the room size and floor type, so we confirm it when we quote. Whole homes take longer than single rooms.",
+      "keywords": "how long,time,installation",
+      "priority": 8
+    },
+    {
+      "q": "Do you sand and polish timber?",
+      "a": "Yes, we sand, stain, and polish timber floors. We can talk through finish options during the visit.",
+      "keywords": "sand,polish,stain,timber",
+      "priority": 9
+    },
+    {
+      "q": "Do you install carpet?",
+      "a": "Yes, we supply and install carpet, and we can include underlay in the quote so you see the full cost.",
+      "keywords": "carpet,underlay,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you install tile?",
+      "a": "Yes, we install floor tiles. Tile prices vary with the tile you choose, so tell us the style you want when you book.",
+      "keywords": "tile,style,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you install vinyl?",
+      "a": "Yes, we install vinyl planks and sheets, and we can discuss which type suits the room and how much it gets used.",
+      "keywords": "vinyl,planks,sheet",
+      "priority": 8
+    },
+    {
+      "q": "Do you install laminate?",
+      "a": "Yes, we install laminate flooring. We check the subfloor first to make sure it is flat enough to lay on.",
+      "keywords": "laminate,subfloor,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you do epoxy floors?",
+      "a": "Yes, we install epoxy floors, mainly in garages and commercial spaces. The surface needs proper preparation, which we cover in the quote.",
+      "keywords": "epoxy,garage,commercial",
+      "priority": 8
+    },
+    {
+      "q": "Do you move furniture?",
+      "a": "We can move furniture for a fee. Tell us when you book so we can plan the time for it.",
+      "keywords": "furniture,move,fee",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer commercial flooring?",
+      "a": "Yes, we service commercial properties. Commercial work is quoted separately after a site visit.",
+      "keywords": "commercial,business,site visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us to explain what is covered before the job starts.",
+      "keywords": "warranty,guarantee,redo",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [service area] and nearby suburbs. Tell us your suburb when you book, and we will confirm whether we cover it.",
+      "keywords": "areas,suburb,service area",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to be home for flooring work?",
+      "a": "No, but someone needs to give us access. We can arrange a key handover, and we will confirm the details when we book.",
+      "keywords": "home,access,key,handover",
+      "priority": 7
+    },
+    {
+      "q": "How soon can I walk on the new floor?",
+      "a": "Many floors can be walked on straight away, but adhesive and polish need more time. We tell you the drying time for your floor before we leave.",
+      "keywords": "walk,drying,adhesive,polish",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair damaged floors?",
+      "a": "Yes, we repair scratched or damaged boards and tiles. We check the damage on a visit before quoting the repair.",
+      "keywords": "repair,scratch,boards,tiles",
+      "priority": 8
+    },
+    {
+      "q": "Do you supply underlay?",
+      "a": "Yes, we supply and install underlay with most floating floors. We include it in the quote so you can see the total.",
+      "keywords": "underlay,supply,install,floating",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "flooring.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "flooring.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "flooring.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

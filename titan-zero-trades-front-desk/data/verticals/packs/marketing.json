@@ -1,0 +1,366 @@
+{
+  "format": 3,
+  "id": "marketing",
+  "name": "Marketing & SEO",
+  "icon": "📈",
+  "tagline": "SEO, Google Ads, social media, content, email",
+  "version": "1.1.0",
+  "category": "business",
+  "source_sha256": "a65cd9e631afa8a969692d6fbeddb790a157aaa133d4e13d91f804a8a006a6bd",
+  "terminology": {
+    "customer": "client",
+    "job": "campaign",
+    "site": "office",
+    "quote": "proposal",
+    "staff": "strategist",
+    "visit": "meeting"
+  },
+  "service_types": [
+    "Search Engine Optimisation (SEO)",
+    "Local SEO and Google Business Profile",
+    "Google Ads Management",
+    "Meta (Facebook and Instagram) Ads",
+    "Social Media Management",
+    "Email Marketing Campaigns",
+    "Marketing Strategy and Audit",
+    "Content Writing (blogs, landing pages, ads)",
+    "Analytics and Tracking Setup",
+    "Conversion Rate Optimisation",
+    "Marketing Automation",
+    "Lead Generation Funnels",
+    "Brand Strategy"
+  ],
+  "catalog": [
+    {
+      "sku": "MKT-AUDIT",
+      "label": "Marketing audit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "audit"
+    },
+    {
+      "sku": "MKT-SEO",
+      "label": "SEO retainer (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "seo"
+    },
+    {
+      "sku": "MKT-LOCAL",
+      "label": "Local SEO (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "local seo"
+    },
+    {
+      "sku": "MKT-GADS",
+      "label": "Google Ads management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "google ads"
+    },
+    {
+      "sku": "MKT-META",
+      "label": "Meta ads management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "meta,facebook"
+    },
+    {
+      "sku": "MKT-SOCIAL",
+      "label": "Social media management (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "social media"
+    },
+    {
+      "sku": "MKT-EMAIL",
+      "label": "Email marketing (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 600,
+      "taxable": 1,
+      "keywords": "email"
+    },
+    {
+      "sku": "MKT-CONTENT",
+      "label": "Content writing (per 1000 words)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "content"
+    },
+    {
+      "sku": "MKT-STRAT",
+      "label": "Marketing strategy session (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "strategy"
+    },
+    {
+      "sku": "MKT-TRACK",
+      "label": "Tracking setup (GA4 + GTM)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "tracking"
+    },
+    {
+      "sku": "MKT-AUTO",
+      "label": "Automation setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "automation"
+    },
+    {
+      "sku": "MKT-FUNNEL",
+      "label": "Funnel build (one-off)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "funnel"
+    }
+  ],
+  "staff_skills": [
+    "seo",
+    "local seo",
+    "google ads",
+    "meta ads",
+    "social media",
+    "email marketing",
+    "content writing",
+    "analytics and tracking",
+    "copywriting",
+    "conversion optimisation"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "campaign launch",
+      "ads not working",
+      "urgent audit"
+    ],
+    "urgent": [
+      "this week",
+      "before launch",
+      "campaign start"
+    ],
+    "routine": [
+      "quote",
+      "retainer",
+      "audit",
+      "strategy",
+      "content"
+    ]
+  },
+  "extra_prompt": "You are booking for a marketing agency. Ask about the business, industry, target market, current marketing, and budget. Ask what outcome they want (leads, sales, awareness). Quote prices only from the reference answers, and say the final price is confirmed after strategy. Do not promise specific rankings, lead volumes, or ROAS that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} We work on monthly retainers or project fees. Tell us your goals and budget, and we will suggest a package.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do SEO?",
+      "a": "Yes, we do local and national SEO, including on-page and technical work. We report progress each month so you can see what has changed.",
+      "keywords": "seo",
+      "priority": 9
+    },
+    {
+      "q": "Do you run Google Ads?",
+      "a": "Yes, we set up and manage Google Ads campaigns. We review spend and results regularly and adjust the campaigns to suit.",
+      "keywords": "google ads,adwords",
+      "priority": 9
+    },
+    {
+      "q": "Do you do Facebook and Instagram ads?",
+      "a": "Yes, we run Meta ads on Facebook and Instagram. We set up audiences, creative, and budgets to suit your goals.",
+      "keywords": "facebook,instagram,meta",
+      "priority": 9
+    },
+    {
+      "q": "Do you manage social media?",
+      "a": "Yes, we plan content, schedule posts, and manage community comments. We agree the posting schedule and tone with you first.",
+      "keywords": "social media",
+      "priority": 9
+    },
+    {
+      "q": "Do you do email marketing?",
+      "a": "Yes, we build and send email campaigns. Tell us which email platform you use, such as [your email platform].",
+      "keywords": "email,klaviyo,mailchimp",
+      "priority": 8
+    },
+    {
+      "q": "Do you write content?",
+      "a": "Yes, we write blogs, landing pages, and ad copy. Content is priced per 1000 words, and we confirm the scope before we start.",
+      "keywords": "content,copywriting",
+      "priority": 8
+    },
+    {
+      "q": "How long until I see results?",
+      "a": "Paid ads can show results within the first few weeks. SEO usually takes several months, and we will set realistic milestones with you.",
+      "keywords": "how long,results",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a free audit?",
+      "a": "{audit_note} Our marketing audit is listed in our price list, and we confirm its scope before you commit.",
+      "keywords": "audit,free",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a long contract?",
+      "a": "{contract_note} We confirm the term and notice period in writing before work starts.",
+      "keywords": "contract,term",
+      "priority": 9
+    },
+    {
+      "q": "What is your minimum retainer?",
+      "a": "{minimum_note} Our monthly retainers start from the amounts in our price list. We confirm the total after we learn your goals.",
+      "keywords": "minimum,retainer",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lead generation?",
+      "a": "Yes, we build landing pages and funnels that capture enquiries. We track each lead so you can see which campaigns bring in enquiries.",
+      "keywords": "lead generation,leads",
+      "priority": 8
+    },
+    {
+      "q": "Do you set up tracking?",
+      "a": "Yes, we set up GA4, Google Tag Manager, and conversion tracking. We check that the tracking records conversions before we hand it over.",
+      "keywords": "tracking,analytics,ga4",
+      "priority": 8
+    },
+    {
+      "q": "Do you do marketing automation?",
+      "a": "Yes, we set up automated email and follow-up workflows. Tell us which tool you use, such as [your CRM or email tool].",
+      "keywords": "automation",
+      "priority": 7
+    },
+    {
+      "q": "Are you a Google Partner?",
+      "a": "{partner_note} If you need proof of our Google qualifications, ask us for [your certification details].",
+      "keywords": "partner,certified",
+      "priority": 7
+    },
+    {
+      "q": "Do you report on results?",
+      "a": "Yes, we send monthly reports and offer a review call. Reports cover the metrics we agreed at the start, such as enquiries and cost per lead.",
+      "keywords": "report,reporting",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {visit} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {visit} with {business} is on {date}.",
+    "quote_intro": "Here is our proposal for your {job}.",
+    "invoice_note": "Thank you. Invoice terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "project_brief",
+      "label": "Project brief",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "marketing.rule1",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up proposal after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "marketing.rule2",
+      "trigger": "project.milestone",
+      "action": "send_invoice",
+      "description": "Send milestone invoice",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Keep client agreements and data handling terms current. Professional indemnity insurance is commonly required for advice and design work. Check any licence that applies to your specific services.",
+    "items": [
+      "Professional indemnity certificate current",
+      "Client agreement signed before work starts"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "projects delivered",
+    "proposal win rate",
+    "client retention"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

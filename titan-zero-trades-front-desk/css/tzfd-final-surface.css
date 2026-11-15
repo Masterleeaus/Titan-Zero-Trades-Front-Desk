@@ -1,0 +1,15 @@
+/* Pass 201: final, route-scoped administration surface layer. Customer-facing templates unaffected. */
+body.tzfd-screen {--tz-bg:#06152e;--tz-panel:#102b4a;--tz-field:#102b4a;--tz-text:#edf7ff;--tz-muted:#bfd2e5;--tz-border:#365777;--tz-accent:#00cfe8;--tz-accent-hover:#087eea;--tz-on-accent:#06152e}
+body.tzfd-screen .tz-app-head {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;margin:0 0 12px;min-height:0}
+body.tzfd-screen .tzfd-official-brand img {display:block;max-width:min(100%,290px);width:auto;height:auto;max-height:92px;object-fit:contain}
+body.tzfd-screen .tzfd-page-head {margin-top:8px!important}
+body.tzfd-screen :is(.tzfd-admin-page,.tzfd-app,.tzfd-page,.wrap,.tz-app) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="color"]),select,textarea),
+body.tzfd-screen #wpbody-content :is(input[type="text"],input[type="search"],input[type="email"],input[type="tel"],input[type="number"],input[type="date"],input[type="time"],input[type="password"],select,textarea) {background:#102b4a!important;color:#edf7ff!important;-webkit-text-fill-color:#edf7ff!important;border:1px solid #456989!important;border-radius:9px!important;box-shadow:none!important;text-shadow:none!important}
+body.tzfd-screen #wpbody-content :is(input,textarea)::placeholder {color:#b6cde0!important;opacity:1!important;-webkit-text-fill-color:#b6cde0!important}
+body.tzfd-screen #wpbody-content select option {background:#102b4a!important;color:#edf7ff!important}
+body.tzfd-screen #wpbody-content :is(input,select,textarea):focus-visible {outline:2px solid #00cfe8!important;outline-offset:2px!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody :is(td,th),body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody a {color:#edf7ff!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody tr {background:#102b4a!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody tr:nth-child(even) {background:#172f4e!important}
+body.tzfd-screen #wpbody-content .tzfd-wizard-review :is(dt,th,label),body.tzfd-screen #wpbody-content .tzfd-review :is(dt,th,label) {color:#edf7ff!important}
+@media(max-width:782px){body.tzfd-screen .tz-app-head{padding:10px 12px}body.tzfd-screen .tzfd-official-brand img{max-height:64px}}

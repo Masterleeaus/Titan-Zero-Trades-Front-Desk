@@ -1,0 +1,397 @@
+{
+  "format": 3,
+  "id": "security",
+  "name": "Security & Alarms",
+  "icon": "🔒",
+  "tagline": "Alarms, CCTV, intercoms, access control, monitoring",
+  "version": "1.1.0",
+  "category": "licensed_trade",
+  "source_sha256": "6fde8cfeda21c15d33edb527a741ed4041fee79fcaffb5f7a91781ecb01a7fa7",
+  "terminology": {
+    "customer": "client",
+    "job": "installation",
+    "site": "premises",
+    "quote": "quote",
+    "staff": "technician",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Alarm System Installation",
+    "Alarm Repair and Fault Finding",
+    "Alarm Service and Testing",
+    "Alarm Monitoring Plans",
+    "CCTV Installation",
+    "CCTV Repair",
+    "Intercom Installation",
+    "Access Control Installation",
+    "Smart Lock Installation",
+    "Motion and Door Sensors",
+    "Panic and Duress Buttons",
+    "Back-to-Base Alarm Service",
+    "Remote Camera Viewing Setup",
+    "Commercial Security Systems",
+    "Emergency Call-Out"
+  ],
+  "catalog": [
+    {
+      "sku": "SEC-ALARM",
+      "label": "Alarm system installation (per system)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "alarm,install"
+    },
+    {
+      "sku": "SEC-CCTV",
+      "label": "CCTV camera installation (per camera)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "cctv,camera"
+    },
+    {
+      "sku": "SEC-INTER",
+      "label": "Intercom installation (per intercom)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "intercom"
+    },
+    {
+      "sku": "SEC-ACCESS",
+      "label": "Access control installation (per door)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "access control"
+    },
+    {
+      "sku": "SEC-SMART",
+      "label": "Smart lock installation (per lock)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "smart lock"
+    },
+    {
+      "sku": "SEC-MON",
+      "label": "Monitoring plan (per month)",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "monitoring"
+    },
+    {
+      "sku": "SEC-SERV",
+      "label": "Alarm service visit (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "service"
+    },
+    {
+      "sku": "SEC-REP",
+      "label": "Alarm repair labour (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "SEC-SENSOR",
+      "label": "Sensor installation (per sensor)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "sensor"
+    },
+    {
+      "sku": "SEC-EMERG",
+      "label": "Emergency call-out (per visit)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "emergency,callout"
+    }
+  ],
+  "staff_skills": [
+    "alarm installation",
+    "alarm fault finding",
+    "cctv",
+    "intercom",
+    "access control",
+    "smart locks",
+    "low-voltage wiring",
+    "camera network setup",
+    "commercial security"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "break-in",
+      "alarm going off",
+      "door or window forced",
+      "panic button activated",
+      "camera down after an incident"
+    ],
+    "urgent": [
+      "alarm fault",
+      "intercom not working",
+      "camera down",
+      "before holiday",
+      "moving in this week",
+      "today",
+      "tomorrow"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "annual service",
+      "monitoring plan",
+      "renewal",
+      "upgrade"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional security company. Ask about the property type, entry points, existing system, and monitoring needs. Ask whether it is residential or commercial, and whether cameras, alarms, or intercoms are wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific security outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we hold a [licence type] licence, number [licence number], and [insurer] insurance. Certificates are available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does an alarm cost?",
+      "a": "{price_note} Alarm systems are priced by the number of sensors, the panel and the features you choose. Tell us about the property and we will quote.",
+      "keywords": "cost,price,alarm",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer monitoring?",
+      "a": "Yes, we offer monitoring plans with [monitoring hours, e.g. 24/7] by [monitoring provider]. The monthly cost is shown on your quote.",
+      "keywords": "monitoring,24/7",
+      "priority": 9
+    },
+    {
+      "q": "Do you install CCTV?",
+      "a": "Yes, we install CCTV systems for homes and businesses. We recommend camera numbers and positions after a site check.",
+      "keywords": "cctv,camera",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair alarms?",
+      "a": "Yes, we repair and service most alarm systems. Tell us the make, model and what the fault is so we can book the right visit.",
+      "keywords": "repair,alarm",
+      "priority": 8
+    },
+    {
+      "q": "Do you install intercoms?",
+      "a": "Yes, we install audio and video intercoms for homes, apartments and businesses. We check your existing wiring and door before we quote.",
+      "keywords": "intercom,audio,video",
+      "priority": 8
+    },
+    {
+      "q": "Do you install access control?",
+      "a": "Yes, we install access control for doors and gates, including keypads and card or fob readers. We confirm the best option for each entry point at the site check.",
+      "keywords": "access control,door",
+      "priority": 8
+    },
+    {
+      "q": "Do you install smart locks?",
+      "a": "Yes, we install smart locks and keypads. Tell us the door type and lock style so we can confirm it will fit before the visit.",
+      "keywords": "smart lock,keypad",
+      "priority": 8
+    },
+    {
+      "q": "Do you install panic buttons?",
+      "a": "Yes, we install panic and duress buttons. Tell us who should be alerted and where you want each button placed.",
+      "keywords": "panic,duress",
+      "priority": 8
+    },
+    {
+      "q": "Do you service back-to-base alarms?",
+      "a": "Yes, we service back-to-base alarms. During a service visit we test the sensors, the panel and the monitoring connection.",
+      "keywords": "back to base,monitoring",
+      "priority": 8
+    },
+    {
+      "q": "Can I view my cameras on my phone?",
+      "a": "Many camera and alarm systems allow remote viewing through a phone app. We confirm which app and account setup your system uses before installation.",
+      "keywords": "view,cameras,phone",
+      "priority": 8
+    },
+    {
+      "q": "How many cameras do I need?",
+      "a": "The number depends on the property size, entry points and the areas you want to see. We recommend a number after a site check and list each camera on your quote.",
+      "keywords": "how many,cameras",
+      "priority": 8
+    },
+    {
+      "q": "Do you install sensors?",
+      "a": "Yes, we install motion, door and window sensors. The number and placement depend on your layout and entry points.",
+      "keywords": "sensor,motion,door",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} We explain what the warranty covers before you book.",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area, e.g. the local metro area and named suburbs]. Ask us to confirm your suburb before booking.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Yes, someone must be home or able to give access. Put any gate code, key or pet details in the access notes when you book.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer emergency service?",
+      "a": "{emergency_note} Emergency call-outs cover faults and break-ins, and the call-out fee is listed in our rates.",
+      "keywords": "emergency,urgent",
+      "priority": 9
+    },
+    {
+      "q": "Can you take over an existing system?",
+      "a": "We can take over and service most existing systems. Tell us the make and model, and we will check it before we agree to take it on.",
+      "keywords": "takeover,existing",
+      "priority": 8
+    },
+    {
+      "q": "Do you install smoke and flood sensors?",
+      "a": "We can connect smoke and flood sensors to your alarm if the system supports them. We confirm compatibility at the site check.",
+      "keywords": "smoke,flood,sensor",
+      "priority": 7
+    },
+    {
+      "q": "Do you do commercial security?",
+      "a": "Yes, we do commercial security for shops, offices and sites. Commercial work is quoted separately after a site visit.",
+      "keywords": "commercial,business",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please make sure someone can give access to {site_label}.",
+    "reminder": "Reminder: {business} will attend for your {job} on {date}.",
+    "quote_intro": "Here is the quote for the {job} at your {site_label}. The price includes parts and labour as listed.",
+    "invoice_note": "Thank you for choosing {business}. Payment is due within the terms shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "asset_details",
+      "label": "Equipment or asset details (make, model, age)",
+      "required": true
+    },
+    {
+      "key": "urgency",
+      "label": "Is it an emergency or a safety issue?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "security.rule1",
+      "trigger": "enquiry.received",
+      "action": "reply_to_enquiry",
+      "description": "Reply within two hours during business hours",
+      "enabled": false
+    },
+    {
+      "id": "security.rule2",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "security.rule3",
+      "trigger": "licence.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before a technician licence expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Security businesses and technicians need a state security licence. Keep licence numbers current on quotes and staff records. Check your state regulator (in Victoria, the Victoria Police Licensing and Regulation Division).",
+    "items": [
+      "Security licence number and expiry for each technician",
+      "Insurance certificate current"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "specialist equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "quote conversion rate",
+    "average job value",
+    "callouts and repeat visits"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,405 @@
+{
+  "format": 3,
+  "id": "makeupartist",
+  "name": "Makeup Artist",
+  "icon": "💄",
+  "tagline": "Bridal, event, editorial, lessons, mobile",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "b4ab912c8d4dc7813e310fe47772abb47bc1b84da77670898207001cae0c52bd",
+  "terminology": {
+    "customer": "client",
+    "job": "booking",
+    "site": "venue",
+    "quote": "quote",
+    "staff": "artist",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Bridal Makeup",
+    "Bridal Trial",
+    "Bridal Party Makeup",
+    "Special Event Makeup",
+    "Photoshoot Makeup",
+    "Editorial and Fashion Makeup",
+    "Fashion Show Makeup",
+    "Prom and Formal Makeup",
+    "Engagement Session Makeup",
+    "Natural Everyday Makeup",
+    "Glam Makeup",
+    "Airbrush Makeup",
+    "SFX and Character Makeup",
+    "Individual Lash Application",
+    "Makeup Lesson (2 hours)",
+    "Mobile On-Location Makeup",
+    "Group Booking"
+  ],
+  "catalog": [
+    {
+      "sku": "MUA-EVENT",
+      "label": "Special event makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "MUA-BRIDAL",
+      "label": "Bridal makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "bridal"
+    },
+    {
+      "sku": "MUA-BRIDAL-TRIAL",
+      "label": "Bridal trial",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "trial"
+    },
+    {
+      "sku": "MUA-PARTY",
+      "label": "Bridal party (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "bridal party"
+    },
+    {
+      "sku": "MUA-PROM",
+      "label": "Prom / formal makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "prom,formal"
+    },
+    {
+      "sku": "MUA-PHOTO",
+      "label": "Photoshoot makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "photoshoot"
+    },
+    {
+      "sku": "MUA-EDIT",
+      "label": "Editorial and fashion makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "editorial,fashion"
+    },
+    {
+      "sku": "MUA-LESSON",
+      "label": "Makeup lesson (2 hours)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "lesson"
+    },
+    {
+      "sku": "MUA-AIR",
+      "label": "Airbrush upgrade (added to a booking)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "airbrush"
+    },
+    {
+      "sku": "MUA-LASH",
+      "label": "Individual lash application",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "lashes"
+    },
+    {
+      "sku": "MUA-SFX",
+      "label": "SFX and character makeup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "sfx"
+    },
+    {
+      "sku": "MUA-TRAVEL",
+      "label": "Travel fee (per km beyond 20km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ],
+  "staff_skills": [
+    "bridal makeup",
+    "bridal trials",
+    "bridal parties",
+    "airbrush",
+    "glam",
+    "natural looks",
+    "special effects",
+    "makeup lessons",
+    "mobile service",
+    "individual lashes",
+    "photoshoot makeup"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "urgent booking"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this weekend",
+      "before photos"
+    ],
+    "routine": [
+      "booking",
+      "trial",
+      "lesson",
+      "quote",
+      "package"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional makeup artist. Ask about the event, date, location, number of people, and desired look. Ask about skin type, allergies, and any sensitivities. Ask whether a trial is wanted. Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise a specific result without seeing the client or a reference photo.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the service, the number of people, and travel. Bridal trials are priced separately from the wedding day.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal makeup?",
+      "a": "Yes, bridal makeup is one of our specialties. A bridal trial is available before the wedding day, and we recommend booking one.",
+      "keywords": "bridal,wedding",
+      "priority": 9
+    },
+    {
+      "q": "Do you travel to me?",
+      "a": "Yes, we are mobile and travel to you. A travel fee applies beyond our included radius, and we confirm it when you book.",
+      "keywords": "mobile,travel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do trials?",
+      "a": "Yes, bridal trials are available, and we recommend them before the wedding day. Book your trial well before the event so there is time to adjust the look.",
+      "keywords": "trial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal parties?",
+      "a": "Yes, we do bridal parties and group bookings. Tell us how many people are in the party so we can plan the time.",
+      "keywords": "bridal party,group",
+      "priority": 9
+    },
+    {
+      "q": "Do you do airbrush makeup?",
+      "a": "Yes, we offer airbrush makeup as an upgrade. It can be added to most bookings, and we confirm the cost when you book.",
+      "keywords": "airbrush",
+      "priority": 8
+    },
+    {
+      "q": "Do you do makeup lessons?",
+      "a": "Yes, we offer one-on-one and group makeup lessons. Our lesson is a two-hour session, so tell us your goals and skill level when you book.",
+      "keywords": "lesson,class",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SFX makeup?",
+      "a": "Yes, we do special effects and character makeup. SFX work takes longer, so we confirm the timing when you book.",
+      "keywords": "sfx,special effects",
+      "priority": 7
+    },
+    {
+      "q": "How long does makeup take?",
+      "a": "Most looks take 45–60 minutes. Bridal takes longer.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "What products do you use?",
+      "a": "We use professional products and can tell you the brands on request. Tell us about allergies or sensitive skin before your booking.",
+      "keywords": "products,brands,allergy",
+      "priority": 9
+    },
+    {
+      "q": "Do you do eyelashes?",
+      "a": "Yes, strip lashes are included. Individual lashes can be added.",
+      "keywords": "lashes,eyelash",
+      "priority": 8
+    },
+    {
+      "q": "Can you cover tattoos or scars?",
+      "a": "Yes, we can cover tattoos and scars with makeup. Tell us about the area when you book so we can plan the time needed.",
+      "keywords": "cover,tattoo,scar",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mature skin?",
+      "a": "Yes, we work with all ages and skin types. Tell us about your skin concerns so we can choose the right products.",
+      "keywords": "mature,older",
+      "priority": 8
+    },
+    {
+      "q": "Do you do male makeup?",
+      "a": "Yes, we do grooming and subtle makeup for men. We can tailor the look to your event.",
+      "keywords": "male,men",
+      "priority": 7
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note} We confirm the deposit and payment terms when you book.",
+      "keywords": "deposit,booking",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as early as you can if your plans change.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [your insurance type] cover through [your insurer]. A certificate is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do photoshoots?",
+      "a": "Yes, we do photoshoots, editorial, and fashion makeup. Send us the call sheet or mood board so we can plan the look.",
+      "keywords": "photoshoot,editorial",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers. Please contact us to confirm the amounts and how they are redeemed.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "trial_booked",
+      "label": "Trial booked if requested",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "makeupartist.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "makeupartist.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Catering needs food safety supervision and a council food business registration. Serving alcohol needs a licence. Venues usually require public liability insurance from the event provider.",
+    "items": [
+      "Food safety supervisor certificate (catering)",
+      "Council food registration (catering)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

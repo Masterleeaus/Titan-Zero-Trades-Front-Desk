@@ -1,0 +1,401 @@
+{
+  "format": 3,
+  "id": "massagespa",
+  "name": "Massage & Spa",
+  "icon": "💆",
+  "tagline": "Relaxation, deep tissue, remedial, day spa",
+  "version": "1.1.0",
+  "category": "personal_care",
+  "source_sha256": "92e3d6ea916b71638f02882c177550bb1648a93708ab53847316783d339b4bcc",
+  "terminology": {
+    "customer": "client",
+    "job": "treatment",
+    "site": "spa",
+    "quote": "quote",
+    "staff": "therapist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Relaxation Massage",
+    "Deep Tissue Massage",
+    "Sports Massage",
+    "Remedial Massage",
+    "Hot Stone Massage",
+    "Pregnancy Massage",
+    "Couples Massage",
+    "Aromatherapy Massage",
+    "Reflexology",
+    "Lymphatic Drainage",
+    "Shiatsu",
+    "Thai Massage",
+    "Facials",
+    "Body Treatment",
+    "Day Spa Package",
+    "Corporate and Event Massage"
+  ],
+  "catalog": [
+    {
+      "sku": "MAS-30",
+      "label": "Massage (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "30 min"
+    },
+    {
+      "sku": "MAS-60",
+      "label": "Massage (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "60 min"
+    },
+    {
+      "sku": "MAS-90",
+      "label": "Massage (90 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 155,
+      "taxable": 1,
+      "keywords": "90 min"
+    },
+    {
+      "sku": "MAS-DEEP",
+      "label": "Deep tissue massage (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 125,
+      "taxable": 1,
+      "keywords": "deep tissue"
+    },
+    {
+      "sku": "MAS-REM",
+      "label": "Remedial massage (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "remedial"
+    },
+    {
+      "sku": "MAS-PREG",
+      "label": "Pregnancy massage (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "pregnancy"
+    },
+    {
+      "sku": "MAS-COUP",
+      "label": "Couples massage (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "couples"
+    },
+    {
+      "sku": "MAS-STONE",
+      "label": "Hot stone massage (90 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 175,
+      "taxable": 1,
+      "keywords": "hot stone"
+    },
+    {
+      "sku": "MAS-REF",
+      "label": "Reflexology (45 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "reflexology"
+    },
+    {
+      "sku": "MAS-FAC",
+      "label": "Facial (60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "facial"
+    },
+    {
+      "sku": "MAS-BODY",
+      "label": "Body treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "body treatment"
+    },
+    {
+      "sku": "MAS-PACK",
+      "label": "Day spa package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "day spa,package"
+    }
+  ],
+  "staff_skills": [
+    "relaxation massage",
+    "deep tissue",
+    "sports massage",
+    "remedial",
+    "hot stone",
+    "pregnancy massage",
+    "couples massage",
+    "reflexology",
+    "aromatherapy",
+    "lymphatic drainage",
+    "facials"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "chest pain",
+      "sudden severe headache",
+      "numbness or weakness",
+      "injury needing medical care"
+    ],
+    "urgent": [
+      "sore back today",
+      "tight neck before an event",
+      "same-day massage",
+      "tomorrow",
+      "this week"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "monthly",
+      "booking",
+      "voucher",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional massage and spa business. Ask about the service, any injuries or medical conditions, pregnancy, and pressure preference. Ask about allergies and modesty preferences. Quote prices only from the reference answers, and say the final price is confirmed in clinic. Do not provide medical advice or promise a therapeutic outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a massage?",
+      "a": "{price_note} Massage is priced by duration and type. We confirm before the session.",
+      "keywords": "cost,price,massage",
+      "priority": 9
+    },
+    {
+      "q": "Do you do deep tissue?",
+      "a": "Yes, we do deep tissue, remedial, and sports massage. Tell us where you feel tension so the therapist can plan the session.",
+      "keywords": "deep tissue,remedial,sports",
+      "priority": 9
+    },
+    {
+      "q": "Do you do pregnancy massage?",
+      "a": "Yes, we offer pregnancy massage. Tell us how far along you are and any medical advice you have received, and we will confirm if we can treat you.",
+      "keywords": "pregnancy,prenatal",
+      "priority": 9
+    },
+    {
+      "q": "Do you do couples massage?",
+      "a": "Yes, we offer couples massage in a shared room. Let us know when you book so we can arrange the room and therapists.",
+      "keywords": "couples,partner",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hot stone?",
+      "a": "Yes, we offer hot stone massage. The 90-minute hot stone session is listed in our price list.",
+      "keywords": "hot stone",
+      "priority": 8
+    },
+    {
+      "q": "Do you do remedial massage?",
+      "a": "Yes, we do remedial massage for ongoing muscle pain and tightness. Rebates may apply with private health, so check your cover.",
+      "keywords": "remedial,health fund",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Some private health funds rebate remedial or other massage, depending on your cover. Ask us to confirm whether our therapists are registered with your fund before you book.",
+      "keywords": "health fund,rebate,private health",
+      "priority": 9
+    },
+    {
+      "q": "Do you do reflexology?",
+      "a": "Yes, we offer reflexology sessions. The 45-minute reflexology session is listed in our price list.",
+      "keywords": "reflexology",
+      "priority": 8
+    },
+    {
+      "q": "Do you do lymphatic drainage?",
+      "a": "Yes, we offer lymphatic drainage. Tell us about any medical conditions when you book so the therapist can advise on suitability.",
+      "keywords": "lymphatic,drainage",
+      "priority": 8
+    },
+    {
+      "q": "Do you do Thai or shiatsu?",
+      "a": "Yes, we offer Thai and shiatsu massage. The two use different techniques, so tell us what you prefer when you book.",
+      "keywords": "thai,shiatsu",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Sessions are 30, 60, or 90 minutes, depending on the treatment. The price list shows the length of each session.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "What should I wear?",
+      "a": "Undress to your comfort level. You will be covered with towels at all times.",
+      "keywords": "wear,undress,dress",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers. Please contact us to confirm the amounts and how long a voucher is valid.",
+      "keywords": "voucher,gift",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please call or message us as early as you can if your plans change.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do corporate massage?",
+      "a": "Yes, we offer corporate and event massage at your workplace or venue. Tell us the number of people and the time slot you need.",
+      "keywords": "corporate,event",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our therapists hold [your insurance type] cover through [your insurer]. A certificate is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Mobile massage is available in [your service area]. Ask us to confirm your suburb and any travel fee before you book.",
+      "keywords": "mobile,home visit",
+      "priority": 7
+    },
+    {
+      "q": "Do you have male therapists?",
+      "a": "We have [number] male and [number] female therapists. Request your preferred therapist when you book.",
+      "keywords": "male,female,therapist",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer day spa packages?",
+      "a": "Yes, we offer day spa packages that combine treatments into one visit. Check the price list for package prices.",
+      "keywords": "day spa,package",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell us at booking if you have an injury, recent surgery, or a medical condition. We may ask for medical clearance before we treat you.",
+      "keywords": "injury,medical",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please arrive a few minutes early.",
+    "quote_intro": "Here is your quote for the services you asked about.",
+    "invoice_note": "Thank you for visiting {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "allergies_patch_test",
+      "label": "Allergies or patch test needed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "massagespa.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    },
+    {
+      "id": "massagespa.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up no-show with rebooking link",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tattooing and skin penetration services are regulated by state health departments and usually need registration. Hair and beauty work needs infection control. Massage practitioners may need registration with a recognised body. Check your state rules.",
+    "items": [
+      "Practitioner registration or certificate current",
+      "Infection control and sterilisation records",
+      "Allergy and patch test records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment chair or room",
+    "equipment station"
+  ],
+  "reporting": [
+    "appointments completed",
+    "no-shows",
+    "rebooking rate",
+    "average ticket"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

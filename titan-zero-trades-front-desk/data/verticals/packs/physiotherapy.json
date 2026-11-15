@@ -1,0 +1,406 @@
+{
+  "format": 3,
+  "id": "physiotherapy",
+  "name": "Physiotherapy",
+  "icon": "🩺",
+  "tagline": "Sports, remedial, rehab, dry needling, telehealth",
+  "version": "1.1.0",
+  "category": "health",
+  "source_sha256": "5a9c3c3caf121c475caa4c9d4de86aef92bb108ce5363f174b58f2bea95c9858",
+  "terminology": {
+    "customer": "patient",
+    "job": "appointment",
+    "site": "clinic",
+    "quote": "estimate",
+    "staff": "physiotherapist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Initial Physiotherapy Assessment",
+    "Sports Physiotherapy",
+    "Remedial Massage",
+    "Dry Needling",
+    "Manual Therapy",
+    "Exercise Prescription",
+    "Post-Operative Rehabilitation",
+    "Pre-Surgery Prehab",
+    "Sports Injury Management",
+    "Back and Neck Pain",
+    "Shoulder Rehabilitation",
+    "Knee Rehabilitation",
+    "Ankle and Foot Rehabilitation",
+    "Clinical Pilates",
+    "Women's Health Physiotherapy",
+    "Men's Health Physiotherapy",
+    "Paediatric Physiotherapy",
+    "Home Visits",
+    "Telehealth Consultations"
+  ],
+  "catalog": [
+    {
+      "sku": "PHY-INIT",
+      "label": "Initial consultation (45–60 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "initial"
+    },
+    {
+      "sku": "PHY-FU",
+      "label": "Follow-up consultation (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "follow up"
+    },
+    {
+      "sku": "PHY-EXT",
+      "label": "Extended follow-up (45 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 125,
+      "taxable": 1,
+      "keywords": "extended"
+    },
+    {
+      "sku": "PHY-DRY",
+      "label": "Dry needling add-on",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "dry needling"
+    },
+    {
+      "sku": "PHY-REM",
+      "label": "Remedial massage (30 min)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "remedial"
+    },
+    {
+      "sku": "PHY-PIL",
+      "label": "Clinical pilates (one-on-one)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "pilates"
+    },
+    {
+      "sku": "PHY-PIL-G",
+      "label": "Clinical pilates (small group)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "pilates group"
+    },
+    {
+      "sku": "PHY-TELE",
+      "label": "Telehealth consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "telehealth"
+    },
+    {
+      "sku": "PHY-HOME",
+      "label": "Home visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "PHY-REP",
+      "label": "Exercise report or return-to-work letter",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "report,return to work"
+    },
+    {
+      "sku": "PHY-PACK5",
+      "label": "5-session rehab package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "package"
+    },
+    {
+      "sku": "PHY-CANC",
+      "label": "Late cancellation fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 50,
+      "taxable": 1,
+      "keywords": "cancellation"
+    }
+  ],
+  "staff_skills": [
+    "physiotherapy",
+    "dry needling",
+    "manual therapy",
+    "sports rehab",
+    "clinical pilates",
+    "exercise prescription",
+    "women's health",
+    "paediatrics"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "acute injury with severe swelling",
+      "recent surgery with severe pain",
+      "severe pain",
+      "can't walk or bear weight"
+    ],
+    "urgent": [
+      "injury this week",
+      "pain getting worse",
+      "after a fall",
+      "needs assessment before a match"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "rehab",
+      "booking",
+      "plan",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a physiotherapy clinic. Ask about the injury or condition, how long it has been present, and any scans or doctor's referral. Ask about goals, sport, and whether they prefer in-clinic or telehealth. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise a specific recovery outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does physio cost?",
+      "a": "{price_note} Initial consultations are longer than follow-ups, so they are priced separately. We confirm the fee before you book.",
+      "keywords": "cost,price,physio",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim on private health?",
+      "a": "Yes, if you have physiotherapy cover with your health fund. We offer HICAPS on-the-spot claiming where available, so ask us at booking whether your fund is supported.",
+      "keywords": "health fund,hicaps,rebate",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a doctor's referral?",
+      "a": "No referral is needed for private physio. Some plans, such as Medicare EPC, and some insurance claims need a referral, so check your plan before booking.",
+      "keywords": "referral,doctor,medicare",
+      "priority": 9
+    },
+    {
+      "q": "Do you do dry needling?",
+      "a": "Yes, our physios are trained in dry needling. We explain the treatment and get your consent before any needles are used.",
+      "keywords": "dry needling,needle",
+      "priority": 9
+    },
+    {
+      "q": "Do you do sports physio?",
+      "a": "Yes, we do sports physio and return-to-sport programs. Tell us your sport, your level and your goals so we can plan your return.",
+      "keywords": "sports",
+      "priority": 9
+    },
+    {
+      "q": "Do you do post-op rehab?",
+      "a": "Yes, we do post-operative rehabilitation. Please bring your surgeon's discharge notes or post-operative instructions to your first visit.",
+      "keywords": "post op,rehab",
+      "priority": 9
+    },
+    {
+      "q": "Do you do prehab?",
+      "a": "Yes, we do pre-surgery preparation. We work on strength and mobility before your operation, which can help your recovery afterwards.",
+      "keywords": "prehab,pre surgery",
+      "priority": 8
+    },
+    {
+      "q": "Do you do women's health physio?",
+      "a": "Yes, we treat women's health conditions, including pelvic floor and prenatal and postnatal care. Tell us what you are looking for when you book.",
+      "keywords": "women's health,pelvic,prenatal",
+      "priority": 9
+    },
+    {
+      "q": "Do you do men's health physio?",
+      "a": "Yes, we treat men's health conditions, including pelvic health and continence. Tell us your concern when you book so we can plan the first visit.",
+      "keywords": "men's health,pelvic",
+      "priority": 8
+    },
+    {
+      "q": "Do you do paediatric physio?",
+      "a": "Yes, we treat children and babies. Please bring a parent or guardian to the first visit and tell us about any relevant medical history.",
+      "keywords": "paediatric,children",
+      "priority": 8
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, we offer video consultations. Telehealth suits follow-ups and advice, but some assessments need to be done in person.",
+      "keywords": "telehealth,video,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in the local metro area. Ask us to confirm your suburb, and we will quote the home visit fee at booking.",
+      "keywords": "home visit,mobile",
+      "priority": 8
+    },
+    {
+      "q": "Do you do clinical pilates?",
+      "a": "Yes, we run clinical pilates in one-on-one and small group formats. Clinical pilates is part of your treatment plan, so ask us which format suits you.",
+      "keywords": "pilates,clinical",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Initial consults are 45 to 60 minutes. Follow-ups are 30 minutes, and extended follow-ups are 45 minutes.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions will I need?",
+      "a": "It depends on the condition. We give you an estimated plan after assessment, and we review it as your progress changes.",
+      "keywords": "how many,sessions",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as early as you can so we can offer the time to someone else.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you registered?",
+      "a": "Our physios hold [AHPRA registration number] and [insurance details]. Ask us for copies before you book.",
+      "keywords": "ahpra,registered,insured",
+      "priority": 9
+    },
+    {
+      "q": "What should I bring?",
+      "a": "Bring any scans, reports and referrals you have, along with shorts and comfortable clothing. Wear clothing that lets us see the area being treated.",
+      "keywords": "bring,what to bring",
+      "priority": 8
+    },
+    {
+      "q": "Do you do exercise prescription?",
+      "a": "Yes, we prescribe home exercises and can send them to you via an app. Your program is updated as your condition changes.",
+      "keywords": "exercise,home program",
+      "priority": 8
+    },
+    {
+      "q": "Do you do manual therapy?",
+      "a": "Yes, we use manual therapy alongside exercise. Hands-on treatment is combined with exercise as part of your plan.",
+      "keywords": "manual therapy",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please bring your card and any referral.",
+    "quote_intro": "Here is your estimate. Your practitioner will confirm the plan at your appointment.",
+    "invoice_note": "Thank you. Health fund claims are handled by the practice where applicable."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 30,
+    "buffer_minutes": 10,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 30,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "referral",
+      "label": "Referral or Medicare details (only if the practice needs them)",
+      "required": false
+    },
+    {
+      "key": "clinical_notes_location",
+      "label": "Clinical details stay in the clinical record, not in booking notes",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "physiotherapy.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 48 hours before",
+      "enabled": false
+    },
+    {
+      "id": "physiotherapy.rule2",
+      "trigger": "recall.due",
+      "action": "send_recall",
+      "description": "Send recall reminder when due",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Health practitioners usually need registration (for example with AHPRA where it applies) and current professional indemnity insurance. Keep clinical details in the clinical record, not in general booking fields. Follow your state health privacy rules.",
+    "items": [
+      "Practitioner registration number and expiry",
+      "Professional indemnity certificate current",
+      "Clinical notes kept only in the clinical record"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment room",
+    "equipment"
+  ],
+  "reporting": [
+    "appointments attended",
+    "no-shows",
+    "new patients",
+    "recall due"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

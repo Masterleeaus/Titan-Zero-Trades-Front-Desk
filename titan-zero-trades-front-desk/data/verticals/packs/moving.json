@@ -1,0 +1,382 @@
+{
+  "format": 3,
+  "id": "moving",
+  "name": "Moving & Removals",
+  "icon": "📦",
+  "tagline": "Local, interstate, office moves, packing",
+  "version": "1.1.0",
+  "category": "cleaning_removal",
+  "source_sha256": "8adc8316a107be963f2c410290cbab3ea1fd910ab2d234c494753410324dff8b",
+  "terminology": {
+    "customer": "customer",
+    "job": "move",
+    "site": "address",
+    "quote": "quote",
+    "staff": "mover",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Local House Move",
+    "Interstate Removals",
+    "International Removals",
+    "Office Relocation",
+    "Packing Service",
+    "Unpacking Service",
+    "Packing Materials and Boxes",
+    "Piano Moving",
+    "Furniture Removal",
+    "Heavy Item Moving (safes, pool tables)",
+    "Storage (short and long term)",
+    "End of Lease Move",
+    "Senior Moving Assistance",
+    "Vehicle Transport"
+  ],
+  "catalog": [
+    {
+      "sku": "MOV-HR-2",
+      "label": "2 movers + truck (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "movers,truck,hourly"
+    },
+    {
+      "sku": "MOV-HR-3",
+      "label": "3 movers + truck (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "movers,truck,hourly"
+    },
+    {
+      "sku": "MOV-PACK",
+      "label": "Packing service (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "pack,packing"
+    },
+    {
+      "sku": "MOV-UNPACK",
+      "label": "Unpacking service (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "unpack"
+    },
+    {
+      "sku": "MOV-BOX",
+      "label": "Packing box (each)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 6,
+      "taxable": 1,
+      "keywords": "box,carton"
+    },
+    {
+      "sku": "MOV-TAPE",
+      "label": "Packing tape (roll)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 5,
+      "taxable": 1,
+      "keywords": "tape"
+    },
+    {
+      "sku": "MOV-BUBBLE",
+      "label": "Bubble wrap (per meter)",
+      "kind": "material",
+      "unit": "meter",
+      "unit_price": 2,
+      "taxable": 1,
+      "keywords": "bubble wrap"
+    },
+    {
+      "sku": "MOV-PIANO",
+      "label": "Piano move surcharge (per piano)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "piano"
+    },
+    {
+      "sku": "MOV-STAIRS",
+      "label": "Stairs / long carry surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "stairs,carry"
+    },
+    {
+      "sku": "MOV-STORAGE",
+      "label": "Storage (per week)",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "storage,store"
+    }
+  ],
+  "staff_skills": [
+    "moving",
+    "removals",
+    "packing",
+    "unpacking",
+    "furniture disassembly",
+    "piano moving",
+    "heavy item handling",
+    "storage",
+    "logistics"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "same day move",
+      "urgent move",
+      "eviction",
+      "settlement"
+    ],
+    "urgent": [
+      "tomorrow",
+      "this week",
+      "moving out friday",
+      "end of lease"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "booking",
+      "packing",
+      "storage"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional moving company. Ask about the pickup and delivery addresses, the volume of items, stairs and lift access, and the preferred date. Ask about packing, fragile items, and whether storage is needed. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a fixed price without an inventory or survey.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "We hold [your insurance type] cover for transit and goods in storage through [your insurer]. A certificate is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "How much does a move cost?",
+      "a": "{price_note} Moving is priced by hour plus truck, or by fixed quote after a survey.",
+      "keywords": "cost,price,moving",
+      "priority": 9
+    },
+    {
+      "q": "Do you supply boxes?",
+      "a": "Yes, we supply boxes and packing materials. Tell us how many rooms you are moving so we can estimate how many you need.",
+      "keywords": "boxes,packing materials",
+      "priority": 8
+    },
+    {
+      "q": "Do you pack for me?",
+      "a": "Yes, we offer full and partial packing services. Packing is charged per hour, and you can choose which items we pack.",
+      "keywords": "pack,packing",
+      "priority": 9
+    },
+    {
+      "q": "Do you move pianos?",
+      "a": "Yes, we move pianos with specialist equipment. Tell us the type and weight of the piano when you book, as a piano move surcharge applies.",
+      "keywords": "piano,move",
+      "priority": 8
+    },
+    {
+      "q": "Do you move pool tables?",
+      "a": "Yes, we move and reassemble pool tables. Tell us the size and access so we can confirm whether it fits the truck.",
+      "keywords": "pool table,billiard",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer storage?",
+      "a": "Yes, we offer short and long term storage. Storage is charged per week, and we confirm the terms before we store your goods.",
+      "keywords": "storage,store",
+      "priority": 9
+    },
+    {
+      "q": "Do you do office moves?",
+      "a": "Yes, we do office and commercial relocations. Tell us about your after-hours access and any IT equipment before the move.",
+      "keywords": "office,commercial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do interstate moves?",
+      "a": "Yes, we do interstate moves. Give us the pickup and drop-off addresses and a preferred date so we can quote.",
+      "keywords": "interstate,long distance",
+      "priority": 9
+    },
+    {
+      "q": "Do you do international moves?",
+      "a": "Yes, we coordinate international moves. Some goods need export or import paperwork, so tell us the destination country when you enquire.",
+      "keywords": "international,overseas",
+      "priority": 8
+    },
+    {
+      "q": "How many movers will come?",
+      "a": "Most jobs send two to four movers, depending on volume. We confirm the crew size in your quote.",
+      "keywords": "how many,movers",
+      "priority": 8
+    },
+    {
+      "q": "What truck size do you use?",
+      "a": "We use trucks sized to your move. Tell us the volume and access.",
+      "keywords": "truck,size",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge for stairs?",
+      "a": "Stairs and long carries may incur a surcharge. Tell us the access.",
+      "keywords": "stairs,access,surcharge",
+      "priority": 8
+    },
+    {
+      "q": "Do you disassemble furniture?",
+      "a": "Yes, we disassemble and reassemble standard furniture. Tell us about any beds or wardrobes that need dismantling when you book.",
+      "keywords": "disassemble,reassemble,furniture",
+      "priority": 8
+    },
+    {
+      "q": "What if something is damaged?",
+      "a": "Please report any damage as soon as possible after the move. We handle claims under our insurance policy, which we explain before the job.",
+      "keywords": "damage,claim",
+      "priority": 9
+    },
+    {
+      "q": "Do you provide a receipt?",
+      "a": "Yes, we provide a detailed receipt for every move. Ask us for an itemised quote if you want to see the breakdown.",
+      "keywords": "receipt,invoice",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area] and interstate routes. Ask us to confirm your suburb and route when you enquire.",
+      "keywords": "area,location",
+      "priority": 7
+    },
+    {
+      "q": "How do I book?",
+      "a": "Tell us the addresses, volume, date, and access. We will confirm a time.",
+      "keywords": "book,booking",
+      "priority": 8
+    },
+    {
+      "q": "Do you move plants?",
+      "a": "Yes, we move potted plants. Some states have biosecurity rules, so check with us before moving plants across state lines.",
+      "keywords": "plant,move",
+      "priority": 7
+    },
+    {
+      "q": "Do you move safes?",
+      "a": "Yes, we move safes with specialist equipment. Tell us the weight and size when you book so we can plan the crew and truck.",
+      "keywords": "safe,move",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} arrives on {date}. Please clear access and remove any loose items.",
+    "quote_intro": "Here is your quote for the {job}, based on what you told us about the volume and access.",
+    "invoice_note": "Thank you. Disposal receipts are available on request."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 20,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 7,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "property_size",
+      "label": "Number of rooms or volume",
+      "required": true
+    },
+    {
+      "key": "hazard_check",
+      "label": "Any hazardous material or asbestos?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "moving.rule1",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "moving.rule2",
+      "trigger": "booking.created",
+      "action": "confirm_access",
+      "description": "Confirm access details 24 hours before",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Moving companies may need a state licence or registration to carry goods for hire. Keep insurance and transport records. Check your state transport rules.",
+    "items": [
+      "Moving or transport licence number",
+      "Goods in transit insurance certificate"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle or truck",
+    "cleaning equipment",
+    "bins or skip"
+  ],
+  "reporting": [
+    "jobs completed",
+    "average job value",
+    "repeat clients"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "white_card"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

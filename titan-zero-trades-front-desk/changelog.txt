@@ -1,0 +1,645 @@
+= 3.0.128 =
+* Setup wizard: clearer spacing on every step, plain-language policy questions, one question per row, and a booking page choice.
+* Verticals: improved service types, questions and answers for all 65 bundled packs. Unverified facts are now placeholders for the owner to complete.
+* Compliance guidance corrected for three packs.
+
+Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (GPLv2). Changes: see THIRD-PARTY-NOTICES.txt section 7. Changed 2026-11-15.
+= 3.0.127 =
+* Booking submissions are saved under the company that owns the calendar. Requests are refused when the calendar has no valid owner or the active company does not match it.
+* Booking-form messages and assistant conversations are limited to the current company's records.
+* Chat assistant: photos from a rejected message are deleted from storage, the per-conversation photo limit is enforced before a file is stored, and the site-wide chat bubble option has been removed.
+* AI usage records use the token counts reported by the provider when they are available.
+* Vertical pack setup keeps saved answers when a details field is left blank, and finishing setup requires the details step.
+* Reminders are re-queued after a customer reschedule or a status change.
+* Renaming a service is refused when another service in the same calendar already uses that name, before any change is saved.
+* Call event storage failures are shown as an administrator notice rather than retried on every page load.
+* Client-portal sign-in links are matched to the exact email address.
+* Legacy iCal feed subscriptions using the old short token stop working when legacy feeds are enabled; subscribers need the new feed URL.
+
+= 3.0.126 =
+* Consolidated shared logo placement and reduced conflicting legacy brand CSS.
+* Corrected Front Desk notice and review contrast rules.
+
+correct brand banner placement and legacy review/calendar contrast.
+= 3.0.120 =
+* Consolidated six sequential administration style layers into one ordered stylesheet.
+* Improved wizard review readability, dark fields, table links, mobile overflow, and brand header spacing.
+* Preserved original stylesheets as non-enqueued references and all booking functionality.
+
+= 3.0.112 =
+* fail closed on unresolved SQL/legacy service ID collisions in catalogue lookups, listings and mutations; preserve legacy backup until safe reference migration.
+
+= 3.0.112 =
+* Verify same-ID SQL service records against legacy records before migration; protect service references and catalogue listings.
+
+= 3.0.109 =
+* non-destructive company-scoped migration of legacy option service records to standalone SQL catalogue. Preserve IDs and legacy backups, refuse cross-company collisions, require verified writes and a completion marker; prefer canonical SQL records for subsequent service changes.
+
+3.0.108 —locked legacy service mutations; fail-closed tenant-scoped provider creation; deduplicated catalogue listings.
+
+3.0.107 —company-scoped standalone SQL services, strict field validation, fail-closed reads, verified updates and archives.
+3.0.106 —native standalone company-scoped service catalogue, admin service write request guards, finite price checks and archive failure reporting.
+3.0.105 —bounded JSON pack import, upload verification, tenant-scoped administrative write guards, reserved ID protections and persisted import read-back.
+= 3.0.104 =
+* bound booking export cardinality and memory footprint; reject malformed export filters before database queries.
+
+= 3.0.103 =
+* bounded AI setup and provider test requests, verified company-scoped profile saves, safe provider failures and response handling.
+* fail-closed calendar owner lookup, bounded resource preview numbers, secure REST response headers, safe admin guard limits and booking status response caps.
+
+= 3.0.102 =
+* fail-closed company-scoped settings migration with verified persistence and retry behaviour.
+* Bound REST request bodies and parsed parameters, reject mismatched Content-Length and unexpected GET bodies.
+* Replace admin reminder dismissal and customer portal logout GET links with POST-only nonce forms.
+* Bound customer, service, pipeline and operations administration submissions.
+
+= 3.0.100 =
+* Secure onboarding HTTP method, permissions and bounded POST forms; validate service source IDs, CSV upload errors, database import failures and safe remote page import.
+
+= 3.0.99 =
+* Verify and scope booking deletion writes, count confirmed deletions, and prevent false-positive administrative notices.
+
+= 3.0.98 =
+Explicit fail-closed booking cancellation and reschedule confirmation nonces, company-scoped admin report DB failure checks, and no-cache/no-referrer portal login links.
+
+= 3.0.97 =
+Booking admin actions: verify bulk and single status updates before reporting success, avoid inaccurate resend and deletion notices, and prevent schedule redirects after failed updates.
+
+= 3.0.95 =
+Security: add-on saves now use POST-only forms and permissions/nonces, reject unknown or unavailable IDs, and validate stored results. Administrative submission size validation now includes all nested parsed values.
+
+= 3.0.94 =
+* make availability cache schema company-aware and fail safely on failed reads, invalid cached JSON and failed writes.
+
+3.0.93 —Calendar administration now verifies create, rename, clone and deletion outcomes, and rejects database read failures and URL-spoofed notices.
+3.0.92 —Removed obsolete GET industry-pack mutation handlers, guarded upload requests, bounded scalar inputs and removed GET-spoofed settings notices.
+= 3.0.91 =
+* Removed Front Desk registration and bootstrapping of the shared Workspace shell. Front Desk now owns one native WordPress sidebar menu, with Dashboard, Bookings, Calendar, Enquiries, Customers, Services, Workers & Equipment, Locations, Add-ons and Settings.
+* Preserved the existing admin page slugs and the independent booking/customer data services.
+
+= 3.0.90 =
+* bound nested REST request inputs and reject non-scalar payload types; add callback-level catalogue validation and private booking-status cache protection; validate export HTTP methods.
+
+= 3.0.89 =
+- Fail-closed AI conversation creation, company-scoped channel lookup, and atomic conversation state persistence.
+
+= 3.0.89 =
+* Standalone transactional audit journal for booking and enquiry status changes, removing the remaining Workspace audit dependency from these operations.
+* Native audit table added to install/upgrade and opt-in uninstall ownership.
+
+= 3.0.89 =
+* validate stored AI conversation/draft JSON, bound image suggestions, and validate WordPress AI client inputs before sending to a provider.
+
+= 3.0.87 =
+* enforce POST on blocked-time writes and settings edits; bind cancellation reasons to the authorised POST nonce, reject ambiguous exports, and bound administrative settings requests.
+
+= 3.0.86 =
+* bounded REST request guards on AI, public webhook, resources, booking status and optional Workspace endpoints.
+* Align plugin version constant with header and readme.
+
+= 3.0.84 =
+* limit admin write request size/shape and enforce POST on sensitive save and AI suggestion actions. Validate AI photo data URIs against decoded image MIME and canonical base64 before saving.
+
+= 3.0.83 =
+* Harden public slot feed database-failure handling, historical record validation, request dispatch, export GET filters and JavaScript delivery headers.
+
+= 3.0.83 =
+* Enforce secure export method/nonce binding, validate submitted form JSON, and fail closed on booking list database errors.
+
+= 3.0.81 =
+harden public missed-call and Twilio webhook input and database failure paths, AI photo image dimensions and private file access, administrator customer identifiers and POST handling, resource-preview content type, and booking status response validation.
+
+= 3.0.79 =
+* booking engine storage preflight now checks InnoDB through the exact database connection used for the transactional booking write, preventing cross-connection engine mismatches.
+
+= 3.0.78 =
+* Fail closed when CSV booking exports cannot read records from the database.
+* Safely decode historic appointment status fields and malformed form definitions in CSV exports.
+* Source-level regression only; WordPress and official Plugin Check verification remain outstanding.
+
+= 3.0.77 =
+* Shield each pre-registered booking-created listener independently so one failed notification does not prevent other listeners from running. Restore original WordPress hook callbacks after dispatch.
+
+= 3.0.76 =
+* Protect committed bookings against failures in optional post-commit notification and integration callbacks; preserve confirmation and log non-sensitive diagnostics.
+
+= 3.0.76 =
+- Persist booking insert and final payload together in a checked InnoDB transaction, rolling back partial writes before confirmation.
+- Never fire post-save notifications until the database COMMIT acknowledges success; report uncertain COMMIT outcomes without recommending automatic retries.
+- Add isolated regression coverage for failed inserts, final writes, readback, storage engines and request mode.
+- Live WordPress/MariaDB and official Plugin Check validation remain outstanding.
+
+= 3.0.74 =
+- Correct CSV calendar context to use the validated, company-scoped ID.
+- Normalize historical appointment export rows, safely skipping malformed records and invalid dates.
+- Avoid PHP warnings for missing booking fields and preserve data-only CSV values without a two-newline separator.
+
+= 3.0.73 =
+* Synchronise the booking widget selection before each wizard Continue, Review or Save attempt.
+* Block blank appointment selections before the delegated AJAX handler can submit, with an actionable service/time error.
+* Source-level regression tests pass; live WordPress and official Plugin Check still required.
+
+= 3.0.72 =
+* Validate all required booking inputs when the legacy AJAX Save button is clicked on Review, not only when moving between wizard steps.
+* Watch dynamically inserted booking buttons on the form even when the legacy field-list container has not yet mounted.
+* Live WordPress database persistence and Plugin Check remain unverified.
+
+= 3.0.70 =
+* Scope booking confirmation and notification lookup to the current business; reject mismatched rows and database failures.
+
+= 3.0.70 =
+* Defer booking-created events, notifications and optional Workspace attachment until after verified final persistence.
+* Keep failure-path capacity lock cleanup for incomplete bookings.
+
+= 3.0.68 =
+* Require a tenant-scoped read-back of the final booking payload before showing confirmation; reject missing or inconsistent booking rows.
+* Reject inserts without a valid database-generated booking identifier.
+
+= 3.0.67 =
+* Release capacity locks when booking insertion fails, including customer validation and database errors; added destructor fallback.
+
+= 3.0.66 =
+* Fail safely on corrupted booking-form configuration and failed final booking persistence updates.
+
+= 3.0.65 =
+* Refuse booking-form submissions with no valid appointment selection; fail closed in parent and scheduling capacity verifiers. Preserve contact-only forms.
+
+Full booking-statistics pagination and fail-closed legacy booking lookups. Live WordPress tests pending.
+= 3.0.64 =
+* Exports now scan complete booking history with keyset pagination instead of silently omitting older records.
+* Fail-closed CSV/iCalendar exports on database read errors.
+
+= 3.0.62 =
+* Replaced the legacy 1,000-booking occupancy limit with complete fail-closed pagination.
+* Reset stale database error state before each capacity read; added regression tests.
+
+= 3.0.61 =
+* Paginate booking capacity reads across full calendar history instead of limiting checks to 2,000 rows.
+* Fail closed on booking occupancy database errors or malformed pagination results.
+* Reject malformed native customer IDs in admin booking submissions rather than coercing them.
+* Add offline capacity-reader regression tests. Live WordPress/DB and official Plugin Check remain unverified.
+
+= 3.0.60 =
+* Hardened optional AI wizard suggestion validation and redacted provider errors.
+* Added explicit regression tests for AI suggestion filtering.
+
+= 3.0.59 =
+* Bind administrator-created bookings to Front Desk native customers, independent of Workspace numeric IDs.
+* Refuse stale customer selections rather than silently creating an unlinked booking.
+* Resolve native customer records in the AI booking pipeline and customer API.
+* Scope the post-processing booking update by business identity.
+* Add native-customer booking-save regression checks.
+
+= 3.0.58 =
+* Use native Front Desk customer records in the Add Booking administrator workflow.
+* Fix a JavaScript reference error in booking submission and synchronise customer ID before AJAX saves.
+* Disable unsafe cross-store Workspace location lookup for unmapped local customer IDs.
+* Add native-customer booking regression checks.
+
+= 3.0.51 =
+* scan older booking records with company-scoped keyset pages so active appointments beyond the first 5,000 cannot silently vanish from booking-rule counts.
+
+= 3.0.50 =
+* recover customer lifecycle notifications after lost post-claim reads, failed dispatch/retry acknowledgements and queue-discovery errors without falsely marking delivery.
+
+= 3.0.49 =
+* recover leased pipeline events after failed retry or quarantine acknowledgements rather than relying solely on hourly cron.
+
+= 3.0.48 =
+* schedule lease-expiry recovery when pipeline notification discovery, post-claim reads or acknowledgements fail; prevent silent empty-queue interpretations of database errors.
+
+= 3.0.47 =
+* continue processing pipeline notification backlogs promptly while respecting bounded dispatch batches.
+
+= 3.0.46 =
+* contain pipeline notification database exceptions by row, preserve unacknowledged leases and schedule recovery.
+
+= 3.0.45 =
+* verify pipeline notification booking and company ownership immediately before hook dispatch.
+
+= 3.0.44 =
+* retry missing pipeline hook consumers and schedule delayed retries promptly, preserving earlier cron wakes.
+
+= 3.0.43 =
+* prevent optional cancellation-link email enrichment from interrupting booking mail on database exceptions; clear stale recipient context.
+
+= 3.0.42 =
+* fail closed on unexpected scheduling engine exceptions during public customer rescheduling and customer-copy enrichment.
+
+= 3.0.41 =
+* resolve company from form for verified public cancellation/rescheduling capability links without requiring a Workspace session; reject explicit tenant mismatch.
+
+= 3.0.40 =
+* prevent database exceptions during capacity lock acquisition/release from escaping booking request handlers; preserve stale-handle protection.
+
+= 3.0.39 =
+* public cancellation now safely handles booking database failures and Workspace ownership exceptions without exposing record details.
+
+= 3.0.38 =
+- Fail-closed exception handling for public customer reschedule booking and tenant lookups.
+
+= 3.0.37 =
+* Bind customer cancellation writes to the full token-validated booking snapshot (form, email, text and serialized state) with byte-exact comparisons.
+
+= 3.0.36 =
+* Preserve uncertain COMMIT outcomes in customer cancellation/rescheduling and fail safely on transaction exceptions.
+
+= 3.0.35 =
+* Recover scheduled customer notification workers from transient database exceptions without aborting remaining queue rows.
+
+= 3.0.34 =
+- Catch database START TRANSACTION, row-lock and status UPDATE exceptions in booking and enquiry handlers; return controlled errors and request rollback before returning.
+- Add 30 behavioral assertions for failures before audit/COMMIT across both paths.
+
+= 3.0.33 =
+* Prevent unhandled Workspace audit exceptions from leaving booking/enquiry transactions open; distinguish uncertain COMMIT outcomes.
+
+= 3.0.32 =
+- Require both Front Desk booking/enquiry and Workspace audit tables to use InnoDB before atomic status changes; refuse unsafe storage.
+- Add 32 executable checks for absent/nontransactional tables, lookup errors, successful audit commits and rollback.
+
+= 3.0.31 =
+- Register all scheduled booking, notification, telephone and Smart Task outbox cron hooks for deactivation/uninstall cleanup.
+- Remove the legacy plugin-owned customer event outbox only when explicit uninstall data erasure is enabled; clear the disposable notification company cursor on uninstall.
+- Add executable cleanup and schedule-registry regression checks.
+
+= 3.0.30 =
+Release metadata consistency verification and fail-closed release audit for runtime plugin version. Live booking and delivery validation still required.
+
+= 3.0.29 =
+- Keep customer cancellation/rescheduling lifecycle events pending for retry when their required WordPress hook has no registered listeners; avoid incorrectly acknowledging silent no-op dispatch.
+
+= 3.0.28 =
+- Repair the development-only two-connection staging probe after strict booking/form/tenant ownership checks; use quarantined synthetic database rows and separately assert nonexistent booking rejection. No production booking behavior changed.
+
+= 3.0.27 =
+- Enforce authoritative company ownership of booking forms before inserting customer notification events; reject foreign, unknown, or unavailable owner lookups.
+
+= 3.0.26 =
+- Require both booking and notification-outbox tables to use InnoDB when staging customer lifecycle events.
+* Verify the queued booking belongs to its recorded booking form before staging cancellation and rescheduling notifications; refuse missing, mismatched or unavailable booking lookups.
+
+= 3.0.24 =
+* Rotate notification worker company discovery cursor with bounded wraparound to prevent starvation when the first 50 companies have permanently ready work.
+
+= 3.0.22 =
+* Expand disposable two-connection staging harness to verify commit visibility and duplicate outbox identity protection; do not treat offline harness checks as live integration evidence.
+
+= 3.0.21 =
+* Require authoritative booking-to-form association before customer notification hooks execute, with bounded retry for temporary lookup failures.
+
+= 3.0.20 =
+* Validate required rescheduling email envelopes before outbox staging and booking commit.
+
+= 3.0.19 =
+- Reject control characters in queued customer email subjects, preventing header-injection input reaching wp_mail.
+- Add executable live WordPress/MariaDB two-connection advisory lock and transactional outbox staging harness (development-only).
+
+= 3.0.18 =
+* Safely replace later WP-Cron customer notification wake events with earlier retries; restore the old wake if scheduling the replacement fails.
+* Ensure the background customer notification queue schedules another short-delay wake when more than 50 companies have ready work, preventing delayed tenant notifications.
+
+= 3.0.16 =
+* Retry customer notification rows if the authoritative Workspace form-owner lookup is temporarily unavailable; retain permanent rejection for confirmed cross-company ownership.
+* Prevent one throwing form-owner lookup from aborting the remaining notification worker batch.
+
+= 3.0.15 =
+* Enforce owner verification in interactive customer event dispatch; schedule bounded retries near due time and continue capped worker batches.
+
+= 3.0.14 =
+* Tenant-safe background customer notification processing and separate short-delay wake events.
+
+= 3.0.13 =
+* Stage rescheduling customer-copy email atomically with booking and notification events. Retry mail acceptance from the tenant-scoped queue.
+
+= 3.0.12 =
+* Customer booking cancellation/rescheduling event outbox with transactional booking writes and tenant-scoped retry dispatch.
+
+= 3.0.11 =
+* Bound pipeline outbox retries, preserve failed rows for company-scoped diagnostics, and provide gated operator recovery.
+
+3.0.10 —atomic pipeline notification staging and lease-based hook retry; delivery acknowledgement remains provider-dependent.
+3.0.9 — Standalone Pipeline Transition Atomicity
+
+3.0.8 — Pipeline Storage and Commit Outcome
+- Request InnoDB explicitly for fresh pipeline state and event tables.
+- Report uncertain COMMIT outcomes separately from definite transaction failures.
+- Preserve staging requirement for actual MariaDB concurrency verification.
+3.0.7 — Transactional Booking Decisions
+3.0.6 — Customer Cancellation Capacity Coordination
+3.0.6 — Calendar Consistency
+- Delayed lifecycle calendar notifications until the related pipeline state transition succeeds.
+- Added restoration of the exact prior calendar payload when approval or rejection state transition fails.
+- Added changed-row checks and optimistic match against the read calendar payload.
+- Added 20 source-structure regression guards. Live MariaDB concurrency is not yet verified.
+
+3.0.4 — Capacity Integrity
+- Keep AI booking rollback inside the capacity mutex, checking the deletion result.
+- Release intake, approval and rejection advisory locks with exception-safe finally blocks.
+- Re-read approval/rejection booking state after lock acquisition before mutation.
+- Reassess approval occupancy from the locked booking snapshot.
+- Add mock-connection lock regression coverage and pipeline mutation guards.
+- Full browser, MariaDB concurrency and provider delivery verification remains outstanding.
+
+3.0.3 — Security
+- Added explicit HTTP-source scalar reader and migrated 232 request reads.
+- Bound 43 additional SQL table identifiers with WordPress placeholders.
+- Enforced InnoDB for call-event transactions and their optional completion outbox.
+- Corrected native duplicate-key detection for call events and booking-action queues.
+- Preserved nullable inbox owner IDs with SQL NULL and safely recognized historical zero-valued empty references.
+- Added source-isolation regressions and real MariaDB integration tests.
+
+3.0.1 — Security
+- Updated Chart.js to 4.6.1 and its readable source and notices.
+- Bundled rebuild manifests and helper; added non-mutating public bundle verification.
+- Enforced capability and nonce inside both browser CSV export methods.
+- Packaged the WordPress candidate using the existing review slug.
+- Retained the Workspace runtime guard without an unverified directory dependency header.
+- Added stricter release metadata and source completeness checks.
+- Rejected activation immediately when the Workspace APIs are absent.
+- Corrected bundled UI translation domains, output escaping and direct access guards.
+- Bound additional query identifiers with %i placeholders.
+- Used WordPress filesystem APIs and refused private attachments when mode 0600 cannot be set.
+
+Titan Zero Front Desk 2.1.0
+- Front Desk is now a feature plugin. It requires Titan Zero Trades: Front Desk and creates no tables without it.
+- Customers, sites and services come from Workspace (TZ_Customers, TZ_Services). Front Desk no longer keeps its own customer table.
+- Front Desk business tables carry company_id.
+- Read-only TZ_FrontDesk API: bookings_for_customer, booking_exists, booking_form. Write: set_booking_status (Invoicing), default_paid_status.
+- Quotes, invoices, payments, coupons and CRM moved out to Titan Zero Quotes, Titan Zero Invoicing and Titan Zero Trades: Front Desk.
+- Generic webhook route titan-zero-front-desk/v1/webhook/{slug} and booking.payment_update_attempted removed. Invoicing owns the payment webhook route.
+- Admin screens use the Workspace shell. Access is by the Titan Zero Worker and Manager roles and Administrators; Editors have no access.
+- Table, option, hook and REST names moved from tzfd_ to tz_fd_ (REST namespace titan-zero-front-desk/v1).
+- Lead intake from Business Builder is stored in Front Desk tables with company_id.
+
+Titan Zero Trades: Front Desk 2.0.55
+- Rebrand the shared admin workspace and plugin listing as Titan Zero Trades: Front Desk.
+- Keep the existing plugin folder, translation domain, route names and stored data identifiers for upgrade compatibility.
+
+Titan Zero Trades: Front Desk 2.0.5
+- Added Create & manage booking portal action to the Bookings screen.
+- Added booking form and customer portal style choices, independent layout toggles, and a WordPress page linking to both pages for checking.
+
+Titan Zero Trades: Front Desk changelog
+
+= 2.0.53 =
+* Apply each calendar's user access list to the Services screen, dedicated service creation and service address/location updates.
+* Hide calendars the current user cannot manage from the service catalog and creation targets.
+
+= 2.0.52 =
+* Reconcile an existing unallocated payment to a matching invoice without deleting or re-entering the payment.
+* Allow an unlinked payment to be assigned to a selected invoice, while preventing a booking-linked payment from crossing bookings or calendars.
+* Replace payment deletion with an audited void that records a reason, timestamp and WordPress user ID; voided payments no longer count toward totals or invoice balances.
+* Update payment help and privacy information to describe reconciliation, void records and retention.
+
+= 2.0.51 =
+* Keep grouped navigation in the Front Desk workspace and remove duplicate top-level WordPress admin menu groups.
+* Remove the separate WordPress menu list from the Front Desk sidebar.
+
+= 2.0.50 =
+* Group the Front Desk sidebar into Dashboard, Customers, Schedule, Money, Business Resources, AI, Add-ons and Settings.
+* Link each section parent to its primary screen, show that section's pages when it is active, and route the Schedule parent to the calendar.
+
+= 2.0.49 =
+* Distinguish database read failures from valid empty results in the calendar, service, customer, quote, pipeline, invoice, payment, dashboard and client-portal screens.
+* Preserve saved portal calendar settings and stop page creation when calendar reads fail.
+* Report calendar lookup failures in WordPress personal-data export and erasure checks instead of treating them as missing tables.
+
+= 2.0.48 =
+* Show an explicit warning when invoice booking-payment reference totals cannot be read, instead of making a database failure look like no payments.
+* Keep text truncation and admin initials working when the optional PHP mbstring extension is unavailable.
+* Raise label, helper, field and disabled-control contrast across Front Desk admin screens.
+* Label legacy admin booking appointment fields as service selection and permit multiple service/time entries on that form.
+* Synchronize selected booking times from the calendar widget state immediately after selection and again before validation/submission.
+
+= 2.0.47 =
+* Keep text truncation and admin initials working when the optional PHP mbstring extension is unavailable.
+* Raise label, helper, field and disabled-control contrast across Front Desk admin screens.
+* Label legacy admin booking appointment fields as service selection and permit multiple service/time entries on that form.
+* Synchronize selected booking times from the calendar widget state immediately after selection and again before validation/submission.
+
+= 2.0.46 =
+* Raise label, helper, field and disabled-control contrast across Front Desk admin screens.
+* Label legacy admin booking appointment fields as service selection and permit multiple service/time entries on that form.
+* Synchronize selected booking times from the calendar widget state immediately after selection and again before validation/submission.
+
+= 2.0.45 =
+* Reject malformed amounts instead of stripping characters into a different value; support valid grouping and configured currency decorations. Quote line values and calculated totals are bounded to their decimal columns.
+* Fail closed and show unavailable payment totals or rows when payment queries fail.
+* Reserve coupon usage before inserting a discounted booking, and release known failed booking claims.
+* Handle malformed legacy calendar JSON without calling the missing JSON class or fatalling the public form.
+
+= 2.0.44 =
+* Serialized invoice payment allocations and invoice edits, status changes, deletion and payment removal with a shared per-invoice lock.
+* Reconciled invoice balances from recorded payment allocations, made database read failures fail closed, and blocked voiding invoices with recorded payments.
+* Added a service creation form that preserves calendar data and detects concurrent calendar edits.
+* Checked the selected portal calendar on both page creation routes; the server-side booking selection and capacity checks remain in the submit path.
+* Added direct invoice and payment navigation, repaired resource permissions and loaded portal builder styles on both admin routes.
+* Serialized coupon usage checks with redemption writes to enforce usage limits across concurrent bookings.
+
+= 2.0.1 =
+* Removed the custom CSS editor. Saved custom CSS is no longer output on any page. Saved settings are kept.
+* Added nonce and permission checks to admin actions and to public requests that change data.
+* Moved inline scripts and styles into script and style files that WordPress loads.
+* Removed the upgrade card and the "Powered by AI" line from the booking assistant.
+* Updated Chart.js to 4.5.1.
+* Documented each external service, including Cerebras, and included readable source for the minified scripts.
+* Help page: the list of Settings tabs no longer names Custom CSS or Styles.
+* Uninstall removes chat photos and invitation files from the plugin's own uploads folder, and chat photos that version 2.0.0 saved in the uploads root. Other files in uploads are not touched.
+* Calendar feed: each date range is cached separately, so a different range no longer shows an earlier one.
+* Front Desk admin pages check the edit_pages capability before they open.
+* AI provider calls report a failed response as an error. The provider address must be http or https.
+* Help links point to the titanzero.io support page.
+* Updated jQuery Validation to 1.22.1.
+* Calendar feed and public availability return only the bookings inside the requested date range.
+* iCal feed: a daylight saving setting of No is respected, and cancelled and rejected bookings are left out of the attachment.
+* Local AI server checks run only when an administrator presses the check button, and accept only http or https addresses.
+* Quote links: an unknown or wrong link returns the same 403 response.
+* Report screen: removed the Export to CSV button, which had no action.
+* Report and admin export forms check a nonce before they change anything.
+* Quote approval is refused for drafts, declined or expired quotes, and quotes past their valid-until date.
+* Quote PDFs no longer show internal notes, and declined or expired quotes no longer show the approval block.
+* The dashboard delete link was removed. It did nothing.
+* iCal feed: Australia and New Zealand daylight saving dates are corrected to the Southern Hemisphere rules.
+
+= 2.0.0: brand graphics =
+* Brand pack v1.0.0 graphics: all product graphics are in images/brand/. The Help page shows the feature cards, workflow overview and light, dark and mark logos. The Preset Setup page shows the setup flow. Trade packs show their banner, and the install notice shows the slim banner. Status tags use the status icons, and admin headings use the screen icons. WordPress.org banner and icon are in .wordpress-org/.
+
+= 2.0.0: plugin name =
+* Renamed to Titan Zero Trades: Front Desk. The plugin folder, slug, main file and text domain are now titan-zero-trades-front-desk. Code prefixes (tzfd), database tables and option keys are unchanged, so existing data keeps working.
+
+= 2.0.0: AI settings note =
+* The AI settings page and the readme point to Google AI Studio and Groq as providers where you can create an API key, with a note that limits, prices and terms are set by each provider.
+
+= 2.0.0: Plugin Check fixes =
+* Settings: the booking intake calendar list reads through the calendar helper, so the settings page makes no direct database call.
+* Read-only routing and page checks are marked as such, so Plugin Check accepts them.
+* The intake calendar list and the quote list query are marked as checked: they read fixed tables and bind every value.
+
+= 2.0.0: booking page and client portal =
+* Settings: a new card creates a booking page and a client portal as normal WordPress pages, so they use the active theme's header, footer and fonts. Choose the calendar for the booking page there. Saving again updates the choice and does not make duplicate pages.
+* Client portal: clients enter their email address and get a one-time sign-in link (valid 20 minutes). The link opens a session for 2 hours. The portal lists their bookings and quotes. Upcoming bookings can be changed or cancelled with the same signed links used in booking emails. The reply to a sign-in request is the same whether or not the address has records.
+* Sign-in emails are sent with the site's own mail setup. No data is sent to any outside service.
+
+= 2.0.0: menu changes =
+* The Front Desk submenu is minimised by default. Its items open as a flyout when you point at Front Desk in the WordPress menu, instead of being listed inline.
+* The New booking page is removed from the Front Desk menu. Add a booking from the Calendar screen instead.
+* On Front Desk screens, the WordPress menu is listed in the Front Desk sidebar (a WordPress menu section), so Posts, Pages, Media and the other WordPress links stay available. The WordPress menu itself stays hidden on those screens.
+
+= 2.0.0: guideline round 8 =
+* Calendar: the event editor opens in a new browser tab, not an iframe dialog (guidelines rule 8). If the browser blocks the pop-up, it opens in the current tab. The quick-add on an empty time slot opens the editor at the clicked time.
+* Removed the unused iframe helpers OpenModelWindow and CloseModelWindow from Common.js.
+* Calendar scripts declare their dependencies, so they load in order.
+* jquery.calendar.js, tzfdform-admin.js and jquery.validate.js are readable now. Their syntax trees match the minified originals, apart from the new-tab change above.
+* Renamed js/tzfdform-pro-*.jquery.js to js/tzfdform-core-*.jquery.js. The form builder core is not a Pro feature.
+* Removed the dormant Titan Zero AI hosted preset. The AI page keeps one upgrade card (see the readme).
+* UPSTREAM.txt lists the readable-source files and the upstream files that were removed.
+
+= 2.0.0: review fixes, round 2 =
+* AI chat: the height setting is applied to the message area (200 to 900 px, default 420).
+* AI photos: the help page says the assistant cannot see photos yet. The photo link is saved with the request.
+* Uninstall: chat photos and invitation files are removed on every uninstall. The database and settings still need TZFD_DELETE_DATA_ON_UNINSTALL.
+
+= 2.0.0: review fixes =
+* AI: the default Anthropic model is claude-sonnet-5-5 and the default Groq model is openai/gpt-oss-120b. The previous defaults are retired.
+* AI keys: a key is never stored unencrypted. Without OpenSSL on the server the key is not saved, and the AI page shows it is not set up.
+* AI photos: the assistant is told it cannot see photos. Uploaded photos are deleted with their conversations after the retention period.
+* Calendar invitations (iCal) are named tzfd-booking_*.ics. Uninstall removes only those files, not other plugins' files.
+* Quotes: the add-on is described as deposit tracking. Payments are recorded by hand; no deposit is taken automatically.
+* readme: a FAQ entry explains that this is not an upgrade from Appointment Hour Booking or Titan Front Desk, and that there is no import tool.
+
+= 2.0.0: audit fixes =
+* Help page: the examples for REST routes and webhook headers now match the code.
+* One REST namespace for every endpoint (titan-zero-front-desk/v1). Webhook and missed-call headers are X-TZFD-Secret, X-TZFD-Event, X-TZFD-Event-ID, X-TZFD-Timestamp and X-TZFD-Signature.
+* AI page: it has its own slug and add-on ID, so it no longer opens Preset Setup. It is in the menu on every Front Desk screen.
+* AI setup wizard: trimmed to the steps the free build uses (provider, mode, business basics, finish). The voice, messaging channel, knowledge base, staff, receptionist and go-live steps, which needed services this build does not include, are removed.
+* Settings: the Quote defaults pane explains how to turn on Quotes when that add-on is off, instead of failing.
+* Dashboard: the greeting reads the first name from user meta.
+* CSS editor: the template scan no longer fails when the templates folder is missing.
+* Brand images that nothing in the plugin loads (source files, generated art, marketing and overview images) are removed.
+
+= 2.0.0: second audit fixes =
+* Fixed: the "Open setup wizard" button in the add-on settings pointed to a page that does not exist. It now opens the AI setup wizard.
+* Fixed: the "Open Vertical Packs" link pointed to a page that does not exist. It now opens the Vertical Packs page.
+* Fixed: the "New service" link and the calendar "edit" route loaded a file that is not in the plugin, so the screen was blank. It now opens the calendar editor.
+* Translations: this release ships in English. Translation files are left out until they are checked against the final strings.
+* readme: the external services list now names OpenRouter, Cerebras and Google AI Studio, which the AI settings can send messages to.
+* Removed unused code: two helper functions in the admin menu class that nothing called.
+* Removed the wporg-assets folder from the plugin package. Store images belong in the WordPress.org assets folder, not in the plugin.
+* Translator comment added for the quote-activity message in the admin menu.
+
+= 2.0.0: add-on build-out =
+* Every Front Desk screen shares one layout that follows the 10-screen mock-up: a dark sidebar with the TITAN ZERO / FRONT DESK brand, the workspace name and the menu; a top bar with breadcrumb, search, help, notifications and your avatar; and a page header with the main action. WordPress's own admin menu is hidden on these screens.
+* Stat tiles with coloured edges appear on the Dashboard, Customers, Quotes, Services, Workers & locations and AI screens. Each tile links to the list it counts.
+* Restyled screens: Dashboard (welcome card with set-up progress, four tiles, upcoming bookings, activity and quick actions); Bookings (status tabs, filters, stats and a workflow footer); Customers (stats, filter bar, last activity, next booking and status); Services (catalogue card with address and location columns, filters and a tip); Calendar toolbar (previous, today, next, title, calendar filter, Day, Week and Month, and Manage calendars); Quotes list (status tabs, search and date range, four stats, and a footer with quick actions); Workers & locations (one page with Team, Locations and Equipment & rooms tabs); AI assistant (receptionist status, response behaviour and the booking assistant add-on).
+* AI assistant: the AI page is always in the menu, even before a key is saved. Until a key is saved it shows a set-up banner, and the guided setup runs from its steps.
+* Page banners are off by default, to match the mock-ups. Turn them on with the titan_zero_front_desk_show_page_banners filter.
+* Customers and Services lists show company and city (Customers) and each service's address and location (Services) in the table, so saved details are visible without opening each record.
+* Dashboard: for administrators, the set-up card links to Continue setup. Other users see a note to ask an administrator to run setup until it is finished.
+* Mobile: Front Desk screens stack into one column below 782px wide, and the dashboard cards keep to the page width at phone size.
+* Settings is organised into sections: General, Booking rules, Business hours, Notifications, Payments, Integrations and Advanced, with a list beside the content (stacked on phones). Save changes saves the open section's form; sections with several forms keep a Save button on each.
+* Settings: business and money, payment methods and quote defaults are embedded in their sections, and saving them returns to Settings. Old tab links still open the right section.
+* Add-ons page: grouped into Included features (switches that change how Front Desk behaves), optional add-on cards with View details, and Add-on settings. Save add-on changes reloads the page, so the menu picks up the saved list.
+* AI Booking Assistant (Field service) shows the badges BYO key and Field service on its card.
+* First-run add-ons are Quotes, Preset Setup (Onboarding) and the Dashboard Widget. The setup wizard is no longer switched on by default.
+* Quotes overhaul: every quote action shows a message at the top of the Quotes page, so a save is never silent. Messages cover saved, emailed, marked as sent (no customer email), duplicated, deleted, and the reason an action was refused.
+* Quotes: a quote can be created, edited, duplicated, deleted and sent by anyone with edit_pages (Editors and Administrators). The Price catalog and quote Settings tabs stay with administrators.
+* Quotes: New quote can start from a booking. The customer name, email, service, address and the service's price are filled in from the booking, and a description still gives an AI draft when the AI is set up.
+* Quotes: Save and email to customer saves and emails in one step. Send again emails a quote again. A quote with no line items cannot be emailed. Delete removes any quote that is not approved. Duplicate copies a quote, with its lines, as a new draft.
+* Quotes: approved quotes are read-only and cannot be deleted. Duplicate one to make a changed draft.
+* Quotes: totals, discount and deposit are recalculated on every save, and money is shown in the site currency on the list, the editor, emails and the customer's quote page. A discount shows with a minus sign.
+* Quotes: the list has totals, status filters and search. The editor has line items with kind, quantity, unit, price and tax, and a live total.
+* Quotes: the price catalog refuses a blank label and a SKU that is already used, and an empty catalog can be filled with a starter list.
+* Quotes: Save, send and the other actions use WordPress form security, and reloading the page after an action does not repeat it.
+* Setup: Start setup opens Preset Setup on a fresh install, even with no add-on switched on. Only administrators see the button; other users see a note to ask an administrator.
+* Payments: a new Payments menu item. Record money received by PayPal, bank transfer or cash, optionally against a booking, with a date, reference and note. Totals show what was received today, this month and in total. Remove deletes a payment recorded by mistake.
+* Payment methods: PayPal (email or PayPal.me link), bank transfer (account name, bank, BSB, account number) and cash, each switched on or off with a note for customers, and a default method. The payment instructions card builds the text for confirmations and invoices. Nothing is sent automatically.
+* Business and money: a Settings tab for business name, phone, email, tax number, website and address, and for the currency code, symbol, symbol position and decimal places. Dashboard, Payments, quotes and AI use the saved currency; quotes previously fell back to USD when WooCommerce was not active.
+* Dashboard: top cards for bookings today, value booked today, total payments and quotes to send. Each card links to its screen. The at-a-glance counts no longer repeat them.
+* Locations: a tab on the Workers & locations page, next to Team and Equipment & rooms. The Locations page still opens from its old link. Workers keeps the people, equipment and rooms, the availability preview and the advanced import.
+* Menu: Dashboard, Calendar, Customers, Bookings, Quotes, Services, Workers & locations, AI, Add-ons and Settings. Payments and Upgrade are no longer in the sidebar; their pages still open from their links. Settings tabs show the active tab in brand red.
+* Payment method fix: when the chosen default is switched off, the first method that is on is used, or cash.
+* Calendar: every booking from every calendar, with Day, Week and Month views, previous and next, and a filter for one calendar. Cancelled and rejected bookings stay visible, marked by status. Manage calendars opens the calendar list.
+* Customers: company, street address, city, region, postcode, country, preferred contact, how they found you, and notes. Customer pages show these as labelled sections.
+* Workers and locations: workers and equipment or rooms have a name, role, type, location, phone, email, notes, working days and hours, days off, bookings at the same time, time needed before and after each booking, and the services they offer. Locations have a name, address, phone, timezone and the postcodes they cover. IDs are made from the name. The resource catalogue stays at schema version 1; the new fields are optional.
+* Services: each service has an address and an optional saved location. These are kept apart from the calendar's own settings, so saving a calendar does not remove them.
+* Dashboard: reminder buttons sit on their own row, figures show as cards, and quick links are buttons.
+* One layout for every Front Desk screen (dashboard, calendar, customers, bookings, quotes, services, workers and booking lists), with brand red (#E31B23) for primary buttons and the active menu item. The sidebar and top bar are set out in the first item of this section.
+* Fix: on a customer's page, a booking with no status shows as Confirmed. It showed as Pending before.
+* Reminders for administrators on Front Desk screens: an AI key reminder while no AI key is saved, and a booking speed reminder (Cache Booking Availability) while that add-on is off. Each can be dismissed for 30 days.
+* Menu: the Front Desk menu is now Dashboard, Calendar, Customers, Bookings, Quotes, Services, Workers, AI, Addons, Settings and Upgrade. Every other tool is a tab on the Settings page, and tab pages show the same tab bar.
+* Dashboard: a Start setup button opens the setup wizard (Preset Setup). Bookings lists upcoming bookings across calendars. Services lists the services of every calendar.
+* Booking intake: each calendar can confirm bookings instantly or hold them as requests saved as Pending until an administrator approves them. Set the default and each calendar's mode under Settings, Other settings. Preset Setup asks the same question.
+* Booking passwords are stored as one-way hashes. Passwords saved before this change are upgraded the first time they are used.
+* The [TZFD_FRONT_DESK_LIST] booking list shortcode shows its rows to administrators only.
+* The missed-call endpoint accepts the documented X-TZFD-Secret header.
+* Add-ons: AI Assistant (your own key or a local AI server), Activity Logs, Automatically cancel pending bookings, Cache, Dashboard widget, Email blacklist, FollowUp notifications, Limit the number of appointments per booking, Missed-call text-back, Password for making bookings, Reminder notifications, Single-day selection, SMS and WhatsApp open-chat buttons, iCal export, WebHook settings, Coupons, Quotes with quote PDF export, Vertical Packs.
+* Customers can cancel a booking, after confirming, or move it to another time, through a link in their email. Both links appear only where the form's copy-to-customer option is on, and each link is signed per booking.
+* Status update emails go to the customer when an administrator changes a booking's status. Their subject and body are set on the status update emails settings page.
+* Messaging, sync and payment framework: the outbox, the sync queue, and the base classes for SMS, payment gateway webhooks, hosted captcha, and CRM sync load on every site. A provider adapter from a separate add-on is needed before they send or receive anything; none ships in this build.
+* Brand: the Front Desk menu has the receptionist icon and an icon beside each Front Desk menu item. Each Front Desk screen has a slim banner, the Help page shows the wordmark, and empty lists (Customers, Services, Workers, Calendars, Quotes, AI conversations) show a matching illustration. The full brand pack, including the onboarding graphic, status badges and feature cards, is in images/brand/.
+* Settings: each add-on has a settings block on the Add-ons page. AI has its own tab, with options for Groq, OpenRouter, Cerebras, Google AI Studio and Ollama, your own key, and a link to the paid Titan Zero AI service on the AI page. Keys are stored encrypted.
+* Deactivating the plugin clears its scheduled events. Deleting the plugin clears them too and keeps bookings and settings unless TZFD_DELETE_DATA_ON_UNINSTALL is set to true in wp-config.php.
+* Requires WordPress 6.2 or newer. Database queries pass table names as placeholders.
+* Plugin Check fixes: escaped output, translator comments, WordPress date and URL helpers, enqueued scripts with versions, no hidden files.
+* Removed: the browser AI (WebLLM) mode, which loaded code from esm.run and Hugging Face, and the custom JavaScript editor. Custom CSS is unchanged.
+* Form builder: the field types that were marked as commercial-only now show the same editor preview as the other fields.
+* Rescheduling: a service with no stored ID is matched by its position, so the change link works on default forms.
+* Front Desk sidebar: every section (Calendars, settings tabs, status update emails, Scheduling Preview, Resources, AI Setup, Preset Setup, Vertical Packs, Quotes and its tabs) is listed inline in the expanded sidebar.
+* New installs start with AI Setup and Quotes switched on. Existing sites keep their Add-ons page choices.
+* Help page: rewritten for this build. Searchable FAQ, step-by-step guides, a page reference for each area, and the add-on reference. Support links point to the vendor help site.
+* Add-on names: the setup wizard add-on is "AI Setup Wizard" and the guided setup is "Preset Setup".
+* Vertical packs: extra FAQ entries for HVAC, electrical and cleaning.
+* Help page: a page reference table for each area lists every Front Desk page and what it is for.
+* Dashboard widget (titled "Titan Zero Front Desk"): counts for today, the next 7 days, appointments awaiting approval, and quotes (when the Quotes add-on is on), with quick links to Add booking, Block times, New quote and Calendars. It is on for new installs.
+* Renamed to Titan Zero Front Desk. The plugin folder, slug, text domain, file names and code prefixes all changed. Install it as a new plugin and remove titan-front-desk first. Database tables are now named tz_fd_* (the upstream cpappbk_* tables are not read), and option keys are now tz_fd_*.
+* Customers: a mini CRM on the Customers page. Add, edit and delete customers. Each customer shows the quotes with the same email and the bookings that contain their email or phone. Deleting a customer keeps their bookings and quotes.
+* AI is optional. AI Setup, the AI booking assistant and AI-drafted quotes appear only after an AI option is chosen and saved under Settings > AI (one of the provider options, your own key, or a local AI server). Without a key, Preset Setup, manual quotes (line items added by hand), bookings, Customers, Add-ons and Settings all work as normal.
+* Quotes without a key: New quote creates a draft with no line items, and the quote editor has an "Add a line item" row.
+* Fixed: quotes did not find the AI Assistant's key, so AI-drafted quotes never reached the provider.
+* "+ New" in the admin bar: New booking, New quote (when Quotes is on), New service (opens the first calendar's editor) and New customer.
+* Plugin Check fixes: output is escaped on every Front Desk screen, database queries are prepared, and form values are sanitised before they are saved. Where WordPress checks the nonce in a shared helper, the code says so.
+* Plugin Check fixes: the layout stylesheet no longer uses a heredoc (its output is unchanged), the quote translator note is in place, and the lineage file is UPSTREAM.txt (it was UPSTREAM.md), so the plugin root has no markdown file.
+* Guidelines: the Upgrade menu item is removed. The AI settings page keeps one upgrade card that links to Titan Zero AI, the only upgrade link.
+* Guidelines: the AI assistant footer says "Upset or urgent requests go to a person". The earlier wording, which said a human agent reviews every request, is removed.
+* Guidelines: AI escalations are emailed to the site administrator. The replies no longer promise a call-back time or a named agent.
+* Guidelines: reminders show only to administrators, only on Front Desk screens. The AI setup reminder no longer appears on other admin pages.
+* Guidelines: Front Desk screens no longer deregister or replace other plugins' script handles. The placeholder script is removed, and the old jQuery UI stylesheet loads under a plugin-specific handle.
+* Guidelines: the lineage file is UPSTREAM.txt, and the readme names that file.
+* Guidelines: the unused jQuery Form copy is removed. WordPress already provides jquery-form.
+* Guidelines: the readme now says what happens to chat photos (the provider gets the link as text, the file is stored in uploads, and it is deleted after the retention period), and describes the Titan Zero AI link on the AI page as a plain link, not a service call.
+* Guidelines: the readme External services section lists every AI provider the plugin can call, with terms links. A new Third-party code section names each bundled library and where its source is.
+* Guidelines: bundled files that nothing loaded are removed (colour and dropdown pickers, CLEditor, jQuery Form, a duplicate validator and other unused helpers). Scripts load through WordPress, and a request for a missing rrule.js file is gone.
+* Guidelines: the legacy script setting prints its scripts and styles in order from WordPress, instead of loading WordPress core files by relative path.
+
+= 1.0.6 =
+* Request custom changes, Request Custom Modifications and Free Support now open an email to support@titanzero.io. The Help links pointed to the vendor help site.
+
+= 1.0.5 =
+* Safer scripts: the booking form and calendar scripts no longer use eval(). Behaviour is unchanged.
+* Direct-access guards added to the two rule classes.
+* Readme and package checked against the WordPress.org plugin guidelines.
+
+= 1.0.3 =
+* Add-on files grouped into folders (core, bookings, messaging, quotes, assistant). Core loads first. The file list is built by TZFD_Addon_Loader, which has tests.
+* No change for customers or settings.
+
+= 1.0.2 =
+* Booking pipeline restructured into agents: intake (worker), booking check, slot check and approver (specialists), pipeline manager (manager policy), run by an orchestrator.
+* Tier rules enforced at every call. A lower-tier agent cannot call a higher one. Tier boundaries tested.
+* Supervisor runs the same steps as a new booking. No change to what customers see.
+
+= 1.0.1 =
+* Pipeline screen under Front Desk. AI assistant bookings are saved to the calendar as pending requests, checked, then approved by staff.
+* Booking manager checks, jobs check (slot still free, under the calendar's capacity lock), approve, reject and check-again actions, event log and hourly supervisor.
+* Fixed: AI assistant bookings were drafts only. A taken slot now returns a clear reply for the assistant.
+
+= 1.0.0 =
+* First release. Merged build: Titan Zero Front Desk core with the Titan Zero Front Desk quotes, coupons, setup wizard and 65 vertical packs.
+* Requires WordPress 6.2 or newer.
+
+= 1.5.98 =
+* Initial Titan Zero Front Desk release, built from an upstream GPLv2 plugin at version 1.5.98 (see UPSTREAM.txt).
+* Includes the upstream schedule calendar view encoding fixes.
+* Brand, text domain, file names, database tables and option keys renamed to Titan Zero Front Desk.
+* Removed the promotional banner, deactivation survey, vendor help links and vendor-hosted AI gateway option.

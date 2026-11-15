@@ -1,0 +1,382 @@
+{
+  "format": 3,
+  "id": "childcare",
+  "name": "Childcare & Nannies",
+  "icon": "🍼",
+  "tagline": "Nannies, babysitters, after-school care, night nanny",
+  "version": "1.1.0",
+  "category": "care",
+  "source_sha256": "686d5082de1b7f98ec7d716175c7e093cd0d17204ab8689d9937c8a449922a40",
+  "terminology": {
+    "customer": "family",
+    "job": "session",
+    "site": "centre",
+    "quote": "quote",
+    "staff": "educator",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Casual Babysitting",
+    "Regular Nanny",
+    "Live-Out Nanny",
+    "Live-In Nanny",
+    "Night Nanny",
+    "After-School Care",
+    "Before-School Care",
+    "Holiday Care",
+    "Weekend Care",
+    "Overnight Care",
+    "Travel Nanny",
+    "Emergency Care",
+    "Twins and Multiples Care",
+    "Special Needs Care",
+    "Nanny Share",
+    "Event Childcare"
+  ],
+  "catalog": [
+    {
+      "sku": "CC-BABY",
+      "label": "Casual babysitting (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "babysitting"
+    },
+    {
+      "sku": "CC-NANNY",
+      "label": "Regular nanny (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "nanny"
+    },
+    {
+      "sku": "CC-NIGHT",
+      "label": "Night nanny (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "night nanny"
+    },
+    {
+      "sku": "CC-OVER",
+      "label": "Overnight care",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "CC-AFTER",
+      "label": "After-school care (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "after school"
+    },
+    {
+      "sku": "CC-LIVEIN",
+      "label": "Live-in nanny (per week)",
+      "kind": "labor",
+      "unit": "week",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "live in"
+    },
+    {
+      "sku": "CC-TWINS",
+      "label": "Twins / multiples surcharge (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 10,
+      "taxable": 1,
+      "keywords": "twins"
+    },
+    {
+      "sku": "CC-EVENT",
+      "label": "Event childcare (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "CC-TRAVEL",
+      "label": "Travel nanny (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "travel"
+    },
+    {
+      "sku": "CC-PLACE",
+      "label": "Permanent placement fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "placement"
+    },
+    {
+      "sku": "CC-MEET",
+      "label": "Meet-and-greet (no charge)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "meet and greet"
+    }
+  ],
+  "staff_skills": [
+    "babysitting",
+    "nanny care",
+    "newborn care",
+    "toddler care",
+    "school pick-ups",
+    "multiples care",
+    "special needs support",
+    "first aid",
+    "wwcc"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "emergency care",
+      "family emergency",
+      "sick child",
+      "hospital"
+    ],
+    "urgent": [
+      "tonight",
+      "today",
+      "tomorrow",
+      "this week",
+      "short notice"
+    ],
+    "routine": [
+      "regular",
+      "weekly",
+      "booking",
+      "nanny",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a childcare or nanny agency. Ask about the children's ages, any allergies or medical needs, the home environment, and the hours needed. Ask about pets, routines, and whether the family needs a regular or casual arrangement. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not promise a specific carer without confirming availability.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Rates depend on the carer's experience, the hours, and the number of children. We confirm the rate when you book.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Are your carers screened?",
+      "a": "Every carer completes [your screening checks, e.g. police check and Working With Children Check] before they start with a family. Ask us for details before you book.",
+      "keywords": "screened,wwcc,police check",
+      "priority": 9
+    },
+    {
+      "q": "Are they first-aid trained?",
+      "a": "Carers hold [first aid and CPR qualification details] before they start. We can share the certificate expiry dates on request.",
+      "keywords": "first aid,cpr",
+      "priority": 9
+    },
+    {
+      "q": "Do you do last-minute care?",
+      "a": "We try to help with last-minute care, subject to availability. Call us as early as possible so we can find a carer.",
+      "keywords": "last minute,urgent",
+      "priority": 9
+    },
+    {
+      "q": "Do you do overnight care?",
+      "a": "Yes, including night nannies for newborns. Overnight care is charged per night, and we confirm the times when you book.",
+      "keywords": "overnight,night nanny",
+      "priority": 9
+    },
+    {
+      "q": "Do you do live-in nannies?",
+      "a": "Yes, we place live-in and live-out nannies. Tell us about your home set-up, hours, and any accommodation needs.",
+      "keywords": "live in,live out",
+      "priority": 8
+    },
+    {
+      "q": "Do you do after-school care?",
+      "a": "Yes, including school pick-ups. Tell us the school, the pick-up time, and who is authorised to collect your child.",
+      "keywords": "after school,pickup",
+      "priority": 9
+    },
+    {
+      "q": "Do you care for newborns?",
+      "a": "Yes, we have newborn care specialists. Tell us your baby's feeding and sleep routine so the carer can follow it.",
+      "keywords": "newborn,baby",
+      "priority": 9
+    },
+    {
+      "q": "Do you care for multiples?",
+      "a": "Yes, we care for twins and triplets. A multiples surcharge applies per hour, and it is shown in your booking.",
+      "keywords": "twins,multiples",
+      "priority": 8
+    },
+    {
+      "q": "Do you care for children with special needs?",
+      "a": "Yes, experienced carers are available for children with additional needs. Tell us about your child's needs so we can match a suitable carer.",
+      "keywords": "special needs,disability",
+      "priority": 9
+    },
+    {
+      "q": "Do you do travel nannies?",
+      "a": "Yes, including domestic and international travel. Travel nanny is charged per day, so tell us the trip dates.",
+      "keywords": "travel",
+      "priority": 8
+    },
+    {
+      "q": "Do you do event childcare?",
+      "a": "Yes, including weddings and corporate events. Event childcare is charged per hour, so give us the start and finish times.",
+      "keywords": "event,wedding",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Let us know as soon as you can so we can release the carer.",
+      "keywords": "cancel",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [insurance type and provider] cover. Ask us for certificates before the first booking.",
+      "keywords": "insured",
+      "priority": 9
+    },
+    {
+      "q": "How do I book a nanny?",
+      "a": "We match a carer to your family, arrange a meet-and-greet, and confirm the booking. The meet-and-greet carries no charge.",
+      "keywords": "book,match",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you need my child's medical details?",
+      "a": "Yes, we need allergy and medical plans so carers can follow them. These are kept in restricted fields and shared only with the carer.",
+      "keywords": "medical,allergy,plan",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit on {date}.",
+    "quote_intro": "Here is the quote for the support you asked about.",
+    "invoice_note": "Thank you. Your statement is available on request."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 0,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "child_name",
+      "label": "Child name and date of birth",
+      "required": true
+    },
+    {
+      "key": "authorised_collectors",
+      "label": "Authorised people to collect the child",
+      "required": true
+    },
+    {
+      "key": "medical_plan",
+      "label": "Medical or allergy plan (kept in restricted fields)",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "childcare.rule1",
+      "trigger": "visit.missed",
+      "action": "alert_coordinator",
+      "description": "Alert coordinator and log the missed visit",
+      "enabled": false
+    },
+    {
+      "id": "childcare.rule2",
+      "trigger": "worker.check_expiry",
+      "action": "remind_staff_record",
+      "description": "Remind coordinator 30 days before a check expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Childcare services are regulated by the state education and care authority (in Victoria, the Department of Education). Each worker needs a Working With Children Check and approved first aid. Your state authority sets the rules; check them before relying on this guidance.",
+    "items": [
+      "Working With Children Check for each worker, with expiry",
+      "Approved first aid training for educators",
+      "Service approval or registration number"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "staff room",
+    "equipment"
+  ],
+  "reporting": [
+    "visits delivered",
+    "missed visits",
+    "staff hours"
+  ],
+  "staff_record_types": [
+    "working_with_children",
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

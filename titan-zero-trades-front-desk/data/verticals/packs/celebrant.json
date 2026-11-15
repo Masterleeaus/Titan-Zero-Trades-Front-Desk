@@ -1,0 +1,357 @@
+{
+  "format": 3,
+  "id": "celebrant",
+  "name": "Celebrants & Officiants",
+  "icon": "📜",
+  "tagline": "Weddings, funerals, naming days, vow renewals",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "02be833665263f61e715a8591baa954d585466ee6590479ea14e3b5fc21ed3ea",
+  "terminology": {
+    "customer": "couple",
+    "job": "ceremony",
+    "site": "venue",
+    "quote": "quote",
+    "staff": "celebrant",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Wedding Ceremony",
+    "Elopement",
+    "Vow Renewal",
+    "Naming Ceremony",
+    "Funeral and Memorial Service",
+    "Commitment Ceremony",
+    "Same-Sex Wedding",
+    "Destination Wedding",
+    "Rehearsal",
+    "MC Services",
+    "Legal-Only Wedding",
+    "Interfaith Ceremony",
+    "Multicultural Ceremony",
+    "Pet Memorial"
+  ],
+  "catalog": [
+    {
+      "sku": "CEL-WED",
+      "label": "Wedding ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "CEL-ELOPE",
+      "label": "Elopement ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "elopement"
+    },
+    {
+      "sku": "CEL-LEGAL",
+      "label": "Legal-only ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "legal only"
+    },
+    {
+      "sku": "CEL-VOW",
+      "label": "Vow renewal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "vow renewal"
+    },
+    {
+      "sku": "CEL-NAME",
+      "label": "Naming ceremony",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 400,
+      "taxable": 1,
+      "keywords": "naming"
+    },
+    {
+      "sku": "CEL-FUN",
+      "label": "Funeral / memorial service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 650,
+      "taxable": 1,
+      "keywords": "funeral"
+    },
+    {
+      "sku": "CEL-REH",
+      "label": "Rehearsal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "rehearsal"
+    },
+    {
+      "sku": "CEL-MC",
+      "label": "MC services (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "mc"
+    },
+    {
+      "sku": "CEL-CUSTOM",
+      "label": "Custom ceremony writing",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "custom writing"
+    },
+    {
+      "sku": "CEL-TRAVEL",
+      "label": "Travel (per km beyond 30 km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ],
+  "staff_skills": [
+    "wedding ceremonies",
+    "elopements",
+    "funeral and memorial services",
+    "naming ceremonies",
+    "vow renewals",
+    "custom ceremony writing",
+    "public speaking",
+    "MC",
+    "interfaith and multicultural ceremonies"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "funeral tomorrow",
+      "funeral this week",
+      "wedding this week",
+      "urgent"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "short notice"
+    ],
+    "routine": [
+      "booking",
+      "quote",
+      "wedding",
+      "ceremony"
+    ]
+  },
+  "extra_prompt": "You are booking for a celebrant or officiant. Ask about the ceremony type, date, venue, guest numbers, and cultural or religious requirements. Ask whether they want a rehearsal, a custom ceremony, or a legal-only ceremony. Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise legal outcomes or lodge paperwork that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Fees depend on the ceremony type, travel, and how much custom writing you need. We confirm the total after a consultation.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do legal weddings?",
+      "a": "Yes, we conduct legal weddings. Our marriage celebrant authorisation number is [your authorisation number], and you can check it on the official register before you book.",
+      "keywords": "legal,marriage,paperwork",
+      "priority": 9
+    },
+    {
+      "q": "Do you do funerals?",
+      "a": "Yes, we conduct funeral and memorial services. We meet the family first to shape the tone and content.",
+      "keywords": "funeral,memorial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do naming ceremonies?",
+      "a": "Yes, we do naming days and welcome ceremonies. Tell us the child's name, family details, and any traditions you want included.",
+      "keywords": "naming",
+      "priority": 8
+    },
+    {
+      "q": "Do you write a custom ceremony?",
+      "a": "Yes, we write a personalised ceremony from your story. Send us your background, favourite readings, and the tone you want.",
+      "keywords": "custom,personalised",
+      "priority": 9
+    },
+    {
+      "q": "Do you do rehearsals?",
+      "a": "Yes, rehearsals are available and recommended. The rehearsal fee is in our price list.",
+      "keywords": "rehearsal",
+      "priority": 8
+    },
+    {
+      "q": "Do you travel?",
+      "a": "Yes, we travel to venues. Travel is charged per km beyond the included distance, so tell us the venue address.",
+      "keywords": "travel",
+      "priority": 8
+    },
+    {
+      "q": "Do you do multicultural ceremonies?",
+      "a": "Yes, we do interfaith and multicultural ceremonies, including bilingual elements. Tell us which traditions and languages you want included.",
+      "keywords": "multicultural,interfaith,bilingual",
+      "priority": 8
+    },
+    {
+      "q": "Do you do same-sex weddings?",
+      "a": "Yes, we celebrate all couples. Let us know your names and the wording you prefer.",
+      "keywords": "same sex,lgbtq",
+      "priority": 9
+    },
+    {
+      "q": "Do you do elopements?",
+      "a": "Yes, elopements and intimate ceremonies are welcome. Tell us the date, the location, and how many guests will attend.",
+      "keywords": "elopement",
+      "priority": 9
+    },
+    {
+      "q": "Do you MC?",
+      "a": "Yes, MC services are available for receptions and events. MC is charged per hour, so tell us how long the event runs.",
+      "keywords": "mc,emcee",
+      "priority": 7
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "We recommend 6–12 months for weddings, but short-notice bookings are possible subject to availability.",
+      "keywords": "how far,advance",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note} Ask us the deposit amount and what it secures before you confirm your date.",
+      "keywords": "deposit",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit. Tell us as early as possible if the date changes.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "What do you need from us?",
+      "a": "We need your names, the ceremony date and venue, any documents we are required to see, and your preferred tone. Share them early so we can plan.",
+      "keywords": "documents,requirements",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a free consultation?",
+      "a": "{consult_note} Book it through [booking method] so we can talk through the ceremony with you.",
+      "keywords": "consult,free",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "guest_numbers",
+      "label": "Number of guests or attendees",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "celebrant.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "celebrant.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Marriage celebrants need authorisation under the federal Marriage Act. Events may need venue or council permits. Carry public liability insurance for each event. Check the rules for your state.",
+    "items": [
+      "Marriage celebrant authorisation number and expiry",
+      "Venue or council permit notes (where needed)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,367 @@
+{
+  "format": 3,
+  "id": "seniortransport",
+  "name": "Senior Transport & Disability Support",
+  "icon": "🚐",
+  "tagline": "NDIS transport, medical appointments, social outings",
+  "version": "1.1.0",
+  "category": "care",
+  "source_sha256": "f0da3d2704e9e935de5b461c13108c742db475448a61662d87866e9c583cb69f",
+  "terminology": {
+    "customer": "client",
+    "job": "trip",
+    "site": "pickup address",
+    "quote": "quote",
+    "staff": "driver",
+    "visit": "trip"
+  },
+  "service_types": [
+    "Medical Appointment Transport",
+    "Hospital Discharge Pickup",
+    "Dialysis Transport",
+    "Wheelchair Accessible Trips",
+    "NDIS Transport",
+    "Social Outings",
+    "Shopping Trips",
+    "Group Outings",
+    "Airport Transfers",
+    "Day Program Transport",
+    "Aged Care Transport",
+    "Companion Travel",
+    "Support Work",
+    "Community Access Trips",
+    "School Transport"
+  ],
+  "catalog": [
+    {
+      "sku": "ST-LOCAL",
+      "label": "Local trip (under 15 km)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "local"
+    },
+    {
+      "sku": "ST-MED",
+      "label": "Medical appointment trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "medical"
+    },
+    {
+      "sku": "ST-DIAL",
+      "label": "Dialysis trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "dialysis"
+    },
+    {
+      "sku": "ST-WHEEL",
+      "label": "Wheelchair accessible trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "wheelchair"
+    },
+    {
+      "sku": "ST-WAIT",
+      "label": "Waiting time (per 30 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "wait"
+    },
+    {
+      "sku": "ST-HOSP",
+      "label": "Hospital discharge trip",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "hospital"
+    },
+    {
+      "sku": "ST-SOCIAL",
+      "label": "Social outing (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "social"
+    },
+    {
+      "sku": "ST-AIR",
+      "label": "Airport transfer",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "airport"
+    },
+    {
+      "sku": "ST-SUPPORT",
+      "label": "Support work (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "support"
+    },
+    {
+      "sku": "ST-COMP",
+      "label": "Companion travel (per trip)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "companion"
+    },
+    {
+      "sku": "ST-NDIS",
+      "label": "NDIS transport (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "ndis"
+    }
+  ],
+  "staff_skills": [
+    "senior transport",
+    "disability awareness",
+    "wheelchair securement",
+    "ndis support",
+    "manual handling",
+    "first aid",
+    "companionship"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "missed hospital discharge",
+      "urgent medical appointment",
+      "passenger unwell in transit",
+      "dialysis run missed"
+    ],
+    "urgent": [
+      "discharge today",
+      "appointment tomorrow",
+      "this week",
+      "appointment soon"
+    ],
+    "routine": [
+      "regular weekly booking",
+      "fortnightly booking",
+      "quote",
+      "social outing",
+      "NDIS plan booking"
+    ]
+  },
+  "extra_prompt": "You are booking for a senior transport and disability support service. Ask about the passenger's mobility needs, whether a wheelchair or hoist is needed, the appointment time, and the pickup and drop-off addresses. Ask whether an escort or carer is needed. Ask about NDIS funding if applicable. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not provide medical advice.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Fares depend on distance, wait time and mobility needs. We confirm the price before you book.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept NDIS?",
+      "a": "Yes, we accept NDIS funding. Ask us to confirm how your plan is managed so we can agree the payment arrangement before you book.",
+      "keywords": "ndis",
+      "priority": 9
+    },
+    {
+      "q": "Do you have wheelchair accessible vehicles?",
+      "a": "Yes, we run wheelchair accessible vehicles. Tell us your wheelchair type and size when you book so we can send the right vehicle.",
+      "keywords": "wheelchair,accessible,vehicles",
+      "priority": 8
+    },
+    {
+      "q": "Do you help with hospital discharge?",
+      "a": "Yes, we collect patients from hospital and help them into their home. Tell us the ward, discharge time and address when you book.",
+      "keywords": "hospital,discharge",
+      "priority": 9
+    },
+    {
+      "q": "Do you wait during appointments?",
+      "a": "Yes, we can wait during appointments. Waiting time is charged in 30-minute blocks at the rate on your quote.",
+      "keywords": "wait,waiting",
+      "priority": 9
+    },
+    {
+      "q": "Can a carer travel with the passenger?",
+      "a": "Yes, one carer or companion can travel with the passenger. Let us know when you book so we can plan the vehicle space.",
+      "keywords": "carer,travel,passenger",
+      "priority": 8
+    },
+    {
+      "q": "Do you do regular bookings?",
+      "a": "Yes, we take regular weekly and fortnightly bookings. Tell us the days and times, and we will confirm the schedule with you.",
+      "keywords": "regular,weekly",
+      "priority": 9
+    },
+    {
+      "q": "Do you do dialysis transport?",
+      "a": "Yes, we do dialysis transport, including early morning runs. Tell us your treatment days and times so we can plan the route.",
+      "keywords": "dialysis",
+      "priority": 9
+    },
+    {
+      "q": "Do you do social outings?",
+      "a": "Yes, we take passengers to shopping, cafes, events and other outings. Tell us where you want to go and what help you need on the trip.",
+      "keywords": "social,outing",
+      "priority": 8
+    },
+    {
+      "q": "Do you do airport transfers?",
+      "a": "Yes, we do airport transfers and can help with luggage and check-in. Tell us your flight time and terminal when you book.",
+      "keywords": "airport",
+      "priority": 8
+    },
+    {
+      "q": "Are your drivers screened?",
+      "a": "Yes, our drivers complete [screening checks, e.g. police check and working with children check] and [first aid training]. Ask us to confirm the current checks for your driver.",
+      "keywords": "screened,police check,first aid",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer support work?",
+      "a": "Yes, we offer support work, including companionship and community access. Support work is charged per hour at the rate on your quote.",
+      "keywords": "support work,community access",
+      "priority": 9
+    },
+    {
+      "q": "Do you do group outings?",
+      "a": "Yes, we run small group outings. Tell us the group size and destination so we can match the vehicle.",
+      "keywords": "group",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please call us as soon as your plans change.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we hold [insurance type] insurance through [insurer]. Certificates are available on request.",
+      "keywords": "insured,registered",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area, e.g. the local metro area]. Ask us to confirm your suburb before booking.",
+      "keywords": "area,suburb",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit on {date}.",
+    "quote_intro": "Here is the quote for the support you asked about.",
+    "invoice_note": "Thank you. Your statement is available on request."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 45,
+    "buffer_minutes": 15,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "mobility_needs",
+      "label": "Mobility and assistance needs",
+      "required": true
+    },
+    {
+      "key": "pickup_address",
+      "label": "Pickup address",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "seniortransport.rule1",
+      "trigger": "visit.missed",
+      "action": "alert_coordinator",
+      "description": "Alert coordinator and log the missed visit",
+      "enabled": false
+    },
+    {
+      "id": "seniortransport.rule2",
+      "trigger": "worker.check_expiry",
+      "action": "remind_staff_record",
+      "description": "Remind coordinator 30 days before a check expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Working With Children Checks apply to childcare and any work with children. Aged and disability support has worker screening and registration rules (for example through the NDIS Quality and Safeguards Commission or the Aged Care Quality and Safety Commission). Keep client health details restricted to staff who need them.",
+    "items": [
+      "Working With Children Check number and expiry for each worker",
+      "Worker screening or NDIS screening check current",
+      "Care needs held in restricted fields"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "staff room",
+    "equipment"
+  ],
+  "reporting": [
+    "visits delivered",
+    "missed visits",
+    "staff hours"
+  ],
+  "staff_record_types": [
+    "working_with_children",
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

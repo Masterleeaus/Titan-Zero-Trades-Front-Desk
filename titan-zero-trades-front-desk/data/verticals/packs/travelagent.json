@@ -1,0 +1,351 @@
+{
+  "format": 3,
+  "id": "travelagent",
+  "name": "Travel Agents",
+  "icon": "✈️",
+  "tagline": "Flights, cruises, packages, corporate travel",
+  "version": "1.1.0",
+  "category": "travel",
+  "source_sha256": "d5ba68b619fa8606d0212b1b9ebf762038b29803dfa7115dd87897f6a4c550b8",
+  "terminology": {
+    "customer": "traveller",
+    "job": "booking",
+    "site": "office",
+    "quote": "quote",
+    "staff": "travel consultant",
+    "visit": "consultation"
+  },
+  "service_types": [
+    "Flight Booking",
+    "Holiday Packages",
+    "Cruise Bookings",
+    "Luxury Travel",
+    "Corporate Travel",
+    "Honeymoon Planning",
+    "Family Holidays",
+    "Group and School Travel",
+    "Ski Holidays",
+    "Adventure Travel",
+    "Rail Travel",
+    "Car Hire",
+    "Travel Insurance",
+    "Visa Support",
+    "Theme Park Holidays"
+  ],
+  "catalog": [
+    {
+      "sku": "TRV-FEE",
+      "label": "Service fee (per booking)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "fee"
+    },
+    {
+      "sku": "TRV-FLIGHT",
+      "label": "Flight booking fee (per booking)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "flight"
+    },
+    {
+      "sku": "TRV-PKG",
+      "label": "Holiday package deposit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "package,deposit"
+    },
+    {
+      "sku": "TRV-CRUISE",
+      "label": "Cruise deposit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "cruise"
+    },
+    {
+      "sku": "TRV-INS",
+      "label": "Travel insurance (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "insurance"
+    },
+    {
+      "sku": "TRV-VISA",
+      "label": "Visa assistance (per application)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "visa"
+    },
+    {
+      "sku": "TRV-CAR",
+      "label": "Car hire (booked through supplier)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "car hire"
+    },
+    {
+      "sku": "TRV-CORP",
+      "label": "Corporate management fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "TRV-AFTER",
+      "label": "After-hours support",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "after hours"
+    },
+    {
+      "sku": "TRV-CHANGE",
+      "label": "Change or reissue fee (per change)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "change"
+    }
+  ],
+  "staff_skills": [
+    "flight booking",
+    "cruise booking",
+    "holiday packages",
+    "corporate travel",
+    "visa requirements",
+    "travel insurance",
+    "group travel",
+    "supplier booking systems"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "flight cancelled today",
+      "travel today",
+      "stranded",
+      "missed flight"
+    ],
+    "urgent": [
+      "departing this week",
+      "departing soon",
+      "next week",
+      "visa deadline"
+    ],
+    "routine": [
+      "quote",
+      "booking",
+      "holiday",
+      "package",
+      "cruise",
+      "honeymoon planning",
+      "travel insurance"
+    ]
+  },
+  "extra_prompt": "You are booking for a travel agency. Ask about departure city, dates, destination, travellers, budget, and any preferences (airline, class, hotel standard). Ask about passports, visas, and travel insurance. Quote prices only from the reference answers, and say the final price is confirmed at booking. Do not promise prices that are not in the reference answers as live availability changes.",
+  "kb": [
+    {
+      "q": "Do you charge a service fee?",
+      "a": "{price_note} Some bookings have no fee, while complex itineraries may attract one. We confirm any fee before you pay.",
+      "keywords": "fee,cost,price,service",
+      "priority": 9
+    },
+    {
+      "q": "Can you beat online prices?",
+      "a": "We compare options for you, and our support during changes adds value. Prices depend on the supplier and dates, so we cannot promise to beat every online fare.",
+      "keywords": "cheaper,online price,beat",
+      "priority": 9
+    },
+    {
+      "q": "Do you book flights only?",
+      "a": "Yes, we can book flights only. Packages can sometimes give better value, so ask us to compare both.",
+      "keywords": "flights only",
+      "priority": 9
+    },
+    {
+      "q": "Do you book cruises?",
+      "a": "Yes, we can book cruises with [cruise lines you work with]. A cruise deposit is taken at booking, as listed on your quote.",
+      "keywords": "book,cruises",
+      "priority": 8
+    },
+    {
+      "q": "Do you do corporate travel?",
+      "a": "Yes, we handle corporate travel with reporting and help with your travel policy. Corporate management is charged as listed on your quote.",
+      "keywords": "corporate,business",
+      "priority": 9
+    },
+    {
+      "q": "Do you arrange travel insurance?",
+      "a": "Yes, we can arrange travel insurance through [insurer or provider]. It is charged per person, and we explain what it covers before you buy.",
+      "keywords": "insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with visas?",
+      "a": "Yes, we explain visa requirements and help with paperwork. Visa processing times and fees are set by the government, so please check them with us before you travel.",
+      "keywords": "visa",
+      "priority": 8
+    },
+    {
+      "q": "Do you do honeymoons?",
+      "a": "Yes, we plan honeymoons and romantic trips. Tell us your budget, dates and what you enjoy, and we will send options.",
+      "keywords": "honeymoon,romantic",
+      "priority": 8
+    },
+    {
+      "q": "Do you do group travel?",
+      "a": "Yes, we book group, family and school travel. Tell us the group size and dates early so we can secure availability.",
+      "keywords": "group",
+      "priority": 9
+    },
+    {
+      "q": "Do you book Disney and theme park holidays?",
+      "a": "Yes, we book Disney and theme park holidays. Tell us your park tickets, accommodation and travel dates when you enquire.",
+      "keywords": "book,disney,theme,park",
+      "priority": 8
+    },
+    {
+      "q": "What if my flight is cancelled?",
+      "a": "We support you during travel disruptions by helping you find options with the airline. Please contact us as soon as you hear about the change.",
+      "keywords": "flight,cancelled",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer payment plans?",
+      "a": "{payment_note} We confirm any instalment dates before you pay.",
+      "keywords": "payment plan,instalment",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancellation terms depend on the supplier, so we confirm the terms for your booking before you pay. Any change or reissue fee is listed on your quote.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you have an after-hours line?",
+      "a": "{afterhours_note} Travellers already on a trip can call us for urgent help.",
+      "keywords": "after hours,emergency",
+      "priority": 8
+    },
+    {
+      "q": "How do I get a quote?",
+      "a": "Tell us your departure city, dates, destination and the number of travellers. We will send you options and a quote.",
+      "keywords": "quote,how",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: please check your travel documents before {date}.",
+    "quote_intro": "Here is the quote for your trip.",
+    "invoice_note": "Thank you for booking with {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 30,
+    "buffer_minutes": 0,
+    "quote_validity_days": 7,
+    "invoice_terms_days": 7,
+    "deposit_percent": 20,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "travel_dates",
+      "label": "Travel dates",
+      "required": true
+    },
+    {
+      "key": "passport_name",
+      "label": "Traveller names as on passports",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "travelagent.rule1",
+      "trigger": "booking.created",
+      "action": "send_itinerary",
+      "description": "Send itinerary and payment reminder",
+      "enabled": false
+    },
+    {
+      "id": "travelagent.rule2",
+      "trigger": "booking.departure_due",
+      "action": "remind_departure",
+      "description": "Send pre-departure reminder",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Travel agents should join the accreditation scheme that applies to them and keep booking records for consumer protection purposes. Check the scheme requirements for your business.",
+    "items": [
+      "Accreditation number current",
+      "Booking records kept for consumer protection"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "consultant"
+  ],
+  "reporting": [
+    "bookings made",
+    "value booked",
+    "enquiries converted"
+  ],
+  "staff_record_types": [
+    "licence",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

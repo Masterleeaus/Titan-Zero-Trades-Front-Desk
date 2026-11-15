@@ -1,0 +1,396 @@
+{
+  "format": 3,
+  "id": "fencing",
+  "name": "Fencing",
+  "icon": "\ud83d\udea7",
+  "tagline": "Timber, Colorbond, pool fencing, gates, repairs",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "ec9a7e6833a68411757f2a394047280d8e7bebaaa771cd6261a1a80538853e0f",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Timber paling and picket fencing",
+    "Colorbond fencing",
+    "Aluminium fencing",
+    "Glass pool fencing",
+    "Pool fence installation",
+    "Chain wire fencing",
+    "Security fencing",
+    "Electric fencing",
+    "Retaining walls",
+    "Gate installation",
+    "Automatic gate systems",
+    "Fence repair",
+    "Fence removal and disposal",
+    "Commercial fencing"
+  ],
+  "catalog": [
+    {
+      "sku": "FNC-TIMB",
+      "label": "Timber fencing, per linear metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "timber,fence"
+    },
+    {
+      "sku": "FNC-COLOR",
+      "label": "Colorbond fencing, per linear metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "colorbond,fence"
+    },
+    {
+      "sku": "FNC-ALUM",
+      "label": "Aluminium fencing, per linear metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 130,
+      "taxable": 1,
+      "keywords": "aluminium,fence"
+    },
+    {
+      "sku": "FNC-GLASS",
+      "label": "Glass pool fencing, per linear metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "glass,pool fence"
+    },
+    {
+      "sku": "FNC-POOL",
+      "label": "Pool fencing, per linear metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 140,
+      "taxable": 1,
+      "keywords": "pool fence"
+    },
+    {
+      "sku": "FNC-GATE",
+      "label": "Gate installation, each",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "gate,install"
+    },
+    {
+      "sku": "FNC-AUTO",
+      "label": "Automatic gate system, each",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "automatic gate,motor"
+    },
+    {
+      "sku": "FNC-REPAIR",
+      "label": "Fence repair, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "repair"
+    },
+    {
+      "sku": "FNC-REMOVE",
+      "label": "Fence removal, per metre",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "FNC-RETAIN",
+      "label": "Retaining wall, per square metre",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "retaining wall"
+    }
+  ],
+  "staff_skills": [
+    "timber paling",
+    "Colorbond",
+    "aluminium fencing",
+    "glass pool fencing",
+    "pool fence layout",
+    "gates and hardware",
+    "retaining walls",
+    "post setting",
+    "fence repair",
+    "site measuring",
+    "fence removal"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "storm damage",
+      "fallen fence",
+      "pool fence damaged",
+      "pool gate not closing",
+      "security risk after break-in"
+    ],
+    "urgent": [
+      "gate not closing properly",
+      "fence leaning after storm",
+      "before a building inspection",
+      "before a sale or handover"
+    ],
+    "routine": [
+      "quote request",
+      "estimate",
+      "new fence install",
+      "repair",
+      "replace panels",
+      "gate install"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional fencing company. Ask about the fence type, length, height, and purpose (boundary, pool, security). Ask about access, slope, and whether old fencing needs removal. Ask about pool compliance if relevant. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific compliance outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Our licence number is [your licence number], and our insurer is [insurer name]. Certificates are available on request before any work starts.",
+      "keywords": "licensed,insured,certificate,licence",
+      "priority": 10
+    },
+    {
+      "q": "How much does fencing cost?",
+      "a": "{price_note} Fencing is priced per linear metre, including materials and installation. Send us the length and fence type for an estimate.",
+      "keywords": "cost,price,metre,estimate",
+      "priority": 10
+    },
+    {
+      "q": "Do you install pool fencing?",
+      "a": "Yes, we install pool fencing. We check your pool layout and gate positions before we quote, so you know what the fence needs.",
+      "keywords": "pool,fence,gate,safety",
+      "priority": 10
+    },
+    {
+      "q": "Do you install Colorbond?",
+      "a": "Yes, we supply and install Colorbond fencing. Tell us the colour and height you want, and we will confirm the options when we quote.",
+      "keywords": "colorbond,install,colour",
+      "priority": 9
+    },
+    {
+      "q": "Do you install timber fencing?",
+      "a": "Yes, we install timber paling and picket fencing. Timber can be stained or left natural, and we can talk through the options when we quote.",
+      "keywords": "timber,paling,picket,stain",
+      "priority": 9
+    },
+    {
+      "q": "Do you install glass fencing?",
+      "a": "Yes, we install frameless and semi-frameless glass fencing. Glass pool fencing is quoted per linear metre, with the fittings listed in your quote.",
+      "keywords": "glass,frameless,pool",
+      "priority": 9
+    },
+    {
+      "q": "Do you install aluminium fencing?",
+      "a": "Yes, we install aluminium fencing and matching gates. We can show you the styles available when we visit.",
+      "keywords": "aluminium,gate,style",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair fences?",
+      "a": "Yes, we repair storm damage, broken palings, and leaning posts. Tell us what happened, and we will advise whether a repair or a replacement makes more sense.",
+      "keywords": "repair,storm,palings,posts",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old fencing?",
+      "a": "Yes, we remove and dispose of old fencing. We confirm what is included, such as posts and concrete, in your quote.",
+      "keywords": "remove,old fence,dispose",
+      "priority": 8
+    },
+    {
+      "q": "Do you install gates?",
+      "a": "Yes, we install driveway and pedestrian gates. Gate hardware and latches are listed separately in your quote.",
+      "keywords": "gate,driveway,pedestrian,latch",
+      "priority": 8
+    },
+    {
+      "q": "Do you install automatic gates?",
+      "a": "Yes, we install automatic gate systems. We confirm the power supply and motor type on a site visit before we quote.",
+      "keywords": "automatic,gate,motor,power",
+      "priority": 8
+    },
+    {
+      "q": "Do you build retaining walls?",
+      "a": "Yes, we build timber, concrete, and block retaining walls. We check the site and soil on a visit before we quote.",
+      "keywords": "retaining,wall,timber,block",
+      "priority": 8
+    },
+    {
+      "q": "Do I need a permit for a fence?",
+      "a": "Some fences and retaining walls need approval from your council. We can advise what may apply to your property, but please confirm with your council.",
+      "keywords": "permit,council,approval",
+      "priority": 9
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "Most residential fences take [number] days, depending on length and access. We confirm the timing when we book.",
+      "keywords": "how long,time,days,install",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial fencing?",
+      "a": "Yes, we service commercial properties. Commercial work is quoted separately after a site visit.",
+      "keywords": "commercial,business,site visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us to explain what is covered before the job starts.",
+      "keywords": "warranty,guarantee,redo",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [service area] and nearby suburbs. Tell us your suburb when you book, and we will confirm whether we cover it.",
+      "keywords": "areas,suburb,service area",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to be home for the fence work?",
+      "a": "It helps for the quote, but it is not needed for the work. We need access to the site on the day, so tell us about gates and keys.",
+      "keywords": "home,access,gate,keys",
+      "priority": 7
+    },
+    {
+      "q": "Do you remove green waste?",
+      "a": "Yes, we remove vegetation and old fence materials. Disposal costs are shown in your quote.",
+      "keywords": "green waste,vegetation,removal",
+      "priority": 7
+    },
+    {
+      "q": "Can you match existing fencing?",
+      "a": "We try to match existing styles and colours. Some products may be discontinued, so we check availability during the visit.",
+      "keywords": "match,existing,colour,style",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "fencing.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "fencing.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "fencing.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,403 @@
+{
+  "format": 3,
+  "id": "photography",
+  "name": "Photography",
+  "icon": "📷",
+  "tagline": "Weddings, portraits, events, product, real estate",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "a38ad0214b6035f979378152a20a4d5b49cb498a8e38e18d6cb581751027c6c7",
+  "terminology": {
+    "customer": "client",
+    "job": "shoot",
+    "site": "location",
+    "quote": "quote",
+    "staff": "photographer",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Wedding Photography",
+    "Engagement Shoots",
+    "Family Portraits",
+    "Newborn Sessions",
+    "Maternity Shoots",
+    "Corporate Headshots",
+    "Product Photography",
+    "Real Estate Photography",
+    "Event Photography",
+    "Birthday and Party Photography",
+    "Pet Photography",
+    "Boudoir Photography",
+    "Fashion Photography",
+    "Commercial Photography",
+    "Videography",
+    "Drone Photography",
+    "Photo Editing and Retouching"
+  ],
+  "catalog": [
+    {
+      "sku": "PHO-MINI",
+      "label": "Mini session (30 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "mini,session"
+    },
+    {
+      "sku": "PHO-FAM",
+      "label": "Family portrait session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "family,portrait"
+    },
+    {
+      "sku": "PHO-NEW",
+      "label": "Newborn session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "newborn"
+    },
+    {
+      "sku": "PHO-HEAD",
+      "label": "Corporate headshots (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "headshot"
+    },
+    {
+      "sku": "PHO-WED",
+      "label": "Wedding photography (full day)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 3500,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "PHO-EVENT",
+      "label": "Event photography (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "event"
+    },
+    {
+      "sku": "PHO-PROD",
+      "label": "Product photography (per item)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "product"
+    },
+    {
+      "sku": "PHO-REST",
+      "label": "Real estate photography package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "real estate"
+    },
+    {
+      "sku": "PHO-DRONE",
+      "label": "Drone add-on",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "drone"
+    },
+    {
+      "sku": "PHO-VID",
+      "label": "Videography (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 300,
+      "taxable": 1,
+      "keywords": "video"
+    },
+    {
+      "sku": "PHO-EDIT",
+      "label": "Advanced retouching (per image)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "retouch"
+    },
+    {
+      "sku": "PHO-TRAVEL",
+      "label": "Travel fee (per km beyond 30 km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ],
+  "staff_skills": [
+    "wedding photography",
+    "portraits",
+    "newborn",
+    "corporate headshots",
+    "product photography",
+    "real estate photography",
+    "videography",
+    "drone",
+    "editing and retouching"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "urgent shoot"
+    ],
+    "urgent": [
+      "this week",
+      "deadline",
+      "before listing",
+      "before launch"
+    ],
+    "routine": [
+      "booking",
+      "session",
+      "portrait",
+      "quote",
+      "package"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional photography business. Ask about the shoot type, date, location, duration, and how many people or items are involved. Ask about usage rights, delivery timelines, and whether editing is included. Quote prices only from the reference answers, and say the final price is confirmed after details are locked in. Do not promise a specific creative outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the shoot type, duration and deliverables. We confirm the final price once the details are locked in.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "Do you do weddings?",
+      "a": "Yes, we shoot weddings and offer full-day packages. Tell us the venue, the timeline and whether you want a second shooter when you enquire.",
+      "keywords": "wedding",
+      "priority": 9
+    },
+    {
+      "q": "How many photos do we get?",
+      "a": "The number depends on the package you choose. Most sessions deliver 50 to 200 edited images, and we confirm the expected count before the shoot.",
+      "keywords": "how many,photos",
+      "priority": 9
+    },
+    {
+      "q": "Is editing included?",
+      "a": "Yes, basic editing is included in our packages. Advanced retouching is quoted separately per image.",
+      "keywords": "editing,retouch",
+      "priority": 9
+    },
+    {
+      "q": "How long until we get the photos?",
+      "a": "Standard delivery is {delivery_time}. Rush delivery is available for an additional fee, which we confirm when you book.",
+      "keywords": "how long,delivery,turnaround",
+      "priority": 9
+    },
+    {
+      "q": "Do you travel?",
+      "a": "Yes, we travel to shoot locations. Travel beyond 30 km is charged as a travel fee, which we confirm before booking.",
+      "keywords": "travel,location",
+      "priority": 8
+    },
+    {
+      "q": "Do you do drone photography?",
+      "a": "Yes, drone photography is available as an add-on. Flights follow the rules that apply in your area, and we confirm the details before booking.",
+      "keywords": "drone,aerial",
+      "priority": 8
+    },
+    {
+      "q": "Do you do video?",
+      "a": "Yes, we do videography, including highlight reels. Video is priced per hour, and we can combine it with a photo shoot.",
+      "keywords": "video,videography",
+      "priority": 8
+    },
+    {
+      "q": "Do you do product photography?",
+      "a": "Yes, we do product and e-commerce photography. Product shoots are priced per item, so send us your product list when you enquire.",
+      "keywords": "product,ecommerce",
+      "priority": 8
+    },
+    {
+      "q": "Do you do real estate photography?",
+      "a": "Yes, we do real estate and architectural photography. Tell us the property address and the date you need the photos by.",
+      "keywords": "real estate,property",
+      "priority": 8
+    },
+    {
+      "q": "Do you do headshots?",
+      "a": "Yes, we do corporate and personal headshots. Headshots are priced per person.",
+      "keywords": "headshot,corporate",
+      "priority": 8
+    },
+    {
+      "q": "Do you do newborn shoots?",
+      "a": "Yes, we do newborn and maternity shoots. Newborn sessions are planned around your baby's sleep and feeding routine.",
+      "keywords": "newborn,maternity",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a studio?",
+      "a": "Yes, we have a studio, and we also shoot on location. Tell us which you prefer when you book.",
+      "keywords": "studio",
+      "priority": 8
+    },
+    {
+      "q": "Do you deliver raw files?",
+      "a": "{raw_note} Ask us whether raw files are included in your package before you book.",
+      "keywords": "raw,unedited",
+      "priority": 7
+    },
+    {
+      "q": "What if it rains?",
+      "a": "If the weather is unsuitable for an outdoor shoot, we talk through rescheduling options with you. Our rescheduling terms are [your rescheduling policy].",
+      "keywords": "rain,weather,reschedule",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note} Your deposit terms are shown on the booking confirmation.",
+      "keywords": "deposit,booking fee",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit. Please tell us as early as you can so we can plan around the change.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [insurer name] public liability cover of [cover amount]. Ask us for a certificate before you book.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer prints and albums?",
+      "a": "Yes, prints, albums and wall art are available. We show you the options and pricing after your shoot.",
+      "keywords": "print,album",
+      "priority": 7
+    },
+    {
+      "q": "Do you have a second shooter?",
+      "a": "Yes, a second shooter can be added to wedding packages. Tell us about the timeline so we can plan the coverage.",
+      "keywords": "second shooter,assistant",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "guest_numbers",
+      "label": "Number of guests or attendees",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "photography.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "photography.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Catering needs food safety supervision and a council food business registration. Serving alcohol needs a licence. Venues usually require public liability insurance from the event provider.",
+    "items": [
+      "Food safety supervisor certificate (catering)",
+      "Council food registration (catering)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

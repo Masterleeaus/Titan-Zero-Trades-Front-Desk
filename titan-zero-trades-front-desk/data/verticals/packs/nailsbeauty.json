@@ -1,0 +1,435 @@
+{
+  "format": 3,
+  "id": "nailsbeauty",
+  "name": "Nails & Beauty",
+  "icon": "💅",
+  "tagline": "Manicures, pedicures, lashes, brows, waxing, tanning",
+  "version": "1.1.0",
+  "category": "personal_care",
+  "source_sha256": "d45995513f00477c77958a64d91d3872daf05182036442928b2b2939dec596b4",
+  "terminology": {
+    "customer": "client",
+    "job": "appointment",
+    "site": "salon",
+    "quote": "quote",
+    "staff": "nail technician",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Manicure",
+    "Pedicure",
+    "Gel Nails",
+    "Acrylic Nails",
+    "Shellac",
+    "SNS and Dip Powder",
+    "Nail Art",
+    "Nail Repair",
+    "Infills",
+    "Gel and Acrylic Removal",
+    "Waxing (face and body)",
+    "Classic and Volume Lash Extensions",
+    "Eyebrow Shaping",
+    "Lash Lift and Tint",
+    "Brow Lamination",
+    "Brow and Lash Tinting",
+    "Facial",
+    "Spray Tan"
+  ],
+  "catalog": [
+    {
+      "sku": "NAIL-MAN",
+      "label": "Manicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "manicure"
+    },
+    {
+      "sku": "NAIL-PED",
+      "label": "Pedicure",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "pedicure"
+    },
+    {
+      "sku": "NAIL-GEL",
+      "label": "Gel nails",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "gel"
+    },
+    {
+      "sku": "NAIL-ACR",
+      "label": "Acrylic full set",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "acrylic"
+    },
+    {
+      "sku": "NAIL-SNS",
+      "label": "SNS / dip powder",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "sns,dip"
+    },
+    {
+      "sku": "NAIL-INF",
+      "label": "Infill",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "infill"
+    },
+    {
+      "sku": "NAIL-ART",
+      "label": "Nail art (per nail)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8,
+      "taxable": 1,
+      "keywords": "nail art"
+    },
+    {
+      "sku": "NAIL-REM",
+      "label": "Gel or acrylic removal",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "removal"
+    },
+    {
+      "sku": "NAIL-WAX",
+      "label": "Waxing (per area)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "wax"
+    },
+    {
+      "sku": "NAIL-LASH",
+      "label": "Lash extensions (full set)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "lash"
+    },
+    {
+      "sku": "NAIL-LASHINF",
+      "label": "Lash infill",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "lash infill"
+    },
+    {
+      "sku": "NAIL-BROW",
+      "label": "Brow shaping and tint",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "brow,eyebrow"
+    },
+    {
+      "sku": "NAIL-TAN",
+      "label": "Spray tan",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "spray tan"
+    },
+    {
+      "sku": "NAIL-FAC",
+      "label": "Facial",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "facial"
+    },
+    {
+      "sku": "NAIL-PATCH",
+      "label": "Patch test",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "patch test"
+    }
+  ],
+  "staff_skills": [
+    "manicure",
+    "pedicure",
+    "gel",
+    "acrylic",
+    "shellac",
+    "nail art",
+    "waxing",
+    "lash extensions",
+    "lash lifts",
+    "brow shaping and tinting",
+    "spray tan",
+    "facials",
+    "patch testing"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "bridal nails today"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "before the weekend"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "infills",
+      "wax",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional nails and beauty salon. Ask about the service, nail condition, any allergies, and whether it is for an event. Ask about lash/brow history, patch tests, and skin sensitivities. Quote prices only from the reference answers, and say the final price is confirmed in salon. Do not promise a specific result without consultation.",
+  "kb": [
+    {
+      "q": "How much are gel nails?",
+      "a": "{price_note} Gel pricing depends on the service and nail length. We confirm the total with you in the salon.",
+      "keywords": "cost,price,gel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do acrylics?",
+      "a": "Yes, we do acrylic and gel extensions. Tell us the length and shape you want so we can quote the full set.",
+      "keywords": "acrylic,gel,extensions",
+      "priority": 9
+    },
+    {
+      "q": "Do you do infills?",
+      "a": "Yes, we do infills and rebalances. Book your infill on time to keep the set in good condition.",
+      "keywords": "infill,rebalance",
+      "priority": 8
+    },
+    {
+      "q": "Do you do SNS?",
+      "a": "Yes, we do SNS and dip powder nails. Ask us about the finishes and colours available when you book.",
+      "keywords": "sns,dip powder",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove gel or acrylic?",
+      "a": "Yes, we do gel and acrylic removals. A removal fee applies, and we confirm it when you book.",
+      "keywords": "removal,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you do nail art?",
+      "a": "Yes, we do nail art and custom designs. Nail art is charged per nail, so bring a photo of the design you want.",
+      "keywords": "nail art,design",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lash extensions?",
+      "a": "Yes, we do classic, hybrid, and volume lash extensions. Tell us the look you want so we can match the set to your natural lashes.",
+      "keywords": "lash,extensions",
+      "priority": 9
+    },
+    {
+      "q": "Do you do lash lifts?",
+      "a": "Yes, we do lash lifts and lash tints. Please tell us about any eye conditions or allergies before the treatment.",
+      "keywords": "lash lift,tint",
+      "priority": 8
+    },
+    {
+      "q": "Do you wax?",
+      "a": "Yes, we do waxing for the face and body. Waxing is charged per area, and we confirm the areas when you book.",
+      "keywords": "wax,waxing",
+      "priority": 9
+    },
+    {
+      "q": "Do you do eyebrows?",
+      "a": "Yes, we shape, tint, and laminate brows. Please tell us about any brow allergies or recent treatments when you book.",
+      "keywords": "brow,eyebrow",
+      "priority": 9
+    },
+    {
+      "q": "Do you do spray tans?",
+      "a": "Yes, we do spray tans. Please tell us about any skin conditions or allergies before the appointment.",
+      "keywords": "spray tan",
+      "priority": 8
+    },
+    {
+      "q": "Do you do facials?",
+      "a": "Yes, we do facials and skin treatments. Tell us about your skin type and concerns so we can choose the right treatment.",
+      "keywords": "facial,skin",
+      "priority": 8
+    },
+    {
+      "q": "Do you require a patch test?",
+      "a": "Yes, tinting and lash services require a patch test 24–48 hours before. Please tell us about any allergies when you book.",
+      "keywords": "patch test,allergy",
+      "priority": 9
+    },
+    {
+      "q": "How long do lashes last?",
+      "a": "Classic lashes usually last about two to three weeks before they need an infill. Results depend on your natural lash growth.",
+      "keywords": "how long,lashes,last",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Yes, booking is recommended. Walk-ins are subject to availability.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal or event packages?",
+      "a": "Yes, we offer bridal and event packages. Tell us the number of people and the date so we can quote a package.",
+      "keywords": "bridal,event,package",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers. Please contact us to confirm the amounts and how long they are valid.",
+      "keywords": "voucher,gift",
+      "priority": 7
+    },
+    {
+      "q": "What if I don't like the result?",
+      "a": "{guarantee_note} Please let us know within [number] hours if you are unhappy with the result, so we can talk through the options.",
+      "keywords": "guarantee,satisfaction",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [your insurance type] cover through [your insurer]. A certificate is available on request.",
+      "keywords": "insured,insurance",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as early as you can if your plans change.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do mobile nails?",
+      "a": "Mobile service is available in [your service area]. Ask us to confirm your suburb and any travel fee before you book.",
+      "keywords": "mobile,area",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please arrive a few minutes early.",
+    "quote_intro": "Here is your quote for the services you asked about.",
+    "invoice_note": "Thank you for visiting {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "allergies_patch_test",
+      "label": "Allergies or patch test needed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "nailsbeauty.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    },
+    {
+      "id": "nailsbeauty.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up no-show with rebooking link",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tattooing and skin penetration services are regulated by state health departments and usually need registration. Hair and beauty work needs infection control. Massage practitioners may need registration with a recognised body. Check your state rules.",
+    "items": [
+      "Practitioner registration or certificate current",
+      "Infection control and sterilisation records",
+      "Allergy and patch test records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment chair or room",
+    "equipment station"
+  ],
+  "reporting": [
+    "appointments completed",
+    "no-shows",
+    "rebooking rate",
+    "average ticket"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,386 @@
+{
+  "format": 3,
+  "id": "treeservices",
+  "name": "Tree Services",
+  "icon": "🌳",
+  "tagline": "Tree removal, pruning, stump grinding, arborist",
+  "version": "1.1.0",
+  "category": "outdoor",
+  "source_sha256": "94294b8d456c6c8ebf14bf5a6e8c7a37aaa7fb02188eccc2544f39e4cc20b98f",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "property",
+    "quote": "quote",
+    "staff": "arborist",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Tree Removal",
+    "Tree Pruning",
+    "Tree Lopping",
+    "Stump Grinding",
+    "Hedge Trimming",
+    "Arborist Report",
+    "Storm Damage Clean-Up",
+    "Palm Tree Removal",
+    "Deadwooding",
+    "Canopy Reduction",
+    "Root Removal",
+    "Mulch Supply",
+    "Land Clearing",
+    "Emergency Tree Work",
+    "Green Waste Removal"
+  ],
+  "catalog": [
+    {
+      "sku": "TREE-SMALL",
+      "label": "Small tree removal (up to 5 m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "small,removal"
+    },
+    {
+      "sku": "TREE-MED",
+      "label": "Medium tree removal (5 to 10 m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "medium,removal"
+    },
+    {
+      "sku": "TREE-LARGE",
+      "label": "Large tree removal (over 10 m)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "large,removal"
+    },
+    {
+      "sku": "TREE-PRUNE",
+      "label": "Tree pruning (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "prune,pruning"
+    },
+    {
+      "sku": "TREE-STUMP",
+      "label": "Stump grinding (per stump)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "stump,grind"
+    },
+    {
+      "sku": "TREE-HEDGE",
+      "label": "Hedge trimming (per metre)",
+      "kind": "labor",
+      "unit": "meter",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "hedge,trim"
+    },
+    {
+      "sku": "TREE-REPORT",
+      "label": "Arborist report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "arborist,report"
+    },
+    {
+      "sku": "TREE-MULCH",
+      "label": "Mulch supply (per cubic metre)",
+      "kind": "material",
+      "unit": "m3",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "mulch"
+    },
+    {
+      "sku": "TREE-WASTE",
+      "label": "Green waste removal (per cubic metre)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "green waste,remove"
+    },
+    {
+      "sku": "TREE-EMERG",
+      "label": "Emergency call-out",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "emergency,storm"
+    }
+  ],
+  "staff_skills": [
+    "arborist",
+    "tree removal",
+    "pruning",
+    "stump grinding",
+    "climbing",
+    "chainsaw",
+    "mulching",
+    "storm clean-up"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "tree on house",
+      "fallen tree",
+      "storm damage",
+      "blocked access",
+      "dangerous branch"
+    ],
+    "urgent": [
+      "before storm",
+      "today",
+      "tomorrow",
+      "before inspection",
+      "tree leaning"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "prune",
+      "remove",
+      "mulch",
+      "hedge trim",
+      "arborist report"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tree service. Ask about the tree species, height, location, and access. Ask whether power lines are nearby and whether a permit is required. Ask about stump grinding and green waste removal. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we hold [licence type] licence [licence number] and [insurer] insurance. Our arborists hold [qualification].",
+      "keywords": "licensed,insured,arborist",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer emergency tree services?",
+      "a": "{emergency_note} We attend fallen trees and storm damage where it is safe to do so.",
+      "keywords": "emergency,storm,fallen",
+      "priority": 9
+    },
+    {
+      "q": "How much does tree removal cost?",
+      "a": "{price_note} Tree removal is priced by height, species and access. We quote after an on-site inspection.",
+      "keywords": "cost,price,tree removal",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove stumps?",
+      "a": "Yes, we grind stumps. Roots may need separate work, which we quote separately.",
+      "keywords": "stump,grind",
+      "priority": 9
+    },
+    {
+      "q": "Do you prune trees?",
+      "a": "Yes, we prune trees for health, shape and safety. Tell us what you want to achieve so we can recommend the right cut.",
+      "keywords": "prune,pruning",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove palm trees?",
+      "a": "Yes, we remove palm trees and fronds. Tell us the palm's height and location when you enquire.",
+      "keywords": "palm,remove",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide arborist reports?",
+      "a": "Yes, we provide arborist reports for councils, insurers and owners. The report fee is listed on your quote.",
+      "keywords": "arborist,report,council",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove green waste?",
+      "a": "Yes, we chip and remove green waste. Green waste is priced per cubic metre, as listed on your quote.",
+      "keywords": "green waste,chip,mulch",
+      "priority": 8
+    },
+    {
+      "q": "Do I need a council permit?",
+      "a": "Some trees need a council permit before they are removed or pruned. We can advise you on your local rules before we start.",
+      "keywords": "council,permit",
+      "priority": 8
+    },
+    {
+      "q": "Do you work near power lines?",
+      "a": "We work near power lines only where the utility has isolated the line, as required. Tell us about any overhead lines at the site before booking.",
+      "keywords": "power line,electrical",
+      "priority": 9
+    },
+    {
+      "q": "Do you do land clearing?",
+      "a": "Yes, we clear land for building or landscaping. Permits may be required, so please check with your council first.",
+      "keywords": "land clearing,clear",
+      "priority": 8
+    },
+    {
+      "q": "Do you trim hedges?",
+      "a": "Yes, we trim and shape hedges. Hedge trimming is priced per metre, as listed on your quote.",
+      "keywords": "hedge,trim",
+      "priority": 8
+    },
+    {
+      "q": "Do you remove roots?",
+      "a": "Yes, we remove surface roots. Deep roots may need excavation, which we quote separately.",
+      "keywords": "root,remove",
+      "priority": 8
+    },
+    {
+      "q": "Can you leave the mulch on site?",
+      "a": "Yes, we can leave mulch on site or take it away. Tell us which you prefer when you book.",
+      "keywords": "leave,mulch,site",
+      "priority": 8
+    },
+    {
+      "q": "How long does a removal take?",
+      "a": "Most removals take [number] hours, depending on the tree's size and access. We confirm the timing when we quote.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us what is covered before you book.",
+      "keywords": "warranty,guarantee",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area]. Ask us to confirm your suburb before booking.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "It helps for the quote. For the work, we need access to the site and to the tree.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you clean up after the job?",
+      "a": "Yes, we clean up and remove debris after the job. We confirm what clean-up is included in your quote.",
+      "keywords": "clean,up,after,job",
+      "priority": 8
+    },
+    {
+      "q": "Do you treat diseased trees?",
+      "a": "We can advise on tree diseases and treat some conditions. Send us photos of the tree so we can tell you what we can do.",
+      "keywords": "disease,treatment",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} will be at your {site_label} on {date}.",
+    "quote_intro": "Here is your quote for the {job}, based on the area and access we discussed.",
+    "invoice_note": "Thank you for your business. Recurring services are invoiced as agreed."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 20,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "property_size",
+      "label": "Area or size of property",
+      "required": false
+    },
+    {
+      "key": "service_frequency",
+      "label": "One-off or recurring",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "treeservices.rule1",
+      "trigger": "job.completed",
+      "action": "offer_plan",
+      "description": "Offer recurring service plan",
+      "enabled": false
+    },
+    {
+      "id": "treeservices.rule2",
+      "trigger": "season.changed",
+      "action": "send_seasonal_reminder",
+      "description": "Send seasonal service reminder",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tree removal and pruning near powerlines need energy distributor approval. Some councils require permits for removing protected trees. Check your council and insurance requirements.",
+    "items": [
+      "Council permit recorded where required",
+      "Insurance certificate current for tree work"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "mower or trimmer",
+    "pressure equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "recurring service clients",
+    "average job value"
+  ],
+  "staff_record_types": [
+    "white_card",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

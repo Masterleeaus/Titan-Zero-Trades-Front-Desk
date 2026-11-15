@@ -1,0 +1,385 @@
+{
+  "format": 3,
+  "id": "tutoring",
+  "name": "Tutoring",
+  "icon": "📚",
+  "tagline": "Maths, English, science, exam prep, online",
+  "version": "1.1.0",
+  "category": "education",
+  "source_sha256": "6d0ce2f72a12d0023d6cc02e74847e931d985643e6436294ba4e1debdd1cb37b",
+  "terminology": {
+    "customer": "student",
+    "job": "lesson",
+    "site": "studio",
+    "quote": "quote",
+    "staff": "tutor",
+    "visit": "lesson"
+  },
+  "service_types": [
+    "Maths Tutoring",
+    "English Tutoring",
+    "Science Tutoring",
+    "Primary School Tutoring",
+    "High School Tutoring",
+    "HSC and VCE Exam Prep",
+    "University Tutoring",
+    "Language Tutoring",
+    "Music Lessons",
+    "Coding Lessons",
+    "Homework Help",
+    "Online Tutoring",
+    "In-Home Tutoring",
+    "Tutoring for Students with Special Needs",
+    "Adult Learning"
+  ],
+  "catalog": [
+    {
+      "sku": "TUT-1",
+      "label": "1 hour tutoring (one-on-one)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "1 hour,tutoring"
+    },
+    {
+      "sku": "TUT-1-ONLINE",
+      "label": "1 hour online tutoring",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 70,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "TUT-GROUP",
+      "label": "Small group tutoring (per person, per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "TUT-5",
+      "label": "5-session package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 400,
+      "taxable": 1,
+      "keywords": "package,5"
+    },
+    {
+      "sku": "TUT-10",
+      "label": "10-session package",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 750,
+      "taxable": 1,
+      "keywords": "package,10"
+    },
+    {
+      "sku": "TUT-EXAM",
+      "label": "Exam prep intensive (2 hours)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 170,
+      "taxable": 1,
+      "keywords": "exam,prep"
+    },
+    {
+      "sku": "TUT-HW",
+      "label": "Homework help (30 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "homework"
+    },
+    {
+      "sku": "TUT-UNI",
+      "label": "University tutoring (1 hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 100,
+      "taxable": 1,
+      "keywords": "university"
+    },
+    {
+      "sku": "TUT-ASSESS",
+      "label": "Initial assessment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "assessment"
+    },
+    {
+      "sku": "TUT-TRAVEL",
+      "label": "Travel fee (per km beyond 15 km)",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    }
+  ],
+  "staff_skills": [
+    "maths",
+    "english",
+    "science",
+    "exam preparation",
+    "languages",
+    "music",
+    "coding",
+    "special needs support",
+    "primary and high school"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "exam tomorrow",
+      "assignment due tomorrow",
+      "urgent help needed",
+      "missed exam or test"
+    ],
+    "urgent": [
+      "this week",
+      "before exam",
+      "before test",
+      "starting now",
+      "exam in two weeks"
+    ],
+    "routine": [
+      "weekly",
+      "regular",
+      "term booking",
+      "booking",
+      "quote",
+      "trial session",
+      "homework help"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional tutoring service. Ask about the subject, year level, current school, and specific topics or goals. Ask whether they prefer in-home, online, or at a centre, and their availability. Quote prices only from the reference answers, and say the final price is confirmed after the first session. Do not promise a specific academic result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much does tutoring cost?",
+      "a": "{price_note} Tutoring is priced per hour. Tell us the subject and year level, and we will confirm the rate.",
+      "keywords": "cost,price,tutoring",
+      "priority": 9
+    },
+    {
+      "q": "Do you do online tutoring?",
+      "a": "Yes, we offer online sessions by video call. You will need a device with a camera, a microphone and a stable internet connection.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "Do you do in-home tutoring?",
+      "a": "Yes, in-home tutoring is available in [your service area]. A travel fee applies beyond 15 km, as listed on your quote.",
+      "keywords": "in home,home",
+      "priority": 9
+    },
+    {
+      "q": "What subjects do you cover?",
+      "a": "We cover maths, English, science, languages, music and coding. Tell us the subject and the topic you need help with.",
+      "keywords": "subjects,maths,english",
+      "priority": 9
+    },
+    {
+      "q": "What year levels do you cover?",
+      "a": "We cover primary, high school and university students. Tell us the year level and the school or course when you enquire.",
+      "keywords": "year level,primary,high school",
+      "priority": 9
+    },
+    {
+      "q": "Do you do exam prep?",
+      "a": "Yes, we prepare students for exams and tests, including HSC and VCE. Tell us the exam date so we can plan sessions with you.",
+      "keywords": "exam,test,prep",
+      "priority": 9
+    },
+    {
+      "q": "Are your tutors qualified?",
+      "a": "Our tutors are [qualification level] and hold [background check, e.g. working with children check]. Ask us for details before you book.",
+      "keywords": "qualified,teacher,background check",
+      "priority": 9
+    },
+    {
+      "q": "Do you help with homework?",
+      "a": "Yes, we help with homework and assignments. Tell us what is due and when, so we can focus the session on it.",
+      "keywords": "homework,assignment",
+      "priority": 8
+    },
+    {
+      "q": "Do you tutor students with special needs?",
+      "a": "Yes, we have tutors with experience of special needs. Tell us about the student's needs so we can match a tutor.",
+      "keywords": "tutor,students,special,needs",
+      "priority": 8
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Sessions are usually 60 minutes, with 30 and 90 minute options available. Tell us which length suits you best.",
+      "keywords": "how long,time,duration",
+      "priority": 8
+    },
+    {
+      "q": "How often should we have sessions?",
+      "a": "Many students have one or two sessions a week. We suggest a schedule after we understand your goals.",
+      "keywords": "how often,frequency",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer group tutoring?",
+      "a": "Yes, small group tutoring is available at a lower rate per person. Group sessions are listed in our rates.",
+      "keywords": "group,small group",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a trial session?",
+      "a": "{trial_note} Ask us about the trial when you enquire.",
+      "keywords": "trial,free",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer discounts for multiple sessions?",
+      "a": "{discount_note} Packages of 5 and 10 sessions are available.",
+      "keywords": "discounts,multiple,sessions",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as soon as possible if you cannot attend.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Yes, we hold [insurance type] insurance with [insurer]. Certificates are available on request.",
+      "keywords": "insured,wwcc,children check",
+      "priority": 9
+    },
+    {
+      "q": "Do you tutor adults?",
+      "a": "Yes, we tutor adults and mature-age students. Tell us your goals and any previous study when you enquire.",
+      "keywords": "adult,mature",
+      "priority": 8
+    },
+    {
+      "q": "Do you tutor university students?",
+      "a": "Yes, we tutor undergraduate and postgraduate students. University tutoring is priced per hour, as listed in our rates.",
+      "keywords": "university,uni",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer music lessons?",
+      "a": "Yes, we offer music tutoring for [list of instruments]. Tell us the instrument and level so we can match a tutor.",
+      "keywords": "music,instrument",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer coding lessons?",
+      "a": "Yes, we tutor coding and programming for school and adult learners. Tell us the language or project you want to learn.",
+      "keywords": "coding,lessons",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} is on {date}.",
+    "quote_intro": "Here is the quote for your lessons.",
+    "invoice_note": "Thank you for learning with {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "student_age",
+      "label": "Student age and year level",
+      "required": true
+    },
+    {
+      "key": "guardian_contact",
+      "label": "Parent or guardian contact (if under 18)",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "tutoring.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Remind student 24 hours before the lesson",
+      "enabled": false
+    },
+    {
+      "id": "tutoring.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Offer make-up lesson",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Working With Children Checks apply to tutors and teachers working with children. Keep student records private and follow your state education rules for any accreditation the service needs.",
+    "items": [
+      "Working With Children Check number and expiry",
+      "Insurance certificate current"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "room",
+    "online meeting"
+  ],
+  "reporting": [
+    "lessons delivered",
+    "student retention",
+    "cancellations"
+  ],
+  "staff_record_types": [
+    "working_with_children",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

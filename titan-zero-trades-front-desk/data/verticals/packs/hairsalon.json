@@ -1,0 +1,403 @@
+{
+  "format": 3,
+  "id": "hairsalon",
+  "name": "Hair Salon",
+  "icon": "\ud83d\udc87",
+  "tagline": "Cuts, colour, styling, bridal, treatments",
+  "version": "1.1.0",
+  "category": "personal_care",
+  "source_sha256": "595d9a351f6f6f3c862cdfac5d9ebe52ac4333edfd5daa95f8fb3ecdb398aa92",
+  "terminology": {
+    "customer": "client",
+    "job": "appointment",
+    "site": "salon",
+    "quote": "quote",
+    "staff": "stylist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Women's cut and style",
+    "Men's cut",
+    "Children's cut",
+    "Colour consultation",
+    "Single-process colour",
+    "Highlights and foils",
+    "Balayage",
+    "Colour correction",
+    "Toner and gloss",
+    "Blow dry and styling",
+    "Updos and event styling",
+    "Bridal hair and trial",
+    "Keratin smoothing treatment",
+    "Hair extensions",
+    "Scalp treatment",
+    "Perms and body waves",
+    "Fringe trim"
+  ],
+  "catalog": [
+    {
+      "sku": "HAIR-WCUT",
+      "label": "Women's cut and style",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "women,cut"
+    },
+    {
+      "sku": "HAIR-MCUT",
+      "label": "Men's cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "men,cut"
+    },
+    {
+      "sku": "HAIR-KCUT",
+      "label": "Children's cut",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "children,kids"
+    },
+    {
+      "sku": "HAIR-BLOW",
+      "label": "Blow dry and style",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "blow dry,style"
+    },
+    {
+      "sku": "HAIR-COL",
+      "label": "Single-process colour",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "colour"
+    },
+    {
+      "sku": "HAIR-FOIL",
+      "label": "Foils and highlights",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "foils,highlights"
+    },
+    {
+      "sku": "HAIR-BAL",
+      "label": "Balayage",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "balayage"
+    },
+    {
+      "sku": "HAIR-UP",
+      "label": "Updo or event styling",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "updo,event"
+    },
+    {
+      "sku": "HAIR-BRID",
+      "label": "Bridal hair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "bridal,wedding"
+    },
+    {
+      "sku": "HAIR-KERA",
+      "label": "Keratin treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "keratin,smoothing"
+    },
+    {
+      "sku": "HAIR-EXT",
+      "label": "Hair extensions, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "extensions"
+    },
+    {
+      "sku": "HAIR-SCALP",
+      "label": "Scalp treatment",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "scalp,treatment"
+    }
+  ],
+  "staff_skills": [
+    "cutting",
+    "colour",
+    "balayage",
+    "foiling",
+    "blow dry and styling",
+    "updos",
+    "keratin",
+    "extensions",
+    "barbering",
+    "bridal hair",
+    "colour correction"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding today",
+      "event tonight",
+      "bridal hair today",
+      "colour emergency after a bad result"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "before the weekend",
+      "bridal trial due",
+      "appointment time changed"
+    ],
+    "routine": [
+      "regular",
+      "booking",
+      "colour",
+      "cut",
+      "blow dry",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional hair salon. Ask about the service wanted, hair length and history (box dye, previous colour), and preferred stylist if any. Ask about allergies and previous reactions. Quote prices only from the reference answers, and say the final price is confirmed in salon. Do not promise a specific colour result without a consultation.",
+  "kb": [
+    {
+      "q": "Do I need a consultation before colour?",
+      "a": "Yes, colour and lightening services start with a consultation, either in the salon or by photo. This helps us plan the colour before your appointment.",
+      "keywords": "consultation,colour,lightening,photo",
+      "priority": 10
+    },
+    {
+      "q": "How much does a colour cost?",
+      "a": "{price_note} Colour is priced by hair length, thickness, and technique. We confirm the price after your consultation.",
+      "keywords": "colour,price,cost,length",
+      "priority": 10
+    },
+    {
+      "q": "Do you do balayage?",
+      "a": "Yes, we do balayage, foils, and freehand lightening. We recommend a consultation first so the result suits your hair.",
+      "keywords": "balayage,foils,lightening",
+      "priority": 9
+    },
+    {
+      "q": "Can you fix a bad colour?",
+      "a": "Yes, we do colour corrections. These need a consultation first and may take more than one visit to get right.",
+      "keywords": "correction,bad colour,fix",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bridal hair?",
+      "a": "Yes, we do bridal and event hair, including trials and on-site styling. Book the trial before the wedding day.",
+      "keywords": "bridal,wedding,trial,event",
+      "priority": 10
+    },
+    {
+      "q": "Do you do keratin treatments?",
+      "a": "Yes, we offer keratin and smoothing treatments. Tell us about any colour or chemical services you have had recently, as these affect the booking.",
+      "keywords": "keratin,smoothing,treatment,chemical",
+      "priority": 8
+    },
+    {
+      "q": "Do you do hair extensions?",
+      "a": "Yes, we supply and install tape, clip-in, and keratin extensions. We confirm the type and amount when we consult.",
+      "keywords": "extensions,tape,clip-in,keratin",
+      "priority": 8
+    },
+    {
+      "q": "Do you cut children's hair?",
+      "a": "Yes, we cut children's hair. Ask us about children's pricing when you book.",
+      "keywords": "children,kids,cut,pricing",
+      "priority": 8
+    },
+    {
+      "q": "How long does a colour take?",
+      "a": "Most colours take [number] hours, depending on the technique and hair length. We confirm the time when you book.",
+      "keywords": "how long,colour,time,hours",
+      "priority": 8
+    },
+    {
+      "q": "What products do you use?",
+      "a": "We use professional salon products. Tell us about any brand preferences or sensitivities when you book.",
+      "keywords": "products,brand,sensitivity,salon",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a senior discount?",
+      "a": "{discount_note} Ask us about it when you book.",
+      "keywords": "discount,senior,concession",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "We recommend booking. Walk-ins are taken when we have availability.",
+      "keywords": "booking,walk-in,availability",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee.",
+      "keywords": "cancel,policy,fee",
+      "priority": 9
+    },
+    {
+      "q": "What if I don't like the result?",
+      "a": "{guarantee_note} Tell us about any concern before you leave, so we can look at it while you are still in the chair.",
+      "keywords": "result,happy,concern,guarantee",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer gift vouchers?",
+      "a": "Yes, we offer gift vouchers for any amount or service. Ask us how to order one.",
+      "keywords": "gift,voucher,present",
+      "priority": 7
+    },
+    {
+      "q": "Do you do men's cuts?",
+      "a": "Yes, we do men's cuts and styling, and we can book them alongside other services.",
+      "keywords": "men,mens,cut,styling",
+      "priority": 8
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. Certificates are available on request.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do mobile hair appointments?",
+      "a": "Mobile hair is available within [service area]. Ask us to confirm your suburb when you book.",
+      "keywords": "mobile,home,suburb,area",
+      "priority": 7
+    },
+    {
+      "q": "Do you do perms?",
+      "a": "Yes, we do perms and body waves. A consultation helps us check that your hair is suitable first.",
+      "keywords": "perm,body wave,consultation",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer scalp treatments?",
+      "a": "Yes, we offer scalp and hair treatments. Tell us about any scalp concerns when you book.",
+      "keywords": "scalp,treatment,hair,concern",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please arrive a few minutes early.",
+    "quote_intro": "Here is your quote for the services you asked about.",
+    "invoice_note": "Thank you for visiting {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "allergies_patch_test",
+      "label": "Allergies or patch test needed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "hairsalon.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    },
+    {
+      "id": "hairsalon.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up no-show with rebooking link",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Tattooing and skin penetration services are regulated by state health departments and usually need registration. Hair and beauty work needs infection control. Massage practitioners may need registration with a recognised body. Check your state rules.",
+    "items": [
+      "Practitioner registration or certificate current",
+      "Infection control and sterilisation records",
+      "Allergy and patch test records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment chair or room",
+    "equipment station"
+  ],
+  "reporting": [
+    "appointments completed",
+    "no-shows",
+    "rebooking rate",
+    "average ticket"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

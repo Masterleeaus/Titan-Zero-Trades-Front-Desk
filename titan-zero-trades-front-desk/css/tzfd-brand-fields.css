@@ -1,0 +1,16 @@
+/* Pass 196: dark, branded form surfaces without hiding field values. */
+body.tzfd-screen .tzfd-admin-page input:not([type=checkbox]):not([type=radio]),
+body.tzfd-screen .tzfd-admin-page textarea,
+body.tzfd-screen .tzfd-admin-page select,
+body.tzfd-screen .tzfd-app input:not([type=checkbox]):not([type=radio]),
+body.tzfd-screen .tzfd-app textarea,
+body.tzfd-screen .tzfd-app select,
+body.tzfd-screen .wrap input:not([type=checkbox]):not([type=radio]):not([type=hidden]),
+body.tzfd-screen .wrap textarea,
+body.tzfd-screen .wrap select {background:#102b4a!important;color:#edf7ff!important;border:1px solid #345777!important;box-shadow:none!important;}
+body.tzfd-screen input::placeholder,body.tzfd-screen textarea::placeholder{color:#a9bfd3!important;opacity:1}
+body.tzfd-screen select option{background:#102b4a;color:#edf7ff}
+body.tzfd-screen input:focus,body.tzfd-screen textarea:focus,body.tzfd-screen select:focus{border-color:#00cfe8!important;outline:2px solid #00cfe844;outline-offset:1px}
+body.tzfd-screen .tzfd-enquiry-publish,body.tzfd-screen .tzfd-pipeline-guide{padding:16px 20px;margin:16px 0;background:#0c2040;border:1px solid #285273;border-radius:12px;color:#e7f4ff}
+body.tzfd-screen .tzfd-enquiry-publish code{display:inline-block;padding:10px 12px;margin-right:12px;background:#07182f;color:#70e8ff}
+body.tzfd-screen .tzfd-pipeline-guide h2,body.tzfd-screen .tzfd-enquiry-publish h2{color:#f0f8ff}

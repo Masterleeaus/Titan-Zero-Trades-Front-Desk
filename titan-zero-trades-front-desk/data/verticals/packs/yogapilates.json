@@ -1,0 +1,368 @@
+{
+  "format": 3,
+  "id": "yogapilates",
+  "name": "Yoga & Pilates Studios",
+  "icon": "🧘",
+  "tagline": "Classes, private sessions, teacher training, workshops",
+  "version": "1.1.0",
+  "category": "fitness",
+  "source_sha256": "89d8e3995a9d8ffbef0c935be10b6d9b86c651ad484af69f2468a996ab535aea",
+  "terminology": {
+    "customer": "member",
+    "job": "class",
+    "site": "studio",
+    "quote": "quote",
+    "staff": "instructor",
+    "visit": "session"
+  },
+  "service_types": [
+    "Group Yoga Classes",
+    "Group Pilates Classes",
+    "Private Yoga Sessions",
+    "Private Pilates Sessions",
+    "Reformer Pilates",
+    "Mat Pilates",
+    "Prenatal Yoga",
+    "Mums and Bubs Classes",
+    "Seniors Yoga",
+    "Yin Yoga",
+    "Vinyasa Yoga",
+    "Hatha Yoga",
+    "Meditation",
+    "Breathwork",
+    "Teacher Training",
+    "Workshops and Retreats",
+    "Corporate Classes",
+    "Online Classes"
+  ],
+  "catalog": [
+    {
+      "sku": "YOG-DROP",
+      "label": "Drop-in class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "drop in"
+    },
+    {
+      "sku": "YOG-10",
+      "label": "10-class pack",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 200,
+      "taxable": 1,
+      "keywords": "pack,10"
+    },
+    {
+      "sku": "YOG-MEM",
+      "label": "Unlimited monthly membership",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "membership"
+    },
+    {
+      "sku": "YOG-PRIV",
+      "label": "Private session (one-on-one)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "private"
+    },
+    {
+      "sku": "YOG-DUET",
+      "label": "Duet session (two people)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "duet"
+    },
+    {
+      "sku": "YOG-REF",
+      "label": "Reformer class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "reformer"
+    },
+    {
+      "sku": "YOG-PREN",
+      "label": "Prenatal class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "prenatal"
+    },
+    {
+      "sku": "YOG-ONLINE",
+      "label": "Online class",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "YOG-CORP",
+      "label": "Corporate class (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "YOG-TT",
+      "label": "Teacher training module",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "teacher training"
+    },
+    {
+      "sku": "YOG-WORK",
+      "label": "Workshop",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 90,
+      "taxable": 1,
+      "keywords": "workshop"
+    }
+  ],
+  "staff_skills": [
+    "yoga",
+    "pilates",
+    "reformer",
+    "meditation",
+    "breathwork",
+    "prenatal",
+    "seniors",
+    "injury modification",
+    "teacher training"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "injury during class",
+      "acute pain",
+      "urgent session needed",
+      "chest pain or dizziness"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "this week",
+      "starting now",
+      "class pack expiring"
+    ],
+    "routine": [
+      "weekly",
+      "membership",
+      "class pack",
+      "booking",
+      "quote",
+      "trial class",
+      "workshop"
+    ]
+  },
+  "extra_prompt": "You are booking for a yoga and pilates studio. Ask about experience level, injuries, pregnancy, and preferred class style. Ask whether they prefer group, private, or online. Quote prices only from the reference answers, and say the final price is confirmed at the studio. Do not provide medical advice or promise a specific physical outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much is a class?",
+      "a": "{price_note} Classes are priced per session, or you can buy a class pack or membership.",
+      "keywords": "cost,price,class",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer private sessions?",
+      "a": "Yes, we offer one-on-one private sessions and duet sessions for two people. Tell us your goals and any injuries before you book.",
+      "keywords": "private,one on one",
+      "priority": 9
+    },
+    {
+      "q": "Do you run reformer pilates?",
+      "a": "Yes, we run reformer classes in small groups. Reformer classes are priced per class, as listed in our rates.",
+      "keywords": "run,reformer,pilates",
+      "priority": 8
+    },
+    {
+      "q": "I am a beginner. Which class should I choose?",
+      "a": "Start with our beginner or foundations class. Tell us your goals and experience, and we will recommend a class.",
+      "keywords": "am,beginner,class,choose",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer prenatal yoga?",
+      "a": "Yes, we run prenatal classes and mums and bubs classes. Please tell your teacher about your pregnancy and any medical advice before class.",
+      "keywords": "prenatal,pregnancy,mums",
+      "priority": 9
+    },
+    {
+      "q": "Do you have classes for seniors?",
+      "a": "Yes, we run gentle classes for seniors. Tell us about any health concerns when you book so we can suggest the right class.",
+      "keywords": "classes,seniors",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer online classes?",
+      "a": "Yes, we offer live and on-demand online classes. Online classes are priced as listed in our rates.",
+      "keywords": "online,streaming",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer teacher training?",
+      "a": "Yes, we run teacher training. {certification_note} Ask us for upcoming course dates.",
+      "keywords": "teacher,training",
+      "priority": 8
+    },
+    {
+      "q": "Do you run corporate classes?",
+      "a": "Yes, we run corporate and workplace classes. Corporate classes are priced per hour, as listed on your quote.",
+      "keywords": "run,corporate,classes",
+      "priority": 8
+    },
+    {
+      "q": "What should I bring to class?",
+      "a": "Bring water and a towel. We provide mats and props.",
+      "keywords": "bring,class",
+      "priority": 8
+    },
+    {
+      "q": "What if I have an injury?",
+      "a": "Tell your teacher before class starts. We can offer modifications, or you can book a private session.",
+      "keywords": "injury,modification",
+      "priority": 9
+    },
+    {
+      "q": "Do I need to book?",
+      "a": "Booking is recommended, as walk-ins depend on space. Please book ahead to secure your spot.",
+      "keywords": "book,booking",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the class or incur a fee. Please let us know as early as you can.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer memberships?",
+      "a": "Yes, we offer an unlimited monthly membership. Membership prices are listed in our rates.",
+      "keywords": "membership,unlimited",
+      "priority": 8
+    },
+    {
+      "q": "Do you run workshops and retreats?",
+      "a": "Yes, we run workshops and retreats. Ask us for upcoming dates and prices.",
+      "keywords": "workshop,retreat",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a trial class?",
+      "a": "{trial_note} Ask us about trial options when you enquire.",
+      "keywords": "trial,class",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. See you there.",
+    "quote_intro": "Here is the quote for the program you asked about.",
+    "invoice_note": "Thank you for training with {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "health_screen",
+      "label": "Health screening completed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "yogapilates.rule1",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up missed session",
+      "enabled": false
+    },
+    {
+      "id": "yogapilates.rule2",
+      "trigger": "membership.renewal_due",
+      "action": "send_renewal",
+      "description": "Send renewal reminder",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Fitness instructors should keep first aid and public liability insurance current. Keep health screening records for clients where the service offers them.",
+    "items": [
+      "First aid certificate current",
+      "Public liability insurance current",
+      "Health screening records kept with the client"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "studio or gym space",
+    "equipment"
+  ],
+  "reporting": [
+    "sessions delivered",
+    "member retention",
+    "cancellations"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

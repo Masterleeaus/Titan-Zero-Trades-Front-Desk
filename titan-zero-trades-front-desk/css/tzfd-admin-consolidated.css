@@ -1,0 +1,304 @@
+/* Consolidated in original enqueue order; upstream files retained for traceability. */
+
+/* BEGIN tzfd-unified-admin */
+
+/* Titan Zero Front Desk unified administration system — Pass 188.
+   Scoped to Front Desk admin routes only; never affects public booking templates. */
+body.tzfd-screen { --tz-bg:#06152e; --tz-panel:#0c2040; --tz-field:#10294b; --tz-text:#edf7ff; --tz-muted:#b5c8dc; --tz-border:#284867; --tz-accent:#00cfe8; --tzfd-border:var(--tz-border,#284867); --tzfd-blue:var(--tz-accent,#00cfe8); --tzfd-text-muted:var(--tz-muted,#b5c8dc); color:var(--tz-text,#edf7ff); }
+body.tzfd-screen #wpcontent,body.tzfd-screen #wpbody,body.tzfd-screen #wpbody-content {background:var(--tz-bg);color:var(--tz-text,#edf7ff)}
+body.tzfd-screen #wpbody-content {box-sizing:border-box;min-width:0;}
+body.tzfd-screen #wpbody-content .wrap,body.tzfd-screen .tzfd-page {max-width:100%;min-width:0;box-sizing:border-box;}
+body.tzfd-screen .tzfd-section-container,body.tzfd-screen .tzfd-statssection-container,body.tzfd-screen .tzfd-pwizard .tzfd-section-container,body.tzfd-screen .tzfd-card,body.tzfd-screen .tzfd-adintsection-container {background:var(--tz-panel,#0c2040)!important;color:var(--tz-text,#edf7ff);border:1px solid var(--tz-border,#284867);border-radius:12px;box-sizing:border-box;min-width:0;}
+body.tzfd-screen .tzfd-statssection-header,body.tzfd-screen .tzfd-section-header {background:var(--tz-field,#10294b);color:var(--tz-text,#edf7ff);border-color:var(--tz-border,#284867)}
+body.tzfd-screen .tzfd-section-container *,body.tzfd-screen .tzfd-card * {box-sizing:border-box;}
+body.tzfd-screen .tzfd-page-head {align-items:center;gap:12px 20px;}
+body.tzfd-screen .tzfd-brand-lockup img {display:block;max-width:min(230px,100%);height:auto;}
+body.tzfd-screen .tzfd-page-actions {max-width:100%;}
+body.tzfd-screen .form-builder,body.tzfd-screen .form-builder .ui-sortable,body.tzfd-screen .tzfd-builder-panel {height:auto!important;min-height:0!important;max-height:none!important;}
+body.tzfd-screen .tzfd-new-calendar {max-width:100%;}
+body.tzfd-screen .tzfd-calendars-list,body.tzfd-screen .tzfd-orders-list {max-width:100%;}
+body.tzfd-screen .tzfd-table-scroll {max-width:100%;overflow-x:auto;}
+body.tzfd-screen input:not([type=checkbox]):not([type=radio]):not([type=submit]),body.tzfd-screen select,body.tzfd-screen textarea {max-width:100%;background:var(--tz-field,#10294b);color:var(--tz-text,#edf7ff);border-color:var(--tz-border,#284867);}
+body.tzfd-screen input:focus-visible,body.tzfd-screen select:focus-visible,body.tzfd-screen textarea:focus-visible,body.tzfd-screen button:focus-visible,body.tzfd-screen a:focus-visible {outline:2px solid #00d6e9;outline-offset:2px;}
+body.tzfd-screen .button-primary,body.tzfd-screen input[type=submit].button-primary {background:linear-gradient(110deg,#00cfe8,#087eea);border-color:#088cc8;color:#04152c;text-shadow:none;}
+body.tzfd-screen .button-primary:hover {background:linear-gradient(110deg,#00e0ee,#1266d8);color:#04152c;}
+body.tzfd-screen .widefat,body.tzfd-screen .wp-list-table {border-color:var(--tz-border,#284867);}
+body.tzfd-screen .widefat td,body.tzfd-screen .widefat th {border-bottom-color:var(--tz-border,#284867);}
+body.tzfd-screen .description,body.tzfd-screen .tzfd-muted {color:var(--tz-muted,#b5c8dc);}
+body.tzfd-screen .tzfd-pwizard .tzfd-section {background:transparent;}
+@media(max-width:782px){body.tzfd-screen .tzfd-page-head {flex-direction:column;align-items:stretch;}body.tzfd-screen .tzfd-section-container,body.tzfd-screen .tzfd-statssection-container {margin-right:0;width:100%;}body.tzfd-screen .tzfd-page-actions {width:100%;}body.tzfd-screen .tzfd-page-actions .button {white-space:normal;}}
+@media(prefers-reduced-motion:reduce){body.tzfd-screen *,body.tzfd-screen *::before,body.tzfd-screen *::after {scroll-behavior:auto!important;transition-duration:.01ms!important;}}
+
+
+/* END tzfd-unified-admin */
+
+
+/* BEGIN tzfd-graphics-ui */
+
+.tzfd-graphics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:16px;margin:14px 0 30px}.tzfd-graphics-item{margin:0;min-width:0;border:1px solid #294462;background:#0a1d38;border-radius:12px;overflow:hidden;color:#f6faff}.tzfd-graphics-item img{width:100%;height:145px;object-fit:contain;display:block;background:#06142b;padding:10px;box-sizing:border-box}.tzfd-graphics-item figcaption{padding:10px;font-size:12px;overflow-wrap:anywhere}.tzfd-graphics h2{margin-top:30px}.tzfd-graphics p{max-width:850px}.tzfd-graphics .tzfd-graphics-item:focus-within{outline:2px solid #00d4e8}
+
+.tzfd-empty-state--illustrated{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;min-height:190px;padding:24px;text-align:center}.tzfd-empty-state--illustrated img{width:min(160px,50%);height:120px;object-fit:contain}.tzfd-empty-state--illustrated p{margin:0;max-width:48ch}
+
+/* Pass 192: integrated illustrations without forced panel heights or overflow. */
+.tzfd-visual-banner{display:flex;align-items:center;gap:18px;max-width:100%;min-width:0;margin:14px 0 22px;padding:16px 20px;border:1px solid #294462;border-radius:14px;background:#0c2040;color:#eaf6ff;box-sizing:border-box}
+.tzfd-visual-banner img{width:108px;height:88px;max-width:30%;object-fit:contain;flex-shrink:0}
+.tzfd-visual-banner p{margin:6px 0 0;color:#c4d6e9}
+.tzfd-help-visual{margin:14px 0;max-width:720px;padding:14px;border:1px solid #294462;border-radius:14px;background:#0c2040;box-sizing:border-box}
+.tzfd-help-visual img{display:block;width:100%;height:auto;max-height:260px;object-fit:contain}
+@media(max-width:600px){.tzfd-visual-banner{gap:10px;padding:12px}.tzfd-visual-banner img{width:72px;height:72px}.tzfd-empty-state--illustrated{min-height:0;padding:18px 12px}}
+
+/* Pass 193: compact contextual imagery without altering table density. */
+.tzfd-screen .tzfd-service-identity{display:flex;align-items:center;gap:10px;min-width:0}
+.tzfd-screen .tzfd-service-identity strong{overflow-wrap:anywhere}
+.tzfd-screen .tzfd-service-thumbnail{width:44px;height:44px;flex:0 0 44px;object-fit:cover;border-radius:9px;background:#0c2040;border:1px solid rgba(0,207,232,.22)}
+@media(max-width:782px){.tzfd-screen .tzfd-service-thumbnail{width:36px;height:36px;flex-basis:36px}}
+
+
+/* END tzfd-graphics-ui */
+
+
+/* BEGIN tzfd-contrast-repair */
+
+/* Pass 195: Front Desk admin contrast and layout correction.
+   Load after all legacy styles. Scoped to plugin screens. */
+body.tzfd-screen { --tz-accent:#00cfe8; --tz-accent-hover:#087eea; --tz-on-accent:#06152e; }
+/* Keep native WP admin positioning intact: no fixed heights or translated shells. */
+body.tzfd-screen #wpbody-content { padding-top:0; min-width:0; }
+body.tzfd-screen #wpbody-content > .wrap { margin-top:10px; }
+body.tzfd-screen #wpbody-content .tzfd-page-head { clear:both; position:relative; top:auto; transform:none; }
+body.tzfd-screen #wpbody-content .tzfd-page { min-width:0; overflow-wrap:anywhere; }
+/* A light surface always has dark foregrounds, including legacy nested spans. */
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid,.tzfd-new-calendar) :is(th,td,span,label,a,p,small,strong,div) { color:#172334; }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) { background-color:var(--tz-field,#10294b); color:var(--tz-text,#edf7ff); }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) :is(input,textarea,select) { color:var(--tz-text,#edf7ff); background:var(--tz-field,#10294b); }
+body.tzfd-screen #wpbody-content :is(.widefat,.wp-list-table,.ui-datepicker,.ui-widget-content,.fc-view,.fc-scrollgrid,.fc-daygrid,.fc-timegrid) :is(input,textarea)::placeholder { color:var(--tz-muted,#b5c8dc); opacity:1; }
+/* Do not recolour dark branded cards: only explicit white/light surfaces. */
+body.tzfd-screen #wpbody-content [style*="background: white"],
+body.tzfd-screen #wpbody-content [style*="background:var(--tz-field,#10294b)"],
+body.tzfd-screen #wpbody-content [style*="background:var(--tz-field,#10294b)"],
+body.tzfd-screen #wpbody-content [style*="background-color: white"],
+body.tzfd-screen #wpbody-content [style*="background-color:var(--tz-field,#10294b)"] { color:var(--tz-text,#edf7ff) !important; }
+body.tzfd-screen #wpbody-content [style*="background: white"] :is(span,small,p,label,a,strong),
+body.tzfd-screen #wpbody-content [style*="background:var(--tz-field,#10294b)"] :is(span,small,p,label,a,strong),
+body.tzfd-screen #wpbody-content [style*="background:var(--tz-field,#10294b)"] :is(span,small,p,label,a,strong) { color:var(--tz-text,#edf7ff) !important; }
+body.tzfd-screen #wpbody-content input:not([type=checkbox]):not([type=radio]):not([type=submit]):not([type=button]),
+body.tzfd-screen #wpbody-content select,
+body.tzfd-screen #wpbody-content textarea { background:var(--tz-field,#10294b) !important; color:var(--tz-text,#edf7ff) !important; border-color:#7b8796 !important; -webkit-text-fill-color:var(--tz-text,#edf7ff); }
+body.tzfd-screen #wpbody-content input::placeholder,body.tzfd-screen #wpbody-content textarea::placeholder {color:var(--tz-muted,#b5c8dc) !important;opacity:1;}
+body.tzfd-screen #wpbody-content select option {background:var(--tz-field,#10294b);color:var(--tz-text,#edf7ff);}
+/* Calendar header on white background must not inherit white heading text. */
+body.tzfd-screen #wpbody-content .ui-datepicker-title,
+body.tzfd-screen #wpbody-content .fc-toolbar-title,
+body.tzfd-screen #wpbody-content .fc-col-header-cell-cushion {color:#172334 !important;}
+body.tzfd-screen #wpbody-content .fc .fc-button-primary {background:#087eea;color:#fff;border-color:#087eea;}
+@media(max-width:782px){body.tzfd-screen #wpbody-content .tzfd-page-head{flex-wrap:wrap;}body.tzfd-screen #wpbody-content .fc{max-width:100%;overflow-x:auto;}}
+
+
+/* END tzfd-contrast-repair */
+
+
+/* BEGIN tzfd-brand-fields */
+
+/* Pass 196: dark, branded form surfaces without hiding field values. */
+body.tzfd-screen .tzfd-admin-page input:not([type=checkbox]):not([type=radio]),
+body.tzfd-screen .tzfd-admin-page textarea,
+body.tzfd-screen .tzfd-admin-page select,
+body.tzfd-screen .tzfd-app input:not([type=checkbox]):not([type=radio]),
+body.tzfd-screen .tzfd-app textarea,
+body.tzfd-screen .tzfd-app select,
+body.tzfd-screen .wrap input:not([type=checkbox]):not([type=radio]):not([type=hidden]),
+body.tzfd-screen .wrap textarea,
+body.tzfd-screen .wrap select {background:#102b4a!important;color:#edf7ff!important;border:1px solid #345777!important;box-shadow:none!important;}
+body.tzfd-screen input::placeholder,body.tzfd-screen textarea::placeholder{color:#a9bfd3!important;opacity:1}
+body.tzfd-screen select option{background:#102b4a;color:#edf7ff}
+body.tzfd-screen input:focus,body.tzfd-screen textarea:focus,body.tzfd-screen select:focus{border-color:#00cfe8!important;outline:2px solid #00cfe844;outline-offset:1px}
+body.tzfd-screen .tzfd-enquiry-publish,body.tzfd-screen .tzfd-pipeline-guide{padding:16px 20px;margin:16px 0;background:#0c2040;border:1px solid #285273;border-radius:12px;color:#e7f4ff}
+body.tzfd-screen .tzfd-enquiry-publish code{display:inline-block;padding:10px 12px;margin-right:12px;background:#07182f;color:#70e8ff}
+body.tzfd-screen .tzfd-pipeline-guide h2,body.tzfd-screen .tzfd-enquiry-publish h2{color:#f0f8ff}
+
+
+/* END tzfd-brand-fields */
+
+
+/* BEGIN tzfd-premium-consistency */
+
+/* Pass 200: scoped, contrast-safe Front Desk administration design system. */
+body.tzfd-screen {--tzfd-bg:#06152e;--tzfd-panel:#102b4a;--tzfd-panel-alt:#172f4e;--tzfd-text:#edf7ff;--tzfd-muted:#bfd2e5;--tzfd-edge:#365777;--tzfd-accent:#00cfe8;}
+body.tzfd-screen #wpcontent {background:var(--tzfd-bg);}
+body.tzfd-screen #wpbody-content {padding-top:0!important;}
+body.tzfd-screen #wpbody-content>.wrap,body.tzfd-screen .tzfd-admin-page {margin-top:12px;max-width:100%;box-sizing:border-box;}
+body.tzfd-screen .wrap h1,body.tzfd-screen .wrap h2,body.tzfd-screen .wrap h3,body.tzfd-screen .wrap label,body.tzfd-screen .wrap legend {color:var(--tzfd-text);}
+body.tzfd-screen .wrap p,body.tzfd-screen .wrap li,body.tzfd-screen .wrap dt,body.tzfd-screen .wrap dd,body.tzfd-screen .wrap summary {color:var(--tzfd-muted);}
+body.tzfd-screen .wrap input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]),body.tzfd-screen .wrap select,body.tzfd-screen .wrap textarea {background:var(--tzfd-panel)!important;color:var(--tzfd-text)!important;border:1px solid var(--tzfd-edge)!important;}
+body.tzfd-screen .wrap input::placeholder,body.tzfd-screen .wrap textarea::placeholder {color:#b5cce0!important;opacity:1;}
+body.tzfd-screen .wrap input:focus-visible,body.tzfd-screen .wrap select:focus-visible,body.tzfd-screen .wrap textarea:focus-visible {outline:2px solid var(--tzfd-accent);outline-offset:2px;}
+body.tzfd-screen .wrap .notice p,body.tzfd-screen .wrap .notice li {color:#15263b;}
+body.tzfd-screen .wrap .notice h2 {color:#15263b;}
+body.tzfd-screen .wrap .widefat,body.tzfd-screen .wrap .wp-list-table {background:var(--tzfd-panel-alt);color:var(--tzfd-text);border-color:var(--tzfd-edge);}
+body.tzfd-screen .wrap .widefat th,body.tzfd-screen .wrap .widefat td,body.tzfd-screen .wrap .widefat td a {color:var(--tzfd-text);border-color:var(--tzfd-edge);}
+body.tzfd-screen .wrap .widefat thead th,body.tzfd-screen .wrap .widefat tfoot th {background:#203c5a;}
+body.tzfd-screen .tzfd-pipeline-stages {display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));gap:12px;margin:20px 0;}
+body.tzfd-screen .tzfd-pipeline-stage {display:flex;gap:12px;padding:16px;background:var(--tzfd-panel-alt);border:1px solid var(--tzfd-edge);border-radius:12px;min-width:0;}
+body.tzfd-screen .tzfd-pipeline-stage strong {color:var(--tzfd-text);font-size:14px;}
+body.tzfd-screen .tzfd-pipeline-stage p {margin:6px 0 0;line-height:1.5;}
+body.tzfd-screen .tzfd-stage-number {color:var(--tzfd-accent);font-weight:800;font-size:18px;}
+body.tzfd-screen .tzfd-pipeline-help summary {cursor:pointer;color:var(--tzfd-text)!important;font-weight:600;}
+body.tzfd-screen .tzfd-pipeline-metrics {display:flex;flex-wrap:wrap;gap:10px;list-style:none;margin:12px 0 24px;padding:0;}
+body.tzfd-screen .tzfd-pipeline-metrics li {padding:10px 14px;border:1px solid var(--tzfd-edge);background:var(--tzfd-panel-alt);border-radius:8px;}
+@media(max-width:782px){body.tzfd-screen .wrap {margin-left:10px;margin-right:10px;}body.tzfd-screen .tzfd-pipeline-stages {grid-template-columns:1fr;}}
+
+
+/* END tzfd-premium-consistency */
+
+
+/* BEGIN tzfd-final-surface */
+
+/* Pass 201: final, route-scoped administration surface layer. Customer-facing templates unaffected. */
+body.tzfd-screen {--tz-bg:#06152e;--tz-panel:#102b4a;--tz-field:#102b4a;--tz-text:#edf7ff;--tz-muted:#bfd2e5;--tz-border:#365777;--tz-accent:#00cfe8;--tz-accent-hover:#087eea;--tz-on-accent:#06152e}
+body.tzfd-screen .tz-app-head {display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px;margin:0 0 12px;min-height:0}
+body.tzfd-screen .tzfd-official-brand img {display:block;max-width:min(100%,290px);width:auto;height:auto;max-height:92px;object-fit:contain}
+body.tzfd-screen .tzfd-page-head {margin-top:8px!important}
+body.tzfd-screen :is(.tzfd-admin-page,.tzfd-app,.tzfd-page,.wrap,.tz-app) :is(input:not([type="checkbox"]):not([type="radio"]):not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="color"]),select,textarea),
+body.tzfd-screen #wpbody-content :is(input[type="text"],input[type="search"],input[type="email"],input[type="tel"],input[type="number"],input[type="date"],input[type="time"],input[type="password"],select,textarea) {background:#102b4a!important;color:#edf7ff!important;-webkit-text-fill-color:#edf7ff!important;border:1px solid #456989!important;border-radius:9px!important;box-shadow:none!important;text-shadow:none!important}
+body.tzfd-screen #wpbody-content :is(input,textarea)::placeholder {color:#b6cde0!important;opacity:1!important;-webkit-text-fill-color:#b6cde0!important}
+body.tzfd-screen #wpbody-content select option {background:#102b4a!important;color:#edf7ff!important}
+body.tzfd-screen #wpbody-content :is(input,select,textarea):focus-visible {outline:2px solid #00cfe8!important;outline-offset:2px!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody :is(td,th),body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody a {color:#edf7ff!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody tr {background:#102b4a!important}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table) tbody tr:nth-child(even) {background:#172f4e!important}
+body.tzfd-screen #wpbody-content .tzfd-wizard-review :is(dt,th,label),body.tzfd-screen #wpbody-content .tzfd-review :is(dt,th,label) {color:#edf7ff!important}
+@media(max-width:782px){body.tzfd-screen .tz-app-head{padding:10px 12px}body.tzfd-screen .tzfd-official-brand img{max-height:64px}}
+
+
+/* END tzfd-final-surface */
+
+
+/* Pass 202: accessible dark admin surfaces, no public booking-template overrides. */
+body.tzfd-screen #wpbody-content .tzfd-admin-page {max-width:none;min-width:0;box-sizing:border-box;}
+body.tzfd-screen #wpbody-content .tzfd-admin-page *,body.tzfd-screen #wpbody-content .tz-app * {box-sizing:border-box;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app) :is(.tzfd-page-head,h1,h2,h3,h4,dt,dd,label,legend,th,td,p,small,strong) {text-shadow:none;}
+body.tzfd-screen #wpbody-content :is(.tzfd-wizard-review,.tzfd-review,.tzfd-review-panel,.tzfd-summary,.tzfd-step-review) :is(dt,th,label,strong,p,span) {color:#eaf5ff!important;opacity:1!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-wizard-review,.tzfd-review,.tzfd-review-panel,.tzfd-summary,.tzfd-step-review) :is(dd,td,output) {color:#ffffff!important;opacity:1!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(input:not([type=checkbox]):not([type=radio]):not([type=hidden]):not([type=submit]):not([type=button]),textarea,select) {background-color:#142c49!important;color:#f5fbff!important;-webkit-text-fill-color:#f5fbff!important;border:1px solid #55718c!important;min-height:38px;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(input,textarea)::placeholder {color:#bcd0e2!important;-webkit-text-fill-color:#bcd0e2!important;opacity:1!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(input,textarea,select):disabled {opacity:.65!important;cursor:not-allowed;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(input,textarea,select):focus-visible {outline:2px solid #00cfe8!important;outline-offset:2px;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.button,.button-primary,button,a) {overflow-wrap:break-word;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page-actions,.tzfd-actions,.tzfd-toolbar) {display:flex;flex-wrap:wrap;gap:8px;align-items:center;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) {max-width:100%;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) td {overflow-wrap:anywhere;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) tbody td {color:#e9f5ff!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) tbody a {color:#72e7ff!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) tbody a:hover {color:#ffffff!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app) :is(.widefat,.tzfd-table) thead th {color:#d8eafa!important;background:#183451!important;}
+body.tzfd-screen #wpbody-content .tz-app-head {margin-top:0!important;}
+body.tzfd-screen #wpbody-content .tzfd-official-brand img {width:auto!important;max-height:64px!important;max-width:min(100%,310px)!important;object-fit:contain;}
+body.tzfd-screen #wpbody-content .tzfd-page-head {margin-top:4px!important;}
+body.tzfd-screen #wpbody-content .tzfd-page-head + .tzfd-page-head {display:none;}
+@media(max-width:782px){body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app){width:100%;max-width:100%;overflow-x:auto;}body.tzfd-screen #wpbody-content .tzfd-official-brand img{max-height:50px!important;}body.tzfd-screen #wpbody-content .tzfd-page-head{gap:10px;}}
+
+/* Pass 203: WordPress-native and legacy form controls on Front Desk screens.
+   Exclude public booking previews and calendar day cells. */
+body.tzfd-screen #wpbody-content :is(.wrap,.tzfd-admin-page,.tz-app) :is(input[type="text"],input[type="email"],input[type="number"],input[type="tel"],input[type="url"],input[type="search"],input[type="date"],input[type="time"],input[type="datetime-local"],input[type="password"],select,textarea):not(.tzfd-public-preview *) {background:#142c49!important;color:#f5fbff!important;-webkit-text-fill-color:#f5fbff!important;border:1px solid #55718c!important;border-radius:8px;box-shadow:none;}
+body.tzfd-screen #wpbody-content :is(.wrap,.tzfd-admin-page,.tz-app) :is(input,textarea)::placeholder {color:#c5d7e7!important;opacity:1;}
+body.tzfd-screen #wpbody-content select option {background:#142c49;color:#f5fbff;}
+body.tzfd-screen #wpbody-content :is(.wrap,.tzfd-admin-page,.tz-app) :is(input,select,textarea):focus-visible {outline:2px solid #00cfe8!important;outline-offset:2px;}
+body.tzfd-screen #wpbody-content :is(.tzfd-review,.tzfd-wizard-review,.tzfd-review-panel,.tzfd-step-review) :is(dt,dd,th,td,label,strong,span,p,div) {color:#edf7ff!important;-webkit-text-fill-color:#edf7ff!important;opacity:1!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-review,.tzfd-wizard-review,.tzfd-review-panel,.tzfd-step-review) :is(button,.button,input[type=submit]) {position:relative;visibility:visible;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) tbody tr {background:#122a46;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) tbody td {color:#eaf4ff!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) tbody td a {color:#68e2fa!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) tbody tr:hover {background:#1a3859;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page-head,.tz-app-head) {margin-top:0!important;}
+body.tzfd-screen #wpbody-content .tzfd-pipeline-guide {max-width:100%;} 
+@media(max-width:782px){body.tzfd-screen #wpbody-content :is(.tzfd-pipeline-guide,.tzfd-pipeline-stages,.tzfd-pipeline-metrics){max-width:100%;min-width:0;}body.tzfd-screen #wpbody-content .wrap{padding-right:8px;}}
+
+/* Pass 208: reconcile remaining light-on-light review and legacy calendar surfaces.
+   These rules are restricted to Front Desk administration screens. */
+body.tzfd-screen #wpbody-content :is(.tzfd-wizard-review,.tzfd-review,.tzfd-review-panel,.tzfd-summary,.tzfd-step-review) :is(dt,dd,th,td,label,span,strong,p,small) {color:#edf7ff!important;opacity:1!important;-webkit-text-fill-color:currentColor!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-wizard-review,.tzfd-review,.tzfd-review-panel,.tzfd-summary,.tzfd-step-review) {background-color:#172f4e;color:#edf7ff;}
+body.tzfd-screen #wpbody-content :is(.ui-datepicker,.fc-daygrid,.fc-scrollgrid,.fc-view) {color:#172334;}
+body.tzfd-screen #wpbody-content :is(.ui-datepicker,.fc-daygrid,.fc-scrollgrid,.fc-view) :is(.ui-datepicker-title,.fc-toolbar-title,.fc-col-header-cell-cushion,.fc-daygrid-day-number) {color:#172334!important;}
+body.tzfd-screen #wpbody-content :is(.notice,.notice-success,.notice-warning,.notice-error) :is(p,span,strong,li,a) {color:#172334;}
+body.tzfd-screen #wpbody-content :is(.tzfd-official-brand,.tzfd-brand-lockup)[hidden] {display:none!important;}
+
+/* Pass 209: canonical brand banner and controlled dark-surface contrast. */
+body.tzfd-screen #wpbody-content>.tzfd-global-brand{display:flex;align-items:center;box-sizing:border-box;position:relative;clear:both;width:100%;min-height:58px;margin:0 0 12px;padding:8px 14px;background:#101f38;border:1px solid #304766;border-radius:10px;}
+body.tzfd-screen #wpbody-content>.tzfd-global-brand img{display:block;width:auto;height:auto;max-width:min(100%,280px);max-height:52px;object-fit:contain;}
+body.tzfd-screen #wpbody-content :is(.tzfd-official-brand,.tzfd-brand-lockup)[hidden]{display:none!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-review,.tzfd-wizard-review,.tzfd-review-panel,.tzfd-step-review) :is(dt,dd,th,td,label,span,strong,p,small){color:#edf7ff!important;opacity:1!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-review,.tzfd-wizard-review,.tzfd-review-panel,.tzfd-step-review) :is(input,select,textarea){background:#142c49!important;color:#edf7ff!important;}
+body.tzfd-screen #wpbody-content :is(.notice,.notice-success,.notice-warning,.notice-error){background:var(--tz-panel,#0c2040);color:var(--tz-text,#edf7ff);}
+body.tzfd-screen #wpbody-content :is(.notice,.notice-success,.notice-warning,.notice-error) :is(p,span,strong,li,a){color:var(--tz-text,#edf7ff)!important;}
+@media(max-width:782px){body.tzfd-screen #wpbody-content>.tzfd-global-brand{min-height:46px;padding:6px 10px;margin-bottom:10px;}body.tzfd-screen #wpbody-content>.tzfd-global-brand img{max-height:40px;max-width:230px;}}
+
+/* Pass 210: canonical administration surface contract. No additional header positioning JS. */
+body.tzfd-screen #wpbody-content {box-sizing:border-box;min-width:0;}
+body.tzfd-screen #wpbody-content>.tzfd-global-brand {margin-block:0 12px;max-width:100%;}
+body.tzfd-screen #wpbody-content :is(.tzfd-official-brand,.tzfd-brand-lockup) {display:none!important;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) {min-width:0;max-width:100%;box-sizing:border-box;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(input[type=text],input[type=email],input[type=tel],input[type=url],input[type=number],input[type=password],input[type=search],input[type=date],input[type=time],input[type=datetime-local],select,textarea) {background-color:#142c49;color:#edf7ff;border:1px solid #456481;box-shadow:none;max-width:100%;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(input,textarea)::placeholder {color:#b9cce0;opacity:1;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(input,select,textarea):focus-visible {outline:2px solid #00cfe8;outline-offset:1px;border-color:#00cfe8;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(select,option) {color-scheme:dark;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) {max-width:100%;}
+body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap) :is(.widefat,.wp-list-table) :is(th,td) {overflow-wrap:anywhere;}
+/* Native WordPress notices retain readable contrast rather than inheriting dark-field text. */
+body.tzfd-screen #wpbody-content .notice :is(input,textarea,select) {background:var(--tz-field,#10294b);color:var(--tz-text,#edf7ff);color-scheme:light;}
+@media(max-width:782px){body.tzfd-screen #wpbody-content>.tzfd-global-brand{padding:6px 10px;}body.tzfd-screen #wpbody-content :is(.tzfd-page,.tzfd-admin-page,.tz-app,.wrap){width:100%;}body.tzfd-screen #wpbody-content :is(.tzfd-page-actions,.tzfd-card-head){flex-wrap:wrap;}}
+
+/* Pipeline page: one clear flow of stages, then the queue, then history. Theme colours only. */
+body.tzfd-screen .tzfd-pipeline-page { max-width:1100px; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-intro { color:var(--tz-muted,#b5c8dc); font-size:14px; margin:6px 0 16px; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-h2 { margin:22px 0 8px; color:var(--tz-text,#edf7ff); font-size:18px; font-weight:700; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-sub { color:var(--tz-muted,#b5c8dc); font-weight:400; font-size:13px; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-empty { color:var(--tz-muted,#b5c8dc); }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-avg { color:var(--tz-muted,#b5c8dc); margin:10px 0 0; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-flow { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; list-style:none; margin:0; padding:0; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-step { display:flex; flex-direction:column; gap:4px; padding:14px 16px; margin:0; background:var(--tz-panel,#0c2040); border:1px solid var(--tz-border,#284867); border-top:4px solid var(--tz-accent,#00cfe8); border-radius:10px; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-step--rejected { border-top-color:#e0786b; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-step--escalated { border-top-color:#f2b84b; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-step--approved { border-top-color:#4fd18b; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-count { font-size:28px; font-weight:700; line-height:1.1; color:var(--tz-text,#edf7ff); }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-step strong { color:var(--tz-text,#edf7ff); font-size:15px; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-hint { color:var(--tz-muted,#b5c8dc); font-size:13px; line-height:1.4; }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-settings { margin-top:26px; padding:12px 16px; background:var(--tz-panel,#0c2040); border:1px solid var(--tz-border,#284867); border-radius:10px; color:var(--tz-text,#edf7ff); }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-settings summary { cursor:pointer; font-weight:700; color:var(--tz-text,#edf7ff); }
+body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-settings p { color:var(--tz-muted,#b5c8dc); }
+
+@media (min-width:960px){ body.tzfd-screen .tzfd-pipeline-page .tzfd-pipeline-flow { grid-template-columns:repeat(5,minmax(0,1fr)); } }
+
+/* WordPress footer strip follows the Front Desk theme. */
+body.tzfd-screen #wpfooter { background:var(--tz-bg,#06152e); color:var(--tz-muted,#b5c8dc); border-top:1px solid var(--tz-border,#284867); }
+body.tzfd-screen #wpfooter a { color:var(--tz-accent,#00cfe8); }
+
+/* Brand and status artwork: responsive, so it never overflows a narrow admin column. */
+body.tzfd-screen .tzfd-help-figure { margin:12px 0 20px; }
+body.tzfd-screen .tzfd-help-figure img { display:block; max-width:100%; height:auto; border-radius:12px; border:1px solid var(--tz-border,#333a48); }
+body.tzfd-screen .tzfdad-state-icon, body.tzfd-screen .tzfd-status-badge, body.tzfd-screen .tzfd-team-mark { display:inline-block; max-width:100%; height:auto; vertical-align:middle; }
+body.tzfd-screen .tzfdad-state-icon { width:18px; margin-right:2px; }
+body.tzfd-screen .tzfd-status-badge { width:18px; margin-right:6px; }
+body.tzfd-screen .tzfd-team-mark { width:32px; margin-right:8px; }
+body.tzfd-screen .tzfdad-concept-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; margin-top:12px; }
+body.tzfd-screen .tzfdad-concept-grid figure { margin:0; min-width:0; }
+body.tzfd-screen .tzfdad-concept-grid img { display:block; max-width:100%; height:auto; border-radius:12px; border:1px solid var(--tz-border,#333a48); background:var(--tz-field,#1f232d); }
+body.tzfd-screen img.tzfd-packs-banner { display:block; max-width:100%; height:auto; border-radius:10px; margin:10px 0; }
+
+/* Contrast fixes found by the screen audit: text on the cyan accent buttons, link-style buttons on dark cards, help table names, muted dashboard text and placeholder code. */
+.tzfd-screen #wpbody-content .tzfd-btn-primary,
+.tzfd-screen #wpbody-content a.button-primary{color:#06152e !important;}
+.tzfd-screen #wpbody-content .tzfd-btn-primary:hover,
+.tzfd-screen #wpbody-content a.button-primary:hover{color:#06152e !important;}
+.tzfd-screen #wpbody-content .tzfd-help-table td strong{color:#edf7ff !important;}
+.tzfd-screen #wpbody-content .tzfd-muted{color:#b5c8dc !important;}
+.tzfd-screen #wpbody-content code{color:#cfe6ff;}
+.tzfd-screen #wpbody-content .tzfdad-ad-tile-foot a.button,
+.tzfd-screen #wpbody-content .button-link{color:#9ed8ff !important;}
+.tzfd-screen #wpbody-content .button:not(.button-primary):not(.tzfd-btn-primary){color:#9ed8ff;}
+/* Buttons inside notices and settings cards, which the notice rule and the card link colour would otherwise override. */
+body.tzfd-screen #wpbody-content .notice .button-primary,
+body.tzfd-screen #wpbody-content .notice .tzfd-btn-primary{color:#06152e !important;}
+body.tzfd-screen #wpbody-content .tzfd-set-card a,
+body.tzfd-screen #wpbody-content .tzfd-set-card a:hover{color:#9ed8ff;}
+/* Add-on settings panels with a white form box (.postbox) need dark labels and help text. Dark panels are left as they are. */
+body.tzfd-screen #wpbody-content details.tzfdad-addon-details[open] .postbox :is(label, p, h3, h4, th, td, legend, .description, small, strong, span, li, em, i, code, div){color:#172334 !important;}

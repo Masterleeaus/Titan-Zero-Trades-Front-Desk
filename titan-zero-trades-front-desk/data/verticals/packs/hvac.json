@@ -1,0 +1,512 @@
+{
+  "format": 3,
+  "id": "hvac",
+  "name": "HVAC / Heating & Cooling",
+  "icon": "\u2744\ufe0f",
+  "tagline": "Air conditioning, heating, refrigerant, thermostats",
+  "version": "1.1.0",
+  "category": "licensed_trade",
+  "source_sha256": "17ed76a21b81542f369a863c247dc8dbb9e53cccded06d5c42d80a77774f07bf",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "site",
+    "quote": "quote",
+    "staff": "technician",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Air conditioning repair",
+    "Split system installation",
+    "Ducted air conditioning installation",
+    "Heat pump service",
+    "Ducted heating service",
+    "Gas heater service and safety check",
+    "Evaporative cooler service",
+    "Annual air conditioner service",
+    "Refrigerant top-up and leak check",
+    "Coil cleaning",
+    "Duct cleaning",
+    "Condensate drain clearing",
+    "Filter replacement",
+    "Thermostat installation and replacement",
+    "Smart thermostat installation",
+    "Commercial HVAC maintenance",
+    "Indoor air quality check",
+    "Emergency heating and cooling call-out"
+  ],
+  "catalog": [
+    {
+      "sku": "HVC-DIAG",
+      "label": "HVAC diagnostic visit (fee)",
+      "kind": "fee",
+      "unit": "each",
+      "unit_price": 89,
+      "taxable": 1,
+      "keywords": "diagnostic,visit,trip,callout"
+    },
+    {
+      "sku": "HVC-LAB-1",
+      "label": "HVAC labour, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "labor,labour,hourly"
+    },
+    {
+      "sku": "HVC-LAB-AH",
+      "label": "After-hours HVAC labour, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "after hours,emergency,night"
+    },
+    {
+      "sku": "HVC-CAP-RUN",
+      "label": "Run capacitor, supplied",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "capacitor,cap,run,start"
+    },
+    {
+      "sku": "HVC-CONTACT",
+      "label": "Contactor, supplied",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "contactor,relay,switch"
+    },
+    {
+      "sku": "HVC-BLOWER",
+      "label": "Blower motor, supplied",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 385,
+      "taxable": 1,
+      "keywords": "blower,motor,fan"
+    },
+    {
+      "sku": "HVC-COMP",
+      "label": "Compressor, supplied",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 1250,
+      "taxable": 1,
+      "keywords": "compressor,main"
+    },
+    {
+      "sku": "HVC-FILT-STD",
+      "label": "Air filter, standard",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 28,
+      "taxable": 1,
+      "keywords": "filter,air filter,standard"
+    },
+    {
+      "sku": "HVC-FILT-HEPA",
+      "label": "Air filter, HEPA or high efficiency",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 68,
+      "taxable": 1,
+      "keywords": "filter,hepa,high efficiency"
+    },
+    {
+      "sku": "HVC-REF-R410",
+      "label": "Refrigerant R-410A, per pound",
+      "kind": "material",
+      "unit": "lb",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "refrigerant,freon,r410"
+    },
+    {
+      "sku": "HVC-REF-R32",
+      "label": "Refrigerant R-32, per pound",
+      "kind": "material",
+      "unit": "lb",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "refrigerant,freon,r32"
+    },
+    {
+      "sku": "HVC-CLEAN",
+      "label": "Coil cleaning",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 210,
+      "taxable": 1,
+      "keywords": "coil,clean,maintenance"
+    },
+    {
+      "sku": "HVC-SERVICE",
+      "label": "Standard air conditioner service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 189,
+      "taxable": 1,
+      "keywords": "service,maintenance,tune up"
+    },
+    {
+      "sku": "HVC-STAT-SMART",
+      "label": "Smart thermostat installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "thermostat,smart,nest,ecobee"
+    },
+    {
+      "sku": "HVC-SPLIT-REPL",
+      "label": "Split system replacement, 3-ton",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 7200,
+      "taxable": 1,
+      "keywords": "replace,install,split,3 ton"
+    },
+    {
+      "sku": "HVC-DUCT-CLEAN",
+      "label": "Duct cleaning, residential",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 595,
+      "taxable": 1,
+      "keywords": "duct,cleaning,air quality"
+    },
+    {
+      "sku": "HVC-DRAIN-CLN",
+      "label": "Condensate drain clearing",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 145,
+      "taxable": 1,
+      "keywords": "drain,condensate,clog,water"
+    },
+    {
+      "sku": "HVX-GASCHK",
+      "label": "Gas heater safety check and service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 165,
+      "taxable": 1,
+      "keywords": "gas heater,safety,check,service"
+    },
+    {
+      "sku": "HVX-DRAIN",
+      "label": "Condensate drain clear and clean",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "drain,condensate,clear,clean"
+    },
+    {
+      "sku": "HVX-ANNUAL",
+      "label": "Annual split system service, per unit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 185,
+      "taxable": 1,
+      "keywords": "annual,service,split system,maintenance"
+    }
+  ],
+  "staff_skills": [
+    "air conditioning",
+    "heating",
+    "split systems",
+    "ducted systems",
+    "heat pumps",
+    "gas heater safety",
+    "refrigerant handling",
+    "controls and thermostats",
+    "fault diagnosis",
+    "commissioning",
+    "indoor air quality"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "no cooling in extreme heat",
+      "no heating in extreme cold",
+      "gas smell",
+      "gas smell from heater",
+      "carbon monoxide",
+      "carbon monoxide alarm sounding",
+      "compressor smoking",
+      "smoke from unit"
+    ],
+    "urgent": [
+      "not cooling",
+      "not heating",
+      "strange noise",
+      "frozen unit",
+      "water leaking from unit",
+      "unit making a loud bang"
+    ],
+    "routine": [
+      "service",
+      "maintenance",
+      "filter change",
+      "tune up",
+      "quote",
+      "install",
+      "annual service",
+      "new split system quote",
+      "filter clean",
+      "musty smell",
+      "thermostat change"
+    ]
+  },
+  "extra_prompt": "You are booking for a heating and cooling company. Ask the brand and model if known, the system type (split, ducted, evaporative, heat pump, or gas heater), and its approximate age. Ask whether the unit runs at all and whether it blows warm or cold air. For gas heaters, a gas smell, a yellow or orange flame, or a carbon monoxide alarm is an emergency: tell the caller to turn the heater off, open windows, and get everyone outside, then treat it as an emergency. For installs, offer an on-site assessment before quoting.",
+  "kb": [
+    {
+      "q": "Do you do emergency AC repair?",
+      "a": "Yes, we run an emergency line for no-cooling and no-heating calls. Availability depends on the season and how busy we are.",
+      "keywords": "emergency,no cooling,no heating,urgent",
+      "priority": 10
+    },
+    {
+      "q": "Do you install new systems?",
+      "a": "Yes, we install and replace split systems, ducted systems, and heat pumps. We do a load calculation and a commissioning check on every install.",
+      "keywords": "install,split,ducted,heat pump",
+      "priority": 9
+    },
+    {
+      "q": "How much does a new AC unit cost?",
+      "a": "{price_note} Costs depend on the system type, the size needed, and how complex the install is. We give you a fixed quote after a site visit.",
+      "keywords": "cost,price,new unit,quote",
+      "priority": 10
+    },
+    {
+      "q": "Do you service commercial HVAC?",
+      "a": "Yes, we service light commercial systems, including rooftop units and split systems. Commercial jobs are quoted after a site visit.",
+      "keywords": "commercial,rooftop,light commercial",
+      "priority": 8
+    },
+    {
+      "q": "What brands do you work on?",
+      "a": "We work on [list of brands you service]. Tell us your brand and model when you book, so we bring the right parts.",
+      "keywords": "brands,models,parts",
+      "priority": 8
+    },
+    {
+      "q": "How long does a service call take?",
+      "a": "A standard AC service usually takes [number] hours. Diagnosis can take longer if the fault is complex.",
+      "keywords": "how long,service,diagnosis,hours",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer financing?",
+      "a": "If financing is available, we explain the options when we quote. [financing provider, or state that financing is not offered].",
+      "keywords": "financing,payment,options,quote",
+      "priority": 7
+    },
+    {
+      "q": "Why is my AC leaking water?",
+      "a": "Usually a blocked condensate drain. It is a common problem, and we can often clear it in a single visit.",
+      "keywords": "leak,water,condensate,drain",
+      "priority": 9
+    },
+    {
+      "q": "My system is frozen. What should I do?",
+      "a": "Turn the system off at the thermostat straight away. Running a frozen system can damage the compressor. Then call us so we can diagnose the cause.",
+      "keywords": "frozen,compressor,thermostat,off",
+      "priority": 10
+    },
+    {
+      "q": "How often should I change my filter?",
+      "a": "Standard filters usually need changing every one to three months. High-efficiency or heavily used systems may need more frequent changes.",
+      "keywords": "filter,change,how often,efficiency",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty on repairs?",
+      "a": "{warranty_note} Ask us to explain what is covered before the job starts.",
+      "keywords": "warranty,guarantee,repair",
+      "priority": 9
+    },
+    {
+      "q": "Can you install a smart thermostat?",
+      "a": "Yes, we install and set up smart thermostats. Tell us the model you want, and we will confirm it works with your system.",
+      "keywords": "smart thermostat,install,model",
+      "priority": 8
+    },
+    {
+      "q": "Do you test for carbon monoxide?",
+      "a": "Yes, our gas heater service includes a carbon monoxide safety check. If you think there is carbon monoxide now, leave the property and call emergency services.",
+      "keywords": "carbon monoxide,gas,safety,heater",
+      "priority": 10
+    },
+    {
+      "q": "How long does a new system install take?",
+      "a": "Most residential replacements take about a day. Ducted or commercial systems can take longer, and we confirm the timing when we quote.",
+      "keywords": "install,time,replacement,ducted",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer maintenance plans?",
+      "a": "Yes, we offer an annual maintenance plan. Ask us what is included, such as the number of services and booking priority, before you sign up.",
+      "keywords": "maintenance plan,annual,service,priority",
+      "priority": 8
+    },
+    {
+      "q": "What energy rating should my new system have?",
+      "a": "A higher energy rating usually means lower running costs but a higher upfront cost. We help match the rating to your climate and how you use the system.",
+      "keywords": "energy rating,running cost,climate",
+      "priority": 8
+    },
+    {
+      "q": "Can you repair a unit over twenty years old?",
+      "a": "We can, but on very old equipment we weigh the repair cost against replacement and give you both options.",
+      "keywords": "old unit,repair,replacement,options",
+      "priority": 8
+    },
+    {
+      "q": "How often should I service my air conditioner?",
+      "a": "Most systems need a service once a year, ideally before summer or winter. Regular service keeps the efficiency up and helps prevent breakdowns.",
+      "keywords": "how often,service,summer,winter",
+      "priority": 9
+    },
+    {
+      "q": "Is it worth repairing an old system?",
+      "a": "A repair is often worth it on a system under about ten years old. For older systems, we give you the repair cost and the replacement cost so you can decide.",
+      "keywords": "worth,repair,old system,replacement",
+      "priority": 8
+    },
+    {
+      "q": "Why does my air conditioner smell musty?",
+      "a": "A musty smell is usually mould or bacteria on the evaporator coil or in the drain pan. A clean and sanitise fixes most cases.",
+      "keywords": "musty,smell,mould,coil",
+      "priority": 8
+    },
+    {
+      "q": "Why is water dripping inside from my indoor unit?",
+      "a": "The condensate drain is usually blocked, or the unit is not level. Switch the unit off and book a service so the drain can be cleared and checked.",
+      "keywords": "dripping,indoor unit,drain,level",
+      "priority": 9
+    },
+    {
+      "q": "What size system do I need?",
+      "a": "It depends on room size, insulation, sun exposure, and ceiling height. We do a load calculation on site and recommend a size that suits the space.",
+      "keywords": "size,system,load calculation,room",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please make sure someone can give access to {site_label}.",
+    "reminder": "Reminder: {business} will attend for your {job} on {date}.",
+    "quote_intro": "Here is the quote for the {job} at your {site_label}. The price includes parts and labour as listed.",
+    "invoice_note": "Thank you for choosing {business}. Payment is due within the terms shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "asset_details",
+      "label": "Equipment or asset details (make, model, age)",
+      "required": true
+    },
+    {
+      "key": "urgency",
+      "label": "Is it an emergency or a safety issue?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "hvac.rule1",
+      "trigger": "enquiry.received",
+      "action": "reply_to_enquiry",
+      "description": "Reply within two hours during business hours",
+      "enabled": false
+    },
+    {
+      "id": "hvac.rule2",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "hvac.rule3",
+      "trigger": "licence.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before a technician licence expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Confirm the licence class and registration that cover this work before you quote, and show the licence number where your state requires it. Some work (for example gas, electrical and some plumbing or roofing) must be signed off by a licensed person. Your state regulator sets the rules; check them before relying on this guidance.",
+    "items": [
+      "Licence or registration number recorded for each technician",
+      "Licence expiry date reminder set",
+      "Certificate or sign-off stored against the job"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "specialist equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "quote conversion rate",
+    "average job value",
+    "callouts and repeat visits"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  },
+  "interaction_slug": "hvac"
+}

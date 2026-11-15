@@ -1,0 +1,379 @@
+{
+  "format": 3,
+  "id": "tattoo",
+  "name": "Tattoo & Piercing",
+  "icon": "🖋️",
+  "tagline": "Custom tattoos, cover-ups, piercings, removal",
+  "version": "1.1.0",
+  "category": "personal_care",
+  "source_sha256": "69db18eba043184a5865d66ce26d01281d1994ab8faba1f4f76c9dac3559a76b",
+  "terminology": {
+    "customer": "client",
+    "job": "session",
+    "site": "studio",
+    "quote": "quote",
+    "staff": "artist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Custom Tattoo Design",
+    "Small Tattoo",
+    "Large Tattoo or Sleeve",
+    "Cover-Up Tattoo",
+    "Black and Grey Tattoo",
+    "Colour Tattoo",
+    "Traditional Tattoo",
+    "Fine Line Tattoo",
+    "Realism and Portrait Tattoo",
+    "Script and Lettering",
+    "Piercing",
+    "Jewellery Change",
+    "Tattoo Removal",
+    "Touch-Up Session",
+    "Consultation"
+  ],
+  "catalog": [
+    {
+      "sku": "TAT-CONS",
+      "label": "Consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    },
+    {
+      "sku": "TAT-HR",
+      "label": "Tattoo hourly rate",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "TAT-MIN",
+      "label": "Minimum charge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "minimum"
+    },
+    {
+      "sku": "TAT-SMALL",
+      "label": "Small tattoo (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "small"
+    },
+    {
+      "sku": "TAT-HALF",
+      "label": "Half-day session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 700,
+      "taxable": 1,
+      "keywords": "half day"
+    },
+    {
+      "sku": "TAT-FULL",
+      "label": "Full-day session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "full day"
+    },
+    {
+      "sku": "TAT-COVER",
+      "label": "Cover-up (starting price)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "cover up"
+    },
+    {
+      "sku": "TAT-PIERCE",
+      "label": "Piercing (per piercing)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "piercing"
+    },
+    {
+      "sku": "TAT-JEWEL",
+      "label": "Jewellery (starting price)",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "jewellery"
+    },
+    {
+      "sku": "TAT-REMOVAL",
+      "label": "Laser tattoo removal (per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "removal"
+    },
+    {
+      "sku": "TAT-TOUCH",
+      "label": "Touch-up",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "touch up"
+    },
+    {
+      "sku": "TAT-AFTER",
+      "label": "Aftercare product",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 25,
+      "taxable": 1,
+      "keywords": "aftercare"
+    }
+  ],
+  "staff_skills": [
+    "custom design",
+    "black and grey",
+    "colour",
+    "traditional",
+    "fine line",
+    "realism",
+    "cover-up",
+    "piercing",
+    "hygiene and sterile technique"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "signs of infection",
+      "allergic reaction",
+      "swelling or heat after a tattoo",
+      "jewellery embedded or stuck"
+    ],
+    "urgent": [
+      "touch-up needed soon",
+      "before event this week",
+      "before holiday",
+      "healing problem"
+    ],
+    "routine": [
+      "booking",
+      "consultation",
+      "quote",
+      "design",
+      "appointment",
+      "piercing",
+      "touch-up"
+    ]
+  },
+  "extra_prompt": "You are booking for a tattoo or piercing studio. Ask about the design idea, size, placement, and any reference images. Ask about skin conditions, allergies, and medications. Ask whether they want a consultation or are ready to book. Quote prices only from the reference answers, and say the final price is confirmed after consultation and design. Do not give medical advice. Advise that clients must be 18+ for tattoos (unless local law allows otherwise with consent).",
+  "kb": [
+    {
+      "q": "How much does a tattoo cost?",
+      "a": "{price_note} Tattoos are priced by size, detail and time, and we give you a quote after your consultation.",
+      "keywords": "cost,price,tattoo",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a consultation?",
+      "a": "Yes, custom work needs a consultation to talk through design, size and placement. We also discuss aftercare before you book.",
+      "keywords": "consultation,consult",
+      "priority": 9
+    },
+    {
+      "q": "Do you do cover-ups?",
+      "a": "Yes, we do cover-ups after a consultation. Cover-up pricing starts from the rate on your quote, and the final cost depends on the design.",
+      "keywords": "cover up",
+      "priority": 9
+    },
+    {
+      "q": "Do you do fine line work?",
+      "a": "Yes, we do fine line and micro tattoos. We talk through size and placement with you first, because fine detail needs the right design.",
+      "keywords": "fine,line,work",
+      "priority": 8
+    },
+    {
+      "q": "Do you do realistic tattoos?",
+      "a": "Yes, we do realism and portrait work. These take longer, so we confirm session length and price at your consultation.",
+      "keywords": "realism,portrait",
+      "priority": 8
+    },
+    {
+      "q": "Do you do colour?",
+      "a": "Yes, we do colour and black and grey work. Tell us the style you like, and we will match you with an artist who works in it.",
+      "keywords": "colour,color",
+      "priority": 9
+    },
+    {
+      "q": "How do I prepare?",
+      "a": "Eat, drink water and sleep well before your session. Avoid alcohol for 24 hours before, and tell us about any medical conditions or medications.",
+      "keywords": "prepare,how to prepare",
+      "priority": 9
+    },
+    {
+      "q": "Do you do piercings?",
+      "a": "Yes, we do ear, nose, lip and body piercings. Please tell us about any allergies, especially to metals, before you book.",
+      "keywords": "piercing",
+      "priority": 9
+    },
+    {
+      "q": "Can I bring my own jewellery?",
+      "a": "Only if it is implant-grade and sterile. We supply safe jewellery and can advise on the right size.",
+      "keywords": "jewellery,jewelry",
+      "priority": 8
+    },
+    {
+      "q": "Do you do tattoo removal?",
+      "a": "We offer tattoo removal or refer you to a specialist. Removal takes more than one session, and each session is priced as listed on your quote.",
+      "keywords": "tattoo,removal",
+      "priority": 8
+    },
+    {
+      "q": "Is there an age limit?",
+      "a": "Yes, you must be 18 or over for tattoos and most piercings. We require photo ID when you book.",
+      "keywords": "age,18",
+      "priority": 9
+    },
+    {
+      "q": "How much is a deposit?",
+      "a": "{deposit_note} Deposits are taken to secure your booking.",
+      "keywords": "deposit",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit your deposit. Please call or message us as soon as you know you cannot make it.",
+      "keywords": "cancel",
+      "priority": 9
+    },
+    {
+      "q": "Do you do touch-ups?",
+      "a": "Yes, touch-ups are included within {touchup_window} on our work. Please book them once the skin has healed.",
+      "keywords": "touch up",
+      "priority": 8
+    },
+    {
+      "q": "How do I care for my tattoo?",
+      "a": "We give you aftercare instructions and aftercare product at the end of your session. Follow the steps closely to help it heal well.",
+      "keywords": "care,tattoo",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a minimum charge?",
+      "a": "{minimum_note} Small tattoos start from the rate on your quote.",
+      "keywords": "minimum",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please arrive a few minutes early.",
+    "quote_intro": "Here is your quote for the services you asked about.",
+    "invoice_note": "Thank you for visiting {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "age_check",
+      "label": "Age check (18 or over, or guardian consent)",
+      "required": true
+    },
+    {
+      "key": "design_brief",
+      "label": "Design brief and placement",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "tattoo.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    },
+    {
+      "id": "tattoo.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Follow up no-show with rebooking link",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Tattoo and skin penetration businesses need registration with the state health department (in Victoria, the Department of Health). Keep hygiene and sterilisation records and client consent forms. Check your state rules.",
+    "items": [
+      "Business registration number and expiry",
+      "Sterilisation and hygiene records per session",
+      "Client consent and health questionnaire on file"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment chair or room",
+    "equipment station"
+  ],
+  "reporting": [
+    "appointments completed",
+    "no-shows",
+    "rebooking rate",
+    "average ticket"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

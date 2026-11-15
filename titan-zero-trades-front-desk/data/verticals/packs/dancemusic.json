@@ -1,0 +1,360 @@
+{
+  "format": 3,
+  "id": "dancemusic",
+  "name": "Dance & Music Schools",
+  "icon": "🎵",
+  "tagline": "Dance, singing, instruments, group and private lessons",
+  "version": "1.1.0",
+  "category": "education",
+  "source_sha256": "76f384d643b8bb883f0ee1b0f83576baab3740c79cfa5148475472a962f3315a",
+  "terminology": {
+    "customer": "student",
+    "job": "class",
+    "site": "studio",
+    "quote": "quote",
+    "staff": "teacher",
+    "visit": "lesson"
+  },
+  "service_types": [
+    "Dance Classes",
+    "Private Dance Lessons",
+    "Wedding Dance",
+    "Singing Lessons",
+    "Piano Lessons",
+    "Guitar Lessons",
+    "Violin Lessons",
+    "Drum Lessons",
+    "Bass Lessons",
+    "Ukulele Lessons",
+    "Music Theory",
+    "AMEB Exam Preparation",
+    "Kindermusik",
+    "Hip Hop",
+    "Ballet",
+    "Contemporary Dance",
+    "Ballroom",
+    "Tap",
+    "Group Music Classes",
+    "Online Lessons"
+  ],
+  "catalog": [
+    {
+      "sku": "DM-GROUP",
+      "label": "Group class (per session)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 22,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "DM-PRIV30",
+      "label": "Private lesson 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "private,30"
+    },
+    {
+      "sku": "DM-PRIV60",
+      "label": "Private lesson 60 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 80,
+      "taxable": 1,
+      "keywords": "private,60"
+    },
+    {
+      "sku": "DM-TERM",
+      "label": "Term fee (per subject)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 320,
+      "taxable": 1,
+      "keywords": "term"
+    },
+    {
+      "sku": "DM-WED",
+      "label": "Wedding dance package (5 lessons)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "wedding"
+    },
+    {
+      "sku": "DM-EXAM",
+      "label": "Exam prep lesson",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "exam"
+    },
+    {
+      "sku": "DM-ONLINE",
+      "label": "Online lesson 30 min",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "online"
+    },
+    {
+      "sku": "DM-CONC",
+      "label": "Concert / showcase fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "concert"
+    },
+    {
+      "sku": "DM-UNIFORM",
+      "label": "Uniform or costume",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "uniform,costume"
+    },
+    {
+      "sku": "DM-REG",
+      "label": "Annual registration fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "registration"
+    }
+  ],
+  "staff_skills": [
+    "ballet",
+    "hip hop",
+    "ballroom",
+    "contemporary dance",
+    "singing",
+    "piano",
+    "guitar",
+    "violin",
+    "drums",
+    "bass",
+    "music theory",
+    "AMEB exam preparation"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding this week",
+      "exam tomorrow",
+      "performance tonight"
+    ],
+    "urgent": [
+      "this week",
+      "before exam",
+      "before wedding",
+      "starting now"
+    ],
+    "routine": [
+      "weekly",
+      "term",
+      "lessons",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a dance or music school. Ask about the student's age, experience, goals, and preferred style or instrument. Ask whether they prefer group or private, in-studio or online. Quote prices only from the reference answers, and say the final price is confirmed after enrolment. Do not promise a specific exam or performance result that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much are lessons?",
+      "a": "{price_note} Lessons are priced per session, per term, or per term package. Ask us which option suits your student.",
+      "keywords": "cost,price,lessons",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer private lessons?",
+      "a": "Yes, private and group lessons are available. Private lessons come in 30 and 60 minute options.",
+      "keywords": "private,group",
+      "priority": 9
+    },
+    {
+      "q": "Do you teach adults?",
+      "a": "Yes, we teach children, teens, and adults. Tell us the student's age and experience when you enquire.",
+      "keywords": "adults,all ages",
+      "priority": 9
+    },
+    {
+      "q": "Do you teach beginners?",
+      "a": "Yes, we welcome beginners at any age. Tell us whether you have any experience so we can place you in the right class.",
+      "keywords": "beginner,new",
+      "priority": 9
+    },
+    {
+      "q": "Do you do wedding dance lessons?",
+      "a": "Yes, we offer wedding dance packages of five lessons. Tell us your wedding date so we can plan the lessons before it.",
+      "keywords": "wedding dance",
+      "priority": 8
+    },
+    {
+      "q": "Do you prepare for AMEB exams?",
+      "a": "Yes, we prepare students for AMEB and other exams. Exam prep is charged per lesson, and we confirm the exam level when you enrol.",
+      "keywords": "ameb,exam",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer online lessons?",
+      "a": "Yes, we offer online lessons by video call. Tell us the instrument or style, and we will confirm the online set-up.",
+      "keywords": "online,remote",
+      "priority": 9
+    },
+    {
+      "q": "How long is a lesson?",
+      "a": "Lessons are usually 30, 45, or 60 minutes, depending on the class or lesson type.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do I need an instrument?",
+      "a": "For instrument lessons, yes. For piano, we can teach on our studio piano, or advise on a home keyboard.",
+      "keywords": "instrument,keyboard,piano",
+      "priority": 9
+    },
+    {
+      "q": "What should students wear?",
+      "a": "Comfortable clothing, and dance shoes or socks for dance classes. Uniforms or costumes are available for some styles.",
+      "keywords": "wear,clothing,shoes",
+      "priority": 8
+    },
+    {
+      "q": "Do you run concerts?",
+      "a": "Yes, we run an annual concert and showcases. Ask us about the showcase fee before you enrol.",
+      "keywords": "concert,showcase",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer a free trial?",
+      "a": "{trial_note} Ask us how to book a trial lesson before you commit to a term.",
+      "keywords": "trial,free",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Tell us early if your student needs to miss a lesson.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you have sibling discounts?",
+      "a": "{discount_note} Tell us about all the students in the family when you enquire.",
+      "keywords": "sibling,discount",
+      "priority": 7
+    },
+    {
+      "q": "Where are you located?",
+      "a": "We are located in the local metro area. Ask us for the studio address and directions when you book.",
+      "keywords": "location,where",
+      "priority": 7
+    },
+    {
+      "q": "Do you offer make-up lessons?",
+      "a": "Yes, we offer a make-up lesson when a booked lesson is missed. Let us know as early as possible so we can plan the make-up time.",
+      "keywords": "make up,missed,rebook",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} is on {date}.",
+    "quote_intro": "Here is the quote for your lessons.",
+    "invoice_note": "Thank you for learning with {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "student_age",
+      "label": "Student age and guardian contact (if under 18)",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "dancemusic.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Remind student 24 hours before the lesson",
+      "enabled": false
+    },
+    {
+      "id": "dancemusic.rule2",
+      "trigger": "booking.missed",
+      "action": "offer_rebook",
+      "description": "Offer make-up lesson",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Working With Children Checks apply to tutors and teachers working with children. Keep student records private and follow your state education rules for any accreditation the service needs.",
+    "items": [
+      "Working With Children Check number and expiry",
+      "Insurance certificate current"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "room",
+    "online meeting"
+  ],
+  "reporting": [
+    "lessons delivered",
+    "student retention",
+    "cancellations"
+  ],
+  "staff_record_types": [
+    "working_with_children",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

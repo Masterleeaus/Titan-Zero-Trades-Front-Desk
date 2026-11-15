@@ -1,0 +1,386 @@
+{
+  "format": 3,
+  "id": "legal",
+  "name": "Legal & Conveyancing",
+  "icon": "⚖️",
+  "tagline": "Conveyancing, wills, family, business, contracts",
+  "version": "1.1.0",
+  "category": "professional",
+  "source_sha256": "96adbccd341b04ffdc9e8df7e7cf7c0d9467044a37cdf2dd4d719a5dcb2fb1be",
+  "terminology": {
+    "customer": "client",
+    "job": "matter",
+    "site": "office",
+    "quote": "quote",
+    "staff": "lawyer",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Conveyancing (Purchase)",
+    "Conveyancing (Sale)",
+    "Wills and Estate Planning",
+    "Probate and Estate Administration",
+    "Family Law (divorce and property settlement)",
+    "Parenting Plans",
+    "Business Law",
+    "Commercial Lease Review",
+    "Contract Review and Drafting",
+    "Employment Law",
+    "Criminal Law",
+    "Traffic Law",
+    "Immigration and Visa Matters",
+    "Personal Injury",
+    "Power of Attorney and Guardianship"
+  ],
+  "catalog": [
+    {
+      "sku": "LEG-CONV-B",
+      "label": "Conveyancing – purchase (fixed)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "conveyancing purchase"
+    },
+    {
+      "sku": "LEG-CONV-S",
+      "label": "Conveyancing – sale (fixed)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1100,
+      "taxable": 1,
+      "keywords": "conveyancing sale"
+    },
+    {
+      "sku": "LEG-WILL",
+      "label": "Will (simple)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 450,
+      "taxable": 1,
+      "keywords": "will"
+    },
+    {
+      "sku": "LEG-POA",
+      "label": "Power of attorney",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "poa"
+    },
+    {
+      "sku": "LEG-PROB",
+      "label": "Probate (from)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "probate"
+    },
+    {
+      "sku": "LEG-FAM",
+      "label": "Family law consultation",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 385,
+      "taxable": 1,
+      "keywords": "family"
+    },
+    {
+      "sku": "LEG-BUS",
+      "label": "Business law consultation",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "business"
+    },
+    {
+      "sku": "LEG-CONTRACT",
+      "label": "Contract review (standard)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "contract"
+    },
+    {
+      "sku": "LEG-LEASE",
+      "label": "Commercial lease review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "lease"
+    },
+    {
+      "sku": "LEG-EMPLOY",
+      "label": "Employment advice",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 420,
+      "taxable": 1,
+      "keywords": "employment"
+    },
+    {
+      "sku": "LEG-COURT",
+      "label": "Court attendance",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "court"
+    },
+    {
+      "sku": "LEG-CONS",
+      "label": "Initial consultation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "consult"
+    }
+  ],
+  "staff_skills": [
+    "conveyancing",
+    "wills",
+    "estates",
+    "probate",
+    "family law",
+    "parenting plans",
+    "business law",
+    "contracts",
+    "commercial leases",
+    "employment",
+    "criminal law",
+    "traffic law",
+    "immigration",
+    "personal injury"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "settlement today",
+      "court tomorrow",
+      "urgent contract",
+      "police interview"
+    ],
+    "urgent": [
+      "this week",
+      "next week",
+      "deadline",
+      "settlement soon"
+    ],
+    "routine": [
+      "quote",
+      "consultation",
+      "will",
+      "contract",
+      "conveyancing"
+    ]
+  },
+  "extra_prompt": "You are booking for a law firm or conveyancer. Ask about the matter type, key dates, and any deadlines. Ask for the property address (for conveyancing) or relevant parties. Do not give legal advice in the booking flow. Quote prices only from the reference answers, and say the final price is confirmed after a conflicts check and initial consultation. Do not promise outcomes.",
+  "kb": [
+    {
+      "q": "How much does conveyancing cost?",
+      "a": "{price_note} Conveyancing fees are fixed for standard purchases and sales. We confirm after review.",
+      "keywords": "cost,price,conveyancing",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer a fixed fee?",
+      "a": "Some matters, such as standard conveyancing and simple wills, may be offered on a fixed fee. We confirm the fee in writing before work begins.",
+      "keywords": "fixed fee",
+      "priority": 9
+    },
+    {
+      "q": "Do I need a will?",
+      "a": "We can talk you through whether a will suits your situation. A will sets out how you want your estate shared and who looks after any dependants.",
+      "keywords": "will",
+      "priority": 9
+    },
+    {
+      "q": "Do you do probate?",
+      "a": "Yes, we handle probate and estate administration. Tell us about the estate, and we will confirm the work and fees before we start.",
+      "keywords": "probate,estate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do family law?",
+      "a": "Yes, we advise on divorce, property settlement, and parenting plans. Tell us about your matter when you book a consultation.",
+      "keywords": "family law,divorce",
+      "priority": 9
+    },
+    {
+      "q": "Do you do business law?",
+      "a": "Yes, we advise on contracts, leases, and company matters. Tell us about the business and the issue you need help with.",
+      "keywords": "business,commercial",
+      "priority": 9
+    },
+    {
+      "q": "Do you do employment law?",
+      "a": "Yes, we advise both employers and employees. Tell us your role and the issue, and we will confirm whether we can help.",
+      "keywords": "employment",
+      "priority": 8
+    },
+    {
+      "q": "Do you do immigration?",
+      "a": "Yes, we assist with visa and immigration matters. Tell us the visa type and your timeline when you enquire.",
+      "keywords": "immigration,visa",
+      "priority": 8
+    },
+    {
+      "q": "Do you do criminal or traffic law?",
+      "a": "Yes, we handle criminal and traffic matters. Please contact us as soon as possible, especially if you have a court date.",
+      "keywords": "criminal,traffic",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a free first consultation?",
+      "a": "{consult_note} Our initial consultation fee is listed in our price list, and we confirm it before you book.",
+      "keywords": "consult,free",
+      "priority": 9
+    },
+    {
+      "q": "How do I send documents?",
+      "a": "We accept documents by email, through our secure portal, or in person. Ask us which method we prefer for sensitive files.",
+      "keywords": "documents,email",
+      "priority": 8
+    },
+    {
+      "q": "Do you do after-hours appointments?",
+      "a": "{afterhours_note} Please ask us for appointment options outside business hours, and we will confirm availability.",
+      "keywords": "after hours",
+      "priority": 7
+    },
+    {
+      "q": "What is your billing structure?",
+      "a": "We bill on a fixed fee, an hourly rate, or a scale fee, depending on the matter. We confirm the structure in writing before we start.",
+      "keywords": "billing,fee",
+      "priority": 9
+    },
+    {
+      "q": "Do you do power of attorney?",
+      "a": "Yes, we prepare power of attorney documents, including enduring powers and guardianship matters. Tell us who you want to appoint and what they can decide.",
+      "keywords": "power of attorney",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [your professional indemnity insurance details] through [your insurer]. A certificate is available on request.",
+      "keywords": "insured,indemnity",
+      "priority": 9
+    },
+    {
+      "q": "How long does conveyancing take?",
+      "a": "Timing depends on the contract and the schedules of the other parties and the lender. We will give you an estimated settlement timeframe of [number] days once we review the contract.",
+      "keywords": "how long,time",
+      "priority": 9
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} appointment with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} appointment with {business} is on {date}. Please bring the documents listed.",
+    "quote_intro": "Here is the fee proposal for your {job}.",
+    "invoice_note": "Thank you. Payment terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "identity_check",
+      "label": "Identity documents checked (keep only what the law needs)",
+      "required": true
+    },
+    {
+      "key": "matter_summary",
+      "label": "Summary of the legal matter",
+      "required": true
+    },
+    {
+      "key": "conflict_check",
+      "label": "Conflict check completed",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "legal.rule1",
+      "trigger": "document.requested",
+      "action": "request_documents",
+      "description": "Request identity documents securely",
+      "enabled": false
+    },
+    {
+      "id": "legal.rule2",
+      "trigger": "invoice.overdue",
+      "action": "send_overdue_reminder",
+      "description": "Send overdue reminder after 14 days",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Accountants providing tax agent services need registration with the Tax Practitioners Board. Legal practice needs a practising certificate. Mortgage brokers need an Australian credit licence (ASIC). Real estate agents need a licence from the state regulator. Verify each licence before relying on it.",
+    "items": [
+      "Tax agent or practising certificate number",
+      "Australian credit licence number (broking)",
+      "Real estate licence number and expiry (real estate)"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "matters open",
+    "hours billed",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

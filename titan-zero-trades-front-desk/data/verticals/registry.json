@@ -1,0 +1,3594 @@
+{
+  "format": 2,
+  "registry_version": "2.0.0",
+  "vertical_count": 65,
+  "categories": {
+    "licensed_trade": {
+      "label": "Licensed services",
+      "desc": "Work that a state licence or registration usually covers."
+    },
+    "building_trade": {
+      "label": "Building and construction",
+      "desc": "Construction and finishing work; permits and registration vary."
+    },
+    "outdoor": {
+      "label": "Outdoor and property",
+      "desc": "Gardens, trees, pools, exterior cleaning."
+    },
+    "cleaning_removal": {
+      "label": "Cleaning and removal",
+      "desc": "Cleaning, junk removal, moving."
+    },
+    "vehicle": {
+      "label": "Vehicle services",
+      "desc": "Car detailing and driving instruction."
+    },
+    "personal_care": {
+      "label": "Personal care and beauty",
+      "desc": "Hair, nails, massage, tattoo."
+    },
+    "health": {
+      "label": "Health and allied health",
+      "desc": "Clinical practice; patient information is sensitive."
+    },
+    "care": {
+      "label": "Care services",
+      "desc": "Children, aged and disability support, transport for clients."
+    },
+    "pet": {
+      "label": "Pet services",
+      "desc": "Pet care, grooming and veterinary."
+    },
+    "fitness": {
+      "label": "Fitness and wellness",
+      "desc": "Personal training, yoga and pilates."
+    },
+    "events": {
+      "label": "Events and creative",
+      "desc": "Catering, events, florist, photography, make-up, celebrants."
+    },
+    "funeral": {
+      "label": "Funeral services",
+      "desc": "Funeral arrangements; family records are sensitive."
+    },
+    "professional": {
+      "label": "Professional and property services",
+      "desc": "Accounting, legal, broking, real estate."
+    },
+    "travel": {
+      "label": "Travel",
+      "desc": "Travel agency bookings."
+    },
+    "business": {
+      "label": "Business services",
+      "desc": "Consulting, IT, marketing, design, assistants, coaching."
+    },
+    "education": {
+      "label": "Education and music",
+      "desc": "Tutoring and music or dance lessons."
+    }
+  },
+  "category_members": {
+    "licensed_trade": [
+      "appliance",
+      "electrical",
+      "garagedoors",
+      "hvac",
+      "locksmith",
+      "pestcontrol",
+      "plumbing",
+      "roofing",
+      "security",
+      "solar"
+    ],
+    "building_trade": [
+      "concrete",
+      "fencing",
+      "flooring",
+      "handyman",
+      "painting",
+      "plastering",
+      "tiling"
+    ],
+    "outdoor": [
+      "landscaping",
+      "poolcleaning",
+      "pressurewashing",
+      "treeservices"
+    ],
+    "cleaning_removal": [
+      "cleaning",
+      "junkremoval",
+      "moving"
+    ],
+    "vehicle": [
+      "cardetailing",
+      "drivinginstructor"
+    ],
+    "personal_care": [
+      "barbershop",
+      "hairsalon",
+      "massagespa",
+      "mobilenails",
+      "nailsbeauty",
+      "tattoo"
+    ],
+    "health": [
+      "dental",
+      "optometry",
+      "physiotherapy",
+      "podiatry",
+      "speechot"
+    ],
+    "care": [
+      "childcare",
+      "homecare",
+      "seniortransport"
+    ],
+    "pet": [
+      "petcare",
+      "petgrooming",
+      "veterinary"
+    ],
+    "fitness": [
+      "personaltraining",
+      "yogapilates"
+    ],
+    "events": [
+      "catering",
+      "celebrant",
+      "eventplanner",
+      "florist",
+      "makeupartist",
+      "photography"
+    ],
+    "funeral": [
+      "funeral"
+    ],
+    "professional": [
+      "accounting",
+      "legal",
+      "mortgagebroker",
+      "realestate"
+    ],
+    "travel": [
+      "travelagent"
+    ],
+    "business": [
+      "coaching",
+      "interiordesign",
+      "itsupport",
+      "marketing",
+      "virtualassistant",
+      "webdesign"
+    ],
+    "education": [
+      "dancemusic",
+      "tutoring"
+    ]
+  },
+  "groups": {
+    "field_home_services": [
+      "appliance",
+      "cleaning",
+      "electrical",
+      "handyman",
+      "hvac",
+      "landscaping",
+      "locksmith",
+      "pestcontrol",
+      "plumbing",
+      "roofing"
+    ]
+  },
+  "interaction_aliases": {
+    "cleaning": "cleaning",
+    "plumbing": "plumbing",
+    "electrical": "electrical",
+    "hvac": "hvac",
+    "handyman": "handyman-property-maintenance",
+    "landscaping": "landscaping-gardening",
+    "pestcontrol": "pest-control",
+    "locksmith": "locksmith-security",
+    "roofing": "roofing-guttering",
+    "appliance": "appliance-equipment-repair"
+  },
+  "label_resolution": {
+    "acrylic nails": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "consultation": {
+      "owners": [
+        "hairsalon",
+        "tattoo"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "cremation": {
+      "owners": [
+        "funeral",
+        "veterinary"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "emergency care": {
+      "owners": [
+        "childcare",
+        "veterinary"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "engagement": {
+      "owners": [
+        "makeupartist",
+        "photography"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "fence repair": {
+      "owners": [
+        "fencing",
+        "handyman"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "flea treatment": {
+      "owners": [
+        "pestcontrol",
+        "petgrooming"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "furniture removal": {
+      "owners": [
+        "junkremoval",
+        "moving"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "gel nails": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "holiday care": {
+      "owners": [
+        "childcare",
+        "petcare"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "infills": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "mulching": {
+      "owners": [
+        "landscaping",
+        "treeservices"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "nail art": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "nail repair": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "overnight care": {
+      "owners": [
+        "childcare",
+        "homecare",
+        "petcare"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "pilates": {
+      "owners": [
+        "personaltraining",
+        "physiotherapy"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "plaster repair": {
+      "owners": [
+        "painting",
+        "plastering"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "remedial massage": {
+      "owners": [
+        "massagespa",
+        "physiotherapy"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "removal": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "rendering": {
+      "owners": [
+        "painting",
+        "plastering"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "retaining walls": {
+      "owners": [
+        "concrete",
+        "fencing"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "roof painting": {
+      "owners": [
+        "painting",
+        "roofing"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "scalp treatment": {
+      "owners": [
+        "barbershop",
+        "hairsalon"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "sns": {
+      "owners": [
+        "mobilenails",
+        "nailsbeauty"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "telehealth": {
+      "owners": [
+        "physiotherapy",
+        "podiatry",
+        "speechot"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "texture coating": {
+      "owners": [
+        "painting",
+        "plastering"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    },
+    "tile repair": {
+      "owners": [
+        "handyman",
+        "tiling"
+      ],
+      "rule": "company_choice",
+      "prompt": "Which vertical is this service for? It is offered in more than one of your verticals."
+    }
+  },
+  "label_index": {
+    "aac": [
+      "speechot"
+    ],
+    "access control": [
+      "security"
+    ],
+    "access control install": [
+      "locksmith"
+    ],
+    "acrylic nails": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "adult learning": [
+      "tutoring"
+    ],
+    "adventure travel": [
+      "travelagent"
+    ],
+    "after-hours lockout": [
+      "locksmith"
+    ],
+    "after-school care": [
+      "childcare"
+    ],
+    "aged care transport": [
+      "seniortransport"
+    ],
+    "air conditioning": [
+      "hvac"
+    ],
+    "airbnb turnover clean": [
+      "cleaning"
+    ],
+    "airbrush makeup": [
+      "makeupartist"
+    ],
+    "airport transfers": [
+      "seniortransport"
+    ],
+    "alarm installation": [
+      "security"
+    ],
+    "alarm monitoring": [
+      "security"
+    ],
+    "alarm repair": [
+      "security"
+    ],
+    "alarm service": [
+      "security"
+    ],
+    "allied health": [
+      "homecare"
+    ],
+    "aluminium fencing": [
+      "fencing"
+    ],
+    "anal glands": [
+      "petgrooming"
+    ],
+    "analytics": [
+      "marketing"
+    ],
+    "ankle": [
+      "physiotherapy"
+    ],
+    "anniversaries": [
+      "eventplanner"
+    ],
+    "anniversary flowers": [
+      "florist"
+    ],
+    "ant & spider control": [
+      "pestcontrol"
+    ],
+    "appliance installation": [
+      "appliance"
+    ],
+    "appliance removal": [
+      "junkremoval"
+    ],
+    "appliance service call": [
+      "appliance"
+    ],
+    "arborist report": [
+      "treeservices"
+    ],
+    "aromatherapy": [
+      "massagespa"
+    ],
+    "articulation": [
+      "speechot"
+    ],
+    "asset finance": [
+      "mortgagebroker"
+    ],
+    "ato audit support": [
+      "accounting"
+    ],
+    "auction": [
+      "realestate"
+    ],
+    "autism support": [
+      "speechot"
+    ],
+    "automatic lessons": [
+      "drivinginstructor"
+    ],
+    "award nights": [
+      "eventplanner"
+    ],
+    "baby showers": [
+      "eventplanner"
+    ],
+    "back & neck": [
+      "physiotherapy"
+    ],
+    "back-to-base": [
+      "security"
+    ],
+    "backflow prevention test": [
+      "plumbing"
+    ],
+    "backup solutions": [
+      "itsupport"
+    ],
+    "balayage": [
+      "hairsalon"
+    ],
+    "ballet": [
+      "dancemusic"
+    ],
+    "ballroom": [
+      "dancemusic"
+    ],
+    "bamboo flooring": [
+      "flooring"
+    ],
+    "bas lodgement": [
+      "accounting"
+    ],
+    "basic wash": [
+      "cardetailing"
+    ],
+    "bass": [
+      "dancemusic"
+    ],
+    "bath & brush": [
+      "petgrooming"
+    ],
+    "bathroom & kitchen": [
+      "interiordesign"
+    ],
+    "bathroom design": [
+      "interiordesign"
+    ],
+    "bathroom fixture install": [
+      "handyman"
+    ],
+    "bathroom renovation plumbing": [
+      "plumbing"
+    ],
+    "bathroom tiling": [
+      "tiling"
+    ],
+    "battery installation": [
+      "solar"
+    ],
+    "battery repair": [
+      "solar"
+    ],
+    "bbq catering": [
+      "catering"
+    ],
+    "beard colour": [
+      "barbershop"
+    ],
+    "beard trim": [
+      "barbershop"
+    ],
+    "bed bug treatment": [
+      "pestcontrol"
+    ],
+    "before-school care": [
+      "childcare"
+    ],
+    "behaviour consults": [
+      "veterinary"
+    ],
+    "behavioural optometry": [
+      "optometry"
+    ],
+    "biomechanical assessment": [
+      "podiatry"
+    ],
+    "bird proofing & exclusion": [
+      "pestcontrol"
+    ],
+    "birthday flowers": [
+      "florist"
+    ],
+    "birthday parties": [
+      "eventplanner"
+    ],
+    "birthday party": [
+      "photography"
+    ],
+    "black & grey": [
+      "tattoo"
+    ],
+    "blocked drain clearing": [
+      "plumbing"
+    ],
+    "blood tests": [
+      "veterinary"
+    ],
+    "blow dry": [
+      "hairsalon"
+    ],
+    "body composition": [
+      "personaltraining"
+    ],
+    "body treatments": [
+      "massagespa"
+    ],
+    "bond cleaning": [
+      "cleaning"
+    ],
+    "bookkeeping": [
+      "accounting"
+    ],
+    "bookkeeping support": [
+      "virtualassistant"
+    ],
+    "boudoir": [
+      "photography"
+    ],
+    "bouquets": [
+      "florist"
+    ],
+    "boxing": [
+      "personaltraining"
+    ],
+    "braces": [
+      "dental"
+    ],
+    "brand identity": [
+      "webdesign"
+    ],
+    "brand strategy": [
+      "marketing"
+    ],
+    "breathwork": [
+      "yogapilates"
+    ],
+    "breed-specific groom": [
+      "petgrooming"
+    ],
+    "bridal bouquets": [
+      "florist"
+    ],
+    "bridal hair": [
+      "hairsalon"
+    ],
+    "bridal makeup": [
+      "makeupartist"
+    ],
+    "bridal nails": [
+      "mobilenails"
+    ],
+    "bridal party": [
+      "makeupartist"
+    ],
+    "bridal showers": [
+      "eventplanner"
+    ],
+    "bridesmaid flowers": [
+      "florist"
+    ],
+    "bridges": [
+      "dental"
+    ],
+    "bridging loan": [
+      "mortgagebroker"
+    ],
+    "brochures": [
+      "webdesign"
+    ],
+    "brow lamination": [
+      "nailsbeauty"
+    ],
+    "buffet": [
+      "catering"
+    ],
+    "burial": [
+      "funeral"
+    ],
+    "business advisory": [
+      "accounting"
+    ],
+    "business cards": [
+      "webdesign"
+    ],
+    "business coaching": [
+      "coaching"
+    ],
+    "business law": [
+      "legal"
+    ],
+    "business tax return": [
+      "accounting"
+    ],
+    "buttonholes": [
+      "florist"
+    ],
+    "buyer advocacy": [
+      "realestate"
+    ],
+    "cable replacement": [
+      "garagedoors"
+    ],
+    "calendar management": [
+      "virtualassistant"
+    ],
+    "canapés": [
+      "catering"
+    ],
+    "canopy reduction": [
+      "treeservices"
+    ],
+    "capital gains tax": [
+      "accounting"
+    ],
+    "car hire": [
+      "travelagent"
+    ],
+    "car key replacement": [
+      "locksmith"
+    ],
+    "car loan": [
+      "mortgagebroker"
+    ],
+    "car park cleaning": [
+      "pressurewashing"
+    ],
+    "career coaching": [
+      "coaching"
+    ],
+    "carpet cleaning": [
+      "cleaning"
+    ],
+    "carpet installation": [
+      "flooring"
+    ],
+    "casket selection": [
+      "funeral"
+    ],
+    "casual babysitting": [
+      "childcare"
+    ],
+    "cat grooming": [
+      "petgrooming"
+    ],
+    "cat visits": [
+      "petcare"
+    ],
+    "cctv installation": [
+      "security"
+    ],
+    "cctv repair": [
+      "security"
+    ],
+    "ceiling fan installation": [
+      "electrical"
+    ],
+    "ceiling fans & lighting": [
+      "electrical"
+    ],
+    "ceiling painting": [
+      "painting"
+    ],
+    "ceiling repair": [
+      "plastering"
+    ],
+    "ceramic coating": [
+      "cardetailing"
+    ],
+    "chain wire": [
+      "fencing"
+    ],
+    "check-up & clean": [
+      "dental"
+    ],
+    "children's cut": [
+      "hairsalon"
+    ],
+    "children's dentistry": [
+      "dental"
+    ],
+    "children's eye test": [
+      "optometry"
+    ],
+    "clipping": [
+      "petgrooming"
+    ],
+    "cloud migration": [
+      "itsupport"
+    ],
+    "cockroach treatment": [
+      "pestcontrol"
+    ],
+    "cocktail parties": [
+      "catering"
+    ],
+    "coding": [
+      "tutoring"
+    ],
+    "colorbond fencing": [
+      "fencing"
+    ],
+    "colour": [
+      "hairsalon"
+    ],
+    "colour consultation": [
+      "painting"
+    ],
+    "colour consulting": [
+      "interiordesign"
+    ],
+    "colour tattoo": [
+      "tattoo"
+    ],
+    "commercial": [
+      "photography"
+    ],
+    "commercial area wash": [
+      "pressurewashing"
+    ],
+    "commercial cleaning": [
+      "cleaning"
+    ],
+    "commercial concrete": [
+      "concrete"
+    ],
+    "commercial design": [
+      "interiordesign"
+    ],
+    "commercial fencing": [
+      "fencing"
+    ],
+    "commercial flooring": [
+      "flooring"
+    ],
+    "commercial garage doors": [
+      "garagedoors"
+    ],
+    "commercial hvac maintenance": [
+      "hvac"
+    ],
+    "commercial junk": [
+      "junkremoval"
+    ],
+    "commercial leases": [
+      "legal"
+    ],
+    "commercial loan": [
+      "mortgagebroker"
+    ],
+    "commercial painting": [
+      "painting"
+    ],
+    "commercial plastering": [
+      "plastering"
+    ],
+    "commercial property": [
+      "realestate"
+    ],
+    "commercial relocation": [
+      "moving"
+    ],
+    "commercial security": [
+      "security"
+    ],
+    "commercial solar": [
+      "solar"
+    ],
+    "commercial tiling": [
+      "tiling"
+    ],
+    "commitment ceremony": [
+      "celebrant"
+    ],
+    "community access": [
+      "seniortransport"
+    ],
+    "companion travel": [
+      "seniortransport"
+    ],
+    "companionship": [
+      "homecare"
+    ],
+    "company setup": [
+      "accounting"
+    ],
+    "company tax": [
+      "accounting"
+    ],
+    "computer repair": [
+      "itsupport"
+    ],
+    "concrete removal": [
+      "concrete"
+    ],
+    "concrete repair": [
+      "concrete"
+    ],
+    "concrete sealing": [
+      "pressurewashing"
+    ],
+    "concrete slabs": [
+      "concrete"
+    ],
+    "conference management": [
+      "eventplanner"
+    ],
+    "construction loan": [
+      "mortgagebroker"
+    ],
+    "construction waste": [
+      "junkremoval"
+    ],
+    "consultation": [
+      "hairsalon",
+      "tattoo"
+    ],
+    "contact lens fitting": [
+      "optometry"
+    ],
+    "contemporary": [
+      "dancemusic"
+    ],
+    "content marketing": [
+      "marketing"
+    ],
+    "contracts": [
+      "legal"
+    ],
+    "conversion optimisation": [
+      "marketing"
+    ],
+    "conveyancing (purchase)": [
+      "legal"
+    ],
+    "conveyancing (sale)": [
+      "legal"
+    ],
+    "cooking classes": [
+      "catering"
+    ],
+    "copywriting": [
+      "marketing"
+    ],
+    "cork flooring": [
+      "flooring"
+    ],
+    "cornice installation": [
+      "plastering"
+    ],
+    "cornice replacement": [
+      "plastering"
+    ],
+    "corns & calluses": [
+      "podiatry"
+    ],
+    "corporate catering": [
+      "catering"
+    ],
+    "corporate classes": [
+      "yogapilates"
+    ],
+    "corporate events": [
+      "eventplanner"
+    ],
+    "corporate flowers": [
+      "florist"
+    ],
+    "corporate headshots": [
+      "photography"
+    ],
+    "corporate massage": [
+      "massagespa"
+    ],
+    "corporate travel": [
+      "travelagent"
+    ],
+    "cosmetic dentistry": [
+      "dental"
+    ],
+    "couples massage": [
+      "massagespa"
+    ],
+    "cover-up": [
+      "tattoo"
+    ],
+    "crack repair": [
+      "plastering"
+    ],
+    "cremation": [
+      "funeral",
+      "veterinary"
+    ],
+    "criminal law": [
+      "legal"
+    ],
+    "crm management": [
+      "virtualassistant"
+    ],
+    "crossovers": [
+      "concrete"
+    ],
+    "crowns": [
+      "dental"
+    ],
+    "cruises": [
+      "travelagent"
+    ],
+    "custom tattoo": [
+      "tattoo"
+    ],
+    "customer service": [
+      "virtualassistant"
+    ],
+    "cybersecurity audit": [
+      "itsupport"
+    ],
+    "dance class": [
+      "dancemusic"
+    ],
+    "data & tv cabling": [
+      "electrical"
+    ],
+    "data entry": [
+      "virtualassistant"
+    ],
+    "data recovery": [
+      "itsupport"
+    ],
+    "day programs": [
+      "seniortransport"
+    ],
+    "day spa packages": [
+      "massagespa"
+    ],
+    "deadbolt installation": [
+      "locksmith"
+    ],
+    "deadwooding": [
+      "treeservices"
+    ],
+    "death notices": [
+      "funeral"
+    ],
+    "debt consolidation": [
+      "mortgagebroker"
+    ],
+    "deck & fence clean": [
+      "pressurewashing"
+    ],
+    "deck repair": [
+      "handyman"
+    ],
+    "deck staining": [
+      "painting"
+    ],
+    "deep clean": [
+      "cleaning"
+    ],
+    "deep tissue massage": [
+      "massagespa"
+    ],
+    "defensive driving": [
+      "drivinginstructor"
+    ],
+    "dementia care": [
+      "homecare"
+    ],
+    "dentistry": [
+      "veterinary"
+    ],
+    "dentures": [
+      "dental"
+    ],
+    "deodorising": [
+      "petgrooming"
+    ],
+    "desexing": [
+      "veterinary"
+    ],
+    "deshedding": [
+      "petgrooming"
+    ],
+    "destination wedding": [
+      "celebrant"
+    ],
+    "destination weddings": [
+      "eventplanner"
+    ],
+    "diabetic eye check": [
+      "optometry"
+    ],
+    "diabetic foot care": [
+      "podiatry"
+    ],
+    "dialysis transport": [
+      "seniortransport"
+    ],
+    "direct cremation": [
+      "funeral"
+    ],
+    "dishwasher repair": [
+      "appliance"
+    ],
+    "disney & theme parks": [
+      "travelagent"
+    ],
+    "divorce": [
+      "legal"
+    ],
+    "dog grooming": [
+      "petgrooming"
+    ],
+    "dog walking": [
+      "petcare"
+    ],
+    "domestic assistance": [
+      "homecare"
+    ],
+    "door hanging": [
+      "handyman"
+    ],
+    "door painting": [
+      "painting"
+    ],
+    "doors & windows repair": [
+      "handyman"
+    ],
+    "drain cleaning": [
+      "plumbing"
+    ],
+    "dried flowers": [
+      "florist"
+    ],
+    "driveway & paving clean": [
+      "pressurewashing"
+    ],
+    "driveways": [
+      "concrete"
+    ],
+    "drone": [
+      "photography"
+    ],
+    "drums": [
+      "dancemusic"
+    ],
+    "dry eye treatment": [
+      "optometry"
+    ],
+    "dry needling": [
+      "physiotherapy"
+    ],
+    "dryer repair": [
+      "appliance"
+    ],
+    "drywall patch": [
+      "handyman"
+    ],
+    "duct cleaning": [
+      "hvac"
+    ],
+    "ducted air conditioning install": [
+      "hvac"
+    ],
+    "ducted heating service": [
+      "hvac"
+    ],
+    "ducted system service": [
+      "hvac"
+    ],
+    "e-commerce store": [
+      "webdesign"
+    ],
+    "e-commerce support": [
+      "virtualassistant"
+    ],
+    "e-design": [
+      "interiordesign"
+    ],
+    "e-waste": [
+      "junkremoval"
+    ],
+    "ear cleaning": [
+      "petgrooming"
+    ],
+    "editing": [
+      "photography"
+    ],
+    "editorial": [
+      "makeupartist"
+    ],
+    "electric fencing": [
+      "fencing"
+    ],
+    "electrical": [
+      "electrical"
+    ],
+    "electrical inspection & test and tag": [
+      "electrical"
+    ],
+    "electrical safety": [
+      "electrical"
+    ],
+    "elopement": [
+      "celebrant"
+    ],
+    "email marketing": [
+      "marketing"
+    ],
+    "emergency appliance callout": [
+      "appliance"
+    ],
+    "emergency care": [
+      "childcare",
+      "veterinary"
+    ],
+    "emergency dental": [
+      "dental"
+    ],
+    "emergency door opening": [
+      "locksmith"
+    ],
+    "emergency electrical": [
+      "electrical"
+    ],
+    "emergency garage door": [
+      "garagedoors"
+    ],
+    "emergency plumbing": [
+      "plumbing"
+    ],
+    "emergency tree work": [
+      "treeservices"
+    ],
+    "employment law": [
+      "legal"
+    ],
+    "end of lease clean": [
+      "cleaning"
+    ],
+    "end of lease move": [
+      "moving"
+    ],
+    "engagement": [
+      "makeupartist",
+      "photography"
+    ],
+    "engagement parties": [
+      "eventplanner"
+    ],
+    "engine bay clean": [
+      "cardetailing"
+    ],
+    "engineered wood": [
+      "flooring"
+    ],
+    "english tutoring": [
+      "tutoring"
+    ],
+    "epoxy flooring": [
+      "flooring"
+    ],
+    "estate cleanout": [
+      "junkremoval"
+    ],
+    "estate tax": [
+      "accounting"
+    ],
+    "euthanasia": [
+      "veterinary"
+    ],
+    "ev charger install": [
+      "electrical"
+    ],
+    "ev charger installation": [
+      "electrical"
+    ],
+    "ev charger integration": [
+      "solar"
+    ],
+    "evaporative cooler service": [
+      "hvac"
+    ],
+    "event childcare": [
+      "childcare"
+    ],
+    "event flowers": [
+      "florist"
+    ],
+    "event photography": [
+      "photography"
+    ],
+    "exam prep": [
+      "tutoring"
+    ],
+    "exam prep (ameb)": [
+      "dancemusic"
+    ],
+    "executive assistant": [
+      "virtualassistant"
+    ],
+    "executive coaching": [
+      "coaching"
+    ],
+    "exercise prescription": [
+      "physiotherapy"
+    ],
+    "exposed aggregate": [
+      "concrete"
+    ],
+    "exterior detail": [
+      "cardetailing"
+    ],
+    "exterior painting": [
+      "painting"
+    ],
+    "extractions": [
+      "dental"
+    ],
+    "eye health assessment": [
+      "optometry"
+    ],
+    "eye test": [
+      "optometry"
+    ],
+    "eyebrow shaping": [
+      "nailsbeauty"
+    ],
+    "eyelash extensions": [
+      "nailsbeauty"
+    ],
+    "facebook ads": [
+      "marketing"
+    ],
+    "facial": [
+      "nailsbeauty"
+    ],
+    "facials": [
+      "massagespa"
+    ],
+    "fade": [
+      "barbershop"
+    ],
+    "family holidays": [
+      "travelagent"
+    ],
+    "family law": [
+      "legal"
+    ],
+    "family portraits": [
+      "photography"
+    ],
+    "fashion": [
+      "photography"
+    ],
+    "fashion show": [
+      "makeupartist"
+    ],
+    "feature walls": [
+      "painting"
+    ],
+    "feeding": [
+      "petcare"
+    ],
+    "fence painting": [
+      "painting"
+    ],
+    "fence removal": [
+      "fencing"
+    ],
+    "fence repair": [
+      "fencing",
+      "handyman"
+    ],
+    "fence wash": [
+      "pressurewashing"
+    ],
+    "fertilising & weed control": [
+      "landscaping"
+    ],
+    "fillings": [
+      "dental"
+    ],
+    "filter replacement": [
+      "hvac"
+    ],
+    "fine line": [
+      "tattoo"
+    ],
+    "fine motor skills": [
+      "speechot"
+    ],
+    "first home buyers": [
+      "realestate"
+    ],
+    "first home loan": [
+      "mortgagebroker"
+    ],
+    "fixture installation": [
+      "handyman"
+    ],
+    "flashing repair": [
+      "roofing"
+    ],
+    "flat-pack assembly": [
+      "handyman"
+    ],
+    "flea & worm treatment": [
+      "veterinary"
+    ],
+    "flea treatment": [
+      "pestcontrol",
+      "petgrooming"
+    ],
+    "fleet detailing": [
+      "cardetailing"
+    ],
+    "flight booking": [
+      "travelagent"
+    ],
+    "floor levelling": [
+      "flooring"
+    ],
+    "floor polishing": [
+      "flooring"
+    ],
+    "floor refinishing": [
+      "flooring"
+    ],
+    "floor removal": [
+      "flooring"
+    ],
+    "floor sanding": [
+      "flooring"
+    ],
+    "floor tiling": [
+      "tiling"
+    ],
+    "floral installations": [
+      "florist"
+    ],
+    "floral tributes": [
+      "funeral"
+    ],
+    "flower subscriptions": [
+      "florist"
+    ],
+    "food trucks": [
+      "catering"
+    ],
+    "footings": [
+      "concrete"
+    ],
+    "fridge & freezer repair": [
+      "appliance"
+    ],
+    "fringe trim": [
+      "hairsalon"
+    ],
+    "full detail": [
+      "cardetailing"
+    ],
+    "funeral & memorial": [
+      "celebrant"
+    ],
+    "funeral catering": [
+      "catering"
+    ],
+    "funeral flowers": [
+      "florist"
+    ],
+    "funeral service": [
+      "funeral"
+    ],
+    "fungal nail treatment": [
+      "podiatry"
+    ],
+    "furniture assembly": [
+      "handyman"
+    ],
+    "furniture removal": [
+      "junkremoval",
+      "moving"
+    ],
+    "furniture repair": [
+      "handyman"
+    ],
+    "furniture selection": [
+      "interiordesign"
+    ],
+    "gait analysis": [
+      "podiatry"
+    ],
+    "garage cleanout": [
+      "junkremoval"
+    ],
+    "garage door installation": [
+      "garagedoors"
+    ],
+    "garage door lock repair": [
+      "locksmith"
+    ],
+    "garage door locks": [
+      "locksmith"
+    ],
+    "garage door repair": [
+      "garagedoors"
+    ],
+    "garden bed installation": [
+      "landscaping"
+    ],
+    "garden bed makeover": [
+      "landscaping"
+    ],
+    "garden maintenance": [
+      "landscaping"
+    ],
+    "garden structures & sheds": [
+      "handyman"
+    ],
+    "gas fitting": [
+      "plumbing"
+    ],
+    "gas heater service": [
+      "hvac"
+    ],
+    "gate installation": [
+      "fencing"
+    ],
+    "gel nails": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "general admin": [
+      "virtualassistant"
+    ],
+    "general foot care": [
+      "podiatry"
+    ],
+    "general handyman": [
+      "handyman"
+    ],
+    "general pest treatment": [
+      "pestcontrol"
+    ],
+    "glam": [
+      "makeupartist"
+    ],
+    "glass fencing": [
+      "fencing"
+    ],
+    "glaucoma screening": [
+      "optometry"
+    ],
+    "gluten-free": [
+      "catering"
+    ],
+    "google ads": [
+      "marketing"
+    ],
+    "google workspace": [
+      "itsupport"
+    ],
+    "graffiti & stain removal": [
+      "pressurewashing"
+    ],
+    "graphic design": [
+      "webdesign"
+    ],
+    "graveside service": [
+      "funeral"
+    ],
+    "green pool recovery": [
+      "poolcleaning"
+    ],
+    "green waste": [
+      "junkremoval"
+    ],
+    "grief support": [
+      "funeral"
+    ],
+    "grooming package": [
+      "barbershop"
+    ],
+    "group booking": [
+      "makeupartist"
+    ],
+    "group bookings": [
+      "mobilenails"
+    ],
+    "group music": [
+      "dancemusic"
+    ],
+    "group outings": [
+      "seniortransport"
+    ],
+    "group pilates class": [
+      "yogapilates"
+    ],
+    "group programs": [
+      "coaching"
+    ],
+    "group travel": [
+      "travelagent"
+    ],
+    "group walks": [
+      "petcare"
+    ],
+    "group yoga class": [
+      "yogapilates"
+    ],
+    "grout repair": [
+      "tiling"
+    ],
+    "gst registration": [
+      "accounting"
+    ],
+    "guitar lessons": [
+      "dancemusic"
+    ],
+    "gum treatment": [
+      "dental"
+    ],
+    "gutter & downpipe": [
+      "roofing"
+    ],
+    "gutter clean exterior": [
+      "pressurewashing"
+    ],
+    "gutter guard installation": [
+      "roofing"
+    ],
+    "gutter replacement": [
+      "roofing"
+    ],
+    "hair design": [
+      "barbershop"
+    ],
+    "hair extensions": [
+      "hairsalon"
+    ],
+    "hair wash": [
+      "barbershop"
+    ],
+    "hand stripping": [
+      "petgrooming"
+    ],
+    "hand wash": [
+      "cardetailing"
+    ],
+    "handwriting": [
+      "speechot"
+    ],
+    "hatha": [
+      "yogapilates"
+    ],
+    "head shave": [
+      "barbershop"
+    ],
+    "headlight restoration": [
+      "cardetailing"
+    ],
+    "health coaching": [
+      "coaching"
+    ],
+    "heat pump service": [
+      "hvac"
+    ],
+    "heating": [
+      "hvac"
+    ],
+    "heavy vehicle": [
+      "drivinginstructor"
+    ],
+    "hedge & shrub trimming": [
+      "landscaping"
+    ],
+    "hedge removal": [
+      "landscaping"
+    ],
+    "hedge trimming": [
+      "treeservices"
+    ],
+    "heel pain": [
+      "podiatry"
+    ],
+    "high school tutoring": [
+      "tutoring"
+    ],
+    "highlights": [
+      "hairsalon"
+    ],
+    "highway driving": [
+      "drivinginstructor"
+    ],
+    "hiit": [
+      "personaltraining"
+    ],
+    "hip hop": [
+      "dancemusic"
+    ],
+    "hoarding cleanout": [
+      "junkremoval"
+    ],
+    "hole repair": [
+      "plastering"
+    ],
+    "holiday care": [
+      "childcare",
+      "petcare"
+    ],
+    "holiday packages": [
+      "travelagent"
+    ],
+    "home loan": [
+      "mortgagebroker"
+    ],
+    "home maintenance check": [
+      "handyman"
+    ],
+    "home modifications": [
+      "speechot"
+    ],
+    "home staging": [
+      "interiordesign"
+    ],
+    "home visits": [
+      "physiotherapy"
+    ],
+    "homework help": [
+      "tutoring"
+    ],
+    "honeymoons": [
+      "travelagent"
+    ],
+    "hospital discharge": [
+      "seniortransport"
+    ],
+    "hot stone massage": [
+      "massagespa"
+    ],
+    "hot towel shave": [
+      "barbershop"
+    ],
+    "hot water repair": [
+      "plumbing"
+    ],
+    "hot water system install": [
+      "plumbing"
+    ],
+    "house & wall wash": [
+      "pressurewashing"
+    ],
+    "house calls": [
+      "veterinary"
+    ],
+    "house sitting": [
+      "petcare"
+    ],
+    "household junk": [
+      "junkremoval"
+    ],
+    "hr consulting": [
+      "coaching"
+    ],
+    "hsc/vce prep": [
+      "tutoring"
+    ],
+    "hvac": [
+      "hvac"
+    ],
+    "ice maker repair": [
+      "appliance"
+    ],
+    "icemaker & water filter": [
+      "appliance"
+    ],
+    "immigration": [
+      "legal"
+    ],
+    "implants": [
+      "dental"
+    ],
+    "in-home tutoring": [
+      "tutoring"
+    ],
+    "inbox management": [
+      "virtualassistant"
+    ],
+    "individual tax return": [
+      "accounting"
+    ],
+    "indoor air quality": [
+      "hvac"
+    ],
+    "infills": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "ingrown nail treatment": [
+      "podiatry"
+    ],
+    "initial consultation": [
+      "physiotherapy"
+    ],
+    "insulation": [
+      "plastering"
+    ],
+    "intercom installation": [
+      "security"
+    ],
+    "interfaith": [
+      "celebrant"
+    ],
+    "interior detail": [
+      "cardetailing"
+    ],
+    "interior painting": [
+      "painting"
+    ],
+    "international moving": [
+      "moving"
+    ],
+    "interstate moving": [
+      "moving"
+    ],
+    "inverter installation": [
+      "solar"
+    ],
+    "inverter repair": [
+      "solar"
+    ],
+    "investment advice": [
+      "realestate"
+    ],
+    "investment loan": [
+      "mortgagebroker"
+    ],
+    "invisalign": [
+      "dental"
+    ],
+    "irrigation": [
+      "landscaping"
+    ],
+    "jewellery change": [
+      "tattoo"
+    ],
+    "keratin treatment": [
+      "hairsalon"
+    ],
+    "key cutting": [
+      "locksmith"
+    ],
+    "key duplication": [
+      "locksmith"
+    ],
+    "key management systems": [
+      "locksmith"
+    ],
+    "kids cut": [
+      "barbershop"
+    ],
+    "kids nails": [
+      "mobilenails"
+    ],
+    "kids parties": [
+      "catering"
+    ],
+    "kindermusik": [
+      "dancemusic"
+    ],
+    "kitchen design": [
+      "interiordesign"
+    ],
+    "kitchen splashback": [
+      "tiling"
+    ],
+    "knee": [
+      "physiotherapy"
+    ],
+    "laminate flooring": [
+      "flooring"
+    ],
+    "land clearing": [
+      "treeservices"
+    ],
+    "landing pages": [
+      "webdesign"
+    ],
+    "landlord representation": [
+      "realestate"
+    ],
+    "language delay": [
+      "speechot"
+    ],
+    "language tutoring": [
+      "tutoring"
+    ],
+    "laptop repair": [
+      "itsupport"
+    ],
+    "large tattoo": [
+      "tattoo"
+    ],
+    "lash lift": [
+      "nailsbeauty"
+    ],
+    "lawn care & fertilising": [
+      "landscaping"
+    ],
+    "lawn edging": [
+      "landscaping"
+    ],
+    "lawn mowing": [
+      "landscaping"
+    ],
+    "lead generation": [
+      "marketing"
+    ],
+    "lead paint removal": [
+      "painting"
+    ],
+    "leadership coaching": [
+      "coaching"
+    ],
+    "leaf & debris removal": [
+      "landscaping"
+    ],
+    "leaf clearing": [
+      "landscaping"
+    ],
+    "leak detection": [
+      "plumbing"
+    ],
+    "leaking shower repair": [
+      "plumbing"
+    ],
+    "learner lessons": [
+      "drivinginstructor"
+    ],
+    "lease renewal": [
+      "realestate"
+    ],
+    "leather conditioning": [
+      "cardetailing"
+    ],
+    "legal-only wedding": [
+      "celebrant"
+    ],
+    "life coaching": [
+      "coaching"
+    ],
+    "lighting design": [
+      "interiordesign"
+    ],
+    "lighting installation": [
+      "electrical"
+    ],
+    "line up": [
+      "barbershop"
+    ],
+    "literacy support": [
+      "speechot"
+    ],
+    "live-in care": [
+      "homecare"
+    ],
+    "live-in nanny": [
+      "childcare"
+    ],
+    "live-out nanny": [
+      "childcare"
+    ],
+    "loan health check": [
+      "mortgagebroker"
+    ],
+    "loan pre-approval": [
+      "mortgagebroker"
+    ],
+    "local moving": [
+      "moving"
+    ],
+    "local seo": [
+      "marketing"
+    ],
+    "lock repair & replacement": [
+      "locksmith"
+    ],
+    "lockout service": [
+      "locksmith"
+    ],
+    "locksmith security audit": [
+      "locksmith"
+    ],
+    "logbook lessons": [
+      "drivinginstructor"
+    ],
+    "logo design": [
+      "webdesign"
+    ],
+    "luxury pedicure": [
+      "mobilenails"
+    ],
+    "luxury travel": [
+      "travelagent"
+    ],
+    "lymphatic drainage": [
+      "massagespa"
+    ],
+    "mac support": [
+      "itsupport"
+    ],
+    "macular health": [
+      "optometry"
+    ],
+    "mailbox & letterbox locks": [
+      "locksmith"
+    ],
+    "makeup lesson": [
+      "makeupartist"
+    ],
+    "managed it": [
+      "itsupport"
+    ],
+    "manicure": [
+      "nailsbeauty"
+    ],
+    "manual lessons": [
+      "drivinginstructor"
+    ],
+    "manual therapy": [
+      "physiotherapy"
+    ],
+    "marketing automation": [
+      "marketing"
+    ],
+    "marketing consulting": [
+      "coaching"
+    ],
+    "marketing strategy": [
+      "marketing"
+    ],
+    "master key systems": [
+      "locksmith"
+    ],
+    "mat pilates": [
+      "yogapilates"
+    ],
+    "maternity": [
+      "photography"
+    ],
+    "maths tutoring": [
+      "tutoring"
+    ],
+    "mattress removal": [
+      "junkremoval"
+    ],
+    "mc services": [
+      "celebrant"
+    ],
+    "meal preparation": [
+      "homecare"
+    ],
+    "medical appointments": [
+      "seniortransport"
+    ],
+    "medicated bath": [
+      "petgrooming"
+    ],
+    "medication": [
+      "petcare"
+    ],
+    "medication assistance": [
+      "homecare"
+    ],
+    "meditation": [
+      "yogapilates"
+    ],
+    "memorial service": [
+      "funeral"
+    ],
+    "men's cut": [
+      "hairsalon"
+    ],
+    "men's haircut": [
+      "barbershop"
+    ],
+    "men's health": [
+      "physiotherapy"
+    ],
+    "metal roof restoration": [
+      "roofing"
+    ],
+    "microchipping": [
+      "veterinary"
+    ],
+    "microsoft 365": [
+      "itsupport"
+    ],
+    "microwave & small appliance": [
+      "appliance"
+    ],
+    "microwave repair": [
+      "appliance"
+    ],
+    "mindset coaching": [
+      "coaching"
+    ],
+    "minor carpentry": [
+      "handyman"
+    ],
+    "mobile detailing": [
+      "cardetailing"
+    ],
+    "mobile grooming": [
+      "petgrooming"
+    ],
+    "mobile makeup": [
+      "makeupartist"
+    ],
+    "mobile manicure": [
+      "mobilenails"
+    ],
+    "mobile pedicure": [
+      "mobilenails"
+    ],
+    "mobility": [
+      "personaltraining"
+    ],
+    "mock test": [
+      "drivinginstructor"
+    ],
+    "mood boards": [
+      "interiordesign"
+    ],
+    "mosaic tiling": [
+      "tiling"
+    ],
+    "mosquito & fly control": [
+      "pestcontrol"
+    ],
+    "mother's day": [
+      "florist"
+    ],
+    "motion sensors": [
+      "security"
+    ],
+    "moustache trim": [
+      "barbershop"
+    ],
+    "move-in / move-out": [
+      "cleaning"
+    ],
+    "mulching": [
+      "landscaping",
+      "treeservices"
+    ],
+    "multicultural": [
+      "celebrant"
+    ],
+    "mums & bubs": [
+      "yogapilates"
+    ],
+    "music theory": [
+      "dancemusic"
+    ],
+    "music tutoring": [
+      "tutoring"
+    ],
+    "nail art": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "nail repair": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "nail surgery": [
+      "podiatry"
+    ],
+    "nail trim": [
+      "petgrooming"
+    ],
+    "naming ceremony": [
+      "celebrant"
+    ],
+    "nanny share": [
+      "childcare"
+    ],
+    "natural look": [
+      "makeupartist"
+    ],
+    "ndis transport": [
+      "seniortransport"
+    ],
+    "nervous driver": [
+      "drivinginstructor"
+    ],
+    "network setup": [
+      "itsupport"
+    ],
+    "new car protection": [
+      "cardetailing"
+    ],
+    "newborn": [
+      "photography"
+    ],
+    "night driving": [
+      "drivinginstructor"
+    ],
+    "night nanny": [
+      "childcare"
+    ],
+    "non-resident tax": [
+      "accounting"
+    ],
+    "nursing care": [
+      "homecare"
+    ],
+    "nursing home visits": [
+      "mobilenails"
+    ],
+    "nutrition coaching": [
+      "personaltraining"
+    ],
+    "occupational therapy – adults": [
+      "speechot"
+    ],
+    "occupational therapy – children": [
+      "speechot"
+    ],
+    "odour removal": [
+      "cardetailing"
+    ],
+    "off-grid systems": [
+      "solar"
+    ],
+    "off-market sale": [
+      "realestate"
+    ],
+    "off-the-plan": [
+      "realestate"
+    ],
+    "office cleaning": [
+      "cleaning"
+    ],
+    "office moving": [
+      "moving"
+    ],
+    "on-the-day management": [
+      "eventplanner"
+    ],
+    "one-on-one pt": [
+      "personaltraining"
+    ],
+    "ongoing pest program": [
+      "pestcontrol"
+    ],
+    "online classes": [
+      "yogapilates"
+    ],
+    "online coaching": [
+      "personaltraining"
+    ],
+    "online lessons": [
+      "dancemusic"
+    ],
+    "online programs": [
+      "coaching"
+    ],
+    "online tutoring": [
+      "tutoring"
+    ],
+    "onsite support": [
+      "itsupport"
+    ],
+    "opener installation": [
+      "garagedoors"
+    ],
+    "opener repair": [
+      "garagedoors"
+    ],
+    "operations consulting": [
+      "coaching"
+    ],
+    "order of service": [
+      "funeral"
+    ],
+    "orthotics": [
+      "podiatry"
+    ],
+    "outdoor lighting": [
+      "electrical"
+    ],
+    "outdoor tiling": [
+      "tiling"
+    ],
+    "oven & cooktop repair": [
+      "appliance"
+    ],
+    "oven cleaning": [
+      "cleaning"
+    ],
+    "overnight care": [
+      "childcare",
+      "homecare",
+      "petcare"
+    ],
+    "overseas licence conversion": [
+      "drivinginstructor"
+    ],
+    "packaging design": [
+      "webdesign"
+    ],
+    "packing": [
+      "moving"
+    ],
+    "packing materials": [
+      "moving"
+    ],
+    "paediatric": [
+      "physiotherapy"
+    ],
+    "paediatric podiatry": [
+      "podiatry"
+    ],
+    "paint correction": [
+      "cardetailing"
+    ],
+    "painting & patching": [
+      "handyman"
+    ],
+    "palliative support": [
+      "homecare"
+    ],
+    "palm tree removal": [
+      "treeservices"
+    ],
+    "pamper parties": [
+      "mobilenails"
+    ],
+    "panel replacement": [
+      "garagedoors"
+    ],
+    "panel upgrade": [
+      "electrical"
+    ],
+    "panic buttons": [
+      "security"
+    ],
+    "parenting plans": [
+      "legal"
+    ],
+    "parking practice": [
+      "drivinginstructor"
+    ],
+    "partner training": [
+      "personaltraining"
+    ],
+    "partnership tax": [
+      "accounting"
+    ],
+    "paths": [
+      "concrete"
+    ],
+    "patios": [
+      "concrete"
+    ],
+    "paving": [
+      "concrete"
+    ],
+    "paving sealing": [
+      "pressurewashing"
+    ],
+    "payroll": [
+      "accounting"
+    ],
+    "pedicure": [
+      "nailsbeauty"
+    ],
+    "pergola & shelf install": [
+      "handyman"
+    ],
+    "pergola clean": [
+      "pressurewashing"
+    ],
+    "pergola repair": [
+      "handyman"
+    ],
+    "perm": [
+      "hairsalon"
+    ],
+    "personal assistant": [
+      "virtualassistant"
+    ],
+    "personal care": [
+      "homecare"
+    ],
+    "personal chef": [
+      "catering"
+    ],
+    "personal injury": [
+      "legal"
+    ],
+    "personal loan": [
+      "mortgagebroker"
+    ],
+    "pest inspection": [
+      "pestcontrol"
+    ],
+    "pet cremation": [
+      "funeral"
+    ],
+    "pet first aid": [
+      "petcare"
+    ],
+    "pet hair removal": [
+      "cardetailing"
+    ],
+    "pet memorial": [
+      "celebrant"
+    ],
+    "pet photography": [
+      "photography"
+    ],
+    "pet sitting": [
+      "petcare"
+    ],
+    "pet taxi": [
+      "petcare"
+    ],
+    "photoshoot": [
+      "makeupartist"
+    ],
+    "piano lessons": [
+      "dancemusic"
+    ],
+    "piano moving": [
+      "moving"
+    ],
+    "picket fencing": [
+      "fencing"
+    ],
+    "piercing": [
+      "tattoo"
+    ],
+    "pilates": [
+      "personaltraining",
+      "physiotherapy"
+    ],
+    "pipe relining": [
+      "plumbing"
+    ],
+    "plant hire": [
+      "florist"
+    ],
+    "plantar fasciitis": [
+      "podiatry"
+    ],
+    "plaster repair": [
+      "painting",
+      "plastering"
+    ],
+    "plasterboard installation": [
+      "plastering"
+    ],
+    "plated dinner": [
+      "catering"
+    ],
+    "plumbing": [
+      "plumbing"
+    ],
+    "polished concrete": [
+      "concrete"
+    ],
+    "pool acid wash": [
+      "poolcleaning"
+    ],
+    "pool algae treatment": [
+      "poolcleaning"
+    ],
+    "pool cover cleaning": [
+      "poolcleaning"
+    ],
+    "pool deck wash": [
+      "pressurewashing"
+    ],
+    "pool equipment check": [
+      "poolcleaning"
+    ],
+    "pool equipment repair": [
+      "poolcleaning"
+    ],
+    "pool fencing": [
+      "fencing"
+    ],
+    "pool filter & pump service": [
+      "poolcleaning"
+    ],
+    "pool leak check": [
+      "poolcleaning"
+    ],
+    "pool opening & closing": [
+      "poolcleaning"
+    ],
+    "pool tile & surface cleaning": [
+      "poolcleaning"
+    ],
+    "pool tiling": [
+      "tiling"
+    ],
+    "post-construction clean": [
+      "cleaning"
+    ],
+    "post-hospital care": [
+      "homecare"
+    ],
+    "post-op rehab": [
+      "physiotherapy"
+    ],
+    "power of attorney": [
+      "legal"
+    ],
+    "power point & switch installation": [
+      "electrical"
+    ],
+    "pre-purchase pest inspection": [
+      "pestcontrol"
+    ],
+    "pre-sale detail": [
+      "cardetailing"
+    ],
+    "pre-sale exterior clean": [
+      "pressurewashing"
+    ],
+    "pre/post natal": [
+      "personaltraining"
+    ],
+    "pregnancy massage": [
+      "massagespa"
+    ],
+    "prehab": [
+      "physiotherapy"
+    ],
+    "prenatal yoga": [
+      "yogapilates"
+    ],
+    "prepaid funerals": [
+      "funeral"
+    ],
+    "prescription glasses": [
+      "optometry"
+    ],
+    "primary tutoring": [
+      "tutoring"
+    ],
+    "print design": [
+      "webdesign"
+    ],
+    "printer setup": [
+      "itsupport"
+    ],
+    "private dance lesson": [
+      "dancemusic"
+    ],
+    "private dining": [
+      "catering"
+    ],
+    "private pilates": [
+      "yogapilates"
+    ],
+    "private treaty sale": [
+      "realestate"
+    ],
+    "private walks": [
+      "petcare"
+    ],
+    "private yoga": [
+      "yogapilates"
+    ],
+    "probate": [
+      "legal"
+    ],
+    "product launches": [
+      "eventplanner"
+    ],
+    "product photography": [
+      "photography"
+    ],
+    "program design": [
+      "personaltraining"
+    ],
+    "project coordination": [
+      "virtualassistant"
+    ],
+    "project management": [
+      "interiordesign"
+    ],
+    "prom": [
+      "makeupartist"
+    ],
+    "property appraisal": [
+      "realestate"
+    ],
+    "property management": [
+      "realestate"
+    ],
+    "property sale": [
+      "realestate"
+    ],
+    "property styling": [
+      "interiordesign"
+    ],
+    "puppy daycare": [
+      "petcare"
+    ],
+    "puppy groom": [
+      "petgrooming"
+    ],
+    "puppy school": [
+      "veterinary"
+    ],
+    "puppy visits": [
+      "petcare"
+    ],
+    "rail travel": [
+      "travelagent"
+    ],
+    "range hood installation": [
+      "appliance"
+    ],
+    "range hood service": [
+      "appliance"
+    ],
+    "rate review": [
+      "mortgagebroker"
+    ],
+    "real estate": [
+      "photography"
+    ],
+    "real estate va": [
+      "virtualassistant"
+    ],
+    "realism": [
+      "tattoo"
+    ],
+    "rebate assistance": [
+      "solar"
+    ],
+    "refinance": [
+      "mortgagebroker"
+    ],
+    "reflexology": [
+      "massagespa"
+    ],
+    "reformer pilates": [
+      "yogapilates"
+    ],
+    "refresher lessons": [
+      "drivinginstructor"
+    ],
+    "refrigeration": [
+      "hvac"
+    ],
+    "refrigerator install": [
+      "appliance"
+    ],
+    "regrouting": [
+      "tiling"
+    ],
+    "regular nanny": [
+      "childcare"
+    ],
+    "rehab": [
+      "personaltraining"
+    ],
+    "rehearsal": [
+      "celebrant"
+    ],
+    "rekeying": [
+      "locksmith"
+    ],
+    "relationship coaching": [
+      "coaching"
+    ],
+    "relaxation massage": [
+      "massagespa"
+    ],
+    "remedial massage": [
+      "massagespa",
+      "physiotherapy"
+    ],
+    "remote programming": [
+      "garagedoors"
+    ],
+    "remote support": [
+      "itsupport"
+    ],
+    "removal": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "rendering": [
+      "painting",
+      "plastering"
+    ],
+    "renovation design": [
+      "interiordesign"
+    ],
+    "rent collection": [
+      "realestate"
+    ],
+    "rental property repairs": [
+      "appliance"
+    ],
+    "rental property tax": [
+      "accounting"
+    ],
+    "repatriation": [
+      "funeral"
+    ],
+    "research": [
+      "virtualassistant"
+    ],
+    "residential cleaning": [
+      "cleaning"
+    ],
+    "residential design": [
+      "interiordesign"
+    ],
+    "respite care": [
+      "homecare"
+    ],
+    "respite transport": [
+      "seniortransport"
+    ],
+    "retaining wall maintenance": [
+      "landscaping"
+    ],
+    "retaining walls": [
+      "concrete",
+      "fencing"
+    ],
+    "retreats": [
+      "coaching"
+    ],
+    "ridge capping repair": [
+      "roofing"
+    ],
+    "rodent control": [
+      "pestcontrol"
+    ],
+    "roller door repair": [
+      "garagedoors"
+    ],
+    "roller replacement": [
+      "garagedoors"
+    ],
+    "roof inspection": [
+      "roofing"
+    ],
+    "roof leak repair": [
+      "roofing"
+    ],
+    "roof painting": [
+      "painting",
+      "roofing"
+    ],
+    "roof replacement": [
+      "roofing"
+    ],
+    "roof repointing": [
+      "roofing"
+    ],
+    "roof soft wash": [
+      "pressurewashing"
+    ],
+    "root canal": [
+      "dental"
+    ],
+    "root removal": [
+      "treeservices"
+    ],
+    "routine inspections": [
+      "realestate"
+    ],
+    "rural & acreage": [
+      "realestate"
+    ],
+    "safe opening & installation": [
+      "locksmith"
+    ],
+    "safety glasses": [
+      "optometry"
+    ],
+    "safety switch (rcd) installation": [
+      "electrical"
+    ],
+    "sales coaching": [
+      "coaching"
+    ],
+    "salt chlorinator service": [
+      "poolcleaning"
+    ],
+    "same-day junk": [
+      "junkremoval"
+    ],
+    "same-sex wedding": [
+      "celebrant"
+    ],
+    "scale & clean": [
+      "dental"
+    ],
+    "scalp treatment": [
+      "barbershop",
+      "hairsalon"
+    ],
+    "school support": [
+      "speechot"
+    ],
+    "school transport": [
+      "seniortransport"
+    ],
+    "school trips": [
+      "travelagent"
+    ],
+    "science tutoring": [
+      "tutoring"
+    ],
+    "screeding": [
+      "tiling"
+    ],
+    "script / lettering": [
+      "tattoo"
+    ],
+    "sectional door repair": [
+      "garagedoors"
+    ],
+    "security cameras": [
+      "security"
+    ],
+    "security fencing": [
+      "fencing"
+    ],
+    "self-employed loans": [
+      "mortgagebroker"
+    ],
+    "self-managed super fund": [
+      "accounting"
+    ],
+    "senior cut": [
+      "barbershop"
+    ],
+    "senior fitness": [
+      "personaltraining"
+    ],
+    "senior moving": [
+      "moving"
+    ],
+    "senior pet checks": [
+      "veterinary"
+    ],
+    "senior refresher": [
+      "drivinginstructor"
+    ],
+    "seniors yoga": [
+      "yogapilates"
+    ],
+    "sensor repair": [
+      "garagedoors"
+    ],
+    "sensory integration": [
+      "speechot"
+    ],
+    "seo": [
+      "marketing"
+    ],
+    "seo setup": [
+      "webdesign"
+    ],
+    "server support": [
+      "itsupport"
+    ],
+    "sfx": [
+      "makeupartist"
+    ],
+    "shellac": [
+      "nailsbeauty"
+    ],
+    "shelving installation": [
+      "handyman"
+    ],
+    "shiatsu": [
+      "massagespa"
+    ],
+    "shopify": [
+      "webdesign"
+    ],
+    "shopping assistance": [
+      "homecare"
+    ],
+    "shopping trips": [
+      "seniortransport"
+    ],
+    "shoulder": [
+      "physiotherapy"
+    ],
+    "singing lessons": [
+      "dancemusic"
+    ],
+    "ski holidays": [
+      "travelagent"
+    ],
+    "skimming": [
+      "plastering"
+    ],
+    "skin fade": [
+      "barbershop"
+    ],
+    "skip bin alternative": [
+      "junkremoval"
+    ],
+    "skylight installation": [
+      "roofing"
+    ],
+    "skylight replacement": [
+      "roofing"
+    ],
+    "sleeve": [
+      "tattoo"
+    ],
+    "small group training": [
+      "personaltraining"
+    ],
+    "small tattoo": [
+      "tattoo"
+    ],
+    "smart home setup": [
+      "itsupport"
+    ],
+    "smart lock installation": [
+      "locksmith"
+    ],
+    "smart locks": [
+      "security"
+    ],
+    "smoke alarm installation": [
+      "electrical"
+    ],
+    "smsf loan": [
+      "mortgagebroker"
+    ],
+    "sns": [
+      "mobilenails",
+      "nailsbeauty"
+    ],
+    "social media": [
+      "virtualassistant"
+    ],
+    "social media management": [
+      "marketing"
+    ],
+    "social outings": [
+      "seniortransport"
+    ],
+    "social support": [
+      "homecare"
+    ],
+    "soft wash (low pressure)": [
+      "pressurewashing"
+    ],
+    "solar & battery": [
+      "electrical"
+    ],
+    "solar cleaning": [
+      "solar"
+    ],
+    "solar inspection": [
+      "solar"
+    ],
+    "solar maintenance": [
+      "solar"
+    ],
+    "solar panel clean": [
+      "pressurewashing"
+    ],
+    "solar panel installation": [
+      "solar"
+    ],
+    "solar panel roof fix": [
+      "roofing"
+    ],
+    "solar repair": [
+      "solar"
+    ],
+    "soundproofing": [
+      "plastering"
+    ],
+    "spa cleaning": [
+      "poolcleaning"
+    ],
+    "space planning": [
+      "interiordesign"
+    ],
+    "special event": [
+      "makeupartist"
+    ],
+    "special needs": [
+      "tutoring"
+    ],
+    "special needs care": [
+      "childcare"
+    ],
+    "speech assessment": [
+      "speechot"
+    ],
+    "speech therapy – adults": [
+      "speechot"
+    ],
+    "speech therapy – children": [
+      "speechot"
+    ],
+    "split system install": [
+      "hvac"
+    ],
+    "sports conditioning": [
+      "personaltraining"
+    ],
+    "sports injury": [
+      "physiotherapy"
+    ],
+    "sports massage": [
+      "massagespa"
+    ],
+    "sports physio": [
+      "physiotherapy"
+    ],
+    "sports podiatry": [
+      "podiatry"
+    ],
+    "sports vision": [
+      "optometry"
+    ],
+    "spray tan": [
+      "nailsbeauty"
+    ],
+    "spring clean": [
+      "cleaning"
+    ],
+    "spring replacement": [
+      "garagedoors"
+    ],
+    "squarespace": [
+      "webdesign"
+    ],
+    "stamped concrete": [
+      "concrete"
+    ],
+    "storage": [
+      "moving"
+    ],
+    "storm damage": [
+      "treeservices"
+    ],
+    "storm damage repair": [
+      "roofing"
+    ],
+    "storm damage tarp": [
+      "roofing"
+    ],
+    "stormwater drain work": [
+      "plumbing"
+    ],
+    "strata & common area clean": [
+      "cleaning"
+    ],
+    "strategy consulting": [
+      "coaching"
+    ],
+    "strength training": [
+      "personaltraining"
+    ],
+    "stump grinding": [
+      "treeservices"
+    ],
+    "stuttering": [
+      "speechot"
+    ],
+    "styling": [
+      "interiordesign"
+    ],
+    "styling & hire": [
+      "eventplanner"
+    ],
+    "sunglasses": [
+      "optometry"
+    ],
+    "support work": [
+      "seniortransport"
+    ],
+    "surgery": [
+      "veterinary"
+    ],
+    "swallowing": [
+      "speechot"
+    ],
+    "switchboard upgrade": [
+      "electrical"
+    ],
+    "sympathy flowers": [
+      "florist"
+    ],
+    "system upgrade": [
+      "solar"
+    ],
+    "table centrepieces": [
+      "florist"
+    ],
+    "tap": [
+      "dancemusic"
+    ],
+    "tap & toilet repair": [
+      "plumbing"
+    ],
+    "tap replacement": [
+      "plumbing"
+    ],
+    "tattoo removal": [
+      "tattoo"
+    ],
+    "tax planning": [
+      "accounting"
+    ],
+    "teacher training": [
+      "yogapilates"
+    ],
+    "team coaching": [
+      "coaching"
+    ],
+    "teeth cleaning": [
+      "petgrooming"
+    ],
+    "teeth whitening": [
+      "dental"
+    ],
+    "telehealth": [
+      "physiotherapy",
+      "podiatry",
+      "speechot"
+    ],
+    "telehealth review": [
+      "optometry"
+    ],
+    "tenant changeover rekey": [
+      "locksmith"
+    ],
+    "tenant finding": [
+      "realestate"
+    ],
+    "termite inspection & treatment": [
+      "pestcontrol"
+    ],
+    "test car hire": [
+      "drivinginstructor"
+    ],
+    "test preparation": [
+      "drivinginstructor"
+    ],
+    "texture coating": [
+      "painting",
+      "plastering"
+    ],
+    "thai massage": [
+      "massagespa"
+    ],
+    "thermostat & controls": [
+      "hvac"
+    ],
+    "thermostat replacement": [
+      "hvac"
+    ],
+    "tile & sheet replacement": [
+      "roofing"
+    ],
+    "tile flooring": [
+      "flooring"
+    ],
+    "tile repair": [
+      "handyman",
+      "tiling"
+    ],
+    "tile replacement": [
+      "tiling"
+    ],
+    "tilt door repair": [
+      "garagedoors"
+    ],
+    "timber fencing": [
+      "fencing"
+    ],
+    "timber flooring": [
+      "flooring"
+    ],
+    "tinting": [
+      "nailsbeauty"
+    ],
+    "tip runs": [
+      "junkremoval"
+    ],
+    "toilet installation": [
+      "plumbing"
+    ],
+    "toner & gloss": [
+      "hairsalon"
+    ],
+    "touch-up": [
+      "tattoo"
+    ],
+    "track repair": [
+      "garagedoors"
+    ],
+    "traditional": [
+      "tattoo"
+    ],
+    "traffic law": [
+      "legal"
+    ],
+    "transcription": [
+      "virtualassistant"
+    ],
+    "transport": [
+      "homecare"
+    ],
+    "travel booking": [
+      "virtualassistant"
+    ],
+    "travel insurance": [
+      "travelagent"
+    ],
+    "travel nanny": [
+      "childcare"
+    ],
+    "tree lopping": [
+      "treeservices"
+    ],
+    "tree pruning": [
+      "treeservices"
+    ],
+    "tree removal": [
+      "treeservices"
+    ],
+    "tree removal & pruning": [
+      "landscaping"
+    ],
+    "trial": [
+      "makeupartist"
+    ],
+    "trim & skirting": [
+      "painting"
+    ],
+    "trust tax": [
+      "accounting"
+    ],
+    "turf installation": [
+      "landscaping"
+    ],
+    "tv mounting": [
+      "handyman"
+    ],
+    "twins & multiples": [
+      "childcare"
+    ],
+    "ukulele": [
+      "dancemusic"
+    ],
+    "underlay installation": [
+      "flooring"
+    ],
+    "university tutoring": [
+      "tutoring"
+    ],
+    "unpacking": [
+      "moving"
+    ],
+    "updo": [
+      "hairsalon"
+    ],
+    "urn selection": [
+      "funeral"
+    ],
+    "ux/ui design": [
+      "webdesign"
+    ],
+    "vacating inspection": [
+      "realestate"
+    ],
+    "vaccinations": [
+      "veterinary"
+    ],
+    "valentine's day": [
+      "florist"
+    ],
+    "vascular assessment": [
+      "podiatry"
+    ],
+    "vegan & vegetarian": [
+      "catering"
+    ],
+    "vehicle transport": [
+      "moving"
+    ],
+    "vendor sourcing": [
+      "eventplanner"
+    ],
+    "veneers": [
+      "dental"
+    ],
+    "vet consultation": [
+      "veterinary"
+    ],
+    "vet visits": [
+      "petcare"
+    ],
+    "videography": [
+      "photography"
+    ],
+    "vinyasa": [
+      "yogapilates"
+    ],
+    "vinyl flooring": [
+      "flooring"
+    ],
+    "violin lessons": [
+      "dancemusic"
+    ],
+    "virus removal": [
+      "itsupport"
+    ],
+    "visas": [
+      "travelagent"
+    ],
+    "vow renewal": [
+      "celebrant"
+    ],
+    "wall tiling": [
+      "tiling"
+    ],
+    "wallpaper installation": [
+      "painting"
+    ],
+    "wart treatment": [
+      "podiatry"
+    ],
+    "wash & style": [
+      "hairsalon"
+    ],
+    "washing machine repair": [
+      "appliance"
+    ],
+    "wasp & bee removal": [
+      "pestcontrol"
+    ],
+    "water damage repair": [
+      "plastering"
+    ],
+    "water heater": [
+      "plumbing"
+    ],
+    "water testing & chemical balance": [
+      "poolcleaning"
+    ],
+    "waterproofing": [
+      "tiling"
+    ],
+    "waxing": [
+      "nailsbeauty"
+    ],
+    "webflow": [
+      "webdesign"
+    ],
+    "website design": [
+      "webdesign"
+    ],
+    "website development": [
+      "webdesign"
+    ],
+    "website maintenance": [
+      "webdesign"
+    ],
+    "wedding catering": [
+      "catering"
+    ],
+    "wedding ceremony": [
+      "celebrant"
+    ],
+    "wedding dance": [
+      "dancemusic"
+    ],
+    "wedding day coordination": [
+      "eventplanner"
+    ],
+    "wedding flowers": [
+      "florist"
+    ],
+    "wedding photography": [
+      "photography"
+    ],
+    "wedding planning": [
+      "eventplanner"
+    ],
+    "wedding styling": [
+      "eventplanner"
+    ],
+    "weekend care": [
+      "childcare"
+    ],
+    "weekly meal prep": [
+      "catering"
+    ],
+    "weekly pool service": [
+      "poolcleaning"
+    ],
+    "weight loss": [
+      "personaltraining"
+    ],
+    "wheelchair accessible": [
+      "seniortransport"
+    ],
+    "wi-fi setup": [
+      "itsupport"
+    ],
+    "wills & estates": [
+      "legal"
+    ],
+    "window cleaning": [
+      "cleaning"
+    ],
+    "window frame wash": [
+      "pressurewashing"
+    ],
+    "wisdom teeth": [
+      "dental"
+    ],
+    "women's cut & style": [
+      "hairsalon"
+    ],
+    "women's health": [
+      "physiotherapy"
+    ],
+    "wordpress": [
+      "webdesign"
+    ],
+    "workshops": [
+      "coaching"
+    ],
+    "workshops & retreats": [
+      "yogapilates"
+    ],
+    "x-ray & ultrasound": [
+      "veterinary"
+    ],
+    "yard clean-up": [
+      "landscaping"
+    ],
+    "yin yoga": [
+      "yogapilates"
+    ],
+    "yoga": [
+      "personaltraining"
+    ]
+  },
+  "feature_map": {
+    "crm": [],
+    "service_catalog": [
+      "accounting",
+      "appliance",
+      "barbershop",
+      "cardetailing",
+      "catering",
+      "celebrant",
+      "childcare",
+      "cleaning",
+      "coaching",
+      "concrete",
+      "dancemusic",
+      "dental",
+      "drivinginstructor",
+      "electrical",
+      "eventplanner",
+      "fencing",
+      "flooring",
+      "florist",
+      "funeral",
+      "garagedoors",
+      "hairsalon",
+      "handyman",
+      "homecare",
+      "hvac",
+      "interiordesign",
+      "itsupport",
+      "junkremoval",
+      "landscaping",
+      "legal",
+      "locksmith",
+      "makeupartist",
+      "marketing",
+      "massagespa",
+      "mobilenails",
+      "mortgagebroker",
+      "moving",
+      "nailsbeauty",
+      "optometry",
+      "painting",
+      "personaltraining",
+      "pestcontrol",
+      "petcare",
+      "petgrooming",
+      "photography",
+      "physiotherapy",
+      "plastering",
+      "plumbing",
+      "podiatry",
+      "poolcleaning",
+      "pressurewashing",
+      "realestate",
+      "roofing",
+      "security",
+      "seniortransport",
+      "solar",
+      "speechot",
+      "tattoo",
+      "tiling",
+      "travelagent",
+      "treeservices",
+      "tutoring",
+      "veterinary",
+      "virtualassistant",
+      "webdesign",
+      "yogapilates"
+    ],
+    "staff_skills": [],
+    "scheduling": [],
+    "resources": [],
+    "compliance": [],
+    "automation": [],
+    "reporting": []
+  },
+  "features": [
+    "crm",
+    "service_catalog",
+    "staff_skills",
+    "scheduling",
+    "resources",
+    "compliance",
+    "automation",
+    "reporting"
+  ],
+  "status": "format-3 coverage is source-reviewed, not runtime-verified; compliance remains unreviewed and automation remains disabled"
+}

@@ -1,0 +1,118 @@
+<?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin-owned custom tables. Live transactional data must not be served from cache; values are bound with prepare() or %i placeholders.
+/**
+ * Lead intake from Titan Zero Business Builder.
+ *
+ * Builder fires do_action( 'tz_builder_lead_captured', $payload ). This class listens and stores
+ * the enquiry in Front Desk's own tz_enquiries table, stamped with the company from the payload.
+ * It writes nothing to any other plugin's table. Builder refuses lead intake when nothing listens
+ * on this hook, so registering here is what lets Builder's leads reach Front Desk.
+ */
+if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+final class TZFD_Lead_Intake {
+
+    const HOOK = 'tz_builder_lead_captured';
+
+    /** Called once from tz_fd_boot(), after Workspace is confirmed. */
+    public static function register() {
+        add_action( self::HOOK, array( __CLASS__, 'receive' ), 10, 1 );
+        add_shortcode( 'tzfd_enquiry_form', array( __CLASS__, 'shortcode' ) );
+        add_action( 'admin_post_nopriv_tzfd_public_enquiry', array( __CLASS__, 'submit_public' ) );
+        add_action( 'admin_post_tzfd_public_enquiry', array( __CLASS__, 'submit_public' ) );
+    }
+
+    /** Public, nonce-protected enquiry form. No dependency on other plugins. */
+    public static function shortcode() {
+        if ( ! class_exists( 'TZFD_Scoped_Store' ) || (int) TZFD_Scoped_Store::company_id() < 1 ) { return ''; }
+        require_once __DIR__ . '/class-tzfd-ui-graphics.php';
+        $out = '<form class="tzfd-public-enquiry" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+        $out .= '<input type="hidden" name="action" value="tzfd_public_enquiry">';
+        $out .= wp_nonce_field( 'tzfd_public_enquiry', '_tzfd_enquiry_nonce', true, false );
+        $out .= '<label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' <input required maxlength="190" name="name" autocomplete="name"></label>';
+        $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'email', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . ' <input required type="email" maxlength="190" name="email" autocomplete="email"></label>';
+        $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'phone', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Phone (optional)', 'titan-zero-trades-front-desk' ) . ' <input maxlength="60" name="phone" autocomplete="tel"></label>';
+        $out .= '<label>' . esc_html__( 'How can we help?', 'titan-zero-trades-front-desk' ) . ' <textarea required maxlength="5000" name="enquiry"></textarea></label>';
+        $out .= '<div class="tzfd-hp" aria-hidden="true" style="position:absolute;left:-9999px"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>';
+        $out .= '<button type="submit">' . esc_html__( 'Send enquiry', 'titan-zero-trades-front-desk' ) . '</button></form>';
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.
+        if ( isset( $_GET['tzfd_enquiry_sent'] ) && '1' === sanitize_text_field( wp_unslash( $_GET['tzfd_enquiry_sent'] ) ) ) { $out = '<p role="status">' . esc_html__( 'Thank you. Your enquiry has been received.', 'titan-zero-trades-front-desk' ) . '</p>' . $out; }
+        return $out;
+    }
+
+    public static function submit_public() {
+        if ( 'POST' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) ) ) { wp_die( esc_html__( 'Method not allowed', 'titan-zero-trades-front-desk' ), '', array( 'response' => 405 ) ); }
+        if ( ! isset( $_POST['_tzfd_enquiry_nonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_tzfd_enquiry_nonce'] ) ), 'tzfd_public_enquiry' ) ) { wp_die( esc_html__( 'Invalid form submission', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
+        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- honeypot presence check; raw value is never stored or output, and sanitizing would trim whitespace-only bot input into a pass.
+        if ( ! empty( wp_unslash( $_POST['website'] ?? '' ) ) ) { wp_die( esc_html__( 'Invalid submission', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
+        $company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+        if ( $company < 1 ) { wp_die( esc_html__( 'Enquiry form unavailable', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }
+        $email = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+        $name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
+        $message = sanitize_textarea_field( wp_unslash( $_POST['enquiry'] ?? '' ) );
+        if ( ! is_email( $email ) || '' === trim( $name ) || '' === trim( $message ) || strlen( $message ) > 5000 ) { wp_die( esc_html__( 'Please complete all required fields', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
+        $key = 'tzfd_enq_' . md5( $company . '|' . (string) sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
+        if ( get_transient( $key ) ) { wp_die( esc_html__( 'Please wait before submitting another enquiry', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
+        set_transient( $key, 1, MINUTE_IN_SECONDS );
+        $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form' ) );
+        if ( ! $saved ) { wp_die( esc_html__( 'Your enquiry could not be saved. Please contact us directly.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }
+        $referer = wp_get_referer();
+        wp_safe_redirect( add_query_arg( 'tzfd_enquiry_sent', '1', $referer ? $referer : home_url( '/' ) ) );
+        exit;
+    }
+
+    /**
+     * Stores one enquiry. Returns the new row id, the existing row id for a duplicate, or 0 when the payload is refused.
+     *
+     * @param mixed $payload Array from Builder (see class header).
+     * @return int
+     */
+    public static function receive( $payload ) {
+        global $wpdb;
+        if ( ! is_array( $payload ) ) { return 0; }
+
+        $company_id = isset( $payload['company_id'] ) && ( is_int( $payload['company_id'] ) || is_string( $payload['company_id'] ) ) && preg_match( '/^[1-9][0-9]*$/D', (string) $payload['company_id'] ) ? absint( $payload['company_id'] ) : 0;
+        if ( 0 === $company_id ) { return 0; } // Fail closed: an enquiry without a company is never stored.
+
+        $name    = isset( $payload['name'] ) && is_scalar( $payload['name'] ) ? sanitize_text_field( (string) $payload['name'] ) : '';
+        $email   = isset( $payload['email'] ) && is_scalar( $payload['email'] ) ? sanitize_email( (string) $payload['email'] ) : '';
+        $phone   = isset( $payload['phone'] ) && is_scalar( $payload['phone'] ) ? sanitize_text_field( (string) $payload['phone'] ) : '';
+        $enquiry = isset( $payload['enquiry'] ) && is_scalar( $payload['enquiry'] ) ? sanitize_textarea_field( (string) $payload['enquiry'] ) : '';
+        if ( '' === $name && '' === $email && '' === $phone && '' === $enquiry ) { return 0; }
+
+        $received = isset( $payload['received'] ) && is_scalar( $payload['received'] ) ? sanitize_text_field( (string) $payload['received'] ) : '';
+        // Builder data is external to Front Desk; reject impossible calendar dates, not just invalid formats.
+        $received_date = false;
+        if ( preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $received ) ) {
+            $received_date = DateTimeImmutable::createFromFormat( '!Y-m-d H:i:s', $received, new DateTimeZone( 'UTC' ) );
+        }
+        $received = $received_date instanceof DateTimeImmutable && $received_date->format( 'Y-m-d H:i:s' ) === $received
+            ? $received
+            : gmdate( 'Y-m-d H:i:s' );
+
+        $row = array(
+            'company_id'        => $company_id,
+            'name'              => substr( $name, 0, 190 ),
+            'email'             => substr( $email, 0, 190 ),
+            'phone'             => substr( $phone, 0, 60 ),
+            'preferred_contact' => isset( $payload['preferred_contact'] ) && is_scalar( $payload['preferred_contact'] ) ? substr( sanitize_key( (string) $payload['preferred_contact'] ), 0, 20 ) : '',
+            'enquiry'           => $enquiry,
+            'campaign_id'       => isset( $payload['campaign_id'] ) && is_scalar( $payload['campaign_id'] ) ? absint( $payload['campaign_id'] ) : 0,
+            'campaign_title'    => isset( $payload['campaign_title'] ) && is_scalar( $payload['campaign_title'] ) ? substr( sanitize_text_field( (string) $payload['campaign_title'] ), 0, 190 ) : '',
+            'source'            => isset( $payload['source'] ) && is_scalar( $payload['source'] ) ? substr( sanitize_key( (string) $payload['source'] ), 0, 60 ) : '',
+            'received_utc'      => $received,
+            'status'            => 'new',
+            'created'           => current_time( 'mysql' ),
+        );
+
+        $table = TZFD_Tables::name( TZFD_Tables::ENQUIRIES );
+        // Duplicate guard: a reloaded or re-posted form sends the same enquiry again. The same company, email and text
+        // inside 10 minutes is one enquiry. Without an email, name and enquiry text decide.
+        $dupe = $wpdb->get_var( $wpdb->prepare("SELECT id FROM %i WHERE company_id = %d AND email = %s AND name = %s AND enquiry = %s AND created >= %s LIMIT 1", $table, // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- table name from TZFD_Tables.
+            $company_id, $email, $name, $enquiry, gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 600 )) );
+        // A duplicate is a success, not a failure: return the stored row so the caller shows the same confirmation. Nothing is stored twice.
+        if ( $dupe ) { return (int) $dupe; }
+        $ok    = $wpdb->insert( $table, $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Front Desk's own table; company_id set above.
+        return $ok ? (int) $wpdb->insert_id : 0;
+    }
+}

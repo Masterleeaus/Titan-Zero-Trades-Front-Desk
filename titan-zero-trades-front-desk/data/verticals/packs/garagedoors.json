@@ -1,0 +1,400 @@
+{
+  "format": 3,
+  "id": "garagedoors",
+  "name": "Garage Doors",
+  "icon": "\ud83d\udeaa",
+  "tagline": "Repairs, installation, openers, springs, remotes",
+  "version": "1.1.0",
+  "category": "licensed_trade",
+  "source_sha256": "36b3bad463782e241dbe3d7eaf7a49dd73bf5f46a627db4a1f24e7a561784429",
+  "terminology": {
+    "customer": "customer",
+    "job": "job",
+    "site": "property",
+    "quote": "quote",
+    "staff": "technician",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Garage door repair",
+    "Garage door installation",
+    "Spring replacement (torsion and extension)",
+    "Opener repair",
+    "Opener installation",
+    "Panel replacement",
+    "Cable replacement",
+    "Roller replacement",
+    "Track repair and realignment",
+    "Remote supply and programming",
+    "Sensor repair",
+    "Roller door repair",
+    "Sectional door repair",
+    "Tilt door repair",
+    "Commercial roller and sectional doors",
+    "Garage door servicing",
+    "Emergency garage door call-out"
+  ],
+  "catalog": [
+    {
+      "sku": "GD-CALL",
+      "label": "Garage door call-out fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "callout,fee"
+    },
+    {
+      "sku": "GD-SPRING",
+      "label": "Spring replacement, pair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "spring,torsion"
+    },
+    {
+      "sku": "GD-OPENER",
+      "label": "Opener installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 550,
+      "taxable": 1,
+      "keywords": "opener,install"
+    },
+    {
+      "sku": "GD-OPENREP",
+      "label": "Opener repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "opener,repair"
+    },
+    {
+      "sku": "GD-REMOTE",
+      "label": "Remote supply and programming",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "remote,program"
+    },
+    {
+      "sku": "GD-PANEL",
+      "label": "Panel replacement",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "panel,replace"
+    },
+    {
+      "sku": "GD-CABLE",
+      "label": "Cable replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "cable,replace"
+    },
+    {
+      "sku": "GD-ROLLER",
+      "label": "Roller replacement, each",
+      "kind": "material",
+      "unit": "each",
+      "unit_price": 18,
+      "taxable": 1,
+      "keywords": "roller,replace"
+    },
+    {
+      "sku": "GD-TRACK",
+      "label": "Track repair",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "track,repair"
+    },
+    {
+      "sku": "GD-SERV",
+      "label": "Garage door service",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "service,maintenance"
+    }
+  ],
+  "staff_skills": [
+    "garage doors",
+    "torsion and extension springs",
+    "openers",
+    "panels",
+    "tracks and rollers",
+    "cables",
+    "remotes and sensors",
+    "commercial roller doors",
+    "door balancing",
+    "insulated doors"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "door stuck",
+      "car trapped",
+      "spring broken",
+      "door off track",
+      "security risk",
+      "door won't close",
+      "door falling"
+    ],
+    "urgent": [
+      "door won't open",
+      "door won't close fully",
+      "strange noise",
+      "remote not working",
+      "door opening slowly",
+      "panel damaged"
+    ],
+    "routine": [
+      "service",
+      "maintenance",
+      "quote",
+      "install",
+      "new remote",
+      "new door"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional garage door company. Ask for the door type (roller, sectional, tilt), the brand, and the exact fault. Ask whether the door is stuck open or closed and whether a car is trapped. Ask about access and ceiling height. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a repair outcome or warranty that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. Certificates are available on request.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer emergency garage door repair?",
+      "a": "Yes, emergency call-outs are available for stuck doors, broken springs, and cars trapped inside. Tell us what happened when you call.",
+      "keywords": "emergency,stuck,spring,trapped",
+      "priority": 10
+    },
+    {
+      "q": "How much does a garage door repair cost?",
+      "a": "{price_note} The cost depends on the fault and the parts needed. We quote before any work begins.",
+      "keywords": "cost,price,repair,parts",
+      "priority": 10
+    },
+    {
+      "q": "Do you replace springs?",
+      "a": "Yes, we replace torsion and extension springs. Springs are replaced in pairs so the door stays balanced.",
+      "keywords": "spring,torsion,extension,pair",
+      "priority": 10
+    },
+    {
+      "q": "Do you install openers?",
+      "a": "Yes, we supply and install garage door openers. We check the door's weight and track before we recommend a model.",
+      "keywords": "opener,install,model,track",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair openers?",
+      "a": "Yes, we repair and service garage door openers. Tell us the opener brand and what it is doing when you book.",
+      "keywords": "opener,repair,service,brand",
+      "priority": 9
+    },
+    {
+      "q": "Can you program a new remote?",
+      "a": "Yes, we program remotes and can supply new ones. Tell us the door model if you know it, and we will confirm compatibility.",
+      "keywords": "remote,program,compatibility",
+      "priority": 8
+    },
+    {
+      "q": "Do you replace panels?",
+      "a": "Yes, we replace damaged panels where the panel is still available. If it is not, we will advise on the closest match.",
+      "keywords": "panel,replace,match",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair tracks?",
+      "a": "Yes, we repair and realign garage door tracks. A bent or loose track can stop the door closing, so book a visit as soon as you notice it.",
+      "keywords": "track,realign,bent,loose",
+      "priority": 9
+    },
+    {
+      "q": "Do you replace cables?",
+      "a": "Yes, we replace cables and rollers. Cables are often replaced with the rollers and springs, so we check all three on the visit.",
+      "keywords": "cable,roller,spring,visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you install new doors?",
+      "a": "Yes, we supply and install new garage doors. We measure the opening and check the headroom before we quote.",
+      "keywords": "new door,install,measure,headroom",
+      "priority": 8
+    },
+    {
+      "q": "Do you service commercial doors?",
+      "a": "Yes, we service commercial roller and sectional doors. Commercial jobs are quoted after a site visit.",
+      "keywords": "commercial,roller,sectional,site visit",
+      "priority": 8
+    },
+    {
+      "q": "How long does a repair take?",
+      "a": "Most repairs take [number] hours, and spring replacements usually take [number] hours. We confirm the time when we quote.",
+      "keywords": "how long,repair,time,hours",
+      "priority": 8
+    },
+    {
+      "q": "What brands do you service?",
+      "a": "We service most major brands. Tell us the brand and model when you book, so we can bring the right parts.",
+      "keywords": "brand,model,parts,service",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us to explain what is covered before the job starts.",
+      "keywords": "warranty,guarantee,redo",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [service area] and nearby suburbs. Tell us your suburb when you book, and we will confirm whether we cover it.",
+      "keywords": "areas,suburb,service area",
+      "priority": 8
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Someone needs to be home or able to give us access. Tell us about any gates, keys, or remote codes when you book.",
+      "keywords": "home,access,keys,gate",
+      "priority": 8
+    },
+    {
+      "q": "Do you charge a call-out fee?",
+      "a": "{callout_note} The call-out fee is shown in your quote before we start work.",
+      "keywords": "call-out,fee,quote",
+      "priority": 9
+    },
+    {
+      "q": "Can you make my door quieter?",
+      "a": "Yes, we lubricate and service the door, and check the rollers and hinges. This often reduces noise, but some noise comes from worn parts that need replacing.",
+      "keywords": "quiet,noise,lubricate,rollers",
+      "priority": 7
+    },
+    {
+      "q": "Do you install insulated doors?",
+      "a": "Yes, we can supply insulated garage doors. Tell us what the garage is used for, and we will recommend options that suit it.",
+      "keywords": "insulated,insulation,door,options",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please make sure someone can give access to {site_label}.",
+    "reminder": "Reminder: {business} will attend for your {job} on {date}.",
+    "quote_intro": "Here is the quote for the {job} at your {site_label}. The price includes parts and labour as listed.",
+    "invoice_note": "Thank you for choosing {business}. Payment is due within the terms shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "asset_details",
+      "label": "Equipment or asset details (make, model, age)",
+      "required": true
+    },
+    {
+      "key": "urgency",
+      "label": "Is it an emergency or a safety issue?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "garagedoors.rule1",
+      "trigger": "enquiry.received",
+      "action": "reply_to_enquiry",
+      "description": "Reply within two hours during business hours",
+      "enabled": false
+    },
+    {
+      "id": "garagedoors.rule2",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "garagedoors.rule3",
+      "trigger": "licence.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before a technician licence expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Garage door work with electrical or gas components may need licensed workers. Check the licence rules that apply to the components you install or repair.",
+    "items": [
+      "Licence for any electrical work on the door",
+      "Safety test record for each installation"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "specialist equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "quote conversion rate",
+    "average job value",
+    "callouts and repeat visits"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

@@ -1,0 +1,355 @@
+{
+  "format": 3,
+  "id": "virtualassistant",
+  "name": "Virtual Assistants",
+  "icon": "🖥️",
+  "tagline": "Admin, inbox, calendar, bookkeeping, research",
+  "version": "1.1.0",
+  "category": "business",
+  "source_sha256": "89523f2eee7d6b32b2991c5fd6a273a69e09f84c0bcd5ebf5f831599b17980bb",
+  "terminology": {
+    "customer": "client",
+    "job": "task",
+    "site": "remote",
+    "quote": "proposal",
+    "staff": "assistant",
+    "visit": "meeting"
+  },
+  "service_types": [
+    "General Admin Support",
+    "Inbox Management",
+    "Calendar Management",
+    "Data Entry",
+    "Customer Service Support",
+    "Bookkeeping Support",
+    "Social Media Management",
+    "Research",
+    "Travel Booking",
+    "Project Coordination",
+    "CRM Management",
+    "Transcription and Minutes",
+    "Personal Assistant",
+    "Executive Assistant",
+    "E-commerce Support",
+    "Real Estate Admin Support"
+  ],
+  "catalog": [
+    {
+      "sku": "VA-HR",
+      "label": "VA hourly rate",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "VA-10",
+      "label": "10-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 500,
+      "taxable": 1,
+      "keywords": "10 hour"
+    },
+    {
+      "sku": "VA-20",
+      "label": "20-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 950,
+      "taxable": 1,
+      "keywords": "20 hour"
+    },
+    {
+      "sku": "VA-40",
+      "label": "40-hour monthly package",
+      "kind": "labor",
+      "unit": "month",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "40 hour"
+    },
+    {
+      "sku": "VA-BOOK",
+      "label": "Bookkeeping VA (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 65,
+      "taxable": 1,
+      "keywords": "bookkeeping"
+    },
+    {
+      "sku": "VA-SOCIAL",
+      "label": "Social media VA (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 60,
+      "taxable": 1,
+      "keywords": "social media"
+    },
+    {
+      "sku": "VA-EXEC",
+      "label": "Executive assistant (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 75,
+      "taxable": 1,
+      "keywords": "executive"
+    },
+    {
+      "sku": "VA-PROJ",
+      "label": "Project rate (per project)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 1,
+      "keywords": "project"
+    },
+    {
+      "sku": "VA-SETUP",
+      "label": "Onboarding and setup",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 150,
+      "taxable": 1,
+      "keywords": "onboarding"
+    },
+    {
+      "sku": "VA-RUSH",
+      "label": "Rush or after-hours rate (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "rush,after hours"
+    }
+  ],
+  "staff_skills": [
+    "general admin",
+    "inbox and calendar management",
+    "bookkeeping (Xero, MYOB)",
+    "social media",
+    "crm",
+    "research",
+    "transcription",
+    "e-commerce platforms",
+    "real estate admin"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "inbox overdue",
+      "urgent deadline today",
+      "missed payment run",
+      "backlog blocking clients"
+    ],
+    "urgent": [
+      "this week",
+      "starting now",
+      "asap",
+      "tax deadline",
+      "month-end"
+    ],
+    "routine": [
+      "retainer",
+      "monthly",
+      "hourly",
+      "quote",
+      "onboarding",
+      "trial hours",
+      "project scope"
+    ]
+  },
+  "extra_prompt": "You are booking for a virtual assistant service. Ask about the tasks, hours per week, tools used, and time zone. Ask about confidentiality and whether an NDA is needed. Quote prices only from the reference answers, and say the final price is confirmed after a scope call. Do not promise specific turnaround times that are not in the reference answers.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} VAs are billed hourly or on a monthly package. We confirm the rate and package before you start.",
+      "keywords": "cost,price,charge",
+      "priority": 9
+    },
+    {
+      "q": "What can a VA do?",
+      "a": "We help with admin, inbox and calendar management, data entry, customer service, bookkeeping support and more. Tell us your tasks and we will match a VA to the work.",
+      "keywords": "tasks,what do",
+      "priority": 9
+    },
+    {
+      "q": "Do you work in my time zone?",
+      "a": "We try to match VAs to your time zone and working hours. Tell us your hours when you enquire.",
+      "keywords": "time zone,hours",
+      "priority": 9
+    },
+    {
+      "q": "Do you sign NDAs?",
+      "a": "Yes, we sign NDAs on request. We also agree on how your data and passwords are handled before work starts.",
+      "keywords": "nda,confidentiality",
+      "priority": 9
+    },
+    {
+      "q": "What tools do you use?",
+      "a": "Our VAs work with tools such as [your tools, e.g. Google Workspace, Microsoft 365, Slack, Asana or Trello]. Tell us which tools you use so we can confirm access.",
+      "keywords": "tools,software",
+      "priority": 9
+    },
+    {
+      "q": "Do you do bookkeeping?",
+      "a": "Yes, we provide bookkeeping support, including Xero and MYOB. We do not replace your accountant, so please check any tax advice with them.",
+      "keywords": "bookkeeping,xero",
+      "priority": 9
+    },
+    {
+      "q": "Do you do social media?",
+      "a": "Yes, we help with social media scheduling, content and engagement. Tell us your platforms and brand voice when you start.",
+      "keywords": "social media",
+      "priority": 8
+    },
+    {
+      "q": "What is your minimum engagement?",
+      "a": "{minimum_note} Ask us about minimum hours when you enquire.",
+      "keywords": "minimum,engagement",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer trial hours?",
+      "a": "{trial_note} We explain what a trial covers before you start.",
+      "keywords": "trial",
+      "priority": 8
+    },
+    {
+      "q": "How do I onboard?",
+      "a": "We have a scope call, sign an agreement and then match you with a VA. Onboarding is charged as listed in our rates.",
+      "keywords": "onboard,start",
+      "priority": 9
+    },
+    {
+      "q": "Can I change my VA?",
+      "a": "Yes, we will rematch you if the fit is not right. Tell us what is not working so we can find a better match.",
+      "keywords": "change,va",
+      "priority": 8
+    },
+    {
+      "q": "Do you work with real estate?",
+      "a": "Yes, we provide real estate admin support. Tell us your listings, CRM and tools when you enquire.",
+      "keywords": "real estate",
+      "priority": 8
+    },
+    {
+      "q": "Do you do transcription?",
+      "a": "Yes, we do transcription and minute-taking for meetings. Tell us the turnaround you need.",
+      "keywords": "transcription,minutes",
+      "priority": 7
+    },
+    {
+      "q": "Do you do e-commerce support?",
+      "a": "Yes, we support stores on [your platforms, e.g. Shopify or Amazon], including orders and listings. Tell us which tasks you need help with.",
+      "keywords": "ecommerce,shopify",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please let us know as early as you can.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer monthly packages?",
+      "a": "Yes, we offer 10, 20 and 40-hour monthly packages. Package prices are listed in our rates.",
+      "keywords": "monthly,packages",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {visit} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {visit} with {business} is on {date}.",
+    "quote_intro": "Here is our proposal for your {job}.",
+    "invoice_note": "Thank you. Invoice terms are shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 60,
+    "buffer_minutes": 15,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "project_brief",
+      "label": "Project brief",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "virtualassistant.rule1",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up proposal after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "virtualassistant.rule2",
+      "trigger": "project.milestone",
+      "action": "send_invoice",
+      "description": "Send milestone invoice",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Keep client agreements and data handling terms current. Professional indemnity insurance is commonly required for advice and design work. Check any licence that applies to your specific services.",
+    "items": [
+      "Professional indemnity certificate current",
+      "Client agreement signed before work starts"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "meeting room"
+  ],
+  "reporting": [
+    "projects delivered",
+    "proposal win rate",
+    "client retention"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

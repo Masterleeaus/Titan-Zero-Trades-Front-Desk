@@ -1,0 +1,393 @@
+{
+  "format": 3,
+  "id": "concrete",
+  "name": "Concrete & Paving",
+  "icon": "🧱",
+  "tagline": "Slabs, driveways, paths, exposed aggregate, paving",
+  "version": "1.1.0",
+  "category": "building_trade",
+  "source_sha256": "5d1196c4a97bdf943687372f15437acaf288c0fa0e4b63b42287e8bc411bc679",
+  "terminology": {
+    "customer": "client",
+    "job": "project",
+    "site": "site",
+    "quote": "quote",
+    "staff": "builder",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Concrete Slabs",
+    "Driveways",
+    "Paths and Footpaths",
+    "Patios",
+    "Exposed Aggregate",
+    "Stamped Concrete",
+    "Polished Concrete",
+    "Pavers and Paving",
+    "Retaining Walls",
+    "Footings",
+    "Crossovers",
+    "Concrete Repairs",
+    "Concrete Removal",
+    "Commercial Concrete"
+  ],
+  "catalog": [
+    {
+      "sku": "CON-SLAB",
+      "label": "Concrete slab (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "slab,concrete"
+    },
+    {
+      "sku": "CON-EXPO",
+      "label": "Exposed aggregate (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 135,
+      "taxable": 1,
+      "keywords": "exposed aggregate"
+    },
+    {
+      "sku": "CON-STAMP",
+      "label": "Stamped concrete (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 160,
+      "taxable": 1,
+      "keywords": "stamped,stencil"
+    },
+    {
+      "sku": "CON-POL",
+      "label": "Polished concrete (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "polished"
+    },
+    {
+      "sku": "CON-PAVE",
+      "label": "Paving (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "paving,pavers"
+    },
+    {
+      "sku": "CON-FOOT",
+      "label": "Footings (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "footing,foundation"
+    },
+    {
+      "sku": "CON-REMOVE",
+      "label": "Concrete removal (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "remove,removal"
+    },
+    {
+      "sku": "CON-REPAIR",
+      "label": "Concrete repair (per hour)",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 110,
+      "taxable": 1,
+      "keywords": "repair,crack"
+    },
+    {
+      "sku": "CON-RETAIN",
+      "label": "Retaining wall (per m²)",
+      "kind": "labor",
+      "unit": "m2",
+      "unit_price": 240,
+      "taxable": 1,
+      "keywords": "retaining wall"
+    },
+    {
+      "sku": "CON-EXCAV",
+      "label": "Excavation (per m³)",
+      "kind": "labor",
+      "unit": "m3",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "excavate,dig"
+    }
+  ],
+  "staff_skills": [
+    "concreting",
+    "formwork",
+    "reinforcement and mesh",
+    "concrete finishing",
+    "exposed aggregate",
+    "stamped concrete",
+    "polished concrete",
+    "paving",
+    "excavation",
+    "retaining walls"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "cracked slab",
+      "sinking slab",
+      "trip hazard",
+      "urgent repair"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "before inspection",
+      "before build"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "replace",
+      "repair"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional concreting and paving company. Ask about the area size, surface type, access, and whether excavation is needed. Ask about reinforcement, finish, and drainage. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise a specific finish or structural outcome that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "We hold [licence number] and [insurance type and provider]. Certificates are available on request before work starts.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does concreting cost?",
+      "a": "{price_note} Concreting is priced per square metre, including excavation and finishing where it is in scope.",
+      "keywords": "cost,price,concrete",
+      "priority": 9
+    },
+    {
+      "q": "Do you do exposed aggregate?",
+      "a": "Yes, we do exposed aggregate and coloured concrete. Tell us the finish and colour you want so we can quote the right option.",
+      "keywords": "exposed aggregate,colour",
+      "priority": 9
+    },
+    {
+      "q": "Do you do stamped concrete?",
+      "a": "Yes, we do stamped and stencilled concrete. Tell us your pattern and colour preferences during the site visit.",
+      "keywords": "stamped,stencil",
+      "priority": 8
+    },
+    {
+      "q": "Do you do polished concrete?",
+      "a": "Yes, we do polished and honed concrete. The finish depends on the slab condition, so we confirm it at the site visit.",
+      "keywords": "polished,honed",
+      "priority": 8
+    },
+    {
+      "q": "Do you reinforce slabs?",
+      "a": "Yes, we use mesh and bar reinforcement where the job needs it. Tell us how the slab will be used so we can confirm the reinforcement.",
+      "keywords": "reinforcement,mesh,rebar",
+      "priority": 9
+    },
+    {
+      "q": "How long before I can use it?",
+      "a": "Foot traffic is usually possible after 24–48 hours, and vehicles usually after about 7 days. Weather and the mix can change this.",
+      "keywords": "cure,dry,walk",
+      "priority": 9
+    },
+    {
+      "q": "Do you excavate?",
+      "a": "Yes, we excavate and prepare the base for your slab. Excavation is priced per cubic metre.",
+      "keywords": "excavate,base",
+      "priority": 9
+    },
+    {
+      "q": "Do you remove old concrete?",
+      "a": "Yes, we break up and remove old concrete. Removal is priced per square metre, and disposal costs are shown on the quote.",
+      "keywords": "remove,old concrete",
+      "priority": 8
+    },
+    {
+      "q": "Do you do paving?",
+      "a": "Yes, we do paving in concrete, brick, and stone pavers. Tell us the pattern and edge you want.",
+      "keywords": "paving,pavers",
+      "priority": 9
+    },
+    {
+      "q": "Do you build retaining walls?",
+      "a": "Yes, we build concrete and block retaining walls. Height and ground conditions affect the design, so we check them at the site visit.",
+      "keywords": "retaining wall",
+      "priority": 8
+    },
+    {
+      "q": "Do you do footings?",
+      "a": "Yes, we do footings for extensions and structures. Footings are priced per cubic metre.",
+      "keywords": "footing,foundation",
+      "priority": 8
+    },
+    {
+      "q": "Do I need a permit?",
+      "a": "Some driveways and crossovers need council approval. Check with your council before work starts, and we can advise on what applies.",
+      "keywords": "permit,council",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle drainage?",
+      "a": "Yes, we allow for drainage and fall in the design. Tell us where water runs off so we can plan the slope.",
+      "keywords": "drainage,fall,slope",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial work?",
+      "a": "Yes, we service commercial projects. Commercial work is priced separately and quoted after a site visit.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "Do you provide a warranty?",
+      "a": "{warranty_note} Ask us for the warranty period and what it covers before you sign.",
+      "keywords": "warranty,guarantee",
+      "priority": 8
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "You do not need to be home for the work, but we do need access to the site. Tell us if you want to be there for the site visit.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you repair cracked concrete?",
+      "a": "Yes, we repair cracks, spalling, and sinking slabs. Tell us how long the damage has been there so we can recommend a repair or replacement.",
+      "keywords": "crack,repair",
+      "priority": 8
+    },
+    {
+      "q": "Do you do coloured concrete?",
+      "a": "Yes, we do oxide and coloured concrete. Colour can vary with the mix and weather, so we discuss samples before the pour.",
+      "keywords": "colour,oxide",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, the site visit for your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: {business} visit for your {job} on {date}.",
+    "quote_intro": "Here is the quote for your {job}. It is based on the scope we agreed at the site visit.",
+    "invoice_note": "Thank you. This invoice follows the progress or completion stage shown above."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 10,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "scope_summary",
+      "label": "Scope of work",
+      "required": true
+    },
+    {
+      "key": "site_visit_booked",
+      "label": "Site visit booked before quote",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "concrete.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit before work starts",
+      "enabled": false
+    },
+    {
+      "id": "concrete.rule2",
+      "trigger": "quote.unanswered",
+      "action": "follow_up_quote",
+      "description": "Follow up quote after 7 days",
+      "enabled": false
+    },
+    {
+      "id": "concrete.rule3",
+      "trigger": "insurance.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before insurance expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Check whether a building permit, registration or domestic building insurance applies to the work before you quote. Keep certificates of currency for public liability and any required insurance. Your state regulator sets the rules.",
+    "items": [
+      "Registration or licence number on quotes where required",
+      "Insurance certificates current",
+      "Permit records kept against the project"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "scaffold or ladder"
+  ],
+  "reporting": [
+    "projects completed",
+    "quote win rate",
+    "deposits received",
+    "overdue invoices"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "white_card",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

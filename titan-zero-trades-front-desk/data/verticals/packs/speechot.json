@@ -1,0 +1,374 @@
+{
+  "format": 3,
+  "id": "speechot",
+  "name": "Speech Pathology & OT",
+  "icon": "🗣️",
+  "tagline": "Speech, OT, paediatrics, adults, telehealth",
+  "version": "1.1.0",
+  "category": "health",
+  "source_sha256": "ecb656254d0580ce76753cadb3a873bb5cab4adfd8e686e053d7184220e216e4",
+  "terminology": {
+    "customer": "client",
+    "job": "appointment",
+    "site": "clinic",
+    "quote": "estimate",
+    "staff": "therapist",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Speech Assessment",
+    "Speech Therapy for Children",
+    "Speech Therapy for Adults",
+    "Stuttering Therapy",
+    "Articulation Therapy",
+    "Language Delay Therapy",
+    "Literacy Support",
+    "Autism Communication Support",
+    "AAC (Augmentative and Alternative Communication)",
+    "Swallowing Therapy",
+    "Occupational Therapy for Children",
+    "Occupational Therapy for Adults",
+    "Sensory Integration Therapy",
+    "Fine Motor and Handwriting",
+    "Home Modification Assessment",
+    "School Support Visits",
+    "Telehealth Sessions"
+  ],
+  "catalog": [
+    {
+      "sku": "SP-ASSESS",
+      "label": "Initial assessment (60 to 90 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "assessment"
+    },
+    {
+      "sku": "SP-SESS",
+      "label": "Therapy session (45 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 195,
+      "taxable": 1,
+      "keywords": "session,45"
+    },
+    {
+      "sku": "SP-SESS60",
+      "label": "Therapy session (60 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 230,
+      "taxable": 1,
+      "keywords": "session,60"
+    },
+    {
+      "sku": "SP-GROUP",
+      "label": "Group session (per person)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "group"
+    },
+    {
+      "sku": "SP-HOME",
+      "label": "Home visit surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "home visit"
+    },
+    {
+      "sku": "SP-SCHOOL",
+      "label": "School visit surcharge",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "school"
+    },
+    {
+      "sku": "SP-TELE",
+      "label": "Telehealth session",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "telehealth"
+    },
+    {
+      "sku": "SP-REPORT",
+      "label": "Written report",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 350,
+      "taxable": 1,
+      "keywords": "report"
+    },
+    {
+      "sku": "SP-PLAN",
+      "label": "Therapy plan or review",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "plan"
+    },
+    {
+      "sku": "SP-PROG",
+      "label": "Home program development",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 180,
+      "taxable": 1,
+      "keywords": "program"
+    },
+    {
+      "sku": "SP-CANC",
+      "label": "Late cancellation fee",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 95,
+      "taxable": 1,
+      "keywords": "cancellation"
+    }
+  ],
+  "staff_skills": [
+    "speech pathology",
+    "occupational therapy",
+    "paediatric assessment",
+    "autism support",
+    "literacy",
+    "swallowing assessment",
+    "sensory integration",
+    "aac",
+    "home modifications"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "choking or swallowing risk",
+      "safety concern",
+      "sudden change in speech or swallowing",
+      "urgent review requested by a doctor"
+    ],
+    "urgent": [
+      "this week",
+      "school deadline",
+      "NDIS plan review due",
+      "assessment needed before school starts",
+      "waiting for a report"
+    ],
+    "routine": [
+      "assessment",
+      "therapy",
+      "review",
+      "booking",
+      "quote",
+      "report request",
+      "home program"
+    ]
+  },
+  "extra_prompt": "You are booking for a speech pathology or occupational therapy practice. Ask about the client's age, diagnosis or concern, current supports, and funding (NDIS, Medicare, private). Ask about goals and whether school or kinder reports are available. Quote prices only from the reference answers, and say the final price is confirmed after assessment. Do not provide clinical advice or promise specific therapeutic outcomes.",
+  "kb": [
+    {
+      "q": "How much does a session cost?",
+      "a": "{price_note} Sessions are priced by length, and an assessment is priced separately. We confirm the fee before your first appointment.",
+      "keywords": "cost,price,session",
+      "priority": 9
+    },
+    {
+      "q": "Do you accept NDIS?",
+      "a": "Yes, we see NDIS participants. Ask us to confirm whether your plan covers speech pathology or occupational therapy before booking.",
+      "keywords": "ndis",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer Medicare rebates?",
+      "a": "{bulk_bill_note} Ask your GP about a referral that may make you eligible for a Medicare rebate, and we will confirm what applies.",
+      "keywords": "medicare,cdm,gp",
+      "priority": 9
+    },
+    {
+      "q": "Can I claim private health?",
+      "a": "If your private health fund covers allied health, you may be able to claim. We can provide a receipt, so check your fund's allied health cover before booking.",
+      "keywords": "health fund,hicaps",
+      "priority": 9
+    },
+    {
+      "q": "Do you do telehealth?",
+      "a": "Yes, telehealth sessions are available by video call for suitable goals. Tell us your needs so we can confirm whether telehealth suits you.",
+      "keywords": "telehealth,online",
+      "priority": 9
+    },
+    {
+      "q": "Do you do home visits?",
+      "a": "Yes, home visits are available in [your service area]. A home visit surcharge may apply and is shown on your quote.",
+      "keywords": "home visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you do school visits?",
+      "a": "Yes, school visits are available with the school's agreement and parent consent. A school visit surcharge applies and is listed in your quote.",
+      "keywords": "school visit",
+      "priority": 8
+    },
+    {
+      "q": "What ages do you work with?",
+      "a": "We work with children, teens and adults. Tell us the person's age and main concerns when you book.",
+      "keywords": "ages,children,adults",
+      "priority": 9
+    },
+    {
+      "q": "How long is a session?",
+      "a": "Therapy sessions run 45 or 60 minutes, and an initial assessment runs 60 to 90 minutes. We confirm the length that suits your goals.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you have a waitlist?",
+      "a": "{waitlist_note} Ask us about the current wait time when you call.",
+      "keywords": "waitlist,waiting",
+      "priority": 9
+    },
+    {
+      "q": "Do you do reports?",
+      "a": "Yes, we write reports for NDIS, schools and paediatricians. A written report is charged separately, as listed on your quote.",
+      "keywords": "report",
+      "priority": 8
+    },
+    {
+      "q": "Do you run group programs?",
+      "a": "Yes, we run social and literacy groups. Group sessions are charged per person, as listed in our rates.",
+      "keywords": "run,group,programs",
+      "priority": 8
+    },
+    {
+      "q": "How many sessions will we need?",
+      "a": "It depends on your goals and progress. We discuss a plan after the assessment and review it with you regularly.",
+      "keywords": "how many,sessions",
+      "priority": 9
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a late cancellation fee. Please call us as early as you can.",
+      "keywords": "cancel",
+      "priority": 8
+    },
+    {
+      "q": "Are your therapists registered?",
+      "a": "Our therapists hold [registration body, e.g. SPA or AHPRA] registration and [insurance type] insurance. {certification_note}",
+      "keywords": "therapists,registered",
+      "priority": 8
+    },
+    {
+      "q": "Do you work with adults after stroke?",
+      "a": "Yes, we work with adults after stroke, including speech and swallowing rehabilitation. Please bring any hospital or GP notes to the assessment.",
+      "keywords": "stroke,adult",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}.",
+    "reminder": "Reminder: your {job} at {business} is on {date}. Please bring your card and any referral.",
+    "quote_intro": "Here is your estimate. Your practitioner will confirm the plan at your appointment.",
+    "invoice_note": "Thank you. Health fund claims are handled by the practice where applicable."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 30,
+    "buffer_minutes": 10,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 30,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "referral",
+      "label": "Referral or Medicare details (only if the practice needs them)",
+      "required": false
+    },
+    {
+      "key": "clinical_notes_location",
+      "label": "Clinical details stay in the clinical record, not in booking notes",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "speechot.rule1",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 48 hours before",
+      "enabled": false
+    },
+    {
+      "id": "speechot.rule2",
+      "trigger": "recall.due",
+      "action": "send_recall",
+      "description": "Send recall reminder when due",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Health practitioners usually need registration (for example with AHPRA where it applies) and current professional indemnity insurance. Keep clinical details in the clinical record, not in general booking fields. Follow your state health privacy rules.",
+    "items": [
+      "Practitioner registration number and expiry",
+      "Professional indemnity certificate current",
+      "Clinical notes kept only in the clinical record"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "treatment room",
+    "equipment"
+  ],
+  "reporting": [
+    "appointments attended",
+    "no-shows",
+    "new patients",
+    "recall due"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

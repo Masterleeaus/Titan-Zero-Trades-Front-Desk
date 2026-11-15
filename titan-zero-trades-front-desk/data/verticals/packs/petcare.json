@@ -1,0 +1,384 @@
+{
+  "format": 3,
+  "id": "petcare",
+  "name": "Pet Care & Dog Walking",
+  "icon": "🐾",
+  "tagline": "Dog walking, pet sitting, overnight care, pet taxi",
+  "version": "1.1.0",
+  "category": "pet",
+  "source_sha256": "438e0616008bb3b11a1a64bac8904aac4d029ac5372035350441543b312f7a52",
+  "terminology": {
+    "customer": "pet owner",
+    "job": "booking",
+    "site": "home",
+    "quote": "quote",
+    "staff": "carer",
+    "visit": "appointment"
+  },
+  "service_types": [
+    "Dog Walking",
+    "Group Dog Walks",
+    "Private Dog Walks",
+    "Puppy Visits",
+    "Puppy Daycare",
+    "Pet Sitting",
+    "Overnight Pet Care",
+    "House Sitting",
+    "Pet Taxi and Vet Visits",
+    "Feeding Visits",
+    "Medication Administration",
+    "Holiday Pet Care",
+    "Cat Visits"
+  ],
+  "catalog": [
+    {
+      "sku": "PETC-W30",
+      "label": "Dog walk (30 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 30,
+      "taxable": 1,
+      "keywords": "walk 30"
+    },
+    {
+      "sku": "PETC-W60",
+      "label": "Dog walk (60 minutes)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 50,
+      "taxable": 1,
+      "keywords": "walk 60"
+    },
+    {
+      "sku": "PETC-PRIV",
+      "label": "Private dog walk",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 55,
+      "taxable": 1,
+      "keywords": "private walk"
+    },
+    {
+      "sku": "PETC-PUPPY",
+      "label": "Puppy visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 40,
+      "taxable": 1,
+      "keywords": "puppy"
+    },
+    {
+      "sku": "PETC-CAT",
+      "label": "Cat visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 35,
+      "taxable": 1,
+      "keywords": "cat"
+    },
+    {
+      "sku": "PETC-SIT",
+      "label": "Pet sitting (per day)",
+      "kind": "labor",
+      "unit": "day",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "sitting"
+    },
+    {
+      "sku": "PETC-OVER",
+      "label": "Overnight stay (per night)",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "overnight"
+    },
+    {
+      "sku": "PETC-HOUSE",
+      "label": "House sitting (per night)",
+      "kind": "labor",
+      "unit": "night",
+      "unit_price": 100,
+      "taxable": 1,
+      "keywords": "house sitting"
+    },
+    {
+      "sku": "PETC-TAXI",
+      "label": "Pet taxi (per trip)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 45,
+      "taxable": 1,
+      "keywords": "taxi,vet"
+    },
+    {
+      "sku": "PETC-MED",
+      "label": "Medication administration (per dose)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 15,
+      "taxable": 1,
+      "keywords": "medication"
+    }
+  ],
+  "staff_skills": [
+    "dog walking",
+    "pet sitting",
+    "house sitting",
+    "pet taxi",
+    "puppy care",
+    "medication",
+    "cat care"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "pet unwell",
+      "emergency vet",
+      "urgent care"
+    ],
+    "urgent": [
+      "today",
+      "tomorrow",
+      "last minute",
+      "this weekend"
+    ],
+    "routine": [
+      "regular",
+      "daily",
+      "weekly",
+      "holiday",
+      "booking",
+      "quote"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional pet care and dog walking business. Ask about the pet, breed, temperament, vaccination status, and any medical needs. Ask about access, keys, feeding routine, and emergency vet details. Quote prices only from the reference answers, and say the final price is confirmed after a meet-and-greet. Do not promise a specific outcome for pets with behavioural or medical issues.",
+  "kb": [
+    {
+      "q": "How much is dog walking?",
+      "a": "{price_note} Walks are priced by duration and by whether they are group or private walks. We confirm the price when we meet your dog.",
+      "keywords": "cost,price,walk",
+      "priority": 9
+    },
+    {
+      "q": "Do you offer pet sitting?",
+      "a": "Yes, we offer in-home pet sitting for your pets. Visits are priced per day, so tell us how many days you need care.",
+      "keywords": "pet sitting,sitting",
+      "priority": 9
+    },
+    {
+      "q": "Do you do overnight stays?",
+      "a": "Yes, we do overnight stays at your home. Overnight stays are priced per night, and we confirm your visit schedule and house rules before the first night.",
+      "keywords": "overnight,stay",
+      "priority": 9
+    },
+    {
+      "q": "Do you do house sitting?",
+      "a": "Yes, we house sit while pets stay in your home. House sitting is priced per night, and we confirm access and daily routines before we start.",
+      "keywords": "house sitting",
+      "priority": 8
+    },
+    {
+      "q": "Do you walk dogs in groups?",
+      "a": "Yes, group walks and private walks are both available. Group walks suit dogs that enjoy company, and private walks suit dogs that need one-on-one time or extra care.",
+      "keywords": "group,private",
+      "priority": 9
+    },
+    {
+      "q": "Do you give medication?",
+      "a": "Yes, we can give oral and topical medication as directed. Please provide written instructions from your vet, including the dose and timing.",
+      "keywords": "medication,meds",
+      "priority": 8
+    },
+    {
+      "q": "Do you do pet taxi?",
+      "a": "Yes, we do pet taxi trips and vet visits. Tell us the pickup address, the destination, and any crate or harness needs when you book.",
+      "keywords": "taxi,vet",
+      "priority": 8
+    },
+    {
+      "q": "Do you do puppy visits?",
+      "a": "Yes, we do puppy visits for toilet training, feeding and company. Puppies need regular toilet breaks, so ask us about a visit schedule that suits your routine.",
+      "keywords": "puppy,visit",
+      "priority": 8
+    },
+    {
+      "q": "Do you care for cats?",
+      "a": "Yes, we do cat visits and cat sitting in your home. Cat visits are priced per visit, and we check food, water and litter at each one.",
+      "keywords": "cat",
+      "priority": 9
+    },
+    {
+      "q": "What vaccinations are required?",
+      "a": "Dogs must be up to date with C5 vaccination. Cats should be up to date with F3 vaccination. Please bring your vet's records to the meet-and-greet.",
+      "keywords": "vaccination,vaccine",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a meet-and-greet?",
+      "a": "Yes, we offer a free meet-and-greet before the first booking. It lets us meet your pet, learn their routine and look over the home.",
+      "keywords": "meet and greet,intro",
+      "priority": 9
+    },
+    {
+      "q": "What if my pet gets sick?",
+      "a": "We contact you and your vet immediately and follow your instructions. Please give us your vet's details before the first visit so we can act quickly.",
+      "keywords": "sick,vet,emergency",
+      "priority": 9
+    },
+    {
+      "q": "Do you have references?",
+      "a": "Yes, references are available on request. Ask us and we will send them to you before you book.",
+      "keywords": "references",
+      "priority": 7
+    },
+    {
+      "q": "Are you insured?",
+      "a": "We hold [insurer name] public liability cover of [cover amount]. Ask us for a certificate before you book.",
+      "keywords": "insured,insurance",
+      "priority": 9
+    },
+    {
+      "q": "Do you have a cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may incur a fee. Please tell us as early as you can so we can offer the time to another client.",
+      "keywords": "cancel,cancellation",
+      "priority": 8
+    },
+    {
+      "q": "Do you do holiday care?",
+      "a": "Yes, we do holiday care. Book early for peak periods, because holiday dates fill quickly.",
+      "keywords": "holiday,christmas",
+      "priority": 8
+    },
+    {
+      "q": "How long are walks?",
+      "a": "Walks are usually 30 or 60 minutes. Tell us your dog's energy level and we will recommend the right length.",
+      "keywords": "how long,walk,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you do puppy daycare?",
+      "a": "Yes, we offer puppy daycare for young dogs. Daycare is set up around vaccination status and a daily routine we agree with you.",
+      "keywords": "daycare,puppy",
+      "priority": 7
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service the local metro area. Ask us to confirm your suburb before you book.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do you send updates?",
+      "a": "Yes, we send photos and updates after each visit. Updates include your pet's activity, feeding and any concerns we noticed.",
+      "keywords": "update,photo,report",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please bring the vaccination record.",
+    "reminder": "Reminder: {business} appointment on {date}.",
+    "quote_intro": "Here is the quote for your pet.",
+    "invoice_note": "Thank you for choosing {business}."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 45,
+    "buffer_minutes": 10,
+    "quote_validity_days": 14,
+    "invoice_terms_days": 0,
+    "deposit_percent": 0,
+    "requires_site_visit": false
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "pet_details",
+      "label": "Pet name, species and breed",
+      "required": true
+    },
+    {
+      "key": "vet_contact",
+      "label": "Vet contact",
+      "required": true
+    },
+    {
+      "key": "keys_location",
+      "label": "Where keys are kept",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "petcare.rule1",
+      "trigger": "vaccination.due",
+      "action": "send_vaccination_reminder",
+      "description": "Send vaccination reminder",
+      "enabled": false
+    },
+    {
+      "id": "petcare.rule2",
+      "trigger": "booking.created",
+      "action": "remind_booking",
+      "description": "Send reminder 24 hours before",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Veterinary practice is regulated by the state veterinary board. Most states do not license pet grooming or pet sitting, but keep vaccination and health records and follow your council rules for animal businesses.",
+    "items": [
+      "Veterinary registration (vet practices)",
+      "Vaccination records kept per pet",
+      "Animal business registration with council where required"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "grooming table",
+    "kennel or run",
+    "vehicle"
+  ],
+  "reporting": [
+    "appointments completed",
+    "rebooking rate",
+    "vaccinations due"
+  ],
+  "staff_record_types": [
+    "training",
+    "insurance"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

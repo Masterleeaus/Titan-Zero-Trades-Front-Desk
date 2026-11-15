@@ -1,0 +1,354 @@
+{
+  "format": 3,
+  "id": "eventplanner",
+  "name": "Wedding & Event Planners",
+  "icon": "\ud83d\udc8d",
+  "tagline": "Weddings, corporate events, parties, styling",
+  "version": "1.1.0",
+  "category": "events",
+  "source_sha256": "7a57a15e26209eed0db32a988323e1ffafdf8d244cac564e8edd1a5d0bb9e31a",
+  "terminology": {
+    "customer": "client",
+    "job": "event",
+    "site": "venue",
+    "quote": "quote",
+    "staff": "planner",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Full wedding planning",
+    "Partial wedding planning",
+    "On-the-day wedding coordination",
+    "Wedding styling and decor hire",
+    "Destination weddings",
+    "Corporate event management",
+    "Product launch events",
+    "Conference management",
+    "Award nights and gala dinners",
+    "Team events and staff parties",
+    "Birthday party planning",
+    "Engagement party planning",
+    "Anniversary celebrations",
+    "Baby and bridal showers",
+    "Vendor sourcing and booking",
+    "Set-up and pack-down"
+  ],
+  "catalog": [
+    {
+      "sku": "EVT-FULL",
+      "label": "Full wedding planning, from",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 4500,
+      "taxable": 1,
+      "keywords": "full planning"
+    },
+    {
+      "sku": "EVT-PART",
+      "label": "Partial wedding planning, from",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "partial"
+    },
+    {
+      "sku": "EVT-OTD",
+      "label": "On-the-day wedding coordination",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "on the day"
+    },
+    {
+      "sku": "EVT-STYLE",
+      "label": "Styling and hire",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1500,
+      "taxable": 1,
+      "keywords": "styling"
+    },
+    {
+      "sku": "EVT-CORP",
+      "label": "Corporate event management",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 2500,
+      "taxable": 1,
+      "keywords": "corporate"
+    },
+    {
+      "sku": "EVT-PARTY",
+      "label": "Party planning",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 900,
+      "taxable": 1,
+      "keywords": "party"
+    },
+    {
+      "sku": "EVT-SETUP",
+      "label": "Set-up and pack-down, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 85,
+      "taxable": 1,
+      "keywords": "setup"
+    },
+    {
+      "sku": "EVT-HOUR",
+      "label": "Planning, per hour",
+      "kind": "labor",
+      "unit": "hour",
+      "unit_price": 120,
+      "taxable": 1,
+      "keywords": "hourly"
+    },
+    {
+      "sku": "EVT-TRAVEL",
+      "label": "Travel, per km beyond 30 km",
+      "kind": "labor",
+      "unit": "km",
+      "unit_price": 1,
+      "taxable": 1,
+      "keywords": "travel"
+    },
+    {
+      "sku": "EVT-CONS",
+      "label": "Initial consultation (free)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 0,
+      "taxable": 0,
+      "keywords": "consult"
+    }
+  ],
+  "staff_skills": [
+    "wedding planning",
+    "run sheets and timelines",
+    "vendor booking",
+    "venue styling",
+    "on-the-day coordination",
+    "corporate event management",
+    "budget tracking",
+    "supplier liaison"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "wedding tomorrow",
+      "vendor cancelled on the day",
+      "venue unavailable on event day",
+      "planner unavailable on event day"
+    ],
+    "urgent": [
+      "event this week",
+      "vendor missing from booking",
+      "short notice booking",
+      "date change request"
+    ],
+    "routine": [
+      "booking enquiry",
+      "quote request",
+      "consultation",
+      "styling request",
+      "planning meeting"
+    ]
+  },
+  "extra_prompt": "You are booking for a wedding or event planner. Ask about the event type, date, guest count, budget range, and venue. Ask about the level of support wanted (full planning, styling, or on-the-day coordination). Quote prices only from the reference answers, and say the final price is confirmed after consultation. Do not promise specific vendor availability or a fixed total budget outcome.",
+  "kb": [
+    {
+      "q": "How much do you charge?",
+      "a": "{price_note} Pricing depends on the event type, guest count, and the services you need, such as styling or on-the-day coordination.",
+      "keywords": "price,cost,fee,charge",
+      "priority": 10
+    },
+    {
+      "q": "Do you do full wedding planning?",
+      "a": "Yes, we plan the whole wedding from first booking to the day, including timeline, vendors, and budget. Partial planning is available if you only need help with some parts.",
+      "keywords": "wedding,full planning,partial",
+      "priority": 10
+    },
+    {
+      "q": "Do you do on-the-day coordination?",
+      "a": "Yes, we run the day for couples who have planned the wedding themselves. We confirm the timeline with each vendor and manage the schedule on the day.",
+      "keywords": "on the day,coordination,timeline",
+      "priority": 9
+    },
+    {
+      "q": "Do you do styling?",
+      "a": "Yes, we style the venue and arrange hire items, then handle set-up and pack-down. We confirm what is included in your quote.",
+      "keywords": "styling,hire,decor,set-up",
+      "priority": 9
+    },
+    {
+      "q": "Do you do corporate events?",
+      "a": "Yes, we plan product launches, conferences, award nights, and team events, including the venue, run sheet, and speakers.",
+      "keywords": "corporate,launch,conference,award",
+      "priority": 9
+    },
+    {
+      "q": "Do you find vendors?",
+      "a": "Yes, we source and book vendors such as venues, caterers, and photographers to suit your style and budget.",
+      "keywords": "vendors,venue,caterer,photographer",
+      "priority": 9
+    },
+    {
+      "q": "How far in advance should I book?",
+      "a": "Many weddings book nine to eighteen months ahead, especially for popular venues and dates. Corporate events and parties can often be arranged on shorter notice.",
+      "keywords": "booking,advance,notice,date",
+      "priority": 9
+    },
+    {
+      "q": "Do you do destination weddings?",
+      "a": "Yes, we plan destination weddings. Travel fees apply, and we show them in your quote so you can see the full cost.",
+      "keywords": "destination,travel,overseas",
+      "priority": 8
+    },
+    {
+      "q": "Do you manage the budget?",
+      "a": "Yes, we build a budget with you, track every expense, and flag any cost that could push you over.",
+      "keywords": "budget,expenses,cost",
+      "priority": 9
+    },
+    {
+      "q": "Do you attend the event?",
+      "a": "Yes, we attend weddings and larger events. Smaller events may only need remote coordination, which we agree on when you book.",
+      "keywords": "attend,on site,remote",
+      "priority": 8
+    },
+    {
+      "q": "What is your cancellation policy?",
+      "a": "Cancelling with less than {cancellation_notice} may forfeit the deposit.",
+      "keywords": "cancel,policy,deposit",
+      "priority": 9
+    },
+    {
+      "q": "Do you require a deposit?",
+      "a": "{deposit_note} The deposit amount and payment dates are set out in your contract.",
+      "keywords": "deposit,payment,contract",
+      "priority": 9
+    },
+    {
+      "q": "Are you insured?",
+      "a": "Our insurer is [insurer name] and our policy number is [policy number]. We can send a copy of the certificate before you book.",
+      "keywords": "insured,insurance,certificate",
+      "priority": 9
+    },
+    {
+      "q": "Do you do set-up and pack-down?",
+      "a": "Yes, we manage set-up and pack-down as part of styling and coordination. We confirm the hours needed when we quote.",
+      "keywords": "set-up,pack-down,hours",
+      "priority": 8
+    },
+    {
+      "q": "Do you offer a free consultation?",
+      "a": "{consult_note} Bring your date, guest count, and budget so we can give you a useful first answer.",
+      "keywords": "consultation,free,first meeting",
+      "priority": 8
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is confirmed for {date}.",
+    "reminder": "Reminder: your {job} is on {date}. Please confirm final numbers.",
+    "quote_intro": "Here is the quote for your {job}. Deposits secure the date.",
+    "invoice_note": "Thank you. The balance is due by the date shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 120,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 25,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "event_date_venue",
+      "label": "Event date and venue",
+      "required": true
+    },
+    {
+      "key": "guest_numbers",
+      "label": "Number of guests or attendees",
+      "required": false
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "eventplanner.rule1",
+      "trigger": "quote.accepted",
+      "action": "request_deposit",
+      "description": "Request deposit for the event",
+      "enabled": false
+    },
+    {
+      "id": "eventplanner.rule2",
+      "trigger": "event.within_30_days",
+      "action": "send_checklist",
+      "description": "Send run sheet checklist",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "guidance",
+    "guidance": "Catering needs food safety supervision and a council food business registration. Serving alcohol needs a licence. Venues usually require public liability insurance from the event provider.",
+    "items": [
+      "Food safety supervisor certificate (catering)",
+      "Council food registration (catering)",
+      "Public liability certificate for each event"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "equipment hire",
+    "venue"
+  ],
+  "reporting": [
+    "events delivered",
+    "quote conversion rate",
+    "deposits received"
+  ],
+  "staff_record_types": [
+    "insurance",
+    "training",
+    "licence"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

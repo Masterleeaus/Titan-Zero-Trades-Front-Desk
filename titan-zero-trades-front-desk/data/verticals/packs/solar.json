@@ -1,0 +1,394 @@
+{
+  "format": 3,
+  "id": "solar",
+  "name": "Solar & Battery",
+  "icon": "☀️",
+  "tagline": "Solar panels, inverters, batteries, maintenance",
+  "version": "1.1.0",
+  "category": "licensed_trade",
+  "source_sha256": "ae36bf8f03f5faed4f8e4599a9a6bfbe47715e088286b39b5583ac586fcf473b",
+  "terminology": {
+    "customer": "customer",
+    "job": "installation",
+    "site": "property",
+    "quote": "quote",
+    "staff": "installer",
+    "visit": "visit"
+  },
+  "service_types": [
+    "Solar Panel Installation",
+    "Solar System Repair",
+    "Inverter Replacement",
+    "Inverter Repair",
+    "Battery Installation",
+    "Battery Repair",
+    "Solar Maintenance Service",
+    "Solar Panel Cleaning",
+    "Off-Grid Solar Systems",
+    "Commercial Solar",
+    "EV Charger Installation",
+    "System Upgrade (Panels, Inverter or Battery)",
+    "Solar Inspection",
+    "Switchboard Upgrade",
+    "Rebate Assistance"
+  ],
+  "catalog": [
+    {
+      "sku": "SOL-6KW",
+      "label": "6.6 kW solar system installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 5500,
+      "taxable": 1,
+      "keywords": "6kw,solar system"
+    },
+    {
+      "sku": "SOL-10KW",
+      "label": "10 kW solar system installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 8500,
+      "taxable": 1,
+      "keywords": "10kw,solar system"
+    },
+    {
+      "sku": "SOL-BATT",
+      "label": "Home battery installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 9500,
+      "taxable": 1,
+      "keywords": "battery,install"
+    },
+    {
+      "sku": "SOL-INV",
+      "label": "Inverter replacement",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1800,
+      "taxable": 1,
+      "keywords": "inverter,replace"
+    },
+    {
+      "sku": "SOL-CLEAN",
+      "label": "Solar panel cleaning (per clean)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 250,
+      "taxable": 1,
+      "keywords": "clean,panel"
+    },
+    {
+      "sku": "SOL-SERV",
+      "label": "Solar service visit",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 220,
+      "taxable": 1,
+      "keywords": "service,maintenance"
+    },
+    {
+      "sku": "SOL-INSP",
+      "label": "Solar inspection",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 280,
+      "taxable": 1,
+      "keywords": "inspection"
+    },
+    {
+      "sku": "SOL-EV",
+      "label": "EV charger installation",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1200,
+      "taxable": 1,
+      "keywords": "ev charger"
+    },
+    {
+      "sku": "SOL-SWITCH",
+      "label": "Switchboard upgrade",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 1400,
+      "taxable": 1,
+      "keywords": "switchboard,upgrade"
+    },
+    {
+      "sku": "SOL-UPGR",
+      "label": "System upgrade (per kW)",
+      "kind": "labor",
+      "unit": "each",
+      "unit_price": 850,
+      "taxable": 1,
+      "keywords": "upgrade"
+    }
+  ],
+  "staff_skills": [
+    "solar installation",
+    "inverter",
+    "battery systems",
+    "electrical",
+    "switchboard work",
+    "ev chargers",
+    "roof work",
+    "fault finding"
+  ],
+  "urgency_signals": {
+    "emergency": [
+      "burning smell",
+      "battery fault",
+      "inverter fault with no power",
+      "scorching at switchboard",
+      "system down"
+    ],
+    "urgent": [
+      "no power",
+      "system fault",
+      "today",
+      "tomorrow",
+      "before storm season"
+    ],
+    "routine": [
+      "quote",
+      "estimate",
+      "install",
+      "service",
+      "clean",
+      "inspection",
+      "rebate check"
+    ]
+  },
+  "extra_prompt": "You are booking for a professional solar and battery company. Ask about the property type, roof type, existing system, and energy goals. Ask about switchboard capacity and whether a battery or EV charger is wanted. Quote prices only from the reference answers, and say the final price is confirmed on site. Do not promise rebate amounts, payback times, or system performance that is not in the reference answers.",
+  "kb": [
+    {
+      "q": "Are you licensed and insured?",
+      "a": "Yes, we hold [electrical licence type] licence [licence number] and [insurer] insurance. Certificates are available on request.",
+      "keywords": "licensed,insured",
+      "priority": 9
+    },
+    {
+      "q": "How much does solar cost?",
+      "a": "{price_note} Solar is priced by system size in kW, including panels, inverter and installation. We give you a quote after a site visit.",
+      "keywords": "cost,price,solar",
+      "priority": 9
+    },
+    {
+      "q": "Do you install batteries?",
+      "a": "Yes, we install home and commercial batteries. We check your switchboard and inverter compatibility before we quote.",
+      "keywords": "battery,install",
+      "priority": 9
+    },
+    {
+      "q": "Do you repair inverters?",
+      "a": "Yes, we repair and replace inverters. Tell us the brand, model and any error code on the display so we can book the right visit.",
+      "keywords": "inverter,repair",
+      "priority": 9
+    },
+    {
+      "q": "Do you clean solar panels?",
+      "a": "Yes, we clean solar panels. Cleaning is priced as listed on your quote, and we confirm the price before we start.",
+      "keywords": "clean,panel",
+      "priority": 8
+    },
+    {
+      "q": "Do you maintain solar systems?",
+      "a": "Yes, we offer solar service visits. A service checks the panels, inverter output and connections, and we list any faults we find.",
+      "keywords": "maintenance,service",
+      "priority": 8
+    },
+    {
+      "q": "What rebates are available?",
+      "a": "Rebates and incentives change and vary by state and system size. We tell you which ones may apply to your system at the quote stage.",
+      "keywords": "rebate,incentive",
+      "priority": 9
+    },
+    {
+      "q": "Do you install EV chargers?",
+      "a": "Yes, we install EV chargers and can connect them to your solar system. Tell us where the charger will go so we can check your switchboard.",
+      "keywords": "ev charger,electric vehicle",
+      "priority": 8
+    },
+    {
+      "q": "Do you install off-grid systems?",
+      "a": "Yes, we install off-grid and hybrid systems. We size the battery and panels to your daily power use, so please share your power bills.",
+      "keywords": "off grid,hybrid",
+      "priority": 8
+    },
+    {
+      "q": "Do you do commercial solar?",
+      "a": "Yes, we do commercial solar installs. Commercial work is quoted separately after a site visit.",
+      "keywords": "commercial,business",
+      "priority": 8
+    },
+    {
+      "q": "What roof types do you work on?",
+      "a": "We work on [roof types you cover, e.g. tile, metal and flat roofs]. We check the roof condition and fixing points before installation.",
+      "keywords": "roof,tile,metal",
+      "priority": 8
+    },
+    {
+      "q": "How long does installation take?",
+      "a": "A typical home installation takes [number] days, depending on system size and roof access. We confirm the timing when you book.",
+      "keywords": "how long,time",
+      "priority": 8
+    },
+    {
+      "q": "Do you upgrade existing systems?",
+      "a": "Yes, we upgrade panels, inverters and batteries. We check the existing system first so the new parts match it.",
+      "keywords": "upgrade,existing,systems",
+      "priority": 8
+    },
+    {
+      "q": "Do you do solar inspections?",
+      "a": "Yes, we do solar inspections, including pre-purchase checks. An inspection covers the panels, inverter and wiring, and we summarise what we find.",
+      "keywords": "inspection,compliance",
+      "priority": 8
+    },
+    {
+      "q": "What warranty do you offer?",
+      "a": "{warranty_note} Please ask us to explain what each product warranty covers before you buy.",
+      "keywords": "warranty,guarantee",
+      "priority": 9
+    },
+    {
+      "q": "What areas do you service?",
+      "a": "We service [your service area]. Ask us to confirm your suburb before booking.",
+      "keywords": "area,location,suburb",
+      "priority": 7
+    },
+    {
+      "q": "Do I need to be home?",
+      "a": "Yes, someone must be home or able to give access on install day. Put any key or gate code details in the access notes.",
+      "keywords": "home,present,access",
+      "priority": 8
+    },
+    {
+      "q": "Do you handle switchboard upgrades?",
+      "a": "Yes, we upgrade switchboards as part of the install where needed. We tell you if an upgrade is required before the work starts.",
+      "keywords": "switchboard,upgrade",
+      "priority": 8
+    },
+    {
+      "q": "What happens during a blackout?",
+      "a": "A battery system can provide backup power if it is designed for that purpose. Tell us which circuits you want backed up so we can size the system.",
+      "keywords": "blackout,backup",
+      "priority": 9
+    },
+    {
+      "q": "Do you monitor systems?",
+      "a": "Yes, we can monitor system performance remotely if your inverter supports it. We confirm the monitoring options when you get a quote.",
+      "keywords": "monitor,remote",
+      "priority": 7
+    }
+  ],
+  "templates": {
+    "booking_confirmation": "Hi {customer}, your {job} with {business} is booked for {date}. Please make sure someone can give access to {site_label}.",
+    "reminder": "Reminder: {business} will attend for your {job} on {date}.",
+    "quote_intro": "Here is the quote for the {job} at your {site_label}. The price includes parts and labour as listed.",
+    "invoice_note": "Thank you for choosing {business}. Payment is due within the terms shown."
+  },
+  "workflow_defaults": {
+    "booking_minutes": 90,
+    "buffer_minutes": 30,
+    "quote_validity_days": 30,
+    "invoice_terms_days": 14,
+    "deposit_percent": 0,
+    "requires_site_visit": true
+  },
+  "required_information": [
+    {
+      "key": "customer_name",
+      "label": "Customer name",
+      "required": true
+    },
+    {
+      "key": "contact_phone",
+      "label": "Phone number",
+      "required": true
+    },
+    {
+      "key": "site_address",
+      "label": "Site address",
+      "required": true
+    },
+    {
+      "key": "preferred_time",
+      "label": "Preferred day or time",
+      "required": false
+    },
+    {
+      "key": "access_notes",
+      "label": "Access notes (gate, key, pets)",
+      "required": false
+    },
+    {
+      "key": "asset_details",
+      "label": "Equipment or asset details (make, model, age)",
+      "required": true
+    },
+    {
+      "key": "urgency",
+      "label": "Is it an emergency or a safety issue?",
+      "required": true
+    }
+  ],
+  "automation_rules": [
+    {
+      "id": "solar.rule1",
+      "trigger": "enquiry.received",
+      "action": "reply_to_enquiry",
+      "description": "Reply within two hours during business hours",
+      "enabled": false
+    },
+    {
+      "id": "solar.rule2",
+      "trigger": "job.completed",
+      "action": "send_invoice",
+      "description": "Send invoice and review request",
+      "enabled": false
+    },
+    {
+      "id": "solar.rule3",
+      "trigger": "licence.expiry_due",
+      "action": "remind_staff_record",
+      "description": "Remind owner 30 days before a technician licence expires",
+      "enabled": false
+    }
+  ],
+  "compliance": {
+    "level": "licence",
+    "guidance": "Solar installers need accreditation and electrical licence coverage for the grid connection, and a clean energy approved installer status where a rebate applies. Check your state rules and the rebate scheme requirements.",
+    "items": [
+      "Installer accreditation number and expiry",
+      "Electrical licence for grid connection work"
+    ],
+    "reviewed": false
+  },
+  "resources": [
+    "vehicle",
+    "tool kit",
+    "specialist equipment"
+  ],
+  "reporting": [
+    "jobs completed",
+    "quote conversion rate",
+    "average job value",
+    "callouts and repeat visits"
+  ],
+  "staff_record_types": [
+    "licence",
+    "insurance",
+    "training"
+  ],
+  "coverage": {
+    "crm": "applicable",
+    "service_catalog": "implemented",
+    "staff_skills": "draft",
+    "scheduling": "draft",
+    "resources": "draft",
+    "compliance": "draft",
+    "automation": "draft",
+    "reporting": "draft"
+  }
+}

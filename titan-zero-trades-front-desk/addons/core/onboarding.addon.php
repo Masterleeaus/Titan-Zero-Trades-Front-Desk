@@ -635,7 +635,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $secret = '';
                 $current = TZFD_Addon_Support::global_settings( 'missed_call', TZFD_MissedCall::defaults() );
                 if ( ! empty( $d['missed_call_on'] ) && '' === $current['inbound_secret'] ) {
-                    $secret = wp_generate_password( 48, false );
+                    require_once dirname( __DIR__, 2 ) . '/includes/class-tzfd-signed-request.php';
+                    $secret = TZFD_Signed_Request::new_secret();
                 }
                 // Check the missed-call settings before anything is written.
                 if ( ! empty( $d['missed_call_on'] ) ) {
@@ -795,7 +796,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<h2>' . esc_html__( 'Setup complete', 'titan-zero-trades-front-desk' ) . '</h2>';
                 echo '<p>' . esc_html__( 'Your phone system should post missed calls to:', 'titan-zero-trades-front-desk' ) . ' <code>' . esc_html( rest_url( 'titan-zero-front-desk/v1/missed-call' ) ) . '</code></p>';
                 if ( $secret ) {
-                    echo '<p>' . esc_html__( 'Inbound secret (shown once; send it in the X-TZFD-Secret header):', 'titan-zero-trades-front-desk' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
+                    echo '<p>' . esc_html__( 'Inbound secret (shown once; use it to sign each request, see Help):', 'titan-zero-trades-front-desk' ) . ' <code>' . esc_html( $secret ) . '</code></p>';
                 }
                 echo '<p><a class="button button-primary" href="' . esc_url( admin_url( 'admin.php?page=tzfd-setup&step=1' ) ) . '">' . esc_html__( 'Open the setup wizard', 'titan-zero-trades-front-desk' ) . '</a></p>';
                 echo '</div>';

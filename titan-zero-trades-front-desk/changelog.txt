@@ -1,4 +1,10 @@
 = 3.0.128 =
+* Missed-call webhook: the plugin generates the inbound secret and shows it once. Each request is signed with HMAC-SHA256 over its timestamp and raw body, and is refused when it is more than five minutes off or repeated. The X-TZFD-Secret header is removed.
+* Personal data erase deletes the booking records that match the requested email address. Client-portal sign-in links and sessions for that address are removed as before.
+* Add Booking: the Workspace location picker and its lookup endpoint are removed.
+* Vertical packs no longer write FAQ rows. The AI Receptionist tables are removed from this version.
+* Celebrant pack: the Marriage Act line is removed from the compliance guidance.
+* Minimum WordPress version is 6.6. Tested on WordPress 6.6.2 and 7.1.4.
 * Setup wizard: clearer spacing on every step, plain-language policy questions, one question per row, and a booking page choice.
 * Verticals: improved service types, questions and answers for all 65 bundled packs. Unverified facts are now placeholders for the owner to complete.
 * Compliance guidance corrected for three packs.

@@ -30,7 +30,6 @@ return array(
     'tz_fd_every_minute',
     'tz_fd_pipeline_supervisor',
     'tz_fd_plans_tick',
-    'tz_fd_receptionist_callback_cron',
     'tz_fd_recovery_cron',
     'tz_fd_reminders_tick',
     'tz_fd_reports_cron',

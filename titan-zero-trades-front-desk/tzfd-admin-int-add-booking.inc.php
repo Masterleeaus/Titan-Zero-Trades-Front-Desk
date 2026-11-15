@@ -217,10 +217,6 @@ if ( current_user_can( 'tz_fd_access' ) ) {
     $tz_rows = TZFD_Local_Customers::search( '', array( 'limit' => 200 ) );
     $tz_booking_customers = is_array( $tz_rows ) ? array_map( static function ( $row ) { return (object) $row; }, $tz_rows ) : array();
 }
-// Workspace sites are an optional external feature. Do not offer its locations
-// for native customer IDs: numeric IDs can overlap between independent stores.
-$tz_workspace_sites = array();
-$tzfd_workspace_location_mode = false;
 // Render customer data once and switch contact fields in place, without reloading
 // or discarding a partially completed appointment.
 $tz_customer_options = array();
@@ -240,12 +236,6 @@ if ( $tz_selected_customer ) {
 }
 // Only admin users with customer access reach this screen.
 wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingCustomers=' . wp_json_encode( $tz_customer_options ) . ';', 'before' );
-wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingExternalLocationMode=false;', 'before' );
-wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdWorkspaceSiteEndpoint=' . wp_json_encode( admin_url( 'admin-ajax.php' ) ) . ';window.tzfdWorkspaceSiteNonce=' . wp_json_encode( wp_create_nonce( 'tzfd_workspace_customer_sites' ) ) . ';', 'before' );
-wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingWorkspaceCustomer=' . wp_json_encode( (string) $tz_selected_customer_id ) . ';', 'before' );
-wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingWorkspaceSites=' . wp_json_encode( array_map( function ( $site ) {
-    return array( 'id' => (int) $site['id'], 'label' => (string) $site['label'] );
-}, $tz_workspace_sites ) ) . ';', 'before' );
 // Report renderer failures explicitly rather than displaying an empty booking pane.
 wp_add_inline_script( 'tzfd-add-booking-inline', <<<'TZFD_RENDER_HEALTH_JS'
 (function () {
@@ -325,83 +315,6 @@ wp_add_inline_script( 'tzfd-add-booking-inline', <<<'TZFD_CUSTOMER_JS'
             }
             hidden.value = select.value || '';
         }
-        // External location mapping is disabled for native Front Desk customers.
-        // Discover sites only if a future verified ID mapping enables the adapter.
-        var workspaceSites = window.tzfdBookingWorkspaceSites || [];
-        var workspaceCustomer = String(window.tzfdBookingWorkspaceCustomer || '');
-        var requestSequence = 0;
-        var siteSelect = document.createElement('select');
-        siteSelect.id = 'tz_fd_workspace_site_select';
-        siteSelect.setAttribute('aria-label', 'Workspace location');
-        var siteLabel = document.createElement('label');
-        siteLabel.textContent = 'Workspace location (optional) ';
-        siteLabel.appendChild(siteSelect);
-        siteLabel.style.display = 'block';
-        siteLabel.style.margin = '10px 0';
-        if (window.tzfdBookingExternalLocationMode === true) select.insertAdjacentElement('afterend', siteLabel);
-        function syncWorkspaceSite(targetForm) {
-            var bookingForm = targetForm && targetForm.tagName === 'FORM' ? targetForm : findBookingForm();
-            if (!bookingForm) return;
-            var hidden = bookingForm.querySelector('input[name="tz_fd_workspace_site_id"]');
-            if (!hidden) {
-                hidden = document.createElement('input');
-                hidden.type = 'hidden';
-                hidden.name = 'tz_fd_workspace_site_id';
-                bookingForm.appendChild(hidden);
-            }
-            hidden.value = siteSelect.value || '';
-        }
-        function populateSites(sites, placeholder) {
-            siteSelect.replaceChildren();
-            var blank = document.createElement('option');
-            blank.value = '';
-            blank.textContent = placeholder || 'No Workspace location';
-            siteSelect.appendChild(blank);
-            sites.forEach(function (site) {
-                var option = document.createElement('option');
-                option.value = String(site.id);
-                option.textContent = String(site.label || 'Location ' + site.id);
-                siteSelect.appendChild(option);
-            });
-            syncWorkspaceSite();
-        }
-        function refreshWorkspaceSites() {
-            var customerId = String(select.value || '');
-            var sequence = ++requestSequence;
-            // Never submit a location belonging to the previously selected customer.
-            populateSites([], customerId ? 'Loading locations…' : 'No Workspace location');
-            if (!customerId) return;
-            if (customerId === workspaceCustomer) {
-                populateSites(workspaceSites);
-                return;
-            }
-            if (!window.fetch || !window.tzfdWorkspaceSiteEndpoint) {
-                populateSites([], 'Locations unavailable');
-                return;
-            }
-            var body = new URLSearchParams({
-                action: 'tzfd_workspace_customer_sites',
-                nonce: window.tzfdWorkspaceSiteNonce || '',
-                customer_id: customerId
-            });
-            fetch(window.tzfdWorkspaceSiteEndpoint, {
-                method: 'POST', credentials: 'same-origin',
-                headers: {'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'},
-                body: body.toString()
-            }).then(function (response) {
-                if (!response.ok) throw new Error('Location lookup failed');
-                return response.json();
-            }).then(function (payload) {
-                if (sequence !== requestSequence || String(select.value) !== customerId) return;
-                if (!payload.success || !payload.data || String(payload.data.customer_id) !== customerId) throw new Error('Location lookup rejected');
-                populateSites(Array.isArray(payload.data.sites) ? payload.data.sites : []);
-            }).catch(function () {
-                if (sequence === requestSequence && String(select.value) === customerId) populateSites([], 'Locations unavailable');
-            });
-        }
-        siteSelect.addEventListener('change', function () { syncWorkspaceSite(); });
-        select.addEventListener('change', function () { syncCustomerId(); if (window.tzfdBookingExternalLocationMode === true) refreshWorkspaceSites(); });
-        if (window.tzfdBookingExternalLocationMode === true) refreshWorkspaceSites();
         // The legacy form builder can invoke AJAX submission directly from its
         // generated button, bypassing the native submit event. Synchronise the
         // selected native customer ID during capture before that handler runs.
@@ -420,7 +333,6 @@ wp_add_inline_script( 'tzfd-add-booking-inline', <<<'TZFD_CUSTOMER_JS'
         document.addEventListener('submit', function (event) {
             if (event.target && event.target.matches('form') && event.target.querySelector('.dfield.fapp input[summary="usedSlots"]')) {
                 syncCustomerId(event.target);
-                if (window.tzfdBookingExternalLocationMode === true) syncWorkspaceSite(event.target);
             }
         }, true);
         syncCustomerId();

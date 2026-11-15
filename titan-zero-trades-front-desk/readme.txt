@@ -4,7 +4,7 @@ Contributors: titan0
 
 Tags: booking, appointments, calendar, scheduling, booking form
 
-Requires at least: 7.0
+Requires at least: 6.6
 
 Requires PHP: 7.4
 
@@ -198,7 +198,7 @@ Titan Zero Front Desk connects to the external services below only when the site
 
 1. SMS gateway and phone system (optional, missed-call text-back)
 
-   What it is: an SMS gateway that you choose, and your phone system. The gateway address must be a secure HTTPS address. Your phone system or gateway sends events to this site's webhook: a missed or unanswered call, and an incoming text such as STOP. Each event must carry the webhook secret that you set (at least 32 characters). This site does not contact the phone system.
+   What it is: an SMS gateway that you choose, and your phone system. The gateway address must be a secure HTTPS address. Your phone system or gateway sends events to this site's webhook: a missed or unanswered call, and an incoming text such as STOP. The plugin generates the webhook secret, shows it once, and each event must be signed with it: the X-TZFD-Timestamp and X-TZFD-Signature headers, with HMAC-SHA256 over the timestamp, a dot and the raw body. Requests more than five minutes off, or repeated, are refused. This site does not contact the phone system.
 
    Sent: after a missed call, this site sends the caller's phone number and one text message with the booking link to the gateway address you entered, with any authentication header you entered. If a caller replies STOP, UNSUBSCRIBE, END, CANCEL or QUIT, the number is recorded and no more texts are sent to it until the caller replies START.
 
@@ -260,7 +260,7 @@ Bookings, customer details and settings are stored in your WordPress database. T
 
 
 
-The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records and staff contacts. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. Front Desk does not automatically erase historical bookings or local customer records. The WordPress erase tool removes client-portal sign-in links and sessions only. Bookings are kept until you delete them. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. 
+The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records and staff contacts. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. The WordPress erase tool deletes the booking records that match the requested email address, and removes client-portal sign-in links and sessions for that address. Local customer records are not erased by that tool; delete them in Front Desk. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. 
 
 
 The client portal stores a one-time sign-in link and a 2-hour session in WordPress temporary storage (transients), which expire automatically. Only the keys are hashed. While those records exist, the client's email address is kept with them as entered. The sign-in email is sent through your site's mail setup, not an outside service.
@@ -335,6 +335,12 @@ Licences and upgrades: sales@titanzero.io
 == Changelog ==
 
 = 3.0.128 =
+* Missed-call webhook: the plugin generates the inbound secret and shows it once. Each request is signed with HMAC-SHA256 over its timestamp and raw body, and is refused when it is more than five minutes off or repeated. The X-TZFD-Secret header is removed.
+* Personal data erase deletes the booking records that match the requested email address. Client-portal sign-in links and sessions for that address are removed as before.
+* Add Booking: the Workspace location picker and its lookup endpoint are removed.
+* Vertical packs no longer write FAQ rows. The AI Receptionist tables are removed from this version.
+* Celebrant pack: the Marriage Act line is removed from the compliance guidance.
+* Minimum WordPress version is 6.6. Tested on WordPress 6.6.2 and 7.1.4.
 * Removed the AI booking assistant and the AI setup wizard from this version. Bookings, customers, reminders and reports work without AI. Earlier AI settings and stored chats are kept, not deleted.
 * Setup wizard: clearer spacing on every step, plain-language policy questions, one question per row, and a booking page choice.
 * Verticals: improved service types, questions and answers for all 65 bundled packs. Unverified facts are now placeholders for the owner to complete.

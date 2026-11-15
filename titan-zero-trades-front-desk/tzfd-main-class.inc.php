@@ -2194,13 +2194,6 @@ public function render_form_admin( $atts ) {
             exit;
         }
 
-        // A Workspace site is accepted only for a verified admin customer selection.
-        // Never accept a public booking's site ID as an ownership assertion.
-        $tz_workspace_requested_site = 0;
-        if ( $titan_zero_front_desk_admin_submission && ! defined( 'TZFD_HOUR_BLOCK_TIMES_PROCESS' ) ) {
-            $tz_workspace_requested_site = isset( $posted_items['tz_fd_workspace_site_id'] ) ? absint( $posted_items['tz_fd_workspace_site_id'] ) : 0;
-        }
-
         // Persist the selected customer relationship only for an authenticated
         // administrator with access to this calendar. Public submissions cannot
         // supply a customer ID or impersonate an existing CRM record.
@@ -2289,16 +2282,6 @@ public function render_form_admin( $atts ) {
 
         // Optional external links and booking-created events are post-commit effects.
         // Do not emit them for incomplete or mismatched stored bookings.
-        // Only after the booking row exists can Front Desk prove ownership.
-        // Workspace's adapter performs its own tenant, customer and site checks.
-        // This is deliberately best-effort: booking persistence remains authoritative.
-        require_once __DIR__ . '/includes/class-tzfd-post-commit-dispatch.php';
-        if ( $tz_workspace_requested_site && ! empty( $tz_params['customer_id'] ) ) {
-            TZFD_Post_Commit_Dispatch::run( function () use ( $item_number, $tz_params, $tz_workspace_requested_site ) {
-                // Front Desk runs standalone: no suite adapter exists, so a site is never attached here.
-                do_action( 'titan_zero_front_desk_workspace_attachment_failed', (int) $item_number, (int) $tz_params['customer_id'], $tz_workspace_requested_site );
-            }, (int) $item_number, 'workspace_attachment' );
-        }
 
 
 

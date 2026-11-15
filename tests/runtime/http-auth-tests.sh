@@ -8,7 +8,7 @@ check() { # name, expected_class (refuse), code
   else echo "PASS $name -- HTTP $code"; pass=$((pass+1)); fi
 }
 check "missed-call, no secret" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' $B/?rest_route=/titan-zero-front-desk/v1/missed-call)"
-check "missed-call, wrong secret" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H 'X-TZFD-Secret: 0123456789012345678901234567890123456789' -d '{"event":"missed","from":"+61400000000"}' $B/?rest_route=/titan-zero-front-desk/v1/missed-call)"
+check "missed-call, bad signature" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' $B/?rest_route=/titan-zero-front-desk/v1/missed-call)"
 check "twilio-status, unsigned" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -d 'MessageSid=SM1&MessageStatus=delivered' $B/?rest_route=/tzfd/v1/twilio-status)"
 check "call-events, unsigned" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' $B/?rest_route=/titan-zero-front-desk/v1/call-events)"
 check "booking status, anonymous" "$(curl -s -o /dev/null -w '%{http_code}' $B/?rest_route=/titan-zero-front-desk/v1/bookings/1)"

@@ -54,18 +54,38 @@ rt_check( 'export returns the booking', ! empty( $items ) && true === ( $export[
 $none = TZFD_Privacy_Exporter::export( '', 1 );
 rt_check( 'export with empty email returns no data', empty( $none['data'] ?? array() ) );
 
-// 5. Erase keeps booking records (documented: the admin deletes them in Front Desk).
-//    It must say so, and it must not remove them silently.
+// 5. Erase deletes the booking records for that address and reports it.
 $erase = TZFD_Privacy_Exporter::erase( $email, 1 );
-rt_check( 'erase keeps booking records and says so', true === ( $erase['items_retained'] ?? false ) && false === ( $erase['items_removed'] ?? true ), json_encode( $erase['messages'] ?? array() ) );
-$left = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE notifyto = %s", $email ) );
-rt_check( 'booking row is still present after erase (by design)', 1 === $left, 'remaining=' . $left );
-// Cleanup of the test row, done directly so the test leaves the site as it found it.
-$wpdb->delete( $table, array( 'notifyto' => $email ) );
+rt_check( 'erase reports the booking as removed', true === ( $erase['items_removed'] ?? false ) && true === ( $erase['done'] ?? false ), json_encode( $erase['messages'] ?? array() ) );
+$left = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $table WHERE LOWER(notifyto) = %s", $email ) );
+rt_check( 'no booking rows remain for the erased address', 0 === $left, 'remaining=' . $left );
+rt_check( 'erase leaves the other bookings for the company alone', $count() >= $before, 'before=' . $before . ' now=' . $count() );
 
 // 6. Erase with empty input removes nothing.
 $before3 = $count();
 TZFD_Privacy_Exporter::erase( '', 1 );
 rt_check( 'erase with empty email removes nothing', $count() === $before3 );
+
+require_once $tz_inc . 'class-tzfd-signed-request.php';
+// 7. Missed-call request signatures (HMAC-SHA256 over timestamp.body, 300 s window, replay refused).
+if ( class_exists( 'TZFD_Signed_Request' ) ) {
+    $secret = TZFD_Signed_Request::new_secret();
+    $body   = '{"event":"missed","from":"+61400000000"}';
+    $now    = time();
+    $ts     = (string) $now;
+    $sig    = 'sha256=' . hash_hmac( 'sha256', $ts . '.' . $body, $secret );
+    rt_check( 'generated secret is 64 characters', 64 === strlen( $secret ) );
+    rt_check( 'valid signature is accepted', TZFD_Signed_Request::signature_valid( $secret, $ts, $sig, $body, $now ) );
+    rt_check( 'tampered body is refused', ! TZFD_Signed_Request::signature_valid( $secret, $ts, $sig, $body . ' ', $now ) );
+    rt_check( 'stale timestamp is refused', ! TZFD_Signed_Request::signature_valid( $secret, (string) ( $now - 1000 ), 'sha256=' . hash_hmac( 'sha256', ( $now - 1000 ) . '.' . $body, $secret ), $body, $now ) );
+    rt_check( 'short secret fails closed', ! TZFD_Signed_Request::signature_valid( '0123', $ts, $sig, $body, $now ) );
+    rt_check( 'missing sha256 prefix is refused', ! TZFD_Signed_Request::signature_valid( $secret, $ts, substr( $sig, 7 ), $body, $now ) );
+    $replay_sig = 'sha256=' . hash_hmac( 'sha256', 'rt-replay-' . $ts, $secret );
+    rt_check( 'first use of a signature is claimed', TZFD_Signed_Request::claim_signature( $replay_sig ) );
+    rt_check( 'repeated signature is refused', ! TZFD_Signed_Request::claim_signature( $replay_sig ) );
+    delete_transient( 'tz_fd_sig_' . hash( 'sha256', $replay_sig ) );
+} else {
+    rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
+}
 
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";

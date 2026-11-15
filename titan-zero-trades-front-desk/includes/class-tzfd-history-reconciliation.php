@@ -12,9 +12,6 @@ final class TZFD_History_Reconciliation {
             array('source'=>'tz_enquiries', 'destination'=>'workspace', 'domain'=>'crm_leads', 'decision'=>'move_after_owner_contract'),
             array('source'=>'tz_pipeline', 'destination'=>'workspace', 'domain'=>'mixed_pipeline', 'decision'=>'split_booking_approval_from_crm'),
             array('source'=>'tz_pipeline_events', 'destination'=>'workspace', 'domain'=>'mixed_pipeline_history', 'decision'=>'split_and_reconcile'),
-            array('source'=>'tz_receptionist_staff', 'destination'=>'workspace', 'domain'=>'staff_duplicate', 'decision'=>'export_and_map_only'),
-            array('source'=>'tz_receptionists', 'destination'=>'front_desk', 'domain'=>'receptionist', 'decision'=>'classify_call_booking_scope'),
-            array('source'=>'tz_receptionist_kb', 'destination'=>'undecided', 'domain'=>'knowledge', 'decision'=>'classify_before_migration'),
             array('source'=>'tz_ai_conversations', 'destination'=>'undecided', 'domain'=>'conversation_history', 'decision'=>'classify_before_migration'),
             array('source'=>'tz_addon_records', 'destination'=>'undecided', 'domain'=>'mixed_addon_records', 'decision'=>'retain_read_only_until_all_owners_reconcile'),
         );
@@ -35,7 +32,7 @@ final class TZFD_History_Reconciliation {
         $result = array();
         foreach ( self::manifest() as $entry ) {
             $bare = $entry['source'];
-            if ( ! TZFD_Tables::is_canonical($bare) || ! in_array($bare, array_merge(TZFD_Tables::owned(), array(TZFD_Tables::RECEPTIONIST_STAFF)), true) ) {
+            if ( ! TZFD_Tables::is_canonical($bare) || ! in_array($bare, TZFD_Tables::owned(), true) ) {
                 return new WP_Error('tzfd_inventory_invalid_table', __( 'Source is not allowlisted.', 'titan-zero-trades-front-desk' ));
             }
             $table = $wpdb->prefix . $bare;

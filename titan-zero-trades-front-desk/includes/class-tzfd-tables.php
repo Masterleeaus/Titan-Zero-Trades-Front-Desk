@@ -26,10 +26,6 @@ final class TZFD_Tables {
     const SINGLE_DAYS        = 'tz_SingleDaysSelection';
     const ENQUIRIES          = 'tz_enquiries';
     const LOCAL_AUDIT        = 'tz_fd_audit_log';
-    const RECEPTIONISTS      = 'tz_receptionists';
-    /** Legacy duplicate of Workspace staff. Not created or used since 19 Oct; rows kept for export and erase only. */
-    const RECEPTIONIST_STAFF = 'tz_receptionist_staff';
-    const RECEPTIONIST_KB    = 'tz_receptionist_kb';
     const PIPELINE           = 'tz_pipeline';
     const PIPELINE_EVENTS    = 'tz_pipeline_events';
     const PIPELINE_NOTIFICATIONS = 'tz_pipeline_notification_outbox';
@@ -47,9 +43,6 @@ final class TZFD_Tables {
         'tzfd_cache'              => 'tz_cache',
         'tzfd_icalexport'         => 'tz_icalexport',
         'tzfd_SingleDaysSelection' => 'tz_SingleDaysSelection',
-        'tzfd_receptionists'      => 'tz_receptionists',
-        'tzfd_receptionist_staff' => 'tz_receptionist_staff',
-        'tzfd_receptionist_kb'    => 'tz_receptionist_kb',
         'tzfd_pipeline'           => 'tz_pipeline',
         'tzfd_pipeline_events'    => 'tz_pipeline_events',
         'tzfd_addon_records'      => 'tz_addon_records',
@@ -63,8 +56,6 @@ final class TZFD_Tables {
     public static function owned() {
         return array(
             self::CALLS, self::CALL_EVENTS, self::SLOT_HOLDS, self::SMART_TASK_OUTBOX, self::BOOKING_INBOX, self::BOOKING_ACTIONS, self::TELEPHONE_DELIVERY, self::ESCALATION_STATE, self::FORMS, self::BOOKINGS, self::CACHE, self::ICALEXPORT, self::SINGLE_DAYS,
-            self::RECEPTIONISTS,
-            self::RECEPTIONIST_KB,
             self::PIPELINE, self::PIPELINE_EVENTS, self::PIPELINE_NOTIFICATIONS, self::ADDON_RECORDS, self::ENQUIRIES, self::LOCAL_AUDIT,
         );
     }

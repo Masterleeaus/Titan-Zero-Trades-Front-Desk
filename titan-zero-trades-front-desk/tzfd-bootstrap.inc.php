@@ -107,10 +107,6 @@ TZFD_Customer_Event_Outbox::boot();
 TZFD_Pipeline_Screen::register();
 
 
-// Schema class used by the receptionist features. Tables are created on activation and again
-// when their schema version changes. Quote and invoice tables belong to Titan Zero Quotes and Invoicing.
-include_once dirname( __FILE__ ) . '/includes/class-tzfd-receptionist-schema.php';
-add_action('init', array('TZFD_Receptionist_Schema', 'maybe_install'));
 
 $tz_plugin = new TZFD_Scheduling_Plugin;
 add_action('tz_fd_process_data_before_insert', array($tz_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);

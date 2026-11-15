@@ -15,6 +15,7 @@ require_once __DIR__ . '/class-tzfd-stored-data.php';
 /** Export customer-submitted fields from bookings matched by their exact email. */
 class TZFD_Privacy_Exporter {
 	const PAGE_SIZE = 50;
+	const ERASE_BATCH = 100;
 
 	/** Register the exporter, the eraser and the suggested privacy policy text. */
 	public static function register() {
@@ -60,7 +61,7 @@ class TZFD_Privacy_Exporter {
 			),
 			array(
 				__( 'Exporting and erasing', 'titan-zero-trades-front-desk' ),
-				__( 'The WordPress export tool includes the booking records (with IP addresses) and staff contacts that match the email address requested. The phone-number opt-out list is not matched by email address, so it is not exported. The WordPress erase tool removes the client-portal sign-in links and sessions for that address. It does not delete bookings, chats or staff contacts. These are reported as kept. Customers, quotes and payments are handled by their own plugins.', 'titan-zero-trades-front-desk' ),
+				__( 'The WordPress export tool includes the booking records (with IP addresses) and staff contacts that match the email address requested. The phone-number opt-out list is not matched by email address, so it is not exported. The WordPress erase tool removes the client-portal sign-in links and sessions for that address. It also deletes the booking records that match that address, and this cannot be undone. Staff contacts are not deleted by the erase tool. Customers, quotes and payments are handled by their own plugins.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Deleting the plugin', 'titan-zero-trades-front-desk' ),
@@ -122,7 +123,9 @@ class TZFD_Privacy_Exporter {
 		return $erasers;
 	}
 
-	/** Remove client-portal sign-in records for an exact email address. Bookings, chats and staff contacts are never removed here; they are reported as kept.
+	/** Delete booking records and client-portal sign-in records for an exact email address.
+	 *
+	 * Booking records are deleted in batches; WordPress calls again while done is false.
 	 *
 	 * @param string $email_address Email address supplied by WordPress privacy tools.
 	 * @param int    $page          One-based page number.
@@ -133,7 +136,7 @@ class TZFD_Privacy_Exporter {
 		$response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => true );
 
 		// Same identity rule as export: invalid input matches nothing.
-		if ( ! is_string( $email_address ) || 1 !== (int) $page ) {
+		if ( ! is_string( $email_address ) || ! is_int( $page ) || $page < 1 ) {
 			return $response;
 		}
 		$email_address = strtolower( trim( $email_address ) );
@@ -144,19 +147,45 @@ class TZFD_Privacy_Exporter {
 			return self::erase_unavailable();
 		}
 
-		// Records that stay until deleted in Titan Zero Trades: Front Desk: reported as kept, never deleted here.
-		$kept = array(
-			array( TZFD_Tables::BOOKINGS, 'notifyto', __( 'Booking records are kept. Delete them in Titan Zero Front Desk.', 'titan-zero-trades-front-desk' ) ),
-		);
-		foreach ( $kept as $item ) {
-			$count = self::count_rows( $item[0], $item[1], $email_address );
-			if ( null === $count ) {
+		// Booking records for this address are deleted automatically, in batches.
+		$bookings_removed = 0;
+		$table    = $wpdb->prefix . TZFD_Tables::BOOKINGS;
+		$existing = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
+		if ( ! empty( $wpdb->last_error ) ) {
+			return self::erase_unavailable();
+		}
+		if ( $table === $existing ) {
+			$ids = $wpdb->get_col( $wpdb->prepare(
+				'SELECT id FROM %i WHERE LOWER(notifyto) = %s ORDER BY id ASC LIMIT %d',
+				$table,
+				$email_address,
+				self::ERASE_BATCH + 1
+			) );
+			if ( ! is_array( $ids ) || ! empty( $wpdb->last_error ) ) {
 				return self::erase_unavailable();
 			}
-			if ( $count > 0 ) {
-				$response['items_retained'] = true;
-				$response['messages'][]     = $item[2];
+			$has_more = count( $ids ) > self::ERASE_BATCH;
+			foreach ( array_slice( $ids, 0, self::ERASE_BATCH ) as $booking_id ) {
+				$booking_id = absint( $booking_id );
+				$wpdb->last_error = '';
+				$deleted = $wpdb->delete( $table, array( 'id' => $booking_id ), array( '%d' ) );
+				if ( 1 !== $deleted || ! empty( $wpdb->last_error ) ) {
+					// Report what was removed and ask WordPress to retry; the rest of the batch is left in place.
+					$partial = self::erase_unavailable();
+					if ( $bookings_removed > 0 ) {
+						$partial['items_removed'] = true;
+						$partial['messages'][]    = self::bookings_removed_message( $bookings_removed );
+					}
+					return $partial;
+				}
+				++$bookings_removed;
+				do_action( 'tz_fd_item_deleted', $booking_id );
 			}
+			$response['done'] = ! $has_more;
+		}
+		if ( $bookings_removed > 0 ) {
+			$response['items_removed'] = true;
+			$response['messages'][]    = self::bookings_removed_message( $bookings_removed );
 		}
 
 		// Client-portal sign-in links and sessions store a serialized array whose 'email' entry is the address. Their keys are hashed,
@@ -191,22 +220,9 @@ class TZFD_Privacy_Exporter {
 		return $response;
 	}
 
-	/** Row count for one email column, or 0 when the table is not installed. Null on a database error. */
-	private static function count_rows( $table, $column, $email_address ) {
-		global $wpdb;
-		$full = $wpdb->prefix . $table;
-		$existing = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $full ) ) );
-		if ( ! empty( $wpdb->last_error ) ) {
-			return null;
-		}
-		if ( $full !== $existing ) {
-			return 0;
-		}
-		$count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE LOWER(%i) = %s', $full, $column, $email_address ) );
-		if ( ! empty( $wpdb->last_error ) || null === $count ) {
-			return null;
-		}
-		return (int) $count;
+	private static function bookings_removed_message( $count ) {
+		/* translators: %d: number of booking records deleted. */
+		return sprintf( _n( '%d booking record deleted.', '%d booking records deleted.', $count, 'titan-zero-trades-front-desk' ), $count );
 	}
 
 	private static function erase_unavailable() {

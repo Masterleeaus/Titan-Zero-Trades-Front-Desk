@@ -377,9 +377,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             if ( ! isset( $packs[$id] ) ) return new WP_Error( 'not_found', __( 'That pack could not be found. Refresh the page and try again.', 'titan-zero-trades-front-desk' ) );
             $pack = self::apply_edits( self::apply_vars( $packs[$id] ), self::edits( $id ) );
 
-            global $wpdb;
-            $rec = self::current_receptionist();
-
             // 1. Service types + business profile
             $biz = TZFD_Scoped_Store::get('tz_fd_business_profile', array());
             if ( ! empty($pack['service_types']) ) {
@@ -399,45 +396,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
                 }
             }
 
-            // 3. Knowledge base entries
+            // 3. Reference Q&A is not stored by Front Desk any more. The count stays 0 for existing callers.
             $kb_created = 0;
-            if ( $rec && ! empty($pack['kb']) ) {
-                foreach ( $pack['kb'] as $qa ) {
-                    $exists = (int) $wpdb->get_var( $wpdb->prepare(
-                        "SELECT COUNT(*) FROM %i
-                         WHERE receptionist_id=%d AND question=%s",
-                        $wpdb->prefix.TZFD_Receptionist_Schema::T_KB, intval($rec->id), $qa['q'] ?? '' ) );
-                    if ( $exists ) continue;
-                    $kb_inserted = $wpdb->insert( $wpdb->prefix.TZFD_Receptionist_Schema::T_KB, array(
-                        'company_id' => TZFD_Scoped_Store::company_id(),
-                        'receptionist_id' => intval($rec->id),
-                        'question'        => sanitize_text_field( is_scalar( $qa['q'] ?? null ) ? (string) $qa['q'] : '' ),
-                        'answer'          => wp_kses_post( is_scalar( $qa['a'] ?? null ) ? (string) $qa['a'] : '' ),
-                        'keywords'        => sanitize_text_field( is_scalar( $qa['keywords'] ?? null ) ? (string) $qa['keywords'] : '' ),
-                        'priority'        => intval( $qa['priority'] ?? 10 ),
-                        'active'          => 1,
-                    ) );
-                    if ( false !== $kb_inserted ) {
-                        $kb_created++;
-                    }
-                }
-            }
-
-            // 3b. Without the Receptionist add-on, the pack's reference answers are kept in their own option for the AI assistant.
-            if ( ! $rec && ! empty($pack['kb']) ) {
-                $store = TZFD_Scoped_Store::get( 'tz_fd_pack_kb', array() );
-                if ( ! is_array($store) ) $store = array();
-                $store[$id] = array();
-                foreach ( $pack['kb'] as $qa ) {
-                    $store[$id][] = array(
-                        'q'        => sanitize_text_field( is_scalar( $qa['q'] ?? null ) ? (string) $qa['q'] : '' ),
-                        'a'        => wp_kses_post( is_scalar( $qa['a'] ?? null ) ? (string) $qa['a'] : '' ),
-                        'keywords' => sanitize_text_field( is_scalar( $qa['keywords'] ?? null ) ? (string) $qa['keywords'] : '' ),
-                    );
-                }
-                TZFD_Scoped_Store::update( 'tz_fd_pack_kb', $store );
-                $kb_created = count( $store[ $id ] );
-            }
 
             // 4. Catalog items. The price catalogue belongs to Titan Zero Quotes (19 Oct split). Front Desk does not
             // write it. Quotes listens to this action and seeds its own catalogue from the pack.
@@ -472,7 +432,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
 
         public static function uninstall_pack( $id ) {
             if ( TZFD_Scoped_Store::company_id() < 1 ) return false;
-            global $wpdb;
             $installed = self::installed();
             if ( ! isset( $installed[$id] ) ) return false;
 
@@ -480,15 +439,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             $pack  = isset( $packs[$id] ) ? self::apply_edits( $packs[$id], self::edits( $id ) ) : null;
 
             if ( $pack ) {
-                // Remove KB entries added by this pack (by exact question match)
-                $rec = self::current_receptionist();
-                if ( $rec && ! empty($pack['kb']) ) {
-                    foreach ( $pack['kb'] as $qa ) {
-                        $wpdb->delete( $wpdb->prefix.TZFD_Receptionist_Schema::T_KB,
-                            array( 'receptionist_id'=>$rec->id, 'question'=>sanitize_text_field($qa['q'] ?? '') ),
-                            array( '%d', '%s' ) );
-                    }
-                }
                 // Catalog items belong to Titan Zero Quotes. Quotes removes its own items for this pack.
                 if ( ! empty( $pack['catalog'] ) ) {
                     do_action( 'tz_fd_pack_catalog_items_removed', $pack['catalog'], $id );
@@ -510,46 +460,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             return true;
         }
 
-        /**
-         * Reference answers for the AI assistant: the installed packs' Q&A that best match the customer's message.
-         * Used when the Receptionist add-on is not active; with it, the answers live in the Receptionist's table.
-         */
-        public static function knowledge_for_prompt( $text, $max = 6, $max_chars = 1800 ) {
-            $active = TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() );
-            if ( ! is_array($active) || ! in_array( 'tzfd-VerticalPacks', $active, true ) ) return '';
-            $store = TZFD_Scoped_Store::get( 'tz_fd_pack_kb', array() );
-            if ( ! is_array($store) || empty($store) ) return '';
-
-            $lower = ' ' . strtolower( (string) $text ) . ' ';
-            $words = array_unique( array_filter( preg_split( '/[^a-z0-9]+/', $lower ), function ( $w ) { return strlen($w) > 2; } ) );
-            if ( empty($words) ) return '';
-
-            $scored = array();
-            foreach ( $store as $entries ) {
-                foreach ( (array) $entries as $qa ) {
-                    $score = 0;
-                    foreach ( array_filter( array_map( 'trim', explode( ',', strtolower( (string) ($qa['keywords'] ?? '') ) ) ) ) as $kw ) {
-                        if ( strpos( $lower, ' ' . $kw ) !== false ) $score += 2;
-                    }
-                    foreach ( array_filter( preg_split( '/[^a-z0-9]+/', strtolower( (string) ($qa['q'] ?? '') ) ), function ( $w ) { return strlen($w) > 3; } ) as $w ) {
-                        if ( in_array( $w, $words, true ) ) $score += 1;
-                    }
-                    if ( $score > 0 ) $scored[] = array( $score, $qa );
-                }
-            }
-            usort( $scored, function ( $a, $b ) { return $b[0] <=> $a[0]; } );
-
-            $out = ''; $n = 0;
-            foreach ( $scored as $tz_item ) {
-                $block = 'Q: ' . $tz_item[1]['q'] . "\nA: " . trim( wp_strip_all_tags( (string) ($tz_item[1]['a'] ?? '') ) ) . "\n";
-                if ( $n >= $max || strlen( $out . $block ) > $max_chars ) break;
-                $out .= $block; $n++;
-            }
-            return trim($out);
-        }
-
         /* ============================================================
-         *  Integration with receptionist (quotes read the urgency and service signals through their own hooks)
+         *  Urgency signals (quotes read them through their own hooks)
          * ============================================================ */
 
         /** Merge all installed packs' urgency signals into one combined map. */
@@ -568,14 +480,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
                 }
             }
             return $signals;
-        }
-
-        private static function current_receptionist() {
-            global $wpdb;
-            // The receptionist tables belong to the AI Receptionist add-on. Without it, the FAQ and staff steps are skipped.
-            if ( ! class_exists( 'TZFD_Receptionist_Schema' ) ) return null;
-            return $wpdb->get_row( $wpdb->prepare(
-                "SELECT * FROM %i ORDER BY id ASC LIMIT 1", $wpdb->prefix.TZFD_Receptionist_Schema::T_RECEPTIONISTS ) );
         }
 
         /* ============================================================
@@ -755,7 +659,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
                             </div>
                             <div style="padding:16px;flex:1;display:flex;flex-direction:column;">
                                 <ul style="list-style:none;padding:0;margin:0 0 12px;font-size:13px;color:#a4acba;line-height:1.7;">
-                                    <li>📚 <?php echo count( $pack['kb'] ?? array() ); ?> <?php esc_html_e('questions and answers','titan-zero-trades-front-desk'); ?></li>
                                     <li>💰 <?php echo count( $pack['catalog'] ?? array() ); ?> <?php esc_html_e('price list items','titan-zero-trades-front-desk'); ?></li>
                                     <li>🔧 <?php echo count( $pack['service_types'] ?? array() ); ?> <?php esc_html_e('service types','titan-zero-trades-front-desk'); ?></li>
                                     <?php if ( ! empty($pack['urgency_signals']['emergency']) ): ?>

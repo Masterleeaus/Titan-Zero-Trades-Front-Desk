@@ -3,7 +3,7 @@
 Plugin Name: Titan Zero Front Desk
 Description: Bookings, calendar, booking pages and phone answering. Operates standalone with optional Titan Zero integrations.
 Version: 3.0.128
-Requires at least: 7.0
+Requires at least: 6.6
 Requires PHP: 7.4
 Author: Titan Zero
 License: GPL-2.0-only
@@ -274,7 +274,6 @@ if ( ! function_exists( 'tz_fd_activate' ) ) {
         // Slot holds have no automatic installer, so their table was never created. Install it here.
         if ( ! class_exists( 'TZFD_Slot_Holds' ) ) { require_once dirname( __FILE__ ) . '/includes/class-tzfd-slot-holds.php'; }
         if ( class_exists( 'TZFD_Slot_Holds' ) ) { TZFD_Slot_Holds::install(); }
-        if ( class_exists( 'TZFD_Receptionist_Schema' ) ) { TZFD_Receptionist_Schema::maybe_install(); }
         // Call lifecycle schema is an explicit, authorised install. Failures are shown as an admin notice.
         // Reactivation is the retry path, so a stored failure from an earlier attempt is cleared first.
         delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
@@ -305,7 +304,6 @@ add_action( 'plugins_loaded', 'tz_fd_boot', 20 );
 if ( file_exists( __DIR__ . '/ui-pack/ui/tz-app-pack.php' ) ) { require_once __DIR__ . '/ui-pack/ui/tz-app-pack.php'; }
 
 // Admin-only, nonce-verified site discovery for the booking customer selector.
-require_once __DIR__ . '/includes/class-tzfd-workspace-site-ajax.php';
 
 // Bundled UI graphics catalogue (admin-only route).
 if ( is_admin() ) {

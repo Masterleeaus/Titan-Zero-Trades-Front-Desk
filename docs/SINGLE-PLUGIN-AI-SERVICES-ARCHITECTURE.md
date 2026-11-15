@@ -1,10 +1,16 @@
-# Titan Zero Front Desk — Single-Plugin AI Services Architecture
+# Scheduling & Enquiries Manager — Single-Plugin AI Services Architecture
 
 > **Authoritative product plan: 2026-11-15.** Status: **specification only**. This document supersedes any planned separately installed Pro extension or AI-only plugin. Do not claim the hosted plans are implemented before end-to-end tests.
 
+## Official WordPress plugin name
+
+**Scheduling & Enquiries Manager** is the correctly spelled user-facing WordPress plugin display name. **Titan Zero** is the vendor/service brand, and **Titan Zero AI Assistant** / **Titan Zero AI Agent Team** are its optional hosted service upgrades. Do not rebrand the AI services as plugins.
+
+Legacy "Front Desk" descriptions, repository names, previously distributed slugs, PHP namespaces, DB options, shortcodes and API identifiers may remain for backward compatibility; audit and migrate only with verified WordPress upgrade safety. Follow the WordPress.org-approved plugin display name/slug, do not assume its slug from this document. Never rename a repository or published WordPress plugin slug merely to match display-name wording.
+
 ## The single-install promise
 
-A service business installs **Titan Zero Front Desk Free** once from WordPress.org (after approval). It continues to own and use its booking, calendars, service catalogue, customers, standard notification, rule-based enquiry handling and AI knowledge tools without payment or an external AI connection.
+A service business installs **Scheduling & Enquiries Manager** once from WordPress.org (after approval). It continues to own and use its booking, calendars, service catalogue, customers, standard notification, rule-based enquiry handling and AI knowledge tools without payment or an external AI connection.
 
 In the plugin's **AI Services** admin view, the business can optionally connect a Titan hosted account and activate:
 1. **Free / basic AI:** tenant-scoped rules/FAQ, cache, semantic lookup where available and limited opted-in hosted model fallback.
@@ -26,7 +32,7 @@ The previous Pro repository is a **historical planning input** and should not be
 
 ## UX: one plugin, two upgrade steps
 
-**WordPress Admin → Front Desk → AI Services**
+**WordPress Admin → Scheduling & Enquiries Manager → AI Services**
 - Show current level, status, consent and last successful link; buttons/links for *Connect account*, *Activate Assistant*, *Upgrade to Agent Team*, *Manage subscription*, *View usage* and *Disconnect*, only when real account/checkout APIs exist.
 - Basic AI and all deterministic booking tools continue operating without creating a Titan account. No signup requirement for standard Free usage.
 - Pair via safe server-created, short-lived one-time token; avoid embedding provider secrets in JS or URL; confirm business/site ownership with Central.

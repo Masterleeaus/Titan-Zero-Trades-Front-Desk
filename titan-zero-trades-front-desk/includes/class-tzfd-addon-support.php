@@ -139,26 +139,26 @@ final class TZFD_Addon_Support {
         $stored = self::merge_stored( $raw, $defaults );
         $legacy = false;
         foreach ( self::SECRET_FIELD_NAMES as $field ) {
-            if ( isset( $stored[ $field ] ) && is_string( $stored[ $field ] ) && '' !== $stored[ $field ] && 0 !== strpos( $stored[ $field ], 'enc:' ) ) {
+            if ( isset( $stored[ $field ] ) && is_string( $stored[ $field ] ) && '' !== $stored[ $field ] && 0 !== strpos( $stored[ $field ], self::SECRET_PREFIX ) ) {
                 $legacy = true;
             }
         }
         if ( $legacy && '' !== $option && is_array( $raw ) ) {
-            // First read of a plain-text credential: store it encrypted. A failed encryption keeps the old value.
+            // First read of a credential stored in an older format: store it in the current format.
+            // A failed conversion keeps the old value.
             foreach ( self::SECRET_FIELD_NAMES as $field ) {
-                if ( ! isset( $raw[ $field ] ) || ! is_string( $raw[ $field ] ) || '' === $raw[ $field ] || 0 === strpos( $raw[ $field ], 'enc:' ) ) { continue; }
-                $enc = self::secret_encrypt( $raw[ $field ] );
-                if ( '' !== $enc ) { $raw[ $field ] = $enc; }
+                if ( ! isset( $raw[ $field ] ) || ! is_string( $raw[ $field ] ) || '' === $raw[ $field ] ) { continue; }
+                $raw[ $field ] = self::secret_upgrade( $raw[ $field ] );
             }
             update_option( $option, $raw, false );
         }
         return self::reveal_secrets( $stored );
     }
 
-    /** Decrypts credential fields for use. Values without the enc: prefix are legacy plain text and are returned as they are. */
+    /** Decrypts credential fields for use. Values without a known encrypted prefix are returned as they are. */
     public static function reveal_secrets( array $settings ) {
         foreach ( self::SECRET_FIELD_NAMES as $field ) {
-            if ( isset( $settings[ $field ] ) && is_string( $settings[ $field ] ) && 0 === strpos( $settings[ $field ], 'enc:' ) ) {
+            if ( isset( $settings[ $field ] ) && is_string( $settings[ $field ] ) && self::is_encrypted( $settings[ $field ] ) ) {
                 $settings[ $field ] = self::secret_decrypt( $settings[ $field ] );
             }
         }
@@ -551,61 +551,73 @@ final class TZFD_Addon_Support {
         return $html . '</div>';
     }
 
-    /**
-     * True when WordPress has a configured AI provider connector, or a site supplies a custom provider through the tz_fd_ai_provider filter.
-     * Every AI feature checks this first. Without it, the rest of the plugin works as normal.
+    /*
+     * Stored credentials
+     *
+     * Current format: "gcm1:" + base64( 12-byte IV | 16-byte tag | ciphertext ), AES-256-GCM. GCM checks the data,
+     * so an altered value is rejected rather than decrypted to garbage. The key is derived from the site's auth salt
+     * with a purpose label, so it is not the same key material used for other signatures on the site.
+     * Older values ("enc:", AES-256-CBC with no integrity check) are still read, and are re-encrypted on the next read.
      */
-    public static function ai_configured() {
-        $custom = apply_filters( 'tz_fd_ai_provider', null );
-        if ( interface_exists( 'TZFD_AI_Provider' ) && $custom instanceof TZFD_AI_Provider ) {
-            return true;
-        }
-        if ( ! function_exists( 'wp_ai_client_prompt' ) || ( function_exists( 'wp_supports_ai' ) && ! wp_supports_ai() ) ) {
-            return false;
-        }
-        if ( class_exists( '\\WordPress\\AiClient\\AiClient' ) ) {
-            try {
-                $registry = \WordPress\AiClient\AiClient::defaultRegistry();
-                foreach ( $registry->getRegisteredProviderIds() as $provider_id ) {
-                    if ( $registry->isProviderConfigured( $provider_id ) ) {
-                        return true;
-                    }
-                }
-            } catch ( \Throwable $error ) {
-                return false;
-            }
-        }
-        return false;
+    const SECRET_PREFIX        = 'gcm1:';
+    const SECRET_PREFIX_LEGACY = 'enc:';
+
+    private static function secret_key() {
+        return hash_hmac( 'sha256', 'titan-zero-trades-front-desk/credential-encryption/v2', wp_salt( 'auth' ), true );
     }
 
-    /** Encrypts an API key before storage. Same format as the AI add-on, so either can read it. */
+    public static function is_encrypted( $stored ) {
+        if ( ! is_string( $stored ) ) { return false; }
+        return 0 === strpos( $stored, self::SECRET_PREFIX ) || 0 === strpos( $stored, self::SECRET_PREFIX_LEGACY );
+    }
+
+    /** Encrypts a credential for storage. Returns '' if encryption is unavailable or fails, so callers keep the old value. */
     public static function secret_encrypt( $plain ) {
-        // Never store an AI key unencrypted. Without OpenSSL nothing is saved; the AI page then shows it is not set up.
-        if ( ! function_exists( 'openssl_encrypt' ) ) { return ''; }
-        $k  = hash( 'sha256', wp_salt( 'auth' ), true );
-        $iv = openssl_random_pseudo_bytes( 16 );
-        $cipher = openssl_encrypt( $plain, 'aes-256-cbc', $k, OPENSSL_RAW_DATA, $iv );
-        // A failed encryption returns '' so callers keep the existing value instead of storing an undecryptable one.
-        if ( false === $cipher ) { return ''; }
-        return 'enc:' . base64_encode( $iv . $cipher );
+        if ( ! function_exists( 'openssl_encrypt' ) || ! is_string( $plain ) || '' === $plain ) { return ''; }
+        if ( ! in_array( 'aes-256-gcm', openssl_get_cipher_methods(), true ) ) { return ''; }
+        $iv     = random_bytes( 12 );
+        $tag    = '';
+        $cipher = openssl_encrypt( $plain, 'aes-256-gcm', self::secret_key(), OPENSSL_RAW_DATA, $iv, $tag, '', 16 );
+        if ( false === $cipher || 16 !== strlen( $tag ) ) { return ''; }
+        return self::SECRET_PREFIX . base64_encode( $iv . $tag . $cipher );
     }
 
+    /** Returns the plain credential, or '' if the stored value is missing, damaged or was altered. */
     public static function secret_decrypt( $stored ) {
         $stored = (string) $stored;
         if ( '' === $stored ) { return ''; }
-        if ( strpos( $stored, 'enc:' ) !== 0 ) {
-            // Legacy plain storage is base64 only. A value that is not valid base64 gives no secret.
-            $plain = base64_decode( $stored, true );
+        if ( 0 === strpos( $stored, self::SECRET_PREFIX ) ) {
+            if ( ! function_exists( 'openssl_decrypt' ) ) { return ''; }
+            $raw = base64_decode( substr( $stored, strlen( self::SECRET_PREFIX ) ), true );
+            if ( false === $raw || strlen( $raw ) <= 28 ) { return ''; }
+            $plain = openssl_decrypt( substr( $raw, 28 ), 'aes-256-gcm', self::secret_key(), OPENSSL_RAW_DATA, substr( $raw, 0, 12 ), substr( $raw, 12, 16 ) );
             return false === $plain ? '' : $plain;
         }
+        if ( 0 === strpos( $stored, self::SECRET_PREFIX_LEGACY ) ) {
+            return self::legacy_decrypt( $stored );
+        }
+        // No prefix: stored before any encryption. Returned as it was saved, as before.
+        return $stored;
+    }
+
+    /** Reads the older AES-256-CBC format. Read-only: new values never use it. */
+    private static function legacy_decrypt( $stored ) {
         if ( ! function_exists( 'openssl_decrypt' ) ) { return ''; }
-        $raw = base64_decode( substr( $stored, 4 ), true );
+        $raw = base64_decode( substr( $stored, strlen( self::SECRET_PREFIX_LEGACY ) ), true );
         // A 16-byte IV followed by at least one cipher block. Anything shorter is not a stored secret.
         if ( false === $raw || strlen( $raw ) <= 16 ) { return ''; }
-        $iv  = substr( $raw, 0, 16 );
-        $ct  = substr( $raw, 16 );
-        $k   = hash( 'sha256', wp_salt( 'auth' ), true );
-        $plain = openssl_decrypt( $ct, 'aes-256-cbc', $k, OPENSSL_RAW_DATA, $iv );
+        $key   = hash( 'sha256', wp_salt( 'auth' ), true );
+        $plain = openssl_decrypt( substr( $raw, 16 ), 'aes-256-cbc', $key, OPENSSL_RAW_DATA, substr( $raw, 0, 16 ) );
         return false === $plain ? '' : $plain;
+    }
+
+    /** Puts a stored credential into the current format. A value already current, or one that cannot be converted, is returned unchanged. */
+    public static function secret_upgrade( $stored ) {
+        $stored = (string) $stored;
+        if ( '' === $stored || 0 === strpos( $stored, self::SECRET_PREFIX ) ) { return $stored; }
+        $plain = 0 === strpos( $stored, self::SECRET_PREFIX_LEGACY ) ? self::legacy_decrypt( $stored ) : $stored;
+        if ( '' === $plain ) { return $stored; }
+        $enc = self::secret_encrypt( $plain );
+        return '' !== $enc ? $enc : $stored;
     }
 }

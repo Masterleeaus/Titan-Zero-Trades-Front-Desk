@@ -65,7 +65,7 @@ Main features
 
 
 
-Compatibility modules. In this version these are kept from earlier releases. The Add-ons screen does not list them, so a new install cannot switch them on there. Where they were already switched on, they keep working: the optional AI booking assistant (it uses the WordPress AI Client and provider connectors, answers from your knowledge base and does not write quotes), the WhatsApp and SMS buttons below the booking form, a webhook that sends signed booking-created and booking-status events to an HTTPS endpoint you choose, and an activity log of booking additions, status changes and deletions.
+Compatibility modules. In this version these are kept from earlier releases. The Add-ons screen does not list them, so a new install cannot switch them on there. Where they were already switched on, they keep working: the WhatsApp and SMS buttons below the booking form, a webhook that sends signed booking-created and booking-status events to an HTTPS endpoint you choose, and an activity log of booking additions, status changes and deletions.
 
 
 
@@ -73,7 +73,7 @@ Titan Zero Front Desk is a free, GPL-licensed plugin. Nothing in it is locked be
 
 
 
-The plugin has no paid upgrade requirement. Reminders, when enabled, appear only to administrators on Front Desk screens: one while no AI provider is connected, one about the booking speed add-on, and one until AI setup is finished. The first two can be set aside for 30 days; the setup reminder can be dismissed.
+The plugin has no paid upgrade requirement. Reminders, when enabled, appear only to administrators on Front Desk screens. The booking availability reminder can be set aside for 30 days.
 
 
 
@@ -89,7 +89,7 @@ Optional external industry presets are examples; native service setup does not r
 
    This is a new plugin, not an upgrade. Do not install it over Appointment Hour Booking or Titan Front Desk; see the FAQ below.
 
-2. Activate Titan Zero Front Desk on a supported WordPress installation. No other Titan Zero plugin is needed. Optional WordPress AI provider connectors and SMS providers are only needed for their corresponding optional features.
+2. Activate Titan Zero Front Desk on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
 
 3. Open Titan Zero Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
 
@@ -142,13 +142,9 @@ No. They are examples. You can edit each price, and each answer, before the pres
 
 
 
-= Can I use an AI model? =
+= Does this version use AI? =
 
-
-
-Yes. WordPress 7.0 or later provides the WordPress AI Client and Settings → Connectors. Install and configure a provider connector there; Titan does not collect or store provider API keys. WordPress includes connectors for OpenAI, Anthropic and Google. For OpenAI-compatible services such as Groq, OpenRouter, Cerebras or a local server, install a compatible provider connector, for example https://wordpress.org/plugins/ultimate-ai-connector-compatible-endpoints/. Each provider's terms, privacy policy, limits and charges apply.
-
-
+No. This version contains no AI feature and does not contact any AI provider. Bookings, customers, reminders and reports work without AI.
 
 = Will my bookings be removed if I delete the plugin? =
 
@@ -182,47 +178,37 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 
 
+== Optional upgrades ==
+
+Front Desk shows optional upgrade links in two places: the Integrations tab of Settings, and the Upgrade link on the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
+
+* Front Desk Pro is a separate download. This plugin does not install, load or check for it.
+* AI Assistant and AI Agent are paid, hosted services that run outside WordPress and need a subscription. Their product pages are at titanzero.io/frontdeskai and titanzero.io/frontdeskagent. Each service's data handling will be listed under External services before any site data is sent to it.
+* Front Desk Pro's product page is at titanzero.io/frontdeskpro.
+
+Front Desk works fully without any of these upgrades.
+
 == External services ==
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author or to any AI provider by default. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 
-1. AI provider configured in WordPress Connectors (optional)
-
-   What it is: a third-party AI provider registered with the WordPress AI Client. Titan uses the WordPress AI Client for booking-assistant replies and AI setup suggestions. The administrator must install and configure a compatible provider connector under Settings → Connectors. Titan does not ask for, store or transmit provider API keys directly.
-
-   Data sent: when an administrator or visitor uses an AI feature, the relevant prompt and conversation context are sent by WordPress to the configured provider. Depending on the feature, this can include customer messages, booking details and service descriptions. Photo attachments are stored by this plugin; a photo URL may be included in the prompt when relevant. The AI provider processes this data under its own terms and privacy policy. Do not enable AI features for personal data unless you have reviewed the provider's policies and your legal obligations.
-
-   Provider terms and privacy: these depend on the connector and provider the administrator installs. Examples include OpenAI (https://openai.com/policies/services-agreement/ and https://openai.com/policies/privacy-policy/), Anthropic (https://www.anthropic.com/legal/commercial-terms and https://www.anthropic.com/legal/privacy), Google AI Studio (https://ai.google.dev/gemini-api/terms and https://policies.google.com/privacy), Groq (https://groq.com/terms-of-use and https://groq.com/privacy-policy), OpenRouter (https://openrouter.ai/terms and https://openrouter.ai/privacy), and Cerebras (https://www.cerebras.ai/terms-of-service and https://www.cerebras.ai/privacy-policy). Other providers and local servers have their own terms.
-
-   Purpose: AI chat replies and setup suggestions. No AI request is sent unless an AI feature is used and a compatible connector is configured.
-
-
-
-2. Local or compatible AI server (optional)
-
-   What it is: a local or self-hosted service exposed through a WordPress AI Client provider connector. Its administrator is responsible for securing the endpoint and reviewing the provider connector's behaviour. Data sent is the prompt content described in item 1.
-
-   Purpose: AI replies and drafts using a service selected and configured by the site administrator.
-
-
-
-3. SMS gateway and phone system (optional, missed-call text-back)
+1. SMS gateway and phone system (optional, missed-call text-back)
 
    What it is: an SMS gateway that you choose, and your phone system. The gateway address must be a secure HTTPS address. Your phone system or gateway sends events to this site's webhook: a missed or unanswered call, and an incoming text such as STOP. Each event must carry the webhook secret that you set (at least 32 characters). This site does not contact the phone system.
 
    Sent: after a missed call, this site sends the caller's phone number and one text message with the booking link to the gateway address you entered, with any authentication header you entered. If a caller replies STOP, UNSUBSCRIBE, END, CANCEL or QUIT, the number is recorded and no more texts are sent to it until the caller replies START.
 
-   Terms and privacy: the plugin does not include an SMS gateway or phone provider. Check the terms and privacy policy of the gateway and phone system you use before you turn this on. The separate Twilio option is described in item 7.
+   Terms and privacy: the plugin does not include an SMS gateway or phone provider. Check the terms and privacy policy of the gateway and phone system you use before you turn this on. The separate Twilio option is described in item 5.
 
    Purpose: texting a caller back when a call is missed.
 
 
 
-4. Web page for service import (optional, setup wizard)
+2. Web page for service import (optional, setup wizard)
 
    What it is: a web page with a price list or list of services that you name in the setup wizard. The address must be a secure HTTPS address.
 
@@ -232,7 +218,7 @@ Titan Zero Front Desk connects to the external services below only when the site
 
 
 
-5. Webhook endpoint (optional)
+3. Webhook endpoint (optional)
 
    What it is: an HTTPS address and a signing secret (at least 32 characters) that you enter in the webhook add-on settings, such as your own app or automation tool.
 
@@ -246,13 +232,13 @@ Titan Zero Front Desk connects to the external services below only when the site
 
 
 
-6. Links that open in a visitor's own app (not a connection)
+4. Links that open in a visitor's own app (not a connection)
 
    The optional WhatsApp and SMS buttons below the booking form are links (a wa.me link for WhatsApp, an sms: link for texts). When a visitor taps one, their own phone or browser opens WhatsApp or their messaging app, and the visitor can edit the message before sending it. This site does not contact WhatsApp. WhatsApp terms: https://www.whatsapp.com/legal/terms-of-service Privacy: https://www.whatsapp.com/legal/privacy-policy
 
 
 
-7. Twilio SMS (optional, off by default)
+5. Twilio SMS (optional, off by default)
 
    What it is: Twilio, a third-party messaging provider. It is used only when the site owner sets TZFD_TWILIO_SMS_ENABLED to true in wp-config.php and also defines the Twilio account SID, auth token and sender number there. Nothing is sent to Twilio until then.
 
@@ -274,7 +260,7 @@ Bookings, customer details and settings are stored in your WordPress database. T
 
 
 
-The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records, assistant chats and staff contacts. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. Front Desk does not automatically erase historical bookings or local customer records. The WordPress erase tool removes client-portal sign-in links and sessions only. Bookings are kept until you delete them. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. Booking assistant chats are kept until the retention period ends.
+The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records, staff contacts and any assistant chats stored by earlier versions. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. Front Desk does not automatically erase historical bookings or local customer records. The WordPress erase tool removes client-portal sign-in links and sessions only. Bookings are kept until you delete them. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. Assistant chats stored by earlier versions are kept until the retention period ends. This version does not create new ones.
 
 
 
@@ -350,6 +336,7 @@ Licences and upgrades: sales@titanzero.io
 == Changelog ==
 
 = 3.0.128 =
+* Removed the AI booking assistant and the AI setup wizard from this version. Bookings, customers, reminders and reports work without AI. Earlier AI settings and stored chats are kept, not deleted.
 * Setup wizard: clearer spacing on every step, plain-language policy questions, one question per row, and a booking page choice.
 * Verticals: improved service types, questions and answers for all 65 bundled packs. Unverified facts are now placeholders for the owner to complete.
 * Compliance guidance corrected for three packs.
@@ -779,6 +766,4 @@ The twelve bundled booking-form designs use JSON metadata (templates/01 through 
 
 The Add Booking, native Customers, Services, Workers, Equipment/Rooms and Locations editing forms use step-by-step navigation when JavaScript is available. Values are never saved by smart fill until the administrator submits the original form.
 
-AI-assisted field suggestions are optional and use the official WordPress AI Client interface (`wp_ai_client_prompt`) available on WordPress 7.0+. Configure an OpenAI or other supported connector under Settings > Connectors and provide the API key THERE; Front Desk does not store provider credentials. WordPress's AI plugin can optionally provide additional experiments and AI administration interfaces but is not required for Front Desk activation. Without a working AI connector, deterministic local suggestions and normal form editing still work. Each suggestion is explicitly requested, reviewed and applied by the administrator.
 
-Only the description typed into the suggestion box is sent for the AI suggestion request. Do not enter confidential personal information into that box. Generated suggestions may be inaccurate; review all fields before saving. AI provider usage may incur charges.

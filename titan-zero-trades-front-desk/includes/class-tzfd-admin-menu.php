@@ -27,14 +27,13 @@ final class TZFD_Admin_Menu {
     const PACKS    = 'tzfd-packs';
     const WORKERS  = 'tzfd-resources';
     const EQUIPMENT = 'tzfd-equipment';
-    const AI       = 'tzfd-ai-setup';
     const LOCATIONS = 'tzfd-locations';
     const PIPELINE = TZFD_Tables::PIPELINE;
     /** Standalone Front Desk navigation order. */
     public static function main_menu_order() {
         return apply_filters( 'tz_fd_admin_menu_order', array(
             self::PARENT, self::BOOKINGS, self::CALENDAR, self::ENQUIRIES, self::CUSTOMERS, self::SERVICES, self::PIPELINE, self::WORKERS, self::EQUIPMENT,
-            self::LOCATIONS, self::AI, self::ADDONS, self::SETTINGS,
+            self::LOCATIONS, self::ADDONS, self::SETTINGS,
             self::EMAILS, self::PREVIEW, self::SETUP, self::PACKS,
         ) );
     }
@@ -320,7 +319,6 @@ final class TZFD_Admin_Menu {
             array( 'key' => 'csv',            'label' => __( 'CSV export', 'titan-zero-trades-front-desk' ),         'kind' => 'tab',  'tab' => '5', 'hash' => 'csv',             'admin' => false ),
             array( 'key' => 'calendar',       'label' => __( 'Calendar display', 'titan-zero-trades-front-desk' ),   'kind' => 'tab',  'tab' => '6', 'hash' => 'calendar',        'admin' => true ),
             array( 'key' => 'other',          'label' => __( 'Other settings', 'titan-zero-trades-front-desk' ),     'kind' => 'tab',  'tab' => '7', 'hash' => 'other',           'admin' => false ),
-            array( 'key' => 'ai',             'label' => __( 'AI', 'titan-zero-trades-front-desk' ),                 'kind' => 'tab',  'tab' => '8', 'hash' => 'ai',              'admin' => true ),
             array( 'key' => 'help',           'label' => __( 'Help', 'titan-zero-trades-front-desk' ),               'kind' => 'page', 'slug' => self::HELP,                         'admin' => false ),
             array( 'key' => 'emails',         'label' => __( 'Status update emails', 'titan-zero-trades-front-desk' ), 'kind' => 'page', 'slug' => self::EMAILS,                     'admin' => true ),
             array( 'key' => 'preview',        'label' => __( 'Scheduling Preview', 'titan-zero-trades-front-desk' ), 'kind' => 'page', 'slug' => self::PREVIEW,                      'admin' => true ),

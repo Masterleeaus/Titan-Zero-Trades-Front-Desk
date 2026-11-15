@@ -43,11 +43,6 @@ if ( !empty($_POST["nonce"]) && current_user_can('tz_fd_access') && wp_verify_no
             $tz_message = 'Schedule Calendar View settings updated.';
         else if ($tz_gotab == 'miscsettings')
             $tz_message = 'Misc settings updated.';
-        else if ($tz_gotab == 'ai' && current_user_can('tz_fd_access'))
-        {
-            // Provider credentials are managed by WordPress Connectors, never by this plugin.
-            $tz_message = 'Configure an AI provider under WordPress Settings → Connectors. Titan no longer stores provider keys.';
-        }
 
     }
     else
@@ -66,7 +61,6 @@ $tz_section_for_gotab = array(
 	'csvarea'         => 'advanced',
 	'schedulecalarea' => 'advanced',
 	'miscsettings'    => 'booking',
-	'ai'              => 'integrations',
 );
 $tz_active = 'general';
 if ( isset( $_POST['gotab'] ) || isset( $_GET['gotab'] ) ) {
@@ -301,15 +295,6 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 <!-- integrations -->
 <div class="tzfd-tab<?php echo $tz_active === 'integrations' ? ' tab-active' : ''; ?>" data-tab="integrations">
 <div class="tzfd-subpane">
-<h2><?php esc_html_e('AI provider connection','titan-zero-trades-front-desk'); ?></h2>
-<p><?php esc_html_e('Titan uses the native WordPress AI Client. Provider credentials are managed by WordPress, not stored in Titan settings.','titan-zero-trades-front-desk'); ?></p>
-<?php if ( TZFD_AI_Options::available() ) : ?>
-<p><?php esc_html_e('Open Settings → Connectors and connect an AI provider. WordPress provides connectors for OpenAI, Anthropic and Google. For free-tier or OpenAI-compatible providers such as Groq, OpenRouter and Cerebras, install a compatible connector plugin first.','titan-zero-trades-front-desk'); ?></p>
-<p><a class="button button-primary" href="<?php echo esc_url( admin_url( 'options-connectors.php' ) ); ?>"><?php esc_html_e('Open WordPress Connectors','titan-zero-trades-front-desk'); ?></a> <a class="button" href="https://wordpress.org/plugins/ultimate-ai-connector-compatible-endpoints/" target="_blank" rel="noopener noreferrer"><?php esc_html_e('Find a compatible-provider connector','titan-zero-trades-front-desk'); ?></a></p>
-<?php else : ?>
-<p><?php esc_html_e('The WordPress AI Client requires WordPress 7.0 or later. Update WordPress to enable AI connectors.','titan-zero-trades-front-desk'); ?></p>
-<?php endif; ?>
-<p class="description"><?php esc_html_e('AI is optional. Booking forms and appointments that do not use AI continue to work without a connected provider. Review the provider terms and privacy policy before sending customer data.','titan-zero-trades-front-desk'); ?></p>
 
 </div>
 <div class="tzfd-subpane">
@@ -335,6 +320,9 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	</table>
 	<?php endif; ?>
 	<p><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=' . TZFD_Admin_Menu::ADDONS ) ); ?>"><?php esc_html_e('Open Add-ons','titan-zero-trades-front-desk'); ?></a></p>
+</div>
+<div class="tzfd-subpane">
+	<?php TZFD_Upgrades::render_cards(); ?>
 </div>
 
 </div>

@@ -48,7 +48,7 @@ class TZFD_Privacy_Exporter {
 			),
 			array(
 				__( 'Booking assistant chats', 'titan-zero-trades-front-desk' ),
-				__( 'The AI booking assistant stores each chat: the messages, the booking draft, the customer\'s email address if they gave one, and a hash of the IP address. A short rate-limit counter is kept under a hash of the IP address. Photos sent in a chat are stored in a private directory when configured, not directly exposed as public media. Photo access uses short-lived signed links; on hosting environments without suitable protected storage, photo uploads are disabled. Chats and photos are deleted after the retention period set in the AI settings (30 days by default).', 'titan-zero-trades-front-desk' ),
+				__( 'Chats from the booking assistant in earlier versions were stored with the messages, the booking draft, the customer\'s email address if they gave one, and a hash of the IP address. This version does not create new chats. A short rate-limit counter is kept under a hash of the IP address. Photos sent in a chat are stored in a private directory when configured, not directly exposed as public media. Photo access uses short-lived signed links; on hosting environments without suitable protected storage, photo uploads are disabled. Chats and photos are deleted after the retention period set in the AI settings (30 days by default).', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Client portal', 'titan-zero-trades-front-desk' ),
@@ -74,20 +74,6 @@ class TZFD_Privacy_Exporter {
 
 		// Outside services: the same list as the readme's External services section.
 		$services = array(
-			array(
-				__( 'An AI provider connected through WordPress AI Client and a compatible connector. The booking assistant sends its chat messages, the booking details collected so far and photo links. Data is sent according to the connector and provider you configure in WordPress Settings → Connectors.', 'titan-zero-trades-front-desk' ),
-				array(
-					'OpenAI'           => 'https://openai.com/policies/privacy-policy/',
-					'Anthropic'        => 'https://www.anthropic.com/legal/privacy',
-					'Groq'             => 'https://groq.com/privacy-policy/',
-								'Google AI Studio' => 'https://policies.google.com/privacy',
-					'Cerebras'         => 'https://www.cerebras.ai/privacy-policy',
-				),
-			),
-			array(
-				__( 'A local or self-hosted AI server configured through a compatible WordPress AI connector, such as a connector for Ollama, LM Studio, vLLM or LocalAI. The connector sends the prompt data described above to the endpoint configured by the administrator.', 'titan-zero-trades-front-desk' ),
-				array(),
-			),
 			array(
 				__( 'An SMS gateway you choose, and your phone system. When a call is missed, the caller\'s phone number and one text message with the booking link are sent to the gateway address you enter. The plugin does not include a gateway or phone provider, so check that provider\'s terms and privacy policy before you turn this on.', 'titan-zero-trades-front-desk' ),
 				array(),
@@ -165,7 +151,7 @@ class TZFD_Privacy_Exporter {
 		// Records that stay until deleted in Titan Zero Trades: Front Desk: reported as kept, never deleted here.
 		$kept = array(
 			array( TZFD_Tables::BOOKINGS, 'notifyto', __( 'Booking records are kept. Delete them in Titan Zero Front Desk.', 'titan-zero-trades-front-desk' ) ),
-			array( TZFD_Tables::AI_CONVERSATIONS, 'user_email', __( 'Booking assistant chats are kept until the retention period ends, then they are deleted automatically.', 'titan-zero-trades-front-desk' ) ),
+			array( TZFD_Tables::AI_CONVERSATIONS, 'user_email', __( 'Chats from earlier booking assistant versions are kept until the retention period ends, then they are deleted automatically.', 'titan-zero-trades-front-desk' ) ),
 		);
 		foreach ( $kept as $item ) {
 			$count = self::count_rows( $item[0], $item[1], $email_address );

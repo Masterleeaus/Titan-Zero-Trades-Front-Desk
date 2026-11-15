@@ -92,18 +92,14 @@ foreach ( TZFD_Addon_Loader::manifest() as $tz_file => $tz_entry ) {
 }
 $tz_front_desk_domains = TZFD_Addon_Loader::domain_ids();
 // Sort every add-on into one of the page's sections.
-// Free build: categories without a leading space are Pro-only and are shown greyed out.
-$tz_is_pro_build = false;
+// The free build lists only the add-ons it ships. Pro features are not shown here.
 $tz_included = array();  // switches listed under "Included features"
 $tz_cards    = array();  // optional add-ons shown as cards
-$tz_pro      = array();  // Pro-only, not switchable in this build
 foreach ( (array) $tz_addons_objs_list as $tz_id => $tz_obj )
 {
 	if ( ! isset( $tz_front_desk_domains[ $tz_id ] ) ) { continue; }
 	$tz_cat = (string) $tz_obj->category;
-	if ( ! $tz_is_pro_build && ( '' === $tz_cat || ' ' !== $tz_cat[0] ) )
-		$tz_pro[ $tz_id ] = $tz_obj;
-	elseif ( 'Add-ons included in this plugin version' === trim( $tz_cat ) )
+	if ( 'Add-ons included in this plugin version' === trim( $tz_cat ) )
 		$tz_included[ $tz_id ] = $tz_obj;
 	else
 		$tz_cards[ $tz_id ] = $tz_obj;
@@ -111,7 +107,6 @@ foreach ( (array) $tz_addons_objs_list as $tz_id => $tz_obj )
 $tz_by_name = function ( $a, $b ) { return strcasecmp( $a->get_addon_name(), $b->get_addon_name() ); };
 uasort( $tz_included, $tz_by_name );
 uasort( $tz_cards, $tz_by_name );
-uasort( $tz_pro, $tz_by_name );
 
 $tz_available = 0;
 foreach ( $tz_cards as $tz_id => $tz_obj )
@@ -175,8 +170,8 @@ $tz_wizard_active = isset( $tz_addons_objs_list['tzfdad-Onboarding'] ) && $tz_ad
 			$tz_is_wiz  = ( 'tzfdad-Onboarding' === $tz_id );
 			$tz_help    = (string) $tz_obj->help;
 			$tz_anchor  = '#tzfdad-addon-' . sanitize_html_class( $tz_id );
-				// Connection state: an add-on that is on but has no AI provider or no adapter needs attention; otherwise on is connected and off is disconnected.
-				$tz_attention = $tz_on && ( ( $tz_obj instanceof TZFD_AIAssistant && ! TZFD_Addon_Support::ai_configured() ) || ( method_exists( $tz_obj, 'has_adapter' ) && ! $tz_obj->has_adapter() ) );
+				// Connection state: an add-on that is on but has no adapter needs attention; otherwise on is connected and off is disconnected.
+				$tz_attention = $tz_on && method_exists( $tz_obj, 'has_adapter' ) && ! $tz_obj->has_adapter();
 				$tz_state_src = plugins_url( 'images/ui-graphics/06-Integrations/Connection-States/' . ( $tz_attention ? 'attention' : ( $tz_on ? 'connected' : 'disconnected' ) ) . '.svg', __FILE__ );
 		?>
 			<div class="tzfdad-ad-tile<?php echo $tz_on ? '' : ' tzfdad-is-off'; ?>">
@@ -197,9 +192,7 @@ $tz_wizard_active = isset( $tz_addons_objs_list['tzfdad-Onboarding'] ) && $tz_ad
 				</div>
 				<p><?php echo esc_html( $tz_obj->get_addon_description() ); ?></p>
 				<div class="tzfdad-ad-tile-foot">
-					<?php if ( $tz_is_wiz && $tz_on ) : ?>
-						<a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=tzfd-ai-setup' ) ); ?>"><?php esc_html_e( 'Open setup wizard', 'titan-zero-trades-front-desk' ); ?></a>
-					<?php elseif ( $tz_on ) : ?>
+					<?php if ( $tz_on ) : ?>
 						<a class="button" href="<?php echo esc_url( $tz_anchor ); ?>"><?php esc_html_e( 'Configure', 'titan-zero-trades-front-desk' ); ?></a>
 					<?php elseif ( '' !== $tz_help ) : ?>
 						<a class="button" target="_blank" rel="noopener" href="<?php echo esc_url( $tz_help ); ?>"><?php esc_html_e( 'View details', 'titan-zero-trades-front-desk' ); ?></a>
@@ -240,37 +233,6 @@ $tz_wizard_active = isset( $tz_addons_objs_list['tzfdad-Onboarding'] ) && $tz_ad
 		<?php endforeach; ?>
 	</section>
 
-	<?php if ( ! empty( $tz_pro ) ) : ?>
-	<!-- Pro-only add-ons: listed, not switchable in this version -->
-	<section class="tzfdad-ad-card" aria-labelledby="tzfdad-ad-pro">
-		<div class="tzfdad-ad-sechead">
-			<div>
-				<h2 id="tzfdad-ad-pro"><?php esc_html_e( 'Titan Zero Pro add-ons', 'titan-zero-trades-front-desk' ); ?></h2>
-				<p><?php esc_html_e( 'These add-ons are not part of this version. Their help pages explain what they do.', 'titan-zero-trades-front-desk' ); ?></p>
-			</div>
-			<span class="tzfdad-pill tzfdad-pill-muted"><?php esc_html_e( 'Pro', 'titan-zero-trades-front-desk' ); ?></span>
-		</div>
-		<div class="tzfdad-ad-grid">
-		<?php foreach ( $tz_pro as $tz_id => $tz_obj ) : ?>
-			<div class="tzfdad-ad-tile tzfdad-is-pro">
-				<div class="tzfdad-ad-tile-top">
-					<h3><?php echo esc_html( $tz_obj->get_addon_name() ); ?></h3>
-					<label class="tzfdad-switch" title="<?php echo esc_attr__( 'Available in Titan Zero Pro', 'titan-zero-trades-front-desk' ); ?>">
-						<input type="checkbox" disabled>
-						<span class="tzfdad-slider"></span>
-					</label>
-				</div>
-				<p><?php echo esc_html( $tz_obj->get_addon_description() ); ?></p>
-				<?php if ( '' !== (string) $tz_obj->help ) : ?>
-				<div class="tzfdad-ad-tile-foot">
-					<a class="button" target="_blank" rel="noopener" href="<?php echo esc_url( $tz_obj->help ); ?>"><?php esc_html_e( 'View details', 'titan-zero-trades-front-desk' ); ?></a>
-				</div>
-				<?php endif; ?>
-			</div>
-		<?php endforeach; ?>
-		</div>
-	</section>
-	<?php endif; ?>
 
 	<!-- Add-on settings -->
 	<section class="tzfdad-ad-card" aria-labelledby="tzfdad-ad-settings">

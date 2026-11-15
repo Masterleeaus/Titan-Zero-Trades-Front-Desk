@@ -8,7 +8,6 @@ final class TZFD_Addon_Loader {
     /** @return array<string,array<string,string>> */
     public static function manifest() {
         return array(
-            'assistant/ai-assistant.addon.php' => array( 'domain' => 'calls', 'policy' => 'active' ),
             'bookings/applimit.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'bookings/auto-cancel-pending-status.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'bookings/calendarless-interface.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
@@ -16,7 +15,6 @@ final class TZFD_Addon_Loader {
             'bookings/icalexport.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'core/base.addon.php' => array( 'domain' => 'infrastructure', 'policy' => 'active' ),
             'core/cache.addon.php' => array( 'domain' => 'infrastructure', 'policy' => 'active' ),
-            'core/installer.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'core/logs.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'core/onboarding.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),
             'core/password.addon.php' => array( 'domain' => 'bookings', 'policy' => 'active' ),

@@ -16,7 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 // Front Desk owns its WordPress admin navigation. Do not boot the suite Workspace shell.
-require_once __DIR__ . '/includes/class-tzfd-smart-wizards.php';
 require_once __DIR__ . '/includes/class-tzfd-customer-admin.php';
 // phpcs:disable WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Plugin-owned custom tables. Direct queries are intentional: caching these results would serve stale bookings. Values are bound with prepare() or %i placeholders; queries built from fragments are reviewed where marked.
 
@@ -68,7 +67,9 @@ TZFD_Operations_Monitor::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-recovery.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-events.php';
 TZFD_Smart_Task_Events::register();
-require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-governor.php';
+// The AI assistant is not part of the free build. Keep the shortcode so pages that
+// already contain it render nothing instead of showing raw shortcode text.
+add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 

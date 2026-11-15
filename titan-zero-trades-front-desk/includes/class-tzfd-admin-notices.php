@@ -41,9 +41,6 @@ final class TZFD_Admin_Notices {
     public static function pending( $user_id ) {
         $out = array();
         if ( ! class_exists( 'TZFD_Addon_Support' ) ) { return $out; }
-        if ( ! TZFD_Addon_Support::ai_configured() && ! self::is_snoozed( 'ai_key', $user_id ) ) {
-            $out[] = 'ai_key';
-        }
         if ( ! self::cache_addon_on() && ! self::is_snoozed( 'speed', $user_id ) ) {
             $out[] = 'speed';
         }
@@ -54,17 +51,10 @@ final class TZFD_Admin_Notices {
         if ( ! current_user_can( 'tz_fd_access' ) || ! self::is_front_desk_screen() ) { return; }
         $user_id = get_current_user_id();
         foreach ( self::pending( $user_id ) as $key ) {
-            if ( 'ai_key' === $key ) {
-                $title = __( 'The AI booking assistant is off', 'titan-zero-trades-front-desk' );
-                $text  = __( 'The AI chat stays off until AI is set up. Open WordPress Settings → Connectors and connect a provider. For free-tier providers, install a compatible connector plugin first.', 'titan-zero-trades-front-desk' );
-                $link  = admin_url( 'admin.php?page=tz_fd_settings&gotab=ai' );
-                $label = __( 'Connect AI provider', 'titan-zero-trades-front-desk' );
-            } else {
-                $title = __( 'Booking availability can be cached', 'titan-zero-trades-front-desk' );
-                $text  = __( 'Turn on Cache Booking Availability under Addons. It keeps a copy of the availability display for busy sites, and it clears itself when bookings change, so customers still see current times.', 'titan-zero-trades-front-desk' );
-                $link  = admin_url( 'admin.php?page=tz_fd_addons' );
-                $label = __( 'Open Addons', 'titan-zero-trades-front-desk' );
-            }
+            $title = __( 'Booking availability can be cached', 'titan-zero-trades-front-desk' );
+            $text  = __( 'Turn on Cache Booking Availability under Addons. It keeps a copy of the availability display for busy sites, and it clears itself when bookings change, so customers still see current times.', 'titan-zero-trades-front-desk' );
+            $link  = admin_url( 'admin.php?page=tz_fd_addons' );
+            $label = __( 'Open Addons', 'titan-zero-trades-front-desk' );
             // Build a fresh URL rather than propagating arbitrary GET parameters
             // (which can contain booking identifiers or third-party tokens).
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.

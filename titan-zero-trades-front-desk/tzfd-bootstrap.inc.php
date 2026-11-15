@@ -73,7 +73,6 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-intake-mode.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-menu.php';
 TZFD_Admin_Menu::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-notices.php';
-include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-options.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-view.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-layout.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-shared-store.php';
@@ -160,13 +159,14 @@ if ( did_action( 'plugins_loaded' ) ) {
     add_action( 'plugins_loaded', array($tz_plugin, 'data_management_pluginsloaded'), -1);
 }
 
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-upgrades.php';
+
 if ( is_admin() ) {
 
-	// The AI page is in the Workspace menu on every admin screen, so its file always loads.
-	require_once dirname( __FILE__ ).'/addons/core/installer.addon.php';
 
     add_action('admin_enqueue_scripts', array($tz_plugin,'insert_adminScripts'), 1);
     add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array($tz_plugin,'plugin_page_links'));
+    add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array('TZFD_Upgrades','plugin_row_link'));
     add_action('admin_menu', array($tz_plugin,'admin_menu') );
     add_action('enqueue_block_editor_assets', array($tz_plugin,'gutenberg_block'));
 

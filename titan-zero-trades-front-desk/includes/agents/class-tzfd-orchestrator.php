@@ -41,7 +41,7 @@ final class TZFD_Orchestrator {
     }
 
     /** Intake, then the checks. Returns ok, booking_id, state and status for the customer. */
-    public static function submit( $formid, array $draft, $source = 'ai-assistant' ) {
+    public static function submit( $formid, array $draft, $source = 'front-desk' ) {
         self::boot();
         $intake = TZFD_Agent_Registry::call( self::AUTHORITY, TZFD_Worker_Booking_Intake::NAME, TZFD_Agent_Tier::DRAFT, array(
             'formid' => (int) $formid,

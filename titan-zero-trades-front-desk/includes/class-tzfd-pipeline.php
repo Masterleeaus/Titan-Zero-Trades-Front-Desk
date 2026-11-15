@@ -101,7 +101,7 @@ final class TZFD_Pipeline {
         if ( ! is_array( $args ) || empty( $args['formid'] ) || ! isset( $args['draft'] ) || ! is_array( $args['draft'] ) ) {
             return $result;
         }
-        $source = substr( sanitize_text_field( (string) apply_filters( 'tz_fd_pipeline_source', 'ai-assistant', $args ) ), 0, 60 );
+        $source = substr( sanitize_text_field( (string) apply_filters( 'tz_fd_pipeline_source', 'front-desk', $args ) ), 0, 60 );
         return self::submit( (int) $args['formid'], $args['draft'], $source );
     }
 
@@ -110,7 +110,7 @@ final class TZFD_Pipeline {
      * Returns ok, booking_id, state and status ('confirmed' or 'pending_confirmation'), or ok false and an error code.
      * error codes: invalid_form, invalid_slot, invalid_duration, slot_taken, busy, save_failed.
      */
-    public static function submit( $formid, array $draft, $source = 'ai-assistant' ) {
+    public static function submit( $formid, array $draft, $source = 'front-desk' ) {
         return TZFD_Orchestrator::submit( $formid, $draft, $source );
     }
 
@@ -118,7 +118,7 @@ final class TZFD_Pipeline {
      * Booking agent's intake: writes the booking to the calendar as Pending and marks it processing.
      * Returns ok and booking_id, or ok false and an error code. Called by the booking-intake worker only.
      */
-    public static function intake( $formid, array $draft, $source = 'ai-assistant' ) {
+    public static function intake( $formid, array $draft, $source = 'front-desk' ) {
         global $wpdb;
         $formid = (int) $formid;
         if ( $formid < 1 ) { return self::fail( 'invalid_form' ); }

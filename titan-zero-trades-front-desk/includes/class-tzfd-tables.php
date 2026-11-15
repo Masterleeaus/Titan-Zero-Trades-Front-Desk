@@ -24,7 +24,6 @@ final class TZFD_Tables {
     const CACHE              = 'tz_cache';
     const ICALEXPORT         = 'tz_icalexport';
     const SINGLE_DAYS        = 'tz_SingleDaysSelection';
-    const AI_CONVERSATIONS   = 'tz_ai_conversations';
     const ENQUIRIES          = 'tz_enquiries';
     const LOCAL_AUDIT        = 'tz_fd_audit_log';
     const RECEPTIONISTS      = 'tz_receptionists';
@@ -48,7 +47,6 @@ final class TZFD_Tables {
         'tzfd_cache'              => 'tz_cache',
         'tzfd_icalexport'         => 'tz_icalexport',
         'tzfd_SingleDaysSelection' => 'tz_SingleDaysSelection',
-        'tzfd_ai_conversations'   => 'tz_ai_conversations',
         'tzfd_receptionists'      => 'tz_receptionists',
         'tzfd_receptionist_staff' => 'tz_receptionist_staff',
         'tzfd_receptionist_kb'    => 'tz_receptionist_kb',
@@ -65,7 +63,7 @@ final class TZFD_Tables {
     public static function owned() {
         return array(
             self::CALLS, self::CALL_EVENTS, self::SLOT_HOLDS, self::SMART_TASK_OUTBOX, self::BOOKING_INBOX, self::BOOKING_ACTIONS, self::TELEPHONE_DELIVERY, self::ESCALATION_STATE, self::FORMS, self::BOOKINGS, self::CACHE, self::ICALEXPORT, self::SINGLE_DAYS,
-            self::AI_CONVERSATIONS, self::RECEPTIONISTS,
+            self::RECEPTIONISTS,
             self::RECEPTIONIST_KB,
             self::PIPELINE, self::PIPELINE_EVENTS, self::PIPELINE_NOTIFICATIONS, self::ADDON_RECORDS, self::ENQUIRIES, self::LOCAL_AUDIT,
         );

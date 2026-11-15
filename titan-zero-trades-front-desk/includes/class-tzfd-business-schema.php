@@ -31,7 +31,6 @@ final class TZFD_Business_Schema {
             TZFD_Tables::CACHE,
             TZFD_Tables::ICALEXPORT,
             TZFD_Tables::SINGLE_DAYS,
-            TZFD_Tables::AI_CONVERSATIONS,
             TZFD_Tables::RECEPTIONISTS,
             TZFD_Tables::RECEPTIONIST_KB,
             TZFD_Tables::PIPELINE,

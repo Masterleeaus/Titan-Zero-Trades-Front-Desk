@@ -260,8 +260,7 @@ Bookings, customer details and settings are stored in your WordPress database. T
 
 
 
-The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records, staff contacts and any assistant chats stored by earlier versions. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. Front Desk does not automatically erase historical bookings or local customer records. The WordPress erase tool removes client-portal sign-in links and sessions only. Bookings are kept until you delete them. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. Assistant chats stored by earlier versions are kept until the retention period ends. This version does not create new ones.
-
+The personal data exporter is registered with the WordPress Export Personal Data tool. It covers booking records and staff contacts. Front Desk maintains its own local customer records; additional plugins may have their own data stores and privacy handling. Front Desk does not automatically erase historical bookings or local customer records. The WordPress erase tool removes client-portal sign-in links and sessions only. Bookings are kept until you delete them. Booking data remains when the plugin is deactivated or deleted, unless you add the constant described in the FAQ. 
 
 
 The client portal stores a one-time sign-in link and a 2-hour session in WordPress temporary storage (transients), which expire automatically. Only the keys are hashed. While those records exist, the client's email address is kept with them as entered. The sign-in email is sent through your site's mail setup, not an outside service.

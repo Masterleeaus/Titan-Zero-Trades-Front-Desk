@@ -47,10 +47,6 @@ class TZFD_Privacy_Exporter {
 				__( 'The staff contact list stores the name, phone number and email address of each staff member you add. Customer records are stored by Titan Zero Trades: Front Desk, and staff contacts are kept until you delete them there.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
-				__( 'Booking assistant chats', 'titan-zero-trades-front-desk' ),
-				__( 'Chats from the booking assistant in earlier versions were stored with the messages, the booking draft, the customer\'s email address if they gave one, and a hash of the IP address. This version does not create new chats. A short rate-limit counter is kept under a hash of the IP address. Photos sent in a chat are stored in a private directory when configured, not directly exposed as public media. Photo access uses short-lived signed links; on hosting environments without suitable protected storage, photo uploads are disabled. Chats and photos are deleted after the retention period set in the AI settings (30 days by default).', 'titan-zero-trades-front-desk' ),
-			),
-			array(
 				__( 'Client portal', 'titan-zero-trades-front-desk' ),
 				__( 'When a client asks for a sign-in link, their email address is stored with the one-time link for 20 minutes and with their session for 2 hours. A cookie named tz_fd_portal_session holds the session token. After these times the records stop working, and WordPress removes them during its routine cleanup.', 'titan-zero-trades-front-desk' ),
 			),
@@ -64,7 +60,7 @@ class TZFD_Privacy_Exporter {
 			),
 			array(
 				__( 'Exporting and erasing', 'titan-zero-trades-front-desk' ),
-				__( 'The WordPress export tool includes the booking records (with IP addresses), booking assistant chats and staff contacts that match the email address requested. The phone-number opt-out list is not matched by email address, so it is not exported. The WordPress erase tool removes the client-portal sign-in links and sessions for that address. It does not delete bookings, chats or staff contacts. These are reported as kept. Customers, quotes and payments are handled by their own plugins.', 'titan-zero-trades-front-desk' ),
+				__( 'The WordPress export tool includes the booking records (with IP addresses) and staff contacts that match the email address requested. The phone-number opt-out list is not matched by email address, so it is not exported. The WordPress erase tool removes the client-portal sign-in links and sessions for that address. It does not delete bookings, chats or staff contacts. These are reported as kept. Customers, quotes and payments are handled by their own plugins.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Deleting the plugin', 'titan-zero-trades-front-desk' ),
@@ -151,7 +147,6 @@ class TZFD_Privacy_Exporter {
 		// Records that stay until deleted in Titan Zero Trades: Front Desk: reported as kept, never deleted here.
 		$kept = array(
 			array( TZFD_Tables::BOOKINGS, 'notifyto', __( 'Booking records are kept. Delete them in Titan Zero Front Desk.', 'titan-zero-trades-front-desk' ) ),
-			array( TZFD_Tables::AI_CONVERSATIONS, 'user_email', __( 'Chats from earlier booking assistant versions are kept until the retention period ends, then they are deleted automatically.', 'titan-zero-trades-front-desk' ) ),
 		);
 		foreach ( $kept as $item ) {
 			$count = self::count_rows( $item[0], $item[1], $email_address );
@@ -250,16 +245,6 @@ class TZFD_Privacy_Exporter {
 	 */
 	private static function email_tables() {
 		return array(
-			'ai-conversations'   => array(
-				'table'  => TZFD_Tables::AI_CONVERSATIONS,
-				'column' => 'user_email',
-				'label'  => __( 'Titan Zero Front Desk booking assistant chats', 'titan-zero-trades-front-desk' ),
-				'fields' => array(
-					'created'  => __( 'Started', 'titan-zero-trades-front-desk' ),
-					'messages' => __( 'Chat messages', 'titan-zero-trades-front-desk' ),
-					'draft'    => __( 'Booking draft', 'titan-zero-trades-front-desk' ),
-				),
-			),
 		);
 	}
 

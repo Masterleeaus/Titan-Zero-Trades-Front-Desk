@@ -24,7 +24,7 @@ final class TZFD_Worker_Booking_Intake extends TZFD_Agent {
         return TZFD_Pipeline::intake(
             isset( $args['formid'] ) ? (int) $args['formid'] : 0,
             isset( $args['draft'] ) && is_array( $args['draft'] ) ? $args['draft'] : array(),
-            isset( $args['source'] ) ? (string) $args['source'] : 'ai-assistant'
+            isset( $args['source'] ) ? (string) $args['source'] : 'front-desk'
         );
     }
 }

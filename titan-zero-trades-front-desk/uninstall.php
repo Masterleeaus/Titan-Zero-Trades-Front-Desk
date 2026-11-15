@@ -49,7 +49,7 @@ if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL ===
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Opt-in uninstall of the plugin's dedicated outbox.
     $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'tzfd_customer_event_outbox' ) );
 
-    // Settings, business profile, AI keys and add-on state (option names keep the tz_fd_ prefix).
+    // Settings, business profile, add-on state (option names keep the tz_fd_ prefix).
     foreach ( $tz_prefixes as $tz_prefix ) {
         $wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $tz_prefix ) . '%') );
     }
@@ -67,9 +67,7 @@ $tz_base    = isset( $tz_uploads['basedir'] ) ? $tz_uploads['basedir'] : '';
 if ( $tz_base ) {
     $tz_dir   = $tz_base . '/titan-zero-trades-front-desk';
     $tz_files = array_merge(
-        (array) glob( $tz_dir . '/tzfd-booking_*.ics' ),
-        (array) glob( $tz_dir . '/tzfd-ai-*' ),
-        (array) glob( $tz_base . '/tzfd-ai-*' )
+        (array) glob( $tz_dir . '/tzfd-booking_*.ics' )
     );
     foreach ( $tz_files as $tz_file ) {
         if ( is_file( $tz_file ) ) { wp_delete_file( $tz_file ); }

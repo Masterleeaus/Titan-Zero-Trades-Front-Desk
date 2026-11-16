@@ -1,4 +1,4 @@
-=== Titan Zero Front Desk ===
+=== Scheduling & Enquiries Manager ===
 
 Contributors: titan0
 
@@ -35,7 +35,7 @@ Front Desk has its own WordPress admin menu and can run standalone, without Tita
 
 
 
-Titan Zero Front Desk gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
+Scheduling & Enquiries Manager gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
 
 
 
@@ -69,7 +69,7 @@ Compatibility modules. In this version these are kept from earlier releases. The
 
 
 
-Titan Zero Front Desk is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
+Scheduling & Enquiries Manager is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
 
 
 
@@ -89,9 +89,9 @@ Optional external industry presets are examples; native service setup does not r
 
    This is a new plugin, not an upgrade. Do not install it over Appointment Hour Booking or Titan Front Desk; see the FAQ below.
 
-2. Activate Titan Zero Front Desk on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
+2. Activate Scheduling & Enquiries Manager on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
 
-3. Open Titan Zero Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
+3. Open Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
 
 4. Create a calendar, then publish its booking form on a page or post. The publishing interface explains the options.
 

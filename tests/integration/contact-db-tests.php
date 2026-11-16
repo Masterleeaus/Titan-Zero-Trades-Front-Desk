@@ -11,10 +11,12 @@
  */
 define( 'ABSPATH', __DIR__ );
 
+if ( ! function_exists( 'esc_html' ) ) { function esc_html( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); } }
+
 $db_name   = getenv( 'TZFD_TEST_DB_NAME' ) ?: 'tzfd_lane_test';
 $db_socket = getenv( 'TZFD_TEST_DB_SOCKET' ) ?: '/var/run/mysqld/mysqld.sock';
 $mysqli = @new mysqli( 'localhost', 'root', '', $db_name, 0, $db_socket );
-if ( $mysqli->connect_errno ) { fwrite( STDERR, "DB connect failed: " . $mysqli->connect_error . "\n" ); exit( 2 ); }
+if ( $mysqli->connect_errno ) { throw new RuntimeException( esc_html( "DB connect failed: " . $mysqli->connect_error ) ); }
 
 final class TZ_WPDB {
     public $prefix = 'wp_';
@@ -91,7 +93,7 @@ $mysqli->query( 'DROP TABLE IF EXISTS wp_tz_sms_conversations' );
 $GLOBALS['pass'] = 0; $GLOBALS['fail'] = 0;
 function tz_check( $name, $ok ) {
     if ( $ok ) { $GLOBALS['pass']++; } else { $GLOBALS['fail']++; }
-    echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . "\n";
+    echo esc_html( ( $ok ? 'PASS ' : 'FAIL ' ) . $name ) . "\n";
 }
 function count_rows( $table, $company ) {
     return (int) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT COUNT(*) FROM %i WHERE company_id = %d', $table, $company ) );
@@ -197,6 +199,6 @@ tz_check( 'reply without consent basis is refused', is_array( $no_consent ) && '
 $wrong = TZFD_Messaging_Replies::process( 9, 'twilio', 'msg-y-1', '+61400999999', 'book', 'customer_initiated' );
 tz_check( 'reply for another company is denied before any write', is_wp_error( $wrong ) && 'tzfd_messaging_tenant' === $wrong->get_error_code() && 0 === count_rows( $A, 9 ) );
 
-echo "\nSummary: {$GLOBALS['pass']} passed, {$GLOBALS['fail']} failed\n";
+echo esc_html( "\nSummary: {$GLOBALS['pass']} passed, {$GLOBALS['fail']} failed\n" );
 $mysqli->close();
 exit( $GLOBALS['fail'] > 0 ? 1 : 0 );

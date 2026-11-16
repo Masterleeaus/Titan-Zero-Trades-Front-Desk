@@ -5,13 +5,15 @@
  * The database and REST paths are not covered here. They need a WordPress test site (see tests/runtime).
  */
 define( 'ABSPATH', __DIR__ );
+
+if ( ! function_exists( 'esc_html' ) ) { function esc_html( $text ) { return htmlspecialchars( (string) $text, ENT_QUOTES, 'UTF-8' ); } }
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-contact-rules.php';
 
 $GLOBALS['tz_pass'] = 0;
 $GLOBALS['tz_fail'] = 0;
 function tz_check( $name, $ok ) {
     if ( $ok ) { $GLOBALS['tz_pass']++; } else { $GLOBALS['tz_fail']++; }
-    echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . "\n";
+    echo esc_html( ( $ok ? 'PASS ' : 'FAIL ' ) . $name ) . "\n";
 }
 $R = 'TZFD_Contact_Rules';
 
@@ -136,5 +138,5 @@ tz_check( 'every template keeps the opt-out line', 4 === count( array_filter( ar
     return false !== strpos( $R::template_text( $k, 'x' ), 'Reply STOP to opt out' ) ? 1 : 0;
 }, array( 'book_link', 'cancel_received', 'quote_received', 'callback_received' ) ) ) ) );
 
-echo "\nSummary: {$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
+echo esc_html( "\nSummary: {$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n" );
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

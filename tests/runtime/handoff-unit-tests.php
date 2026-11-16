@@ -4,7 +4,7 @@
  * Run: php -I /home/claude/wt/issue-27/tests/runtime/handoff-unit-tests.php
  * Requires the class from the plugin folder beside this repo checkout.
  */
-$root = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/titan-zero-trades-front-desk';
+$root = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk';
 require_once $root . '/includes/class-tzfd-human-handoff.php';
 
 $fail = 0;

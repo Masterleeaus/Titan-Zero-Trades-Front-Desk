@@ -33,9 +33,14 @@ $A::save_entries( array( array( 'kind' => 'faq', 'question' => 'Do you offer fre
 $r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2' );
 $check( 'cache invalidated on approved-content change', 'approved' === $r['status'] && 'Quotes cost money now.' === $r['text'], json_encode( $r ) );
 
+$A::save_handoff_url( 'https://example.test/contact/' );
 $r = $A::answer( 'Do you bake bread?', $conv, 'wp-3' );
 $check( 'unsupported question refused when generation off', 'unavailable' === $r['status'] && null !== $r['link'], json_encode( $r ) );
 $r = $A::answer( 'Do you bake bread?', $conv, 'wp-3' );
+$A::save_handoff_url( '' );
+$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3b' );
+$check( 'no handoff configured: refusal has no link but still says to contact the business', null === $r['link'] && false !== strpos( $r['text'], 'contact the business' ), json_encode( $r ) );
+$A::save_handoff_url( 'https://example.test/contact/' );
 $check( 'refusal link is the booking page or handoff', is_array( $r['link'] ) && '' !== $r['link']['url'] );
 
 // Generative branch with a stub provider via the real filter.

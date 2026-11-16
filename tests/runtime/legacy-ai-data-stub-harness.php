@@ -50,6 +50,16 @@ class FakeWpdb {
             }
             return $out;
         }
+        if (strpos($sql, 'SELECT id FROM') === 0) {
+            preg_match('/FROM `([^`]+)`/', $sql, $t);
+            preg_match("/LOWER\(`([^`]+)`\) = '((?:[^'\\\\]|\\\\.)*)'/", $sql, $m);
+            $col = $m[1]; $val = strtolower(stripslashes($m[2]));
+            $ids = array();
+            foreach ($GLOBALS['tables'][$t[1]] ?? array() as $r) { if (strtolower($r[$col] ?? '') === $val) $ids[] = (int) $r['id']; }
+            sort($ids);
+            preg_match('/LIMIT (\d+)/', $sql, $l);
+            return array_slice($ids, 0, (int) $l[1]);
+        }
         if (strpos($sql, 'SHOW COLUMNS FROM') === 0) {
             preg_match('/FROM `([^`]+)`/', $sql, $t);
             $rows = $GLOBALS['tables'][$t[1]] ?? array();
@@ -69,6 +79,14 @@ class FakeWpdb {
             return count($GLOBALS['tables'][$m[1]] ?? array());
         }
         return null;
+    }
+    public function query($sql) {
+        $GLOBALS['sql'][] = $sql;
+        if (!preg_match('/^DELETE FROM `([^`]+)` WHERE id IN \(([\d,]+)\)$/', $sql, $m)) return false;
+        $ids = array_map('intval', explode(',', $m[2]));
+        $before = count($GLOBALS['tables'][$m[1]] ?? array());
+        $GLOBALS['tables'][$m[1]] = array_values(array_filter($GLOBALS['tables'][$m[1]] ?? array(), function ($r) use ($ids) { return !in_array((int) $r['id'], $ids, true); }));
+        return $before - count($GLOBALS['tables'][$m[1]]);
     }
     public function get_results($sql, $fmt) {
         preg_match("/WHERE LOWER\(`([^`]+)`\) = '((?:[^'\\\\]|\\\\.)*)'/", $sql, $m);
@@ -115,6 +133,7 @@ function wp_list() {}
 function wp_kses_post($s) { return $s; }
 function current_time($t) { return ''; }
 function gmdate_stub() {}
+function _n($single, $plural, $n, $d = '') { return 1 === (int) $n ? $single : $plural; }
 
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-legacy-ai-data.php';
 
@@ -268,6 +287,33 @@ $GLOBALS['caps'] = false;
 try { TZFD_Legacy_AI_Data::handle_restore(); check('non-admin restore is refused', false); } catch (StopDie $d) { check('non-admin restore is refused', true); }
 $GLOBALS['caps'] = true;
 unlink($tmp);
+
+// 11. On-request erase of legacy chat rows by exact email. No automatic deletion.
+TZFD_Legacy_AI_Data::register();
+$erasers = TZFD_Legacy_AI_Data::register_eraser(array());
+check('eraser is registered with WordPress privacy tools', isset($erasers['tzfd-legacy-ai-chats']));
+$hook_names = array_map(function ($h) { return $h[0]; }, $GLOBALS['hooks']);
+check('no admin_init, activation or upgrade hook can delete data', !in_array('admin_init', $hook_names, true) && !in_array('upgrader_process_complete', $hook_names, true) && !in_array('plugins_loaded', $hook_names, true));
+$opts_before = $GLOBALS['opts'];
+$bad = TZFD_Legacy_AI_Data::erase_chats("jane@example.com' OR 1=1", 1);
+check('erase rejects a malformed address and deletes nothing', $bad['items_removed'] === false && count($GLOBALS['tables']['wp_tz_ai_conversations']) === 3);
+$none = TZFD_Legacy_AI_Data::erase_chats('nobody@example.com', 1);
+check('erase with no match removes nothing and is done', $none['items_removed'] === false && $none['done'] === true && count($GLOBALS['tables']['wp_tz_ai_conversations']) === 3);
+$gone = TZFD_Legacy_AI_Data::erase_chats('JANE@example.com', 1);
+$remaining_ids = array_map(function ($r) { return $r['id']; }, $GLOBALS['tables']['wp_tz_ai_conversations']);
+check('erase removes exact-email chat rows, case-insensitive', $gone['items_removed'] === true && $gone['done'] === true && $remaining_ids === array(2));
+check('erase reports the number removed', strpos(implode(' ', $gone['messages']), '2 legacy AI chat records deleted') !== false);
+check('erase does not touch other customers or options', $GLOBALS['opts'] === $opts_before);
+$after_export = TZFD_Legacy_AI_Data::export_chats('jane@example.com', 1);
+check('exporter returns nothing after erase', $after_export['data'] === array());
+// Batching: more than PAGE_SIZE matching rows take two calls.
+for ($i = 100; $i < 152; $i++) { $GLOBALS['tables']['wp_tz_ai_conversations'][] = array('id' => $i, 'email' => 'bulk@example.com', 'message' => 'm', 'api_key' => 'k'); }
+$first = TZFD_Legacy_AI_Data::erase_chats('bulk@example.com', 1);
+check('first batch removes one page and is not done', $first['items_removed'] === true && $first['done'] === false);
+$second = TZFD_Legacy_AI_Data::erase_chats('bulk@example.com', 2);
+check('second call removes the rest and is done', $second['done'] === true && count(array_filter($GLOBALS['tables']['wp_tz_ai_conversations'], function ($r) { return $r['email'] === 'bulk@example.com'; })) === 0);
+check('batched erase keeps the other customer row', count($GLOBALS['tables']['wp_tz_ai_conversations']) === 1 && $GLOBALS['tables']['wp_tz_ai_conversations'][0]['email'] === 'other@example.com');
+$GLOBALS['caps'] = true;
 
 echo "\n$pass passed, $fail failed\n";
 exit($fail ? 1 : 0);

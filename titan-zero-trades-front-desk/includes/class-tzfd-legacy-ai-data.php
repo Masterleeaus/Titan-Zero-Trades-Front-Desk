@@ -61,6 +61,7 @@ final class TZFD_Legacy_AI_Data {
 		add_action( 'admin_post_' . self::ACTION_DELETE, array( __CLASS__, 'handle_delete' ) );
 		add_action( 'admin_post_' . self::ACTION_RESTORE, array( __CLASS__, 'handle_restore' ) );
 		add_filter( 'wp_privacy_personal_data_exporters', array( __CLASS__, 'register_exporter' ) );
+		add_filter( 'wp_privacy_personal_data_erasers', array( __CLASS__, 'register_eraser' ) );
 	}
 
 	/** Find every legacy AI option row on this site, including per-company copies. Returns sorted names only. */
@@ -430,5 +431,79 @@ final class TZFD_Legacy_AI_Data {
 			);
 		}
 		return array( 'data' => $items, 'done' => $done );
+	}
+
+	/** Register the on-request eraser for legacy chat rows. No automatic deletion exists. */
+	public static function register_eraser( $erasers ) {
+		$erasers['tzfd-legacy-ai-chats'] = array(
+			'eraser_friendly_name' => __( 'Titan Zero Front Desk AI chat history (legacy)', 'titan-zero-trades-front-desk' ),
+			'callback'             => array( __CLASS__, 'erase_chats' ),
+		);
+		return $erasers;
+	}
+
+	/**
+	 * On-request erase of legacy chat rows for one exact email address. Runs only when WordPress
+	 * privacy tools call it for a confirmed request. Deletes matching chat rows only, in batches of
+	 * PAGE_SIZE. Each call re-selects from the start, so WordPress can call again while done is false.
+	 *
+	 * @param string $email_address Address supplied by WordPress privacy tools.
+	 * @param int    $page          1-based page number (validated, not used as an offset).
+	 * @return array
+	 */
+	public static function erase_chats( $email_address, $page = 1 ) {
+		global $wpdb;
+		$response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => true );
+		if ( ! is_string( $email_address ) || ! is_int( $page ) || $page < 1 ) { return $response; }
+		$email_address = strtolower( trim( $email_address ) );
+		if ( '' === $email_address || ! is_email( $email_address ) || sanitize_email( $email_address ) !== $email_address ) { return $response; }
+		if ( ! self::chat_table_exists() ) { return $response; }
+
+		$table        = self::chat_table();
+		$email_column = self::email_match_column( $table );
+		if ( '' === $email_column ) { return $response; }
+
+		$ids = $wpdb->get_col(
+			$wpdb->prepare(
+				'SELECT id FROM %i WHERE LOWER(%i) = %s ORDER BY id ASC LIMIT %d',
+				$table,
+				$email_column,
+				$email_address,
+				self::PAGE_SIZE + 1
+			)
+		);
+		if ( ! is_array( $ids ) ) {
+			$response['items_retained'] = true;
+			$response['messages'][]     = __( 'Legacy AI chat records could not be checked. Please retry.', 'titan-zero-trades-front-desk' );
+			return $response;
+		}
+		$ids  = array_map( 'absint', $ids );
+		$done = count( $ids ) <= self::PAGE_SIZE;
+		$ids  = array_slice( $ids, 0, self::PAGE_SIZE );
+		if ( empty( $ids ) ) { return $response; }
+
+		$placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+		$deleted      = $wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE id IN (' . $placeholders . ')', ...array_merge( array( $table ), $ids ) ) );
+		if ( false === $deleted ) {
+			$response['items_retained'] = true;
+			$response['messages'][]     = __( 'Legacy AI chat records could not be deleted. Please retry.', 'titan-zero-trades-front-desk' );
+			return $response;
+		}
+		$response['items_removed'] = (int) $deleted > 0;
+		$response['messages'][]    = sprintf( /* translators: %d: number of legacy chat records deleted. */ _n( '%d legacy AI chat record deleted.', '%d legacy AI chat records deleted.', (int) $deleted, 'titan-zero-trades-front-desk' ), (int) $deleted );
+		$response['done']          = $done;
+		return $response;
+	}
+
+	/** The verified email column for a chat table, or '' when the table has no id column or no email column. */
+	private static function email_match_column( $table ) {
+		global $wpdb;
+		$columns = $wpdb->get_col( $wpdb->prepare( 'SHOW COLUMNS FROM %i', $table ) );
+		$columns = is_array( $columns ) ? array_map( 'strval', $columns ) : array();
+		if ( ! in_array( 'id', $columns, true ) ) { return ''; }
+		foreach ( self::EMAIL_COLUMNS as $candidate ) {
+			if ( in_array( $candidate, $columns, true ) ) { return $candidate; }
+		}
+		return '';
 	}
 }

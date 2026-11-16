@@ -57,6 +57,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-waitlist-accept
 add_action( 'init', array( 'TZFD_Booking_Action_Outbox', 'boot' ) );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-frontdesk-api.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-suite-gateway.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-connector.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-tasks.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-outbox.php';
 TZFD_Smart_Task_Outbox::boot();

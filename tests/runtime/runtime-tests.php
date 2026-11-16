@@ -85,7 +85,15 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     $replay_sig = 'sha256=' . hash_hmac( 'sha256', 'rt-replay-' . $ts, $secret );
     rt_check( 'first use of a signature is claimed', TZFD_Signed_Request::claim_signature( $replay_sig ) );
     rt_check( 'repeated signature is refused', ! TZFD_Signed_Request::claim_signature( $replay_sig ) );
-    delete_transient( 'tz_fd_sig_' . hash( 'sha256', $replay_sig ) );
+    $claim_key = TZFD_Signed_Request::claim_key( $replay_sig );
+    rt_check( 'claim stores a hash key, not the raw signature', false === strpos( $claim_key, $replay_sig ) && 0 === strpos( $claim_key, 'tz_fd_sig_' ) );
+    $expired_sig = 'sha256=' . hash_hmac( 'sha256', 'rt-expired-' . $ts, $secret );
+    rt_check( 'signature claimed at t', TZFD_Signed_Request::claim_signature( $expired_sig, $now ) );
+    rt_check( 'claim still held inside REPLAY_TTL', ! TZFD_Signed_Request::claim_signature( $expired_sig, $now + TZFD_Signed_Request::REPLAY_TTL - 1 ) );
+    rt_check( 'expired claim can be reclaimed once', TZFD_Signed_Request::claim_signature( $expired_sig, $now + TZFD_Signed_Request::REPLAY_TTL ) );
+    rt_check( 'reclaimed claim is held again', ! TZFD_Signed_Request::claim_signature( $expired_sig, $now + TZFD_Signed_Request::REPLAY_TTL + 1 ) );
+    delete_option( $claim_key );
+    delete_option( TZFD_Signed_Request::claim_key( $expired_sig ) );
 } else {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }

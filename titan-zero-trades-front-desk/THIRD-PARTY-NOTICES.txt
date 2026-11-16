@@ -286,7 +286,7 @@ Other inherited files:
   - captcha/captcha.php: rewritten as an adapter for includes/class-tzfd-captcha.php. The file
     has no licence line of its own and is covered by the plugin licence (GPLv2).
   - tzfd-calendar/*: renamed from the upstream mv/ folder. Checked on 2026-11-15 against the
-    1.5.98 package: tzfd-calendar/css/cupertino/calendar.css is identical. tzfd-calendar/css/main.css
+    1.5.98 package: tzfd-calendar/css/cupertino/calendar.css differs only by one added attribution comment line. tzfd-calendar/css/main.css
     differs by one comment line. The four images in tzfd-calendar/css/images differ (binary).
     Common.js, jquery.alert.js and jquery.calendar.js differ (see section 7 above).
 

@@ -30,6 +30,8 @@ final class TZFD_Tables {
     const PIPELINE_EVENTS    = 'tz_pipeline_events';
     const PIPELINE_NOTIFICATIONS = 'tz_pipeline_notification_outbox';
     const ADDON_RECORDS      = 'tz_addon_records';
+    const CONTACT_ACTIONS    = 'tz_contact_actions';
+    const SMS_CONVERSATIONS  = 'tz_sms_conversations';
     /** Not created or dropped by Front Desk. Standalone customers use TZFD_Local_Customers. */
     const CUSTOMERS          = 'tz_customers';
 
@@ -57,6 +59,7 @@ final class TZFD_Tables {
         return array(
             self::CALLS, self::CALL_EVENTS, self::SLOT_HOLDS, self::SMART_TASK_OUTBOX, self::BOOKING_INBOX, self::BOOKING_ACTIONS, self::TELEPHONE_DELIVERY, self::ESCALATION_STATE, self::FORMS, self::BOOKINGS, self::CACHE, self::ICALEXPORT, self::SINGLE_DAYS,
             self::PIPELINE, self::PIPELINE_EVENTS, self::PIPELINE_NOTIFICATIONS, self::ADDON_RECORDS, self::ENQUIRIES, self::LOCAL_AUDIT,
+            self::CONTACT_ACTIONS, self::SMS_CONVERSATIONS,
         );
     }
 

@@ -96,6 +96,8 @@ TZFD_Resource_Admin::register();
 TZFD_Service_Details::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-review.php';
 TZFD_Enquiry_Review::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-triage.php';
+TZFD_Enquiry_Triage::register();
 // Booking pipeline: managers, approval and supervisor for assistant and channel bookings.
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline.php';

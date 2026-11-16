@@ -143,6 +143,8 @@ final class TZFD_Enquiry_Review {
         $filter = TZFD_Request_Value::key( sanitize_text_field( wp_unslash( $_GET['status'] ?? '' ) ) );
         $saved  = isset( $_GET['enquiry_saved'] );
         $error  = isset( $_GET['enquiry_error'] );
+        $triage_saved = isset( $_GET['triage_saved'] );
+        $triage_error = isset( $_GET['triage_error'] );
         // phpcs:enable WordPress.Security.NonceVerification.Recommended
         $company = (int) TZFD_Scoped_Store::company_id();
         echo '<div class="wrap tzfd-admin-page"><h1>' . wp_kses( TZFD_UI_Graphics::brand_html( 'inbox' ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Enquiries', 'titan-zero-trades-front-desk' ) . '</h1>';
@@ -153,6 +155,8 @@ final class TZFD_Enquiry_Review {
         echo '<a class="button" href="' . esc_url( admin_url( 'edit.php?post_type=page' ) ) . '">' . esc_html__( 'Manage pages', 'titan-zero-trades-front-desk' ) . '</a></div>';
         if ( $saved ) { echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Enquiry status saved.', 'titan-zero-trades-front-desk' ) . '</p></div>'; }
         if ( $error ) { echo '<div class="notice notice-error inline"><p>' . esc_html__( 'The enquiry status could not be saved. Reload the page and try again.', 'titan-zero-trades-front-desk' ) . '</p></div>'; }
+        if ( $triage_saved ) { echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Triage change saved.', 'titan-zero-trades-front-desk' ) . '</p></div>'; }
+        if ( $triage_error ) { echo '<div class="notice notice-error inline"><p>' . esc_html__( 'The triage change could not be saved. Reload the page and try again.', 'titan-zero-trades-front-desk' ) . '</p></div>'; }
         if ( ! $company ) {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'No company is selected, so no enquiries can be shown.', 'titan-zero-trades-front-desk' ) . '</p></div></div>';
             return;
@@ -162,12 +166,14 @@ final class TZFD_Enquiry_Review {
         foreach ( self::STATUSES as $s ) { echo '<option value="' . esc_attr( $s ) . '"' . selected( $filter, $s, false ) . '>' . esc_html( ucfirst( $s ) ) . '</option>'; }
         echo '</select> <button class="button" type="submit">' . esc_html__( 'Filter', 'titan-zero-trades-front-desk' ) . '</button></form>';
         $rows = self::list_for_company( $company, $filter );
+        $triage_map = class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::map_for_company( $company, array_map( static function ( $r ) { return (int) $r->id; }, $rows ) ) : array();
         echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Received', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Contact', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Enquiry', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Source', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Change', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
         if ( empty( $rows ) ) { echo '<tr><td colspan="7">' . esc_html__( 'No enquiries.', 'titan-zero-trades-front-desk' ) . '</td></tr>'; }
         foreach ( $rows as $r ) {
             $contact = trim( (string) $r->email . ' ' . (string) $r->phone );
             echo '<tr><td>' . esc_html( (string) $r->received_utc ) . ' UTC</td><td>' . esc_html( (string) $r->name ) . '</td><td>' . esc_html( $contact ) . '</td>';
-            echo '<td>' . esc_html( (string) $r->enquiry ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
+            $triage_row = $triage_map[ (int) $r->id ] ?? null;
+            echo '<td>' . esc_html( (string) $r->enquiry ) . ( class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::row_html( (int) $r->id, $triage_row ) : '' ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
             echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '" /><input type="hidden" name="enquiry" value="' . (int) $r->id . '" />';
             wp_nonce_field( self::NONCE, self::NONCE_FIELD );
             echo '<select name="status" aria-label="' . esc_attr__( 'New status', 'titan-zero-trades-front-desk' ) . '">';

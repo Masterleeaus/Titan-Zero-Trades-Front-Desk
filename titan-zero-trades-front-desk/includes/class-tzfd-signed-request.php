@@ -33,11 +33,21 @@ final class TZFD_Signed_Request {
         return hash_equals( $expected, $signature );
     }
 
-    /** Records a signature for REPLAY_TTL seconds. Returns false when it was already seen. */
+    /**
+     * Records a signature for REPLAY_TTL seconds. Returns false when it was already seen.
+     * add_option() is an atomic insert on the unique option_name, so two concurrent deliveries
+     * of the same signed request cannot both claim it (a get-then-set transient could).
+     * The stored value is a zero-padded timestamp so expired claims can be purged by comparison.
+     */
     public static function claim_signature( $signature ) {
+        global $wpdb;
         $key = 'tz_fd_sig_' . hash( 'sha256', (string) $signature );
-        if ( false !== get_transient( $key ) ) return false;
-        set_transient( $key, 1, self::REPLAY_TTL );
-        return true;
+        $now = time();
+        if ( isset( $wpdb ) && is_object( $wpdb ) && method_exists( $wpdb, 'query' ) && method_exists( $wpdb, 'esc_like' ) && ! empty( $wpdb->options ) ) {
+            $like   = $wpdb->esc_like( 'tz_fd_sig_' ) . '%';
+            $cutoff = sprintf( '%012d', $now - self::REPLAY_TTL );
+            $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND option_value < %s", $like, $cutoff ) );
+        }
+        return (bool) add_option( $key, sprintf( '%012d', $now ), '', 'no' );
     }
 }

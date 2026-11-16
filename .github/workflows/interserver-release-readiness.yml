@@ -1,0 +1,32 @@
+name: WordPress plugin release readiness
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Validate committed plugin source
+        shell: bash
+        run: |
+          set -euo pipefail
+          count=$(find . -path ./.git -prune -o -type f -name '*.php' -print | wc -l)
+          if [ "$count" -lt 1 ]; then
+            echo 'No WordPress PHP source exists in this Git commit: no installable release possible.' >&2
+            exit 1
+          fi
+          find . -path ./.git -prune -o -type f -name '*.php' -print0 | xargs -0 -r -n 1 php -l
+          echo 'PHP syntax passed; WordPress runtime installation and E2E tests remain mandatory.'
+      - name: Write syntax-only evidence
+        shell: bash
+        run: |
+          printf 'repository=%s\ncommit=%s\nkind=wordpress\nstatus=syntax-only-not-release-approved\n' "$GITHUB_REPOSITORY" "$GITHUB_SHA" > RELEASE-MANIFEST.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: plugin-syntax-evidence-${{ github.sha }}
+          path: RELEASE-MANIFEST.txt
+          retention-days: 30

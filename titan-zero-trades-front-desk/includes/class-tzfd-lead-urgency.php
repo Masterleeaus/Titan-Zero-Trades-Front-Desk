@@ -289,14 +289,20 @@ final class TZFD_Lead_Urgency {
             'throttle_minutes' => max( 1, min( 1440, absint( self::post_text( 'urgency_throttle_minutes', (string) self::DEFAULT_THROTTLE_MIN ) ) ) ),
         );
 
+        $old_rules  = get_option( self::OPTION_RULES, null );
+        $old_alerts = get_option( self::OPTION_ALERTS, null );
         update_option( self::OPTION_RULES, $rules, false );
         update_option( self::OPTION_ALERTS, $alerts, false );
-        if ( class_exists( 'TZFD_Local_Audit' ) ) {
-            $actor = (int) get_current_user_id();
-            TZFD_Local_Audit::insert( $company, $actor, $actor ? 'user' : 'system', array(
-                'plugin' => 'titan-zero-front-desk', 'action' => 'enquiry.urgency_rules', 'entity' => 'enquiry', 'entity_id' => 0,
-                'summary' => 'Urgency rules and alert preferences updated',
-            ) );
+        $actor = (int) get_current_user_id();
+        $audited = class_exists( 'TZFD_Local_Audit' ) && TZFD_Local_Audit::insert( $company, $actor, $actor ? 'user' : 'system', array(
+            'plugin' => 'titan-zero-front-desk', 'action' => 'enquiry.urgency_rules', 'entity' => 'urgency_rules', 'entity_id' => $company,
+            'summary' => 'Urgency rules and alert preferences updated',
+        ) );
+        if ( true !== $audited ) {
+            // A change that cannot be audited is not kept.
+            null === $old_rules ? delete_option( self::OPTION_RULES ) : update_option( self::OPTION_RULES, $old_rules, false );
+            null === $old_alerts ? delete_option( self::OPTION_ALERTS ) : update_option( self::OPTION_ALERTS, $old_alerts, false );
+            wp_die( esc_html__( 'The change could not be recorded, so it was not saved.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
         }
         wp_safe_redirect( add_query_arg( array( 'enquiry_saved' => 1 ), admin_url( 'admin.php?page=' . TZFD_Admin_Menu::ENQUIRIES ) ) );
         exit;

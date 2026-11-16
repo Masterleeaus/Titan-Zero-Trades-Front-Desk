@@ -72,6 +72,8 @@ TZFD_Smart_Task_Events::register();
 add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-answer-box.php';
+add_action( 'init', array( 'TZFD_Answer_Box', 'register' ) );
 
 /**
  * Translate persisted values without passing dynamic data to the

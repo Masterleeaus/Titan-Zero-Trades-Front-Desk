@@ -180,13 +180,11 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 == Optional upgrades ==
 
-Front Desk shows optional upgrade links in two places: the Integrations tab of Settings, and the Upgrade link on the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
+This version does not need a separate Pro download. The plugin does not install, load or check for one, and the Plugins list has no Upgrade link.
 
-* Front Desk Pro is a separate download. This plugin does not install, load or check for it.
-* AI Assistant and AI Agent are paid, hosted services that run outside WordPress and need a subscription. Their product pages are at titanzero.io/frontdeskai and titanzero.io/frontdeskagent. Each service's data handling will be listed under External services before any site data is sent to it.
-* Front Desk Pro's product page is at titanzero.io/frontdeskpro.
+Titan Zero AI Assistant and Titan Zero AI Agent Team are optional paid hosted services that run outside WordPress and need a subscription. They are not part of this version. Each service's data handling will be listed under External services before any site data is sent to it.
 
-Front Desk works fully without any of these upgrades.
+Front Desk works fully without any of these services.
 
 == External services ==
 
@@ -759,6 +757,9 @@ Add-on settings now require authorised POST and nonce validation instead of stat
 
 
 == Upgrade Notice ==
+
+= 3.0.128 =
+The AI booking assistant and AI setup wizard are removed from this version. Bookings, customers and reminders work without AI. The missed-call webhook now uses a new signed request format and a newly generated secret, so update any receiving endpoint.
 
 = 3.0.127 =
 Booking submissions are now saved under the company that owns the calendar, and a calendar with no valid owner refuses submissions. Check that each calendar has an owner after upgrading. The site-wide chat bubble no longer appears on any page.

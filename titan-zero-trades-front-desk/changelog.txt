@@ -5,6 +5,7 @@
 * Vertical packs no longer write FAQ rows. The AI Receptionist tables are removed from this version.
 * Celebrant pack: the Marriage Act line is removed from the compliance guidance.
 * Minimum WordPress version is 6.6. Tested on WordPress 6.6.2 and 7.1.4.
+* Removed the AI booking assistant and the AI setup wizard from this version. Bookings, customers, reminders and reports work without AI. Earlier AI settings and stored chats are kept, not deleted.
 * Setup wizard: clearer spacing on every step, plain-language policy questions, one question per row, and a booking page choice.
 * Verticals: improved service types, questions and answers for all 65 bundled packs. Unverified facts are now placeholders for the owner to complete.
 * Compliance guidance corrected for three packs.
@@ -26,7 +27,6 @@ Changed for Titan Zero Trades: Front Desk from Appointment Hour Booking 1.5.98 (
 * Consolidated shared logo placement and reduced conflicting legacy brand CSS.
 * Corrected Front Desk notice and review contrast rules.
 
-correct brand banner placement and legacy review/calendar contrast.
 = 3.0.120 =
 * Consolidated six sequential administration style layers into one ordered stylesheet.
 * Improved wizard review readability, dark fields, table links, mobile overflow, and brand header spacing.

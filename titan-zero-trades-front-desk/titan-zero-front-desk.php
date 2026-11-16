@@ -25,6 +25,7 @@ if ( ! defined( 'TZFD_VERSION' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-tables.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-free-services.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-history-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-migration-handoff.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-record-reconciliation.php';

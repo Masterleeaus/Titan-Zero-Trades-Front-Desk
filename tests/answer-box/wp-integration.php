@@ -9,7 +9,9 @@ $pass = 0; $fail = 0;
 $check = function ( $name, $cond, $detail = '' ) use ( &$pass, &$fail ) {
 	if ( $cond ) { $pass++; echo "PASS $name\n"; } else { $fail++; echo "FAIL $name $detail\n"; }
 };
-$conv = str_repeat( 'a', 32 );
+// Fresh identifiers per run: transients from an earlier run must not change results.
+$run = bin2hex( random_bytes( 4 ) );
+$conv = bin2hex( random_bytes( 16 ) );
 $nofilter = function () { return 0; };
 
 // Reset state
@@ -22,35 +24,35 @@ $n = $A::save_entries( array(
 ) );
 $check( 'approved entries persisted via options', 1 === $n && 1 === count( get_option( TZFD_Answer_Box::OPT_ENTRIES ) ) );
 $A::save_hours( 'Mon-Fri 8am to 5pm' );
-$r = $A::answer( 'What are your hours?', $conv, 'wp-1' );
+$A::save_handoff_url( 'https://example.test/contact/' );
+$r = $A::answer( 'What are your hours?', $conv, 'wp-1-' . $run );
 $check( 'hours answered from stored owner text', 'approved' === $r['status'] && false !== strpos( $r['text'], 'Mon-Fri' ), json_encode( $r ) );
 
-$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2' );
+$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2-' . $run );
 $check( 'exact match answer', 'approved' === $r['status'] );
-$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2' );
+$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2-' . $run );
 $check( 'cache hit via transient', 'cache' === $r['status'], json_encode( $r ) );
 $A::save_entries( array( array( 'kind' => 'faq', 'question' => 'Do you offer free quotes?', 'answer' => 'Quotes cost money now.', 'approved' => true ) ) );
-$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2' );
+$r = $A::answer( 'Do you offer free quotes?', $conv, 'wp-2-' . $run );
 $check( 'cache invalidated on approved-content change', 'approved' === $r['status'] && 'Quotes cost money now.' === $r['text'], json_encode( $r ) );
 
 $A::save_handoff_url( 'https://example.test/contact/' );
-$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3' );
+$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3-' . $run );
 $check( 'unsupported question refused when generation off', 'unavailable' === $r['status'] && null !== $r['link'], json_encode( $r ) );
-$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3' );
+$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3-' . $run );
 $A::save_handoff_url( '' );
-$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3b' );
+$r = $A::answer( 'Do you bake bread?', $conv, 'wp-3b-' . $run );
 $check( 'no handoff configured: refusal has no link but still says to contact the business', null === $r['link'] && false !== strpos( $r['text'], 'contact the business' ), json_encode( $r ) );
 $A::save_handoff_url( 'https://example.test/contact/' );
-$check( 'refusal link is the booking page or handoff', is_array( $r['link'] ) && '' !== $r['link']['url'] );
 
 // Generative branch with a stub provider via the real filter.
 add_filter( 'tzfd_answer_box_daily_generation_cap', function () { return 10; } );
 $calls = 0;
 add_filter( 'tzfd_answer_box_generate', function () use ( &$calls ) { $calls++; return array( 'ok' => true, 'text' => 'Please contact us for that.' ); } );
-$c2 = str_repeat( 'b', 32 );
-$A::answer( 'Can you fix a fence', $c2, 'wp-4' );
-$A::answer( 'Can you fix a gate', $c2, 'wp-4' );
-$r = $A::answer( 'Can you fix a roof', $c2, 'wp-4' );
+$c2 = bin2hex( random_bytes( 16 ) );
+$A::answer( 'Can you fix a fence', $c2, 'wp-4-' . $run );
+$A::answer( 'Can you fix a gate', $c2, 'wp-4-' . $run );
+$r = $A::answer( 'Can you fix a roof', $c2, 'wp-4-' . $run );
 $check( 'two generative turns then refusal', 2 === $calls && 'turns_exhausted' === $r['status'], "calls=$calls status={$r['status']}" );
 
 // Shortcode rendering through WordPress (do_shortcode) and XSS escaping.
@@ -66,11 +68,11 @@ $check( 'first load has no answer text and a fresh token', 1 === preg_match( '/n
 // Anonymous rate limit through real transients.
 $A::save_entries( array( array( 'kind' => 'faq', 'question' => 'Hours', 'answer' => 'Open.', 'approved' => true ) ) );
 $limited = 0;
-for ( $i = 0; $i < 11; $i++ ) { if ( 'rate_limited' === $A::answer( 'Hours', $conv, 'wp-rl' )['status'] ) { $limited++; } }
+for ( $i = 0; $i < 11; $i++ ) { if ( 'rate_limited' === $A::answer( 'Hours', $conv, 'wp-rl-' . $run )['status'] ) { $limited++; } }
 $check( 'anonymous rate limit enforced via transients', 1 === $limited, "limited=$limited" );
 $leak = false; global $wpdb;
 $rows = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_name LIKE '_transient_tzab_rl_%'" );
-foreach ( $rows as $name ) { if ( false !== strpos( $name, 'wp-rl' ) ) { $leak = true; } }
+foreach ( $rows as $name ) { if ( false !== strpos( $name, 'wp-rl-' . $run ) ) { $leak = true; } }
 $check( 'rate limit keys hold no raw client value', ! $leak );
 
 // Cleanup

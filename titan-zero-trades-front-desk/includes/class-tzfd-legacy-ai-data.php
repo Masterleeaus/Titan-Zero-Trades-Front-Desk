@@ -34,8 +34,19 @@ final class TZFD_Legacy_AI_Data {
 	const PAGE           = 'tzfd-legacy-ai-data';
 	const ACTION_EXPORT  = 'tzfd_legacy_ai_export';
 	const ACTION_DELETE  = 'tzfd_legacy_ai_delete';
+	const ACTION_RESTORE = 'tzfd_legacy_ai_restore';
 	const NOTICE_ARG     = 'tzfd_legacy_ai_notice';
 	const PAGE_SIZE      = 50;
+
+	/** Export format identifier and version accepted by the restore action. */
+	const FORMAT         = 'tzfd-legacy-ai-export';
+	const FORMAT_VERSION = 1;
+
+	/** Largest export file the restore action will read, in bytes. */
+	const RESTORE_MAX_BYTES = 1048576;
+
+	/** Only option names with this shape may be restored. */
+	const LEGACY_NAME_PATTERN = '/^(tz_fd_ai_|tzfd_c\d+_tz_fd_ai_)/';
 
 	/** Columns that may hold an address used to match a customer for the privacy exporter, in priority order. */
 	const EMAIL_COLUMNS = array( 'email', 'customer_email', 'user_email', 'contact_email' );
@@ -48,6 +59,7 @@ final class TZFD_Legacy_AI_Data {
 		add_action( 'admin_menu', array( __CLASS__, 'add_page' ) );
 		add_action( 'admin_post_' . self::ACTION_EXPORT, array( __CLASS__, 'handle_export' ) );
 		add_action( 'admin_post_' . self::ACTION_DELETE, array( __CLASS__, 'handle_delete' ) );
+		add_action( 'admin_post_' . self::ACTION_RESTORE, array( __CLASS__, 'handle_restore' ) );
 		add_filter( 'wp_privacy_personal_data_exporters', array( __CLASS__, 'register_exporter' ) );
 	}
 
@@ -181,12 +193,21 @@ final class TZFD_Legacy_AI_Data {
 		$texts  = array(
 			'deleted'  => __( 'Legacy AI option rows were deleted. Chat records and all other data were kept.', 'titan-zero-trades-front-desk' ),
 			'refused'  => __( 'Nothing was deleted. Type the exact phrase and confirm that you have a backup.', 'titan-zero-trades-front-desk' ),
+			'restored'        => __( 'Restore finished. Only missing options were added. Existing values were kept.', 'titan-zero-trades-front-desk' ),
+			'restore_invalid' => __( 'Nothing was restored. The file was missing, too large, or not a Front Desk legacy AI export.', 'titan-zero-trades-front-desk' ),
 		);
 
 		echo '<div class="wrap"><h1>' . esc_html__( 'Front Desk legacy AI data', 'titan-zero-trades-front-desk' ) . '</h1>';
 		echo '<p>' . esc_html__( 'These records come from earlier AI features. Nothing here is deleted automatically. Chat history and bookings are kept in every case.', 'titan-zero-trades-front-desk' ) . '</p>';
 		if ( isset( $texts[ $notice ] ) ) {
-			echo '<div class="notice notice-info"><p>' . esc_html( $texts[ $notice ] ) . '</p></div>';
+			echo '<div class="notice notice-info"><p>' . esc_html( $texts[ $notice ] ) . '</p>';
+			if ( 'restored' === $notice ) {
+				$added   = isset( $_GET['added'] ) ? absint( $_GET['added'] ) : 0;
+				$skipped = isset( $_GET['skipped'] ) ? absint( $_GET['skipped'] ) : 0;
+				$reject  = isset( $_GET['rejected'] ) ? absint( $_GET['rejected'] ) : 0;
+				echo '<p>' . esc_html( sprintf( /* translators: 1: options added, 2: options kept, 3: options rejected */ __( 'Added: %1$d. Kept existing: %2$d. Rejected: %3$d.', 'titan-zero-trades-front-desk' ), $added, $skipped, $reject ) ) . '</p>';
+			}
+			echo '</div>';
 		}
 
 		echo '<h2>' . esc_html__( 'Audit', 'titan-zero-trades-front-desk' ) . '</h2>';
@@ -212,6 +233,15 @@ final class TZFD_Legacy_AI_Data {
 		echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION_EXPORT ) . '" />';
 		wp_nonce_field( self::ACTION_EXPORT );
 		submit_button( __( 'Download JSON export', 'titan-zero-trades-front-desk' ), 'secondary', 'submit', false );
+		echo '</form>';
+
+		echo '<h2>' . esc_html__( 'Restore from export', 'titan-zero-trades-front-desk' ) . '</h2>';
+		echo '<p>' . esc_html__( 'Adds legacy AI options that are missing on this site. Existing values are never overwritten, and chat history is not changed.', 'titan-zero-trades-front-desk' ) . '</p>';
+		echo '<form method="post" enctype="multipart/form-data" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+		echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION_RESTORE ) . '" />';
+		wp_nonce_field( self::ACTION_RESTORE );
+		echo '<p><input type="file" name="export_file" accept="application/json,.json" /></p>';
+		submit_button( __( 'Restore missing options', 'titan-zero-trades-front-desk' ), 'secondary', 'submit', false );
 		echo '</form>';
 
 		echo '<h2>' . esc_html__( 'Delete legacy AI options', 'titan-zero-trades-front-desk' ) . '</h2>';
@@ -255,9 +285,80 @@ final class TZFD_Legacy_AI_Data {
 		self::redirect_back( 'deleted' );
 	}
 
-	/** Redirect to the page with a fixed notice key. */
-	private static function redirect_back( $notice ) {
-		wp_safe_redirect( add_query_arg( array( 'page' => self::PAGE, self::NOTICE_ARG => $notice ), admin_url( 'tools.php' ) ) );
+	/**
+	 * Rollback: add legacy AI options from a previous export. Add-only. add_option() never overwrites an
+	 * existing row, so current values are kept. Rejects anything outside the legacy names or credential-like.
+	 * Chat rows are not restored here.
+	 *
+	 * @param mixed $payload Decoded export JSON.
+	 * @return array{added:int,skipped:int,rejected:int,valid:bool}
+	 */
+	public static function restore_payload( $payload ) {
+		$result = array( 'added' => 0, 'skipped' => 0, 'rejected' => 0, 'valid' => false );
+		if ( ! is_array( $payload ) || ! isset( $payload['format'], $payload['format_version'], $payload['options'] ) ) {
+			return $result;
+		}
+		if ( self::FORMAT !== $payload['format'] || self::FORMAT_VERSION !== $payload['format_version'] || ! is_array( $payload['options'] ) ) {
+			return $result;
+		}
+		$result['valid'] = true;
+		foreach ( $payload['options'] as $name => $value ) {
+			$name = (string) $name;
+			if ( 1 !== preg_match( self::LEGACY_NAME_PATTERN, $name ) || self::is_secret_name( $name ) ) {
+				$result['rejected']++;
+				continue;
+			}
+			if ( add_option( $name, $value, '', 'no' ) ) {
+				$result['added']++;
+			} else {
+				$result['skipped']++;
+			}
+		}
+		return $result;
+	}
+
+	/** admin-post handler: restore from an uploaded export. Administrators only, with a valid nonce. */
+	public static function handle_restore() {
+		if ( ! current_user_can( self::CAP ) ) {
+			wp_die( esc_html__( 'You do not have permission to do this.', 'titan-zero-trades-front-desk' ), 403 );
+		}
+		check_admin_referer( self::ACTION_RESTORE );
+		$file = isset( $_FILES['export_file'] ) && is_array( $_FILES['export_file'] ) ? $_FILES['export_file'] : array();
+		if ( empty( $file ) || ! isset( $file['error'], $file['tmp_name'], $file['size'] ) || UPLOAD_ERR_OK !== $file['error'] || ! is_uploaded_file( $file['tmp_name'] ) ) {
+			self::redirect_back( 'restore_invalid' );
+		}
+		$result = self::restore_from_file( $file['tmp_name'], (int) $file['size'] );
+		if ( ! $result['valid'] ) {
+			self::redirect_back( 'restore_invalid' );
+		}
+		self::redirect_back( 'restored', $result );
+	}
+
+	/**
+	 * Read and restore one export file. Refuses files over RESTORE_MAX_BYTES before reading them.
+	 * Upload ownership is checked by the caller.
+	 *
+	 * @return array Same shape as restore_payload(), with valid=false when the file is unusable.
+	 */
+	public static function restore_from_file( $path, $size ) {
+		$invalid = array( 'added' => 0, 'skipped' => 0, 'rejected' => 0, 'valid' => false );
+		if ( ! is_string( $path ) || $size < 1 || $size > self::RESTORE_MAX_BYTES ) {
+			return $invalid;
+		}
+		$raw = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local uploaded tmp file, size-capped above.
+		if ( ! is_string( $raw ) ) {
+			return $invalid;
+		}
+		return self::restore_payload( json_decode( $raw, true ) );
+	}
+
+	/** Redirect to the page with a fixed notice key, optionally with restore counts. */
+	private static function redirect_back( $notice, $counts = array() ) {
+		$args = array( 'page' => self::PAGE, self::NOTICE_ARG => $notice );
+		foreach ( array( 'added', 'skipped', 'rejected' ) as $key ) {
+			if ( isset( $counts[ $key ] ) ) { $args[ $key ] = (int) $counts[ $key ]; }
+		}
+		wp_safe_redirect( add_query_arg( $args, admin_url( 'tools.php' ) ) );
 		exit;
 	}
 

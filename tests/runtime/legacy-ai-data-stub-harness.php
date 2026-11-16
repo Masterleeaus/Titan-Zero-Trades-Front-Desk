@@ -215,5 +215,59 @@ check('exporter is registered with WordPress privacy tools', isset($wrap['tzfd-l
 $writes = array_filter($GLOBALS['sql'], function ($q) { return preg_match('/^\s*(DELETE|UPDATE|INSERT|DROP)/i', $q); });
 check('no write statements were issued by the exporter or audit', count($writes) === 0);
 
+// 10. Rollback: restore from an export adds only missing legacy options, never overwrites.
+function add_option($n, $v, $d = '', $a = 'yes') { if (array_key_exists($n, $GLOBALS['opts'])) return false; $GLOBALS['opts'][$n] = $v; $GLOBALS['autoload'][$n] = $a; return true; }
+function absint($v) { return abs((int) $v); }
+$GLOBALS['autoload'] = array();
+$GLOBALS['opts']['tz_fd_ai_greeting'] = 'Current greeting';
+$export = array(
+    'format' => 'tzfd-legacy-ai-export', 'format_version' => 1,
+    'options' => array(
+        'tz_fd_ai_services' => 'Export plumbing',
+        'tz_fd_ai_greeting' => 'Old greeting',
+        'tzfd_c7_tz_fd_ai_services' => 'Export scoped',
+        'tz_fd_ai_provider_api_key' => 'sk-FROM-EXPORT',
+        'tz_fd_dashboard_maxitems' => 99,
+        'other_plugin_option' => 'x',
+    ),
+);
+$before_chat = count($GLOBALS['tables']['wp_tz_ai_conversations']);
+$r = TZFD_Legacy_AI_Data::restore_payload($export);
+check('restore reports valid export', $r['valid'] === true);
+check('restore adds missing legacy options', $r['added'] === 2 && $GLOBALS['opts']['tz_fd_ai_services'] === 'Export plumbing' && $GLOBALS['opts']['tzfd_c7_tz_fd_ai_services'] === 'Export scoped');
+check('restore keeps existing value and never overwrites', $GLOBALS['opts']['tz_fd_ai_greeting'] === 'Current greeting' && $r['skipped'] === 1);
+check('restore writes restored options with autoload off', $GLOBALS['autoload']['tz_fd_ai_services'] === 'no');
+check('restore rejects credential-like and non-legacy names', !isset($GLOBALS['opts']['tz_fd_ai_provider_api_key']) && $r['rejected'] === 3);
+check('restore does not touch unrelated settings', $GLOBALS['opts']['tz_fd_dashboard_maxitems'] === 25 && $GLOBALS['opts']['other_plugin_option'] === 'x');
+check('restore does not touch chat rows', count($GLOBALS['tables']['wp_tz_ai_conversations']) === $before_chat);
+$again = TZFD_Legacy_AI_Data::restore_payload($export);
+check('second restore adds nothing new', $again['added'] === 0 && $GLOBALS['opts']['tz_fd_ai_services'] === 'Export plumbing');
+$bad_format = TZFD_Legacy_AI_Data::restore_payload(array('format' => 'other', 'format_version' => 1, 'options' => array('tz_fd_ai_x' => 1)));
+$bad_ver = TZFD_Legacy_AI_Data::restore_payload(array('format' => 'tzfd-legacy-ai-export', 'format_version' => 2, 'options' => array('tz_fd_ai_y' => 1)));
+$bad_shape = TZFD_Legacy_AI_Data::restore_payload('not an array');
+check('restore refuses wrong format, version or shape', !$bad_format['valid'] && !$bad_ver['valid'] && !$bad_shape['valid'] && !isset($GLOBALS['opts']['tz_fd_ai_x']) && !isset($GLOBALS['opts']['tz_fd_ai_y']));
+
+// File path: size cap is enforced before reading; ownership check refuses non-uploaded files.
+$tmp = tempnam(sys_get_temp_dir(), 'tzfdr');
+file_put_contents($tmp, json_encode($export));
+$GLOBALS['opts'] = array_diff_key($GLOBALS['opts'], array('tz_fd_ai_services' => 1));
+$ff = TZFD_Legacy_AI_Data::restore_from_file($tmp, filesize($tmp));
+check('file restore reads a valid export', $ff['valid'] === true && $ff['added'] === 1 && isset($GLOBALS['opts']['tz_fd_ai_services']));
+$GLOBALS['opts'] = array_diff_key($GLOBALS['opts'], array('tz_fd_ai_services' => 1));
+$big = TZFD_Legacy_AI_Data::restore_from_file($tmp, TZFD_Legacy_AI_Data::RESTORE_MAX_BYTES + 1);
+check('oversized file is refused before reading', $big['valid'] === false && !isset($GLOBALS['opts']['tz_fd_ai_services']));
+$junk = tempnam(sys_get_temp_dir(), 'tzfdr');
+file_put_contents($junk, '{not json');
+check('malformed JSON file restores nothing', TZFD_Legacy_AI_Data::restore_from_file($junk, filesize($junk))['valid'] === false);
+unlink($junk);
+// Handler: a file that was not uploaded over HTTP is refused (is_uploaded_file is false for it).
+$_FILES = array('export_file' => array('error' => 0, 'tmp_name' => $tmp, 'size' => filesize($tmp)));
+try { TZFD_Legacy_AI_Data::handle_restore(); } catch (StopRedirect $r2) { check('handler refuses a non-uploaded file', strpos($r2->getMessage(), 'restore_invalid') !== false); }
+check('handler refusal restores nothing', !isset($GLOBALS['opts']['tz_fd_ai_services']));
+$GLOBALS['caps'] = false;
+try { TZFD_Legacy_AI_Data::handle_restore(); check('non-admin restore is refused', false); } catch (StopDie $d) { check('non-admin restore is refused', true); }
+$GLOBALS['caps'] = true;
+unlink($tmp);
+
 echo "\n$pass passed, $fail failed\n";
 exit($fail ? 1 : 0);

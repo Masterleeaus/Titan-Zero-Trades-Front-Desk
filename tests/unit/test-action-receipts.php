@@ -36,6 +36,7 @@ function tzfd_test_action_receipts() {
 	tzfd_assert( false === $R::verify_chain( $secret, $injected )['valid'], 'extra field is detected' );
 
 	// Privacy: raw arguments are never stored, only a digest.
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- unit suite runs without WordPress, so wp_json_encode() is unavailable.
 	$serialised = json_encode( $chain );
 	tzfd_assert( false === strpos( $serialised, 'Sunday only' ) && false === strpos( $serialised, 'cust-1' ), 'receipt contains no raw arguments' );
 	tzfd_assert( 64 === strlen( $chain[1]['args_digest'] ), 'args are stored as SHA-256 digest' );

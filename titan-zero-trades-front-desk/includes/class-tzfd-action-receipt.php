@@ -98,6 +98,7 @@ final class TZFD_Action_Receipt {
 			if ( ! in_array( $key, $expected, true ) ) { throw new InvalidArgumentException( 'unknown_receipt_key' ); }
 		}
 		foreach ( array( 'receipt_id', 'company_id', 'agent_id' ) as $key ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message from fixed internal field names; not HTML output.
 			if ( ! self::is_id( $fields[ $key ] ?? null ) ) { throw new InvalidArgumentException( 'invalid_' . $key ); }
 		}
 		if ( ! in_array( $fields['tool'] ?? null, array_keys( TZFD_Agent_Tool_Permissions::catalogue() ), true ) ) { throw new InvalidArgumentException( 'invalid_tool' ); }
@@ -105,6 +106,7 @@ final class TZFD_Action_Receipt {
 		$reason = $fields['reason'] ?? null;
 		if ( ! is_string( $reason ) || strlen( $reason ) > 64 || ! preg_match( '/^[a-z_]+$/D', $reason ) ) { throw new InvalidArgumentException( 'invalid_reason' ); }
 		foreach ( array( 'grant_version', 'sequence' ) as $key ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message from fixed internal field names; not HTML output.
 			if ( ! is_int( $fields[ $key ] ?? null ) || $fields[ $key ] < 1 ) { throw new InvalidArgumentException( 'invalid_' . $key ); }
 		}
 		if ( ! is_int( $fields['occurred_at'] ?? null ) || $fields['occurred_at'] < 0 ) { throw new InvalidArgumentException( 'invalid_occurred_at' ); }
@@ -127,6 +129,7 @@ final class TZFD_Action_Receipt {
 
 	/** Canonical JSON: keys sorted recursively, so the same content always hashes the same way. */
 	private static function canonical( $value ) {
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- hash input must stay byte-identical; wp_json_encode() may alter output and is WordPress-only.
 		return json_encode( self::sorted( $value ), JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
 	}
 

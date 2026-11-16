@@ -75,6 +75,7 @@ final class TZFD_Agent_Tool_Permissions {
 			if ( ! in_array( $key, $allowed, true ) ) { throw new InvalidArgumentException( 'unknown_grant_key' ); }
 		}
 		foreach ( array( 'company_id', 'agent_id' ) as $key ) {
+			// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message from fixed internal field names; not HTML output.
 			if ( ! self::is_id( $grant[ $key ] ?? null ) ) { throw new InvalidArgumentException( 'invalid_' . $key ); }
 		}
 		$state = $grant['state'] ?? self::STATE_ACTIVE;
@@ -175,6 +176,7 @@ final class TZFD_Agent_Tool_Permissions {
 		$catalogue = self::catalogue();
 		if ( ! isset( $catalogue[ $tool ] ) ) { throw new InvalidArgumentException( 'unknown_tool' ); }
 		if ( ! is_array( $args ) ) { throw new InvalidArgumentException( 'args_not_array' ); }
+		// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- measures serialised size only; wp_json_encode() is WordPress-only and may change the measured length.
 		$encoded = json_encode( $args );
 		if ( false === $encoded || strlen( $encoded ) > self::MAX_ARGS_BYTES ) { throw new InvalidArgumentException( 'args_too_large' ); }
 		$schema = $catalogue[ $tool ]['args'];
@@ -212,6 +214,7 @@ final class TZFD_Agent_Tool_Permissions {
 				if ( is_string( $value ) && '' !== trim( $value ) && strlen( $value ) <= 500 && ! preg_match( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', $value ) ) { return $value; }
 				break;
 		}
+		// phpcs:ignore WordPress.Security.EscapeOutput.ExceptionNotEscaped -- exception message from fixed internal type names; not HTML output.
 		throw new InvalidArgumentException( 'invalid_' . $type );
 	}
 

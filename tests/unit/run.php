@@ -21,6 +21,7 @@ function tzfd_assert( $condition, $message ) {
 }
 
 function tzfd_assert_same( $expected, $actual, $message ) {
+	// phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- unit suite runs without WordPress, so wp_json_encode() is unavailable; this only builds a failure message.
 	tzfd_assert( $expected === $actual, $message . ' | expected ' . json_encode( $expected ) . ' got ' . json_encode( $actual ) );
 }
 
@@ -60,10 +61,12 @@ foreach ( get_defined_functions()['user'] as $fn ) {
 }
 
 $local_t = $GLOBALS['tzfd_tests'];
+// phpcs:disable WordPress.Security.EscapeOutput.OutputNotEscaped -- CLI runner writes plain text to stdout; HTML escaping helpers do not apply.
 foreach ( $local_t['failures'] as $failure ) {
 	echo 'FAIL ' . $failure . "\n";
 }
 echo 'Local-free suite: passed ' . $local_t['pass'] . ', failed ' . $local_t['fail'] . "\n";
+// phpcs:enable WordPress.Security.EscapeOutput.OutputNotEscaped
 $local_fail = $local_t['fail'];
 
 /* ---- Suite 2: Free AI case files (main harness) ---- */
@@ -73,6 +76,7 @@ foreach ( glob( __DIR__ . '/cases/*.php' ) as $case ) {
 }
 $pass = $GLOBALS['tzfd_t_pass'];
 $fail = $GLOBALS['tzfd_t_fail'];
+// phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- CLI runner writes plain text to stdout; HTML escaping helpers do not apply.
 echo "Free AI cases: assertions passed: $pass, failed: $fail\n";
 
 exit( ( $local_fail > 0 || $fail > 0 ) ? 1 : 0 );

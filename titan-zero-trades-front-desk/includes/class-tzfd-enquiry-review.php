@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/class-tzfd-request-value.php';
 require_once __DIR__ . '/class-tzfd-transaction-storage.php';
 require_once __DIR__ . '/class-tzfd-local-audit.php';
+require_once __DIR__ . '/class-tzfd-quote-request-classifier.php';
 
 /**
  * Enquiry review: a minimal list and status view for tz_enquiries (Business Builder leads).
@@ -136,6 +137,25 @@ final class TZFD_Enquiry_Review {
         return '<img class="tzfd-status-badge" src="' . esc_url( $url ) . '" alt="" width="18" height="18" loading="lazy" decoding="async" />';
     }
 
+    /**
+     * Read-only quote request draft under an enquiry, for owner review. Shows the extracted date, site and missing fields.
+     * Never shows or sets a price, approval or booking. Empty when the enquiry is not a quote request.
+     */
+    private static function quote_draft_html( $row ) {
+        $draft = TZFD_Quote_Request_Classifier::classify( array(
+            'company_id' => (int) $row->company_id, 'name' => (string) $row->name, 'email' => (string) $row->email,
+            'phone' => (string) $row->phone, 'enquiry' => (string) $row->enquiry,
+        ), array(), '' );
+        if ( ! empty( $draft['error'] ) || 'quote_request' !== $draft['intent'] ) { return ''; }
+        $missing = empty( $draft['missing'] ) ? __( 'none', 'titan-zero-trades-front-desk' ) : implode( ', ', $draft['missing'] );
+        $date    = '' !== $draft['requested_date'] ? $draft['requested_date'] : '-';
+        $site    = '' !== $draft['site'] ? $draft['site'] : '-';
+        return '<div class="tzfd-quote-draft"><strong>' . esc_html__( 'Quote request draft (owner review, no price)', 'titan-zero-trades-front-desk' ) . '</strong><br />'
+            . esc_html__( 'Requested date', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $date ) . ' · '
+            . esc_html__( 'Site', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $site ) . ' · '
+            . esc_html__( 'Missing', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $missing ) . '</div>';
+    }
+
     /** Admin page: enquiry list with a status filter and a status change per row. */
     public static function page() {
         if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'You do not have permission to open this page.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
@@ -173,8 +193,8 @@ final class TZFD_Enquiry_Review {
             $contact = trim( (string) $r->email . ' ' . (string) $r->phone );
             echo '<tr><td>' . esc_html( (string) $r->received_utc ) . ' UTC</td><td>' . esc_html( (string) $r->name ) . '</td><td>' . esc_html( $contact ) . '</td>';
             $triage_row = $triage_map[ (int) $r->id ] ?? null;
-            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- TZFD_Enquiry_Triage::row_html() escapes every value it returns.
-            echo '<td>' . esc_html( (string) $r->enquiry ) . ( class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::row_html( (int) $r->id, $triage_row ) : '' ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- TZFD_Enquiry_Triage::row_html() escapes every value it returns; quote_draft_html() escapes its own output.
+            echo '<td>' . esc_html( (string) $r->enquiry ) . self::quote_draft_html( $r ) . ( class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::row_html( (int) $r->id, $triage_row ) : '' ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
             echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '" /><input type="hidden" name="enquiry" value="' . (int) $r->id . '" />';
             wp_nonce_field( self::NONCE, self::NONCE_FIELD );
             echo '<select name="status" aria-label="' . esc_attr__( 'New status', 'titan-zero-trades-front-desk' ) . '">';

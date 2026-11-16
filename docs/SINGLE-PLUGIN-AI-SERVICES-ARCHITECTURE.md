@@ -124,7 +124,7 @@ Audit of the add-on registry, admin pages, AJAX, REST, scripts, settings and sho
 - Pre-existing scheduled AI cron events are still stopped by the shared hook list on deactivation and uninstall.
 - No remote delete or opt-out is needed, because the free build sends nothing to an AI service.
 
-**Regression evidence:** `tests/runtime/ai-free-edition-tests.php` (17 checks, PHP CLI, no WordPress needed). It covers the manifest, the catalogue, negative cases for legacy AI selections and unlisted files, upgrade-link refusal of non-https URLs, the dismiss-key list, the retired shortcode, and a static scan for outbound AI calls.
+**Regression evidence:** `tests/runtime/ai-free-edition-unit-tests.php` (17 checks, PHP CLI, no WordPress needed). It covers the manifest, the catalogue, negative cases for legacy AI selections and unlisted files, upgrade-link refusal of non-https URLs, the dismiss-key list, the retired shortcode, and a static scan for outbound AI calls.
 
 ## Authoritative issue tracker
 

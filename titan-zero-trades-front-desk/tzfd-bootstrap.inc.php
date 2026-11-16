@@ -98,6 +98,9 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-webhooks.php';
 TZFD_Webhooks::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-privacy-exporter.php';
 TZFD_Privacy_Exporter::register();
+// Legacy AI data: admin-only audit, export and confirmed deletion. Adds no automatic deletion hook.
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-ai-data.php';
+TZFD_Legacy_AI_Data::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-resource-admin.php';
 TZFD_Resource_Admin::register();
 TZFD_Service_Details::register();

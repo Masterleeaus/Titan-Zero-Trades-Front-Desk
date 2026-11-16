@@ -22,6 +22,25 @@ function sanitize_text_field( $v ) { return trim( strip_tags( (string) $v ) ); }
 $GLOBALS['tz_transients'] = array();
 function get_transient( $k ) { return $GLOBALS['tz_transients'][ $k ] ?? false; }
 function set_transient( $k, $v, $ttl = 0 ) { $GLOBALS['tz_transients'][ $k ] = $v; return true; }
+$GLOBALS['tz_options'] = array();
+function add_option( $k, $v, $deprecated = '', $autoload = 'yes' ) { if ( isset( $GLOBALS['tz_options'][ $k ] ) ) { return false; } $GLOBALS['tz_options'][ $k ] = (string) $v; return true; }
+function get_option( $k, $d = false ) { return $GLOBALS['tz_options'][ $k ] ?? $d; }
+function wp_cache_delete( $k, $g = '' ) { return true; }
+// Stand-in for $wpdb: the only query used is the option compare-and-set in claim_signature().
+class TZ_Fake_WPDB {
+    public $options = 'wp_options';
+    public function prepare( $sql, ...$args ) { return array( $sql, $args ); }
+    public function query( $prepared ) {
+        list( $sql, $a ) = $prepared; // $a = array( new, name, expected_old )
+        $name = $a[1];
+        if ( isset( $GLOBALS['tz_options'][ $name ] ) && (string) $GLOBALS['tz_options'][ $name ] === (string) $a[2] ) {
+            $GLOBALS['tz_options'][ $name ] = (string) $a[0];
+            return 1;
+        }
+        return 0;
+    }
+}
+$GLOBALS['wpdb'] = new TZ_Fake_WPDB();
 function rest_url( $p ) { return 'https://example.test/wp-json/' . $p; }
 class WP_Error { public function __construct( $c = '', $m = '', $d = null ) { $this->code = $c; $this->message = $m; $this->data = $d; } }
 class WP_REST_Response { public $data; public function __construct( $d = null ) { $this->data = $d; } }
@@ -109,6 +128,13 @@ tz_check( 'signed request: non-numeric timestamp refused', ! TZFD_Signed_Request
 tz_check( 'signed request: stale timestamp (301s) refused', ! TZFD_Signed_Request::signature_valid( $secret, $mc_ts, $mc_sig, $mc_body, $now + 301 ) );
 tz_check( 'signed request: missing headers (null) refused', ! TZFD_Signed_Request::signature_valid( $secret, null, null, $mc_body, $now ) );
 tz_check( 'signed request: replay of identical signature refused', TZFD_Signed_Request::claim_signature( $mc_sig ) && ! TZFD_Signed_Request::claim_signature( $mc_sig ) );
+$exp_sig = 'sha256=' . str_repeat( '1', 64 );
+$exp_opt = 'tzfd_sig_' . hash( 'sha256', $exp_sig );
+$GLOBALS['tz_options'][ $exp_opt ] = (string) ( time() - 700 ); // record older than REPLAY_TTL
+tz_check( 'signed request: expired replay record can be reclaimed once', TZFD_Signed_Request::claim_signature( $exp_sig ) );
+tz_check( 'signed request: reclaimed record blocks an immediate second claim', ! TZFD_Signed_Request::claim_signature( $exp_sig ) );
+$GLOBALS['tz_options'][ $exp_opt ] = 'corrupt'; // non-numeric record: must not be reclaimed
+tz_check( 'signed request: corrupt replay record fails closed', ! TZFD_Signed_Request::claim_signature( $exp_sig ) );
 tz_check( 'signed request: different signature is not blocked by a replay record', TZFD_Signed_Request::claim_signature( 'sha256=' . str_repeat( '0', 64 ) ) );
 
 // ---- 4. Twilio status callback ----------------------------------------------

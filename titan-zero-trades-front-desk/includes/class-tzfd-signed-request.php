@@ -33,11 +33,27 @@ final class TZFD_Signed_Request {
         return hash_equals( $expected, $signature );
     }
 
-    /** Records a signature for REPLAY_TTL seconds. Returns false when it was already seen. */
+    /**
+     * Records a signature for REPLAY_TTL seconds. Returns false when it was already seen.
+     *
+     * Atomic: two identical requests arriving together cannot both claim. add_option() is an
+     * INSERT against a unique option_name, so exactly one caller succeeds. An expired record is
+     * replaced only by a compare-and-set UPDATE on its old value, so one racer wins the replacement.
+     */
     public static function claim_signature( $signature ) {
-        $key = 'tz_fd_sig_' . hash( 'sha256', (string) $signature );
-        if ( false !== get_transient( $key ) ) return false;
-        set_transient( $key, 1, self::REPLAY_TTL );
+        global $wpdb;
+        $option = 'tzfd_sig_' . hash( 'sha256', (string) $signature );
+        $now    = time();
+        if ( add_option( $option, (string) $now, '', 'no' ) ) return true;
+        $seen = (string) get_option( $option, '' );
+        if ( ! ctype_digit( $seen ) || (int) $seen + self::REPLAY_TTL > $now ) return false;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- compare-and-set on one option row; no core API is atomic here.
+        $won = $wpdb->query( $wpdb->prepare(
+            "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value = %s",
+            (string) $now, $option, $seen
+        ) );
+        if ( 1 !== (int) $won ) return false;
+        wp_cache_delete( $option, 'options' );
         return true;
     }
 }

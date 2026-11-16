@@ -88,4 +88,7 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }
 
+// Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
+require __DIR__ . '/faq-retrieval-wp-tests.php';
+
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";

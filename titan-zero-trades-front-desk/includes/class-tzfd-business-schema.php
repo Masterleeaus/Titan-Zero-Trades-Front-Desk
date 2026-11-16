@@ -101,6 +101,8 @@ final class TZFD_Business_Schema {
             }
             self::ensure_company_column( $bare, $default );
         }
+        // Triage columns (issue #28) are added on activation for fresh and upgraded installs alike.
+        if ( class_exists( 'TZFD_Enquiry_Triage' ) ) { TZFD_Enquiry_Triage::ensure_columns(); }
         return true;
     }
 

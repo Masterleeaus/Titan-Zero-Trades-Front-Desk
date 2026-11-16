@@ -9,6 +9,7 @@
  * on this hook, so registering here is what lets Builder's leads reach Front Desk.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+require_once __DIR__ . '/class-tzfd-enquiry-triage.php';
 
 final class TZFD_Lead_Intake {
 
@@ -113,6 +114,9 @@ final class TZFD_Lead_Intake {
         // A duplicate is a success, not a failure: return the stored row so the caller shows the same confirmation. Nothing is stored twice.
         if ( $dupe ) { return (int) $dupe; }
         $ok    = $wpdb->insert( $table, $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Front Desk's own table; company_id set above.
-        return $ok ? (int) $wpdb->insert_id : 0;
+        $new_id = $ok ? (int) $wpdb->insert_id : 0;
+        // Local, deterministic triage (issue #28). Its failure never undoes or hides a saved enquiry.
+        if ( $new_id ) { TZFD_Enquiry_Triage::apply_after_capture( $new_id, $company_id ); }
+        return $new_id;
     }
 }

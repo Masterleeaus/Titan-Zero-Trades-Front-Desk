@@ -169,7 +169,6 @@ if ( is_admin() ) {
 
     add_action('admin_enqueue_scripts', array($tz_plugin,'insert_adminScripts'), 1);
     add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array($tz_plugin,'plugin_page_links'));
-    add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array('TZFD_Upgrades','plugin_row_link'));
     add_action('admin_menu', array($tz_plugin,'admin_menu') );
     add_action('enqueue_block_editor_assets', array($tz_plugin,'gutenberg_block'));
 

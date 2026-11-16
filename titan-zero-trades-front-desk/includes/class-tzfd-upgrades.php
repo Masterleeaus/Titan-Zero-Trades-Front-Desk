@@ -1,22 +1,24 @@
 <?php
 /**
- * Optional upgrade links for Front Desk Pro, AI Assistant and AI Agent.
+ * Upgrade links, shown only when a product URL is set.
  *
- * Front Desk works fully without them.
- * Pro is a separate download: this plugin never installs or loads it.
- * GPL-2.0-only.
+ * The single-plugin plan (2026-11-15) retires the separate Pro package and does not
+ * stage hosted AI sales or checkout links before the hosted backend is ready. The URL
+ * constants are therefore empty; the tzfd_upgrade_url filter still supplies a URL when a
+ * site owner or a later release has a verified destination.
+ * Front Desk works fully without them. GPL-2.0-only.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 final class TZFD_Upgrades {
-	/** Sales or download page for the separately distributed Pro package. Empty until published. */
-	const PRO_URL = 'https://titanzero.io/frontdeskpro';
+	/** Retired: no separate Pro package. Empty. */
+	const PRO_URL = '';
 
-	/** Product page for the paid hosted AI Assistant subscription. */
-	const AI_URL = 'https://titanzero.io/frontdeskai';
+	/** Hosted AI Assistant sales page. Empty until the hosted backend is ready. */
+	const AI_URL = '';
 
-	/** Product page for the paid hosted AI Agent subscription. */
-	const AGENT_URL = 'https://titanzero.io/frontdeskagent';
+	/** Hosted AI Agent sales page. Empty until the hosted backend is ready. */
+	const AGENT_URL = '';
 
 	/** Return a safe HTTPS product URL, or an empty string when none is set. */
 	public static function url( $product ) {

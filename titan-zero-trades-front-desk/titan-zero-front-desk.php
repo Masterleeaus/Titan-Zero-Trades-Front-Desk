@@ -72,6 +72,9 @@ TZFD_Smart_Task_Events::register();
 add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
+// Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
+TZFD_AI_Widget::boot();
 
 /**
  * Translate persisted values without passing dynamic data to the

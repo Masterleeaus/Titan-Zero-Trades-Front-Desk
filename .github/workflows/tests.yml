@@ -111,10 +111,11 @@ jobs:
       - name: Extra WordPress test files (if any)
         run: |
           cd "$WP_DIR"
-          shopt -s nullglob
-          for f in "$GITHUB_WORKSPACE"/tests/runtime/*-wp-tests.php "$GITHUB_WORKSPACE"/tests/runtime/*-runtime-tests.php "$GITHUB_WORKSPACE"/tests/answer-box/wp-integration.php; do
-            [ "$(basename "$f")" = "runtime-tests.php" ] && continue
-            echo "== $f"; php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
+          files=$(find "$GITHUB_WORKSPACE/tests" \( -name '*-wp-tests.php' -o -name '*-runtime-tests.php' -o -name 'wp-integration.php' \) ! -name 'runtime-tests.php' | sort)
+          if [ -z "$files" ]; then echo "No extra WordPress test files"; exit 0; fi
+          for f in $files; do
+            echo "== $f"
+            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
           done
       - name: Server log on failure
         if: failure()

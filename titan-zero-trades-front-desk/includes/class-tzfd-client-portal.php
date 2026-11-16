@@ -51,6 +51,9 @@ final class TZFD_Client_Portal {
     const LINK_TTL       = 1200;   // 20 minutes
     const SESSION_TTL    = 7200;   // 2 hours
     const THROTTLE_TTL   = 60;     // one sign-in email per address per minute
+    const IP_THROTTLE_PREFIX = 'tz_fd_portal_ip_';
+    const IP_LIMIT       = 5;      // sign-in requests per client address
+    const IP_WINDOW      = 600;    // seconds for the per-address window
 
     const ACTION_REQUEST = 'tz_fd_portal_request';
     const ACTION_CREATE  = 'tz_fd_portal_create_pages';
@@ -356,6 +359,17 @@ final class TZFD_Client_Portal {
             wp_safe_redirect( add_query_arg( self::PARAM_NOTICE, 'invalid', self::portal_url() ) );
             exit;
         }
+
+        // Per-address limit, checked before any lookup or mail. Over the limit the visitor gets the same
+        // 'sent' notice as every other request, so the limit does not reveal anything about accounts.
+        $remote  = sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+        $ip_key  = self::token_key( self::IP_THROTTLE_PREFIX, md5( $remote ) );
+        $ip_hits = (int) get_transient( $ip_key );
+        if ( $ip_hits >= self::IP_LIMIT ) {
+            wp_safe_redirect( add_query_arg( self::PARAM_NOTICE, 'sent', self::portal_url() ) );
+            exit;
+        }
+        set_transient( $ip_key, $ip_hits + 1, self::IP_WINDOW );
 
         $raw_email = isset( $_POST['email'] ) ? sanitize_email( tzfd_request_text( 'post', 'email' ) ) : '';
         $email     = TZFD_Customer_Cancellation::normalize_email( $raw_email );

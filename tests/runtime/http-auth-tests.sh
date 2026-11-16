@@ -14,6 +14,8 @@ check "call-events, unsigned" "$(curl -s -o /dev/null -w '%{http_code}' -X POST 
 check "booking status, anonymous" "$(curl -s -o /dev/null -w '%{http_code}' $B/?rest_route=/titan-zero-front-desk/v1/bookings/1)"
 check "resources catalog, anonymous" "$(curl -s -o /dev/null -w '%{http_code}' $B/?rest_route=/titan-zero-front-desk/v1/resources/catalog)"
 check "resources preview, anonymous" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -d '{}' $B/?rest_route=/titan-zero-front-desk/v1/resources/preview)"
-check "workspace customer-sites AJAX, anonymous" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -d 'action=tzfd_workspace_customer_sites&nonce=x' $B/wp-admin/admin-ajax.php)"
+# The plugin registers no wp_ajax_ hooks. The real anonymous state-change entry point is admin-post.php.
+check "service create via admin-post, anonymous, no nonce" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -d 'action=tz_fd_service_create' $B/wp-admin/admin-post.php)"
+check "public enquiry via admin-post, no nonce" "$(curl -s -o /dev/null -w '%{http_code}' -X POST -d 'action=tzfd_public_enquiry&name=x&email=x@example.com&enquiry=x' $B/wp-admin/admin-post.php)"
 echo "Note: REST is called as ?rest_route= because the pretty /wp-json/ path is not routed on this test server."
 echo "Summary: $pass passed, $fail failed"

@@ -79,6 +79,8 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-scheduling-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-intake-mode.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-menu.php';
 TZFD_Admin_Menu::register();
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-services-page.php';
+TZFD_AI_Services_Page::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-notices.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-view.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-layout.php';

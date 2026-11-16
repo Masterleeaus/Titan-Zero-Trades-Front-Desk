@@ -31,6 +31,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-migration-handoff.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-record-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-call-lifecycle.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-telephony-adapter.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-messaging-replies.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-telephone-delivery.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-sms.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-status.php';
@@ -260,6 +261,7 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
         $booted = true;
         // The public webhook routes are registered here, not at file load, so a site without Workspace exposes no endpoint.
         TZFD_Telephony_Adapter::register();
+        TZFD_Messaging_Replies::register();
         TZFD_Twilio_Status::boot();
         TZFD_Access::register();
     TZFD_Lead_Intake::register();

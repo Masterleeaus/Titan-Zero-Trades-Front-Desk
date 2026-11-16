@@ -1,6 +1,7 @@
 <?php
 /** Authenticated, provider-neutral call lifecycle webhook adapter (Pass 40). */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+require_once __DIR__ . '/class-tzfd-missed-call-tasks.php';
 final class TZFD_Telephony_Adapter {
     const WINDOW_SECONDS = 300;
     /**
@@ -59,8 +60,10 @@ final class TZFD_Telephony_Adapter {
              ! in_array( $event['event'], TZFD_Call_Lifecycle::EVENTS, true ) ) {
             return null;
         }
+        // The caller number is optional and only used for missed-call callback tasks. Anything malformed is dropped.
+        $from = isset( $event['from'] ) && is_string( $event['from'] ) && strlen( $event['from'] ) <= 40 ? $event['from'] : '';
         return array( 'company_id' => $credentials['company_id'], 'provider' => $credentials['provider'],
-            'call_id' => $event['call_id'], 'event_id' => $event['event_id'], 'event' => $event['event'] );
+            'call_id' => $event['call_id'], 'event_id' => $event['event_id'], 'event' => $event['event'], 'from' => $from );
     }
     public static function receive( $request ) {
         require_once __DIR__ . '/class-tzfd-rest-request-guard.php';
@@ -85,6 +88,12 @@ final class TZFD_Telephony_Adapter {
         $result = TZFD_Call_Lifecycle::record_event( $event['company_id'], $event['provider'],
             $event['call_id'], $event['event_id'], $event['event'], true );
         if ( is_wp_error( $result ) ) { return $result; }
+        // A missed call gets one callback task. It is idempotent per call, so a redelivery never adds a second task.
+        // A failed task write returns 503 and skips the replay marker, so the provider's retry is processed.
+        if ( 'missed' === $event['event'] ) {
+            $task = TZFD_Missed_Call_Tasks::record( $event['company_id'], $event['provider'], $event['call_id'], $event['from'] );
+            if ( is_wp_error( $task ) ) { return $task; }
+        }
         set_transient( $replay_key, 1, self::REPLAY_TTL );
         return new WP_REST_Response( $result, 200 );
     }

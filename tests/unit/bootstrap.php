@@ -12,6 +12,9 @@ foreach ( array(
     'class-tzfd-tenant-storage.php',
     'class-tzfd-knowledge-store.php',
     'class-tzfd-answer-cache.php',
+    'class-tzfd-business-facts.php',
+    'class-tzfd-embedding-provider.php',
+    'class-tzfd-faq-search.php',
 ) as $file ) {
     require_once $plugin_inc . $file;
 }

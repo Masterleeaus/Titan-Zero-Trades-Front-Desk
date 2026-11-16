@@ -3,7 +3,7 @@
  * Regression checks for issue #2: the Front Desk free edition has no AI execution path.
  *
  * Runs with the PHP CLI only, no WordPress install needed:
- *   php tests/runtime/ai-free-edition-tests.php
+ *   php tests/runtime/ai-free-edition-unit-tests.php
  *
  * Not shipped in the plugin. Exits 1 if any check fails.
  */

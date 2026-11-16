@@ -75,6 +75,22 @@ $rows = $wpdb->get_col( "SELECT option_name FROM {$wpdb->options} WHERE option_n
 foreach ( $rows as $name ) { if ( false !== strpos( $name, 'wp-rl-' . $run ) ) { $leak = true; } }
 $check( 'rate limit keys hold no raw client value', ! $leak );
 
+
+// Tenant scope: a service row owned by another company must never be answered.
+global $wpdb;
+$svc_table = $wpdb->prefix . 'tzfd_local_services';
+$wpdb->insert( $svc_table, array( 'company_id' => 2, 'name' => 'Tenant Zebra Service', 'description' => 'Other company only.', 'price' => 0, 'duration_minutes' => 30, 'gst_applies' => 0, 'archived' => 0 ) );
+$r = $A::answer( 'Do you offer Tenant Zebra Service', $conv, 'wp-tenant-' . $run );
+$check( 'service of another company is never answered', false === strpos( $r['text'], 'Other company only' ), json_encode( $r ) );
+$wpdb->delete( $svc_table, array( 'company_id' => 2, 'name' => 'Tenant Zebra Service' ) );
+
+// Outage: a provider that throws must produce a handoff, not an error page or a guess.
+remove_all_filters( 'tzfd_answer_box_generate' );
+add_filter( 'tzfd_answer_box_generate', function () { throw new RuntimeException( 'proxy down' ); } );
+$r = $A::answer( 'Can you paint a fence in purple', bin2hex( random_bytes( 16 ) ), 'wp-outage-' . $run );
+$check( 'provider outage returns proxy_unavailable with handoff link', 'proxy_unavailable' === $r['status'] && is_array( $r['link'] ), json_encode( $r ) );
+remove_all_filters( 'tzfd_answer_box_generate' );
+
 // Cleanup
 delete_option( TZFD_Answer_Box::OPT_ENTRIES ); delete_option( TZFD_Answer_Box::OPT_HOURS ); delete_option( TZFD_Answer_Box::OPT_BUDGET );
 echo "\nSummary: $pass passed, $fail failed\n";

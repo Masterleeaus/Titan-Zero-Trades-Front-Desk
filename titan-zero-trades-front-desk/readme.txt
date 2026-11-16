@@ -180,13 +180,13 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 == Optional upgrades ==
 
-Front Desk shows optional upgrade links in two places: the Integrations tab of Settings, and the Upgrade link on the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
+Front Desk shows an optional information card for its paid hosted services on the Integrations tab of Settings. It adds no upgrade link to the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
 
-* Front Desk Pro is a separate download. This plugin does not install, load or check for it.
 * AI Assistant and AI Agent are paid, hosted services that run outside WordPress and need a subscription. Their product pages are at titanzero.io/frontdeskai and titanzero.io/frontdeskagent. Each service's data handling will be listed under External services before any site data is sent to it.
-* Front Desk Pro's product page is at titanzero.io/frontdeskpro.
 
+There is one plugin. Front Desk does not install, load or require a separate Pro package.
 Front Desk works fully without any of these upgrades.
+
 
 == External services ==
 

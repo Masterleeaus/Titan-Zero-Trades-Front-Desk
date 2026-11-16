@@ -25,6 +25,7 @@ final class TZFD_Tables {
     const ICALEXPORT         = 'tz_icalexport';
     const SINGLE_DAYS        = 'tz_SingleDaysSelection';
     const ENQUIRIES          = 'tz_enquiries';
+    const ENQUIRY_TRIAGE     = 'tz_enquiry_triage';
     const LOCAL_AUDIT        = 'tz_fd_audit_log';
     const PIPELINE           = 'tz_pipeline';
     const PIPELINE_EVENTS    = 'tz_pipeline_events';
@@ -58,7 +59,7 @@ final class TZFD_Tables {
     public static function owned() {
         return array(
             self::CALLS, self::CALL_EVENTS, self::SLOT_HOLDS, self::SMART_TASK_OUTBOX, self::BOOKING_INBOX, self::BOOKING_ACTIONS, self::TELEPHONE_DELIVERY, self::ESCALATION_STATE, self::FORMS, self::BOOKINGS, self::CACHE, self::ICALEXPORT, self::SINGLE_DAYS,
-            self::PIPELINE, self::PIPELINE_EVENTS, self::PIPELINE_NOTIFICATIONS, self::ADDON_RECORDS, self::ENQUIRIES, self::LOCAL_AUDIT,
+            self::PIPELINE, self::PIPELINE_EVENTS, self::PIPELINE_NOTIFICATIONS, self::ADDON_RECORDS, self::ENQUIRIES, self::ENQUIRY_TRIAGE, self::LOCAL_AUDIT,
             self::CONTACT_ACTIONS, self::SMS_CONVERSATIONS,
         );
     }

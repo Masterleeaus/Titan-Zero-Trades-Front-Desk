@@ -1,0 +1,23 @@
+# Patterns excluded from the Free plugin ZIP and the source manifest.
+# One shell glob per line, matched against each entry's path relative to the plugin folder.
+.git
+.gitignore
+.gitattributes
+.editorconfig
+.DS_Store
+Thumbs.db
+*.map
+*.bak
+*.orig
+*.tmp
+*.log
+*.zip
+*.swp
+node_modules
+composer.json
+composer.lock
+phpcs.xml
+phpcs.xml.dist
+phpunit.xml
+phpunit.xml.dist
+tests

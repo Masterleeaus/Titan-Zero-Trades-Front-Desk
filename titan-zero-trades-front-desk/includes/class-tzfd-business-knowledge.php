@@ -171,7 +171,11 @@ final class TZFD_Business_Knowledge {
     }
 
     public static function rest_answer( $request ) {
-        if ( ! TZFD_REST_Request_Guard::check( $request, 'GET', 1024, 12 ) ) {
+        // The shared guard treats a null body as invalid, and WordPress gives null for a GET with no body.
+        // Read-only checks are done here instead: no payload, and a bounded parameter count.
+        $body = is_object( $request ) && method_exists( $request, 'get_body' ) ? $request->get_body() : null;
+        $params = is_object( $request ) && method_exists( $request, 'get_params' ) ? $request->get_params() : null;
+        if ( ( null !== $body && '' !== $body ) || ! is_array( $params ) || count( $params ) > 12 ) {
             return self::error( 'titan_zero_front_desk_invalid_request', 400 );
         }
         return self::answer( $request->get_param( 'q' ) );

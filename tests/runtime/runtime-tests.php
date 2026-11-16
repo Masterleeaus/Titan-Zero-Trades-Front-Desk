@@ -3,7 +3,9 @@
  * Runtime checks for Front Desk 3.0.128 r21 on the disposable test site.
  * Run: wp --allow-root eval-file runtime-tests.php   (not shipped in the plugin)
  */
-$tz_inc = '/var/www/html/wp-content/plugins/titan-zero-trades-front-desk/includes/';
+// Resolves against the active WordPress install (WP_PLUGIN_DIR), not a fixed server path.
+if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; return; }
+$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php' ) as $tz_file ) {
     require_once $tz_inc . $tz_file;
 }

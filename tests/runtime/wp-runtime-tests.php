@@ -23,7 +23,7 @@ $GLOBALS['tzfd_rt'] = array( 'PASS' => 0, 'FAIL' => 0, 'SKIP' => 0, 'GAP' => 0 )
 
 function tzfd_rt_out( $status, $name, $detail = '' ) {
 	$GLOBALS['tzfd_rt'][ $status ]++;
-	echo $status . ' ' . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
+	echo esc_html( $status . ' ' . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) ) . "\n";
 }
 function tzfd_rt_ok( $name, $ok, $detail = '' ) {
 	tzfd_rt_out( $ok ? 'PASS' : 'FAIL', $name, $detail );
@@ -66,16 +66,16 @@ $tzfd_form  = 1;
 $tzfd_params = array( 'formid' => $tzfd_form, 'name' => 'RT Customer', 'email' => $tzfd_email, 'notes' => 'runtime test' );
 $tzfd_row    = array(
 	'formid' => $tzfd_form, 'time' => current_time( 'mysql' ), 'ipaddr' => '127.0.0.1',
-	'notifyto' => $tzfd_email, 'posted_data' => serialize( $tzfd_params ), 'data' => 'RT CUSTOMER', 'whoadded' => (string) $tzfd_admin_id,
+	'notifyto' => $tzfd_email, 'posted_data' => serialize( $tzfd_params ), 'data' => 'RT CUSTOMER', 'whoadded' => (string) $tzfd_admin_id, // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- posted_data must hold the plugin's own PHP-serialized format
 );
-$tzfd_before = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tzfd_bookings WHERE company_id=%d", $tzfd_company ) );
+$tzfd_before = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE company_id=%d', $tzfd_bookings, $tzfd_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw table count, bypasses the object cache
 $tzfd_res    = TZFD_Booking_Create_Transaction::create( $wpdb, $tzfd_company, $tzfd_row, $tzfd_params, TZFD_Intake_Mode::MODE_INSTANT );
 $tzfd_id     = (int) ( $tzfd_res['id'] ?? 0 );
-tzfd_rt_ok( 'A1 customer booking create commits one row', ( $tzfd_res['status'] ?? '' ) === 'success' && 1 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tzfd_bookings WHERE company_id=%d", $tzfd_company ) ) - $tzfd_before, 'status=' . ( $tzfd_res['status'] ?? 'none' ) );
+tzfd_rt_ok( 'A1 customer booking create commits one row', ( $tzfd_res['status'] ?? '' ) === 'success' && 1 === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE company_id=%d', $tzfd_bookings, $tzfd_company ) ) - $tzfd_before, 'status=' . ( $tzfd_res['status'] ?? 'none' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw table count, bypasses the object cache
 
-$tzfd_orphan_before = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $tzfd_bookings" );
+$tzfd_orphan_before = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $tzfd_bookings ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw table count, bypasses the object cache
 $tzfd_bad = TZFD_Booking_Create_Transaction::create( $wpdb, 0, $tzfd_row, $tzfd_params, TZFD_Intake_Mode::MODE_INSTANT );
-tzfd_rt_ok( 'A2 create for an invalid company fails closed with no row', 'failed' === ( $tzfd_bad['status'] ?? '' ) && $tzfd_orphan_before === (int) $wpdb->get_var( "SELECT COUNT(*) FROM $tzfd_bookings" ) );
+tzfd_rt_ok( 'A2 create for an invalid company fails closed with no row', 'failed' === ( $tzfd_bad['status'] ?? '' ) && $tzfd_orphan_before === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $tzfd_bookings ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw table count, bypasses the object cache
 
 // Slot holds: the table is an explicit, admin-only install.
 $tzfd_hold_ok = class_exists( 'TZFD_Slot_Holds' ) && true === TZFD_Slot_Holds::install();
@@ -112,14 +112,14 @@ $tzfd_hold_row   = array(
 	'start_utc' => gmdate( 'Y-m-d H:i:s', $tzfd_expires + 7200 ), 'end_utc' => gmdate( 'Y-m-d H:i:s', $tzfd_expires + 10800 ),
 	'expires_at' => gmdate( 'Y-m-d H:i:s', $tzfd_expires ), 'payload' => '{}', 'booking_id' => '', 'created_at' => gmdate( 'Y-m-d H:i:s' ),
 );
-$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE token_hash=%s', $tzfd_hold_table, $tzfd_token_hash ) );
+$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE token_hash=%s', $tzfd_hold_table, $tzfd_token_hash ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct write; the test needs the database's own unique-key refusal
 $wpdb->suppress_errors( true );
-$tzfd_first  = $wpdb->insert( $tzfd_hold_table, $tzfd_hold_row );
-$tzfd_second = $wpdb->insert( $tzfd_hold_table, $tzfd_hold_row );
+$tzfd_first  = $wpdb->insert( $tzfd_hold_table, $tzfd_hold_row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct insert; the test needs the database's own unique-key refusal
+$tzfd_second = $wpdb->insert( $tzfd_hold_table, $tzfd_hold_row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct insert; the test needs the database's own unique-key refusal
 $wpdb->suppress_errors( false );
-tzfd_rt_ok( 'A8 duplicate hold token for one company is refused by the database', false !== $tzfd_first && false === $tzfd_second, 'first=' . var_export( $tzfd_first, true ) . ' second=' . var_export( $tzfd_second, true ) );
+tzfd_rt_ok( 'A8 duplicate hold token for one company is refused by the database', false !== $tzfd_first && false === $tzfd_second, 'first=' . wp_json_encode( $tzfd_first ) . ' second=' . wp_json_encode( $tzfd_second ) );
 
-$tzfd_entry = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE token_hash=%s', $tzfd_hold_table, $tzfd_token_hash ), ARRAY_A );
+$tzfd_entry = $wpdb->get_row( $wpdb->prepare( 'SELECT * FROM %i WHERE token_hash=%s', $tzfd_hold_table, $tzfd_token_hash ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read; the object cache would not reflect the direct insert above
 $tzfd_payload_entry = is_array( $tzfd_entry ) ? array_merge( $tzfd_entry, array( 'payload' => wp_json_encode( array(
 	'required_resource_ids' => array( 'room-a' ), 'start' => gmdate( 'c', $tzfd_expires + 7200 ),
 	'end' => gmdate( 'c', $tzfd_expires + 10800 ), 'quantity' => 1,
@@ -168,10 +168,10 @@ tzfd_rt_ok( 'B9 cancel token with a flipped character is refused', ! TZFD_Custom
 tzfd_rt_ok( 'B10 a booking with a lock flag is not cancellable from the customer link', false === TZFD_Customer_Cancellation::is_cancelable_data( array( 'lock' => 1, 'apps' => array( 'x' ) ) ) );
 tzfd_rt_ok( 'B11 a booking without apps is not cancellable from the customer link', false === TZFD_Customer_Cancellation::is_cancelable_data( array() ) );
 
-$tzfd_stored = $wpdb->get_var( $wpdb->prepare( "SELECT posted_data FROM $tzfd_bookings WHERE id=%d", $tzfd_id ) );
+$tzfd_stored = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw column read, bypasses the object cache
 $tzfd_cas    = TZFD_Customer_Cancellation::compare_and_swap( $wpdb, $tzfd_id, 'stale-original-value', null );
-$tzfd_after  = $wpdb->get_var( $wpdb->prepare( "SELECT posted_data FROM $tzfd_bookings WHERE id=%d", $tzfd_id ) );
-tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . var_export( $tzfd_cas, true ) );
+$tzfd_after  = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw column read, bypasses the object cache
+tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . wp_json_encode( $tzfd_cas ) );
 
 tzfd_rt_skip( 'B13 customer cancel and reschedule end to end', 'needs the stored booking with complete form data and mail capture; token and state rules are tested above' );
 
@@ -201,10 +201,10 @@ tzfd_rt_ok( 'C4 outbox table installs for an administrator (explicit install)', 
 
 if ( $tzfd_installed ) {
 	$tzfd_event = 'reminder-v1:rt-' . substr( md5( uniqid( '', true ) ), 0, 16 );
-	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id=%d AND booking_id=%d', $tzfd_outbox, $tzfd_company, $tzfd_id ) );
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id=%d AND booking_id=%d', $tzfd_outbox, $tzfd_company, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- direct cleanup of this run's own outbox rows
 
 	$tzfd_unverified = TZFD_Booking_Action_Outbox::enqueue( $tzfd_company, $tzfd_id, 'reminder', 7, $tzfd_event );
-	tzfd_rt_ok( 'C5 enqueue refuses a reminder when ownership and consent are not verified', false === $tzfd_unverified, 'result=' . var_export( $tzfd_unverified, true ) );
+	tzfd_rt_ok( 'C5 enqueue refuses a reminder when ownership and consent are not verified', false === $tzfd_unverified, 'result=' . wp_json_encode( $tzfd_unverified ) );
 
 	$tzfd_verify = static function () { return true; };
 	add_filter( 'tzfd_booking_verify_owner_v1', $tzfd_verify, 10, 3 );
@@ -215,7 +215,7 @@ if ( $tzfd_installed ) {
 	tzfd_rt_ok( 'C6 verified reminder is queued once and not delivered by enqueue', is_array( $tzfd_first_q ) && true === $tzfd_first_q['inserted'] && false === $tzfd_first_q['delivered'] );
 
 	$tzfd_again = TZFD_Booking_Action_Outbox::enqueue( $tzfd_company, $tzfd_id, 'reminder', 7, $tzfd_event );
-	$tzfd_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE company_id=%d AND event_hash=%s', $tzfd_outbox, $tzfd_company, hash( 'sha256', $tzfd_company . ':' . $tzfd_id . ':reminder:' . $tzfd_event ) ) );
+	$tzfd_count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE company_id=%d AND event_hash=%s', $tzfd_outbox, $tzfd_company, hash( 'sha256', $tzfd_company . ':' . $tzfd_id . ':reminder:' . $tzfd_event ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row count, bypasses the object cache
 	tzfd_rt_ok( 'C7 repeating the same event is deduplicated (one row)', is_array( $tzfd_again ) && true === $tzfd_again['deduplicated'] && 1 === $tzfd_count, 'rows=' . $tzfd_count );
 
 	$tzfd_other_recipient = TZFD_Booking_Action_Outbox::enqueue( $tzfd_company, $tzfd_id, 'reminder', 8, $tzfd_event );
@@ -267,14 +267,14 @@ tzfd_rt_skip( 'E6 bad or missing REST nonce on a logged-in request', 'cookie non
 $tzfd_keep_opt = 'tz_fd_rt_keep_' . $tzfd_id;
 update_option( $tzfd_keep_opt, 'kept' );
 set_transient( 'tz_fd_rt_cache_' . $tzfd_id, 'cache', 3600 );
-$tzfd_rows_before = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tzfd_bookings WHERE id=%d", $tzfd_id ) );
+$tzfd_rows_before = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row count, bypasses the object cache
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) { define( 'WP_UNINSTALL_PLUGIN', 'titan-zero-trades-front-desk/titan-zero-front-desk.php' ); }
 if ( ! defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) ) {
 	require WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/uninstall.php';
-	tzfd_rt_ok( 'F1 uninstall without the opt-in keeps the booking row', 1 === $tzfd_rows_before && 1 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM $tzfd_bookings WHERE id=%d", $tzfd_id ) ) );
+	tzfd_rt_ok( 'F1 uninstall without the opt-in keeps the booking row', 1 === $tzfd_rows_before && 1 === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row count, bypasses the object cache
 	tzfd_rt_ok( 'F2 uninstall without the opt-in keeps plugin settings', 'kept' === get_option( $tzfd_keep_opt ) );
 	// Check the database row, not get_transient(): the object cache would still answer after a direct DELETE.
-	tzfd_rt_ok( 'F3 uninstall always clears the plugin cache transient rows', 0 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", '%tz\\_fd\\_rt\\_cache\\_%' ) ) );
+	tzfd_rt_ok( 'F3 uninstall always clears the plugin cache transient rows', 0 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE %s", '%tz\\_fd\\_rt\\_cache\\_%' ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw options row count, as the comment above explains
 	delete_option( $tzfd_keep_opt );
 } else {
 	tzfd_rt_skip( 'F1-F3 uninstall without opt-in', 'TZ_DELETE_DATA_ON_UNINSTALL was already defined in this process' );
@@ -289,4 +289,4 @@ if ( is_multisite() ) {
 	tzfd_rt_skip( 'G1 multisite', 'single-site install; multisite needs provision-wp-site.sh --multisite' );
 }
 
-echo "\nSummary (wp-runtime-tests): " . $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
+echo "\nSummary (wp-runtime-tests): " . (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";

@@ -4,6 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/class-tzfd-request-value.php';
 require_once __DIR__ . '/class-tzfd-transaction-storage.php';
 require_once __DIR__ . '/class-tzfd-local-audit.php';
+require_once __DIR__ . '/class-tzfd-lead-urgency.php';
 
 /**
  * Enquiry review: a minimal list and status view for tz_enquiries (Business Builder leads).
@@ -22,6 +23,7 @@ final class TZFD_Enquiry_Review {
 
     public static function register() {
         add_action( 'admin_post_' . self::ACTION, array( __CLASS__, 'handle_status' ) );
+        TZFD_Lead_Urgency::register();
     }
 
     /** Enquiries for one company, newest first. Optional status filter. Empty on failure (fail closed). */
@@ -161,13 +163,14 @@ final class TZFD_Enquiry_Review {
         echo '<label for="tz_fd_enquiry_filter">' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</label> <select id="tz_fd_enquiry_filter" name="status"><option value="">' . esc_html__( 'All', 'titan-zero-trades-front-desk' ) . '</option>';
         foreach ( self::STATUSES as $s ) { echo '<option value="' . esc_attr( $s ) . '"' . selected( $filter, $s, false ) . '>' . esc_html( ucfirst( $s ) ) . '</option>'; }
         echo '</select> <button class="button" type="submit">' . esc_html__( 'Filter', 'titan-zero-trades-front-desk' ) . '</button></form>';
+        TZFD_Lead_Urgency::render_settings();
         $rows = self::list_for_company( $company, $filter );
-        echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Received', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Contact', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Enquiry', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Source', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Change', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
-        if ( empty( $rows ) ) { echo '<tr><td colspan="7">' . esc_html__( 'No enquiries.', 'titan-zero-trades-front-desk' ) . '</td></tr>'; }
+        echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Received', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Contact', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Enquiry', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Source', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Urgency', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Change', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+        if ( empty( $rows ) ) { echo '<tr><td colspan="8">' . esc_html__( 'No enquiries.', 'titan-zero-trades-front-desk' ) . '</td></tr>'; }
         foreach ( $rows as $r ) {
             $contact = trim( (string) $r->email . ' ' . (string) $r->phone );
             echo '<tr><td>' . esc_html( (string) $r->received_utc ) . ' UTC</td><td>' . esc_html( (string) $r->name ) . '</td><td>' . esc_html( $contact ) . '</td>';
-            echo '<td>' . esc_html( (string) $r->enquiry ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
+            echo '<td>' . esc_html( (string) $r->enquiry ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>' . TZFD_Lead_Urgency::render_override( $r ) . '</td><td>';
             echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '" /><input type="hidden" name="enquiry" value="' . (int) $r->id . '" />';
             wp_nonce_field( self::NONCE, self::NONCE_FIELD );
             echo '<select name="status" aria-label="' . esc_attr__( 'New status', 'titan-zero-trades-front-desk' ) . '">';

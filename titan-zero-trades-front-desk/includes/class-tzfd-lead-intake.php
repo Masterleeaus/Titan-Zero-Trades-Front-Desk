@@ -9,6 +9,7 @@
  * on this hook, so registering here is what lets Builder's leads reach Front Desk.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+require_once __DIR__ . '/class-tzfd-lead-urgency.php';
 
 final class TZFD_Lead_Intake {
 
@@ -90,7 +91,13 @@ final class TZFD_Lead_Intake {
             ? $received
             : gmdate( 'Y-m-d H:i:s' );
 
+        // Rule-only urgency (issue #29): classified from the enquiry text at intake, stored with its reasons.
+        $urgency = TZFD_Lead_Urgency::classify( $enquiry, $received );
+
         $row = array(
+            'urgency_auto'      => $urgency['automatic'],
+            'urgency_reason'    => substr( implode( '; ', $urgency['reasons'] ), 0, 190 ),
+            'urgency_override'  => '',
             'company_id'        => $company_id,
             'name'              => substr( $name, 0, 190 ),
             'email'             => substr( $email, 0, 190 ),
@@ -113,6 +120,10 @@ final class TZFD_Lead_Intake {
         // A duplicate is a success, not a failure: return the stored row so the caller shows the same confirmation. Nothing is stored twice.
         if ( $dupe ) { return (int) $dupe; }
         $ok    = $wpdb->insert( $table, $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Front Desk's own table; company_id set above.
-        return $ok ? (int) $wpdb->insert_id : 0;
+        if ( ! $ok ) { return 0; }
+        $id = (int) $wpdb->insert_id;
+        // Urgent alert only when the admin has opted in and the throttle window allows it. Duplicates returned above.
+        TZFD_Lead_Urgency::maybe_alert( $company_id, $id, $name, $urgency );
+        return $id;
     }
 }

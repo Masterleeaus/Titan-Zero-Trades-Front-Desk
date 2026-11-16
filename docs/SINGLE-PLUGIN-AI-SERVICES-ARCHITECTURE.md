@@ -110,3 +110,14 @@ Source: https://github.com/Masterleeaus/Titan-zero-front-desk-pro
 - [Free AI base #19](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/19)
 - [Central catalog #156](https://github.com/Masterleeaus/Central/issues/156)
 - [Website master #9](https://github.com/Masterleeaus/Titan-zero-website/issues/9)
+
+## Service contract v1 (issue #16)
+
+Implemented in `titan-zero-trades-front-desk/includes/class-tzfd-service-contract.php` (pure PHP, no WordPress calls, not yet registered as REST routes). Tests: `php tests/contract/service-contract-tests.php`. Frozen registry and signature vector: `tests/contract/fixtures/contract-v1.json`.
+
+- **Operations:** read `service.catalogue.list`, `staff.list`, `locations.list`, `form_fields.list`, `booking.list`, `booking.get`, `transaction.list`, `report.summary`, `settings.get`, `capability.check`, `privacy.export`; write `booking.create`, `booking.status.set`. Unlisted operations are refused. Changing the registry requires a new contract major.
+- **Authorisation:** owner actors need the plugin capability (`tz_fd_access`), or `manage_options` for settings and privacy export. Agent actors need a delegated scope and, for writes and privacy export, owner approval. Visitors are refused everywhere. Every check requires the actor tenant to equal the request tenant.
+- **Handshake:** the contract major must match on both sides, and the plugin version must be at least the hosted `min_plugin_version`. Older plugins are refused with `plugin_upgrade_required`.
+- **Signed envelope:** HMAC-SHA256 over canonical JSON of `v, op, tenant_id, ts, nonce, payload`. The window is ±300 s. Nonces are single-use. Bodies are capped at 64 KiB, payloads at depth 6 and 10,000-byte strings. The key must be at least 32 bytes and is never sent to the browser.
+
+Not yet covered: REST route registration, legacy Pro option migration, the hosted Central and AI Proxy endpoints, and WordPress runtime, outage and downgrade tests.

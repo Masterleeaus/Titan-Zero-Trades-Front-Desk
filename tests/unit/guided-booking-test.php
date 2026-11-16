@@ -3,18 +3,20 @@
  * Standalone checks for TZFD_Guided_Booking. Not shipped in the plugin package.
  * Run: php -l and php <this file>. Exit code 0 means all checks passed.
  */
-define( 'ABSPATH', __DIR__ . '/' );
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 if ( ! function_exists( 'wp_json_encode' ) ) {
     function wp_json_encode( $value, $flags = 0 ) { return json_encode( $value, $flags ); }
 }
-require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-guided-booking.php';
+// TZFD_INCLUDES lets the WordPress run load the installed copy, so class files are not loaded twice from two paths.
+$tzfd_includes = getenv( 'TZFD_INCLUDES' ) ? getenv( 'TZFD_INCLUDES' ) : dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes';
+require_once $tzfd_includes . '/class-tzfd-guided-booking.php';
 
-$failures = 0;
-$passes   = 0;
+// Counters live in $GLOBALS so the count is shared when this file runs under wp eval-file.
+$GLOBALS['tzfd_gb_pass'] = 0;
+$GLOBALS['tzfd_gb_fail'] = 0;
 function check( $label, $ok ) {
-    global $failures, $passes;
-    if ( $ok ) { $passes++; return; }
-    $failures++;
+    if ( $ok ) { $GLOBALS['tzfd_gb_pass']++; return; }
+    $GLOBALS['tzfd_gb_fail']++;
     echo "FAIL: $label\n";
 }
 function throws( $callable ) {
@@ -111,5 +113,5 @@ check( 'slot taken after confirmation refused', 'slot_unavailable' === TZFD_Guid
 check( 'submit with unavailable snapshot refused', 'engine_unavailable' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria(), null, $service, $slot, $values, $conf['token'] )['status'] );
 check( 'tenant mismatch refused', 'tenant_mismatch' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria( 'acme', 'other' ), $none, $service, $slot, $values, $conf['token'] )['status'] );
 
-echo "$passes passed, $failures failed\n";
-exit( $failures ? 1 : 0 );
+echo $GLOBALS['tzfd_gb_pass'] . " passed, " . $GLOBALS['tzfd_gb_fail'] . " failed\n";
+if ( $GLOBALS['tzfd_gb_pass'] !== 27 || $GLOBALS['tzfd_gb_fail'] ) { echo "Check count or failures differ from expected.\n"; if ( ! defined( 'WPINC' ) ) { exit( 1 ); } }

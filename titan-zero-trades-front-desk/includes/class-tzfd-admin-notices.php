@@ -6,9 +6,9 @@ require_once __DIR__ . '/class-tzfd-request-value.php';
 
 
 /**
- * Two reminders for administrators on Workspace screens:
- *  - the AI key reminder, while no AI provider is connected (the AI chat stays off);
+ * One reminder for administrators on Front Desk screens:
  *  - the booking speed reminder, while the Cache Booking Availability add-on is off.
+ * The free build has no AI provider connection, so no AI key reminder exists.
  * Each can be dismissed for 30 days, per user. Nothing is shown to other users.
  */
 final class TZFD_Admin_Notices {
@@ -88,7 +88,7 @@ final class TZFD_Admin_Notices {
             wp_die( esc_html__( 'Invalid notice request.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
         }
         // The nonce action embeds the notice key, so verify the nonce against each known key before reading any notice field.
-        $known    = array( 'ai_key', 'speed' );
+        $known    = array( 'speed' );
         $verified = false;
         foreach ( $known as $candidate ) {
             if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ?? '' ) ), 'tz_fd_dismiss_' . $candidate ) ) {

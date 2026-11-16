@@ -76,6 +76,9 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-hosted-ai-connector.php
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-ai-data.php';
 TZFD_Legacy_AI_Data::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
+// Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
+TZFD_AI_Widget::boot();
 
 /**
  * Translate persisted values without passing dynamic data to the

@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Titan Zero Front Desk
+Plugin Name: Titan Zero Scheduling & Enquiries Manager
 Description: Bookings, calendar, booking pages and phone answering. Operates standalone with optional Titan Zero integrations.
 Version: 3.0.128
 Requires at least: 6.6

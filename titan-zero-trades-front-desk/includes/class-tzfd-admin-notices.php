@@ -88,7 +88,7 @@ final class TZFD_Admin_Notices {
             wp_die( esc_html__( 'Invalid notice request.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
         }
         // The nonce action embeds the notice key, so verify the nonce against each known key before reading any notice field.
-        $known    = array( 'ai_key', 'speed' );
+        $known    = array( 'speed' );
         $verified = false;
         foreach ( $known as $candidate ) {
             if ( wp_verify_nonce( sanitize_text_field( wp_unslash( $_REQUEST['_wpnonce'] ?? '' ) ), 'tz_fd_dismiss_' . $candidate ) ) {

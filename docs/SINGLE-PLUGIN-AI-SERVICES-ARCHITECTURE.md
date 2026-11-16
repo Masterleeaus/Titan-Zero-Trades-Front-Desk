@@ -4,7 +4,7 @@
 
 ## Official WordPress plugin name
 
-**Scheduling & Enquiries Manager** is the correctly spelled user-facing WordPress plugin display name. **Titan Zero** is the vendor/service brand, and **Titan Zero AI Assistant** / **Titan Zero AI Agent Team** are its optional hosted service upgrades. Do not rebrand the AI services as plugins.
+**Titan Zero Scheduling & Enquiries Manager** is the official user-facing WordPress plugin display name. **Titan Zero** is the vendor/service brand, and **Titan Zero AI Assistant** / **Titan Zero AI Agent Team** are its optional hosted service upgrades. Do not rebrand the AI services as plugins.
 
 Legacy "Front Desk" descriptions, repository names, previously distributed slugs, PHP namespaces, DB options, shortcodes and API identifiers may remain for backward compatibility; audit and migrate only with verified WordPress upgrade safety. Follow the WordPress.org-approved plugin display name/slug, do not assume its slug from this document. Never rename a repository or published WordPress plugin slug merely to match display-name wording.
 

@@ -1,4 +1,4 @@
-=== Titan Zero Front Desk ===
+=== Titan Zero Scheduling & Enquiries Manager ===
 
 Contributors: titan0
 
@@ -35,7 +35,7 @@ Front Desk has its own WordPress admin menu and can run standalone, without Tita
 
 
 
-Titan Zero Front Desk gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
+Titan Zero Scheduling & Enquiries Manager gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
 
 
 
@@ -69,7 +69,7 @@ Compatibility modules. In this version these are kept from earlier releases. The
 
 
 
-Titan Zero Front Desk is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
+Titan Zero Scheduling & Enquiries Manager is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
 
 
 
@@ -89,9 +89,9 @@ Optional external industry presets are examples; native service setup does not r
 
    This is a new plugin, not an upgrade. Do not install it over Appointment Hour Booking or Titan Front Desk; see the FAQ below.
 
-2. Activate Titan Zero Front Desk on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
+2. Activate Titan Zero Scheduling & Enquiries Manager on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
 
-3. Open Titan Zero Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
+3. Open Titan Zero Scheduling & Enquiries Manager in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
 
 4. Create a calendar, then publish its booking form on a page or post. The publishing interface explains the options.
 
@@ -158,7 +158,7 @@ No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and
 
 
 
-No. Titan Zero Front Desk does not automatically import the bookings, customers or settings of those plugins. It uses its own tables and option names, so the old data stays where it is. There is no import tool in this version. Keep the old plugin until you have what you need from it, then deactivate and remove it. Enter any bookings you still need here by hand.
+No. Titan Zero Scheduling & Enquiries Manager does not automatically import the bookings, customers or settings of those plugins. It uses its own tables and option names, so the old data stays where it is. There is no import tool in this version. Keep the old plugin until you have what you need from it, then deactivate and remove it. Enter any bookings you still need here by hand.
 
 
 
@@ -192,7 +192,7 @@ Front Desk works fully without any of these upgrades.
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Scheduling & Enquiries Manager connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 
@@ -256,7 +256,7 @@ Titan Zero Front Desk connects to the external services below only when the site
 
 
 
-Bookings, customer details and settings are stored in your WordPress database. Titan Zero Front Desk does not create an account, collect a licence key or report usage to the author.
+Bookings, customer details and settings are stored in your WordPress database. Titan Zero Scheduling & Enquiries Manager does not create an account, collect a licence key or report usage to the author.
 
 
 
@@ -275,7 +275,7 @@ The IP address of each booking request is stored by default. To stop this, turn 
 
 
 
-Titan Zero Front Desk incorporates GPLv2-derived code from Appointment Hour Booking 1.5.98 by CodePeople (https://wordpress.org/plugins/appointment-hour-booking/). It is not endorsed by CodePeople. Upstream authorship and release history are credited in the LICENSE.txt, UPSTREAM.txt and THIRD-PARTY-NOTICES.txt files included with the plugin.
+Titan Zero Scheduling & Enquiries Manager incorporates GPLv2-derived code from Appointment Hour Booking 1.5.98 by CodePeople (https://wordpress.org/plugins/appointment-hour-booking/). It is not endorsed by CodePeople. Upstream authorship and release history are credited in the LICENSE.txt, UPSTREAM.txt and THIRD-PARTY-NOTICES.txt files included with the plugin.
 
 
 
@@ -433,7 +433,7 @@ Add-on settings now require authorised POST and nonce validation instead of stat
 
 * Readme and help text: corrected the plugin folder name, the uninstall constant (TZ_DELETE_DATA_ON_UNINSTALL) and the product names used for booking features. Compatibility modules are now described accurately.
 
-* Booking form, dashboard widget, status update emails and personal-data labels now name Titan Zero Front Desk where they describe bookings.
+* Booking form, dashboard widget, status update emails and personal-data labels now name Titan Zero Scheduling & Enquiries Manager where they describe bookings.
 
 * Client portal: a sign-in link can be used only once, even when two requests use it at the same time.
 
@@ -667,7 +667,7 @@ Add-on settings now require authorised POST and nonce validation instead of stat
 
 * New brand graphics throughout: Help page feature cards and workflow overview, Preset Setup flow, trade pack banners, status tags, screen heading icons and the WordPress.org banner and icon.
 
-* Renamed to Titan Zero Front Desk.
+* Renamed to Titan Zero Scheduling & Enquiries Manager.
 
 * Major release. Adds a client portal (one-time sign-in links, view, change or cancel bookings and quotes), a booking page created as normal WordPress pages, a restructured Front Desk menu, a booking pipeline run by agents with staff approval, and calendar event editing in a new browser tab.
 

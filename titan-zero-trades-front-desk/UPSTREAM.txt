@@ -31,7 +31,7 @@ Upstream paths are from the 1.5.98 package. The calendar folder was named mv/ up
 - Renamed and changed: mv/js/jquery.calendar.js (here tzfd-calendar/js/jquery.calendar.js) and js/fbuilder-admin.js (here js/tzfdform-admin.js). The changes are listed in THIRD-PARTY-NOTICES.txt, section 7.
 - Identical to upstream: js/tzfdform-admin-fields/00_jquery.parse.min.js (same as js/fields-admin/00_jquery.parse.min.js); css/cupertino/jquery-ui-1.8.20.custom.css and the 59 files in js/languages/ (same as the upstream files of the same name).
 - Changed by a few lines: js/jQuery.stringify.js. Its code is upstream's; it has a header comment added and three alias lines renamed (fbuilderjQuery to tzfdformjQuery). See section 6 of THIRD-PARTY-NOTICES.txt.
-- Replaced after the upstream release: js/chart.js. The upstream copy is Chart.js 4.4.4 (its header); this build ships 4.5.1 from npm. Chart.js 4.6.1 is now available and remains an update requirement before resubmission.
+- Replaced after the upstream release: js/chart.js. The upstream copy is Chart.js 4.4.4 (its header); this build ships 4.6.1 from npm (js/chart.js header: "Chart.js v4.6.1"; byte-identical to the npm dist, see THIRD-PARTY-NOTICES.txt section 2).
 - Added from npm, not in upstream: js/jquery.validate.js (jquery-validation 1.22.1, with four local changes) and tzfd-calendar/js/rrule.js (rrule 2.8.1, with a wrapper appended).
 - Not compared line by line in this pass: other renamed files (for example js/tzfdform-admin-fields/ from js/fields-admin/, js/tzfdform-core-*.jquery.js from js/fbuilder-pro-*.jquery.js, and the add-on, template and CSS folders). Their changes are not yet recorded file by file.
 

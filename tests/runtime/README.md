@@ -44,8 +44,6 @@ not counted as a pass).
 
 - **Reminder outbox table is never created.** `tz_booking_actions` is absent after activation; nothing in the plugin
   calls `TZFD_Booking_Action_Outbox::install()`. Enqueue refuses until an administrator triggers an install.
-- **Opt-in uninstall keeps `tzfd_local_customers`.** The table is outside `TZFD_Tables::owned()`. Decide whether
-  customer records should be erased when the owner opts in.
 - **Activation without an administrator.** `TZFD_Slot_Holds::install()` and the call-lifecycle install require
   `manage_options`. Activating with no user (for example `wp plugin activate` without `--user`) leaves `tz_slot_holds`
   and `tz_calls` uncreated and does not report it.

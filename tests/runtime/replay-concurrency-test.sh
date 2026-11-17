@@ -3,6 +3,8 @@
 # Sends N identical, validly signed requests at the same moment. Exactly one must be accepted (2xx)
 # and every other must be refused with 401. Run on the disposable test site only.
 #   B=http://localhost:8080 SECRET=<inbound secret shown once in settings> N=8 ./replay-concurrency-test.sh
+# The test site must run with several workers, e.g. PHP_CLI_SERVER_WORKERS=8 php -S localhost:8080 -t <wp>.
+# PHP's built-in server defaults to one worker, which serialises requests and hides the race.
 B="${B:-http://localhost:8080}"
 N="${N:-8}"
 if [ -z "${SECRET:-}" ]; then echo "Set SECRET to the inbound secret from the test site."; exit 2; fi

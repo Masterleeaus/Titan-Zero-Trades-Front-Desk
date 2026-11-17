@@ -276,8 +276,10 @@ final class TZFD_Legacy_AI_Data {
             $columns = self::chat_columns();
             $table   = self::chat_table();
             foreach ( $chats as $row ) {
-                if ( ! is_array( $row ) || ! isset( $row['id'] ) || ! is_int( $row['id'] ) || $row['id'] < 1 ) { ++$summary['chats_skipped']; continue; }
-                $exists = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i = %d', $table, 'id', $row['id'] ) );
+                // wpdb returns numeric columns as strings, so an export from a real database holds "12", not 12.
+                $id = is_array( $row ) && isset( $row['id'] ) && ( is_int( $row['id'] ) || ( is_string( $row['id'] ) && ctype_digit( $row['id'] ) ) ) ? (int) $row['id'] : 0;
+                if ( $id < 1 ) { ++$summary['chats_skipped']; continue; }
+                $exists = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i = %d', $table, 'id', $id ) );
                 if ( $exists > 0 ) { ++$summary['chats_skipped']; continue; }
                 $clean = array();
                 foreach ( $row as $column => $value ) {
@@ -365,7 +367,7 @@ final class TZFD_Legacy_AI_Data {
         $email = is_string( $email_address ) ? strtolower( trim( $email_address ) ) : '';
         if ( ! self::email_ready( $email ) ) { return $response; }
         $wpdb->last_error = '';
-        $deleted = $wpdb->query( $wpdb->prepare( 'DELETE FROM `' . self::chat_table() . '` WHERE LOWER(`user_email`) = %s', $email ) );
+        $deleted = $wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE LOWER(%i) = %s', self::chat_table(), 'user_email', $email ) );
         if ( false === $deleted || ! empty( $wpdb->last_error ) ) {
             $response['items_retained'] = true;
             $response['messages'][]     = __( 'Booking assistant chats from an earlier version could not be erased. Please retry.', 'titan-zero-trades-front-desk' );

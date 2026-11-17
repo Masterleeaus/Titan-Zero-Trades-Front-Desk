@@ -20,6 +20,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-page.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-builtin-verticals.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-automation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-status-api.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-business-knowledge.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-loader.php';
 
 // loading add-ons
@@ -81,6 +82,8 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-menu.php';
 TZFD_Admin_Menu::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-services-page.php';
 TZFD_AI_Services_Page::register();
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-monthly-insights.php';
+TZFD_Ai_Monthly_Insights::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-notices.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-view.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-layout.php';

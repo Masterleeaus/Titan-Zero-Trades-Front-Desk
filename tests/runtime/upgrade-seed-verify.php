@@ -37,6 +37,11 @@ if ( 'seed' === $tz_phase ) {
 	}
 	update_option( 'tz_fd_ai_system_prompt', 'upgrade-sentinel-prompt' );
 	update_option( 'tz_fd_ai_services', array( 'basic' => true, 'sentinel' => 'upgrade' ) );
+	// Legacy AI state (issue #17): a stored credential and one saved chat must survive the upgrade and the downgrade.
+	update_option( 'tz_fd_ai_api_key', 'sk-UPG-sentinel-key', false );
+	$tz_chat = $wpdb->prefix . 'tz_ai_conversations';
+	$wpdb->query( "CREATE TABLE IF NOT EXISTS `$tz_chat` ( id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT, user_email VARCHAR(190) NOT NULL DEFAULT '', messages LONGTEXT NULL, draft LONGTEXT NULL, created DATETIME NULL, PRIMARY KEY (id), KEY user_email (user_email) ) DEFAULT CHARSET=utf8mb4" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable site, legacy table shape
+	$wpdb->insert( $tz_chat, array( 'user_email' => 'upgrade-chat@example.test', 'messages' => 'seeded chat', 'draft' => '', 'created' => current_time( 'mysql' ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable site
 	$tz_print = array();
 	foreach ( $tz_ids as $tz_id ) {
 		$tz_r = $wpdb->get_row( $wpdb->prepare( 'SELECT id, company_id, notifyto, data, posted_data FROM %i WHERE id=%d', $tz_table, $tz_id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read, bypasses the object cache
@@ -45,6 +50,7 @@ if ( 'seed' === $tz_phase ) {
 	file_put_contents( $tz_file, wp_json_encode( array( // phpcs:ignore WordPress.WP.AlternativeFunctions -- scratch fingerprint file outside the plugin, written on the disposable site
 		'ids' => $tz_ids, 'prints' => $tz_print,
 		'ai_prompt' => get_option( 'tz_fd_ai_system_prompt' ), 'ai_services' => get_option( 'tz_fd_ai_services' ),
+		'ai_key' => get_option( 'tz_fd_ai_api_key' ), 'chat_rows' => (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$tz_chat`" ), // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable site
 	) ) );
 	echo 'PASS seed -- ' . count( $tz_ids ) . " bookings and 2 settings written on 3.0.128\n";
 	return;
@@ -65,6 +71,10 @@ if ( 'verify' === $tz_phase ) {
 	$tz_prompt = get_option( 'tz_fd_ai_system_prompt' );
 	echo ( $tz_prompt === $tz_saved['ai_prompt'] ? 'PASS' : 'FAIL' ) . " AI prompt setting survives\n";
 	echo ( get_option( 'tz_fd_ai_services' ) == $tz_saved['ai_services'] ? 'PASS' : 'FAIL' ) . " AI services setting survives\n";
+	$tz_chat = $wpdb->prefix . 'tz_ai_conversations';
+	$tz_chat_now = $wpdb->get_var( "SHOW TABLES LIKE '" . esc_sql( $tz_chat ) . "'" ) ? (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$tz_chat`" ) : -1; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable site
+	echo ( get_option( 'tz_fd_ai_api_key' ) === ( $tz_saved['ai_key'] ?? null ) ? 'PASS' : 'FAIL' ) . " AI credential is not removed by activation\n";
+	echo ( $tz_chat_now === (int) ( $tz_saved['chat_rows'] ?? -2 ) ? 'PASS' : 'FAIL' ) . ' saved AI chat rows survive (' . (int) $tz_chat_now . " now)\n";
 	$tz_new = array( 'tz_slot_holds', 'tz_calls', 'tz_call_events' );
 	foreach ( $tz_new as $tz_bare ) {
 		$tz_has = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . $tz_bare ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- schema check, must not be cached

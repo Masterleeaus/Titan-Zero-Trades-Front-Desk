@@ -20,7 +20,7 @@ function apply_filters( $hook, $value, ...$args ) {
 	}
 	return $value;
 }
-function do_action( $hook, ...$args ) { $GLOBALS['t_actions'][] = $hook; }
+function do_action( $hook, ...$args ) { return null; }
 function add_shortcode( $tag, $cb ) { $GLOBALS['t_shortcodes'][ $tag ] = $cb; }
 function get_option( $k, $d = false ) { return $GLOBALS['t_options'][ $k ] ?? $d; }
 function update_option( $k, $v, $autoload = null ) { $GLOBALS['t_options'][ $k ] = $v; return true; }

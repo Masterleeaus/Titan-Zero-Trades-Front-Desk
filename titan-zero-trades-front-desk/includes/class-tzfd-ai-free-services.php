@@ -12,5 +12,9 @@ require_once __DIR__ . '/class-tzfd-ai-gap-page.php';
 require_once __DIR__ . '/class-tzfd-ai-faq-suggestions.php';
 require_once __DIR__ . '/class-tzfd-ai-setup-check.php';
 require_once __DIR__ . '/class-tzfd-ai-monthly-insights.php';
+require_once __DIR__ . '/class-tzfd-ai-answer-box.php';
 TZFD_Ai_Gap_Detection::register();
 TZFD_Ai_Gap_Page::register();
+TZFD_Ai_Faq_Suggestions::register();
+// Any publish, unpublish or edit of a FAQ entry drops the cached public answers (#39 -> #20 cache).
+add_action( TZFD_Ai_Knowledge_Builder::CHANGED_ACTION, array( 'TZFD_AI_Answer_Box', 'invalidate' ) );

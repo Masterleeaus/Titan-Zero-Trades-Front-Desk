@@ -91,6 +91,11 @@ final class TZFD_Knowledge_Store {
      */
     public function save_entry( array $input, $expected_version = null ) {
         if ( ! $this->allowed() ) { return self::fail( 'forbidden', 'A manager is required to change FAQ entries.' ); }
+        return $this->locked( function () use ( $input, $expected_version ) { return $this->write_entry( $input, $expected_version ); } );
+    }
+
+    /** Version check, validation and write of one entry. Runs under the lock taken by locked(). */
+    private function write_entry( array $input, $expected_version ) {
         $doc = $this->document();
         if ( null !== $expected_version && (int) $expected_version !== (int) $doc['version'] ) {
             return self::fail( 'conflict', 'The FAQ changed since you loaded it. Reload and try again.' );
@@ -130,6 +135,11 @@ final class TZFD_Knowledge_Store {
      */
     public function delete_entry( $id, $expected_version = null ) {
         if ( ! $this->allowed() ) { return self::fail( 'forbidden', 'A manager is required to change FAQ entries.' ); }
+        return $this->locked( function () use ( $id, $expected_version ) { return $this->remove_entry( $id, $expected_version ); } );
+    }
+
+    /** Version check and removal of one entry. Runs under the lock taken by locked(). */
+    private function remove_entry( $id, $expected_version ) {
         $doc = $this->document();
         if ( null !== $expected_version && (int) $expected_version !== (int) $doc['version'] ) {
             return self::fail( 'conflict', 'The FAQ changed since you loaded it. Reload and try again.' );
@@ -194,6 +204,24 @@ final class TZFD_Knowledge_Store {
     }
 
     /* ----- internals ----- */
+
+    /**
+     * Runs $work under the storage's lock for this company's FAQ document, when the storage offers one. A lock
+     * held by another request returns 'busy' and writes nothing; the caller reloads and retries. The lock is
+     * released on every path, including a failed write.
+     */
+    private function locked( callable $work ) {
+        $lock = $this->storage instanceof TZFD_Tenant_Lock ? $this->storage : null;
+        if ( null === $lock ) { return $work(); }
+        if ( ! $lock->acquire( self::KEY, $this->company ) ) {
+            return self::fail( 'busy', 'Another FAQ change is in progress. Reload and try again.' );
+        }
+        try {
+            return $work();
+        } finally {
+            $lock->release( self::KEY, $this->company );
+        }
+    }
 
     private function allowed() {
         return $this->company > 0 && (bool) call_user_func( $this->can_manage );

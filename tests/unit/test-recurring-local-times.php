@@ -47,3 +47,9 @@ function tzfd_test_recurring_local_times() {
 	tzfd_throws( function () use ( $R ) { $R::expand( array( '2026-06-01', 'x' ), '09:00', 'Australia/Melbourne', 60 ); }, 'one bad date rejects the whole list' );
 	tzfd_throws( function () use ( $R ) { $R::expand( array_fill( 0, 367, '2026-06-01' ), '09:00', 'Australia/Melbourne', 60 ); }, 'more than the maximum occurrences throws' );
 }
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

@@ -38,7 +38,7 @@ final class TZFD_Pipeline_Screen {
 
     public static function render() {
         if ( ! current_user_can( self::CAP ) ) {
-            wp_die( esc_html__( 'You do not have permission to view this page.', 'titan-zero-trades-front-desk' ) );
+            wp_die( esc_html__( 'You do not have permission to view this page.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
         }
         global $wpdb;
         $table = $wpdb->prefix . TZFD_Pipeline::TABLE_STATE;
@@ -181,7 +181,7 @@ final class TZFD_Pipeline_Screen {
             wp_die( esc_html__( 'POST request required.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 405 ) );
         }
         if ( ! current_user_can( self::CAP ) ) {
-            wp_die( esc_html__( 'You do not have permission to do that.', 'titan-zero-trades-front-desk' ) );
+            wp_die( esc_html__( 'You do not have permission to do that.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
         }
         $id = TZFD_Request_Value::id( sanitize_text_field( wp_unslash( $_POST['booking_id'] ?? '' ) ) );
         if ( $id < 1 ) { wp_die( esc_html__( 'Invalid booking ID.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }

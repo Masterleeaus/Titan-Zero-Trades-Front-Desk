@@ -222,3 +222,9 @@ function tzfd_test_agent_gateway() {
 	tzfd_throws( function () use ( $G, $store ) { $G::save_grant( $store, array( 'company_id' => 'co-1', 'agent_id' => 'agent-1', 'tools' => array( 'drop_tables' ) ) ); }, 'grant with an unknown tool is refused' );
 }
 
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

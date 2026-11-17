@@ -153,10 +153,11 @@ tzfd_rt_skip( 'A18 end-to-end oversell prevention through the public form', 'the
 
 /* ------------------------------------------------------------------ B. Reschedule and cancel tokens */
 
-$tzfd_rs = TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret );
-tzfd_rt_ok( 'B1 reschedule token is issued for a well-formed request', 64 === strlen( $tzfd_rs ) );
-tzfd_rt_ok( 'B2 reschedule token ignores e-mail case', $tzfd_rs === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, strtoupper( $tzfd_email ), $tzfd_version, $tzfd_secret ) );
-tzfd_rt_ok( 'B3 reschedule token fails closed on an empty secret or bad version', '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, '' ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, 'nope', $tzfd_secret ) );
+$tzfd_rl = TZFD_Customer_Rescheduling::issue( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret, time() );
+$tzfd_rs = is_array( $tzfd_rl ) ? $tzfd_rl['token'] : '';
+tzfd_rt_ok( 'B1 reschedule token is issued for a well-formed request, with a 14-day expiry', 64 === strlen( $tzfd_rs ) && 1209600 === $tzfd_rl['expires'] - $tzfd_rl['issued'] );
+tzfd_rt_ok( 'B2 reschedule token ignores e-mail case', $tzfd_rs === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, strtoupper( $tzfd_email ), $tzfd_version, $tzfd_secret, $tzfd_rl['issued'], $tzfd_rl['expires'] ) );
+tzfd_rt_ok( 'B3 reschedule token fails closed on an empty secret, bad version or missing issue time', '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, '', $tzfd_rl['issued'], $tzfd_rl['expires'] ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, 'nope', $tzfd_secret, $tzfd_rl['issued'], $tzfd_rl['expires'] ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret ) );
 
 $tzfd_ct = TZFD_Customer_Cancellation::create_token( $tzfd_id, $tzfd_email, $tzfd_secret, $tzfd_version, $tzfd_expires );
 tzfd_rt_ok( 'B4 cancel token verifies for the same booking, e-mail, version and expiry', TZFD_Customer_Cancellation::verify_token( $tzfd_id, $tzfd_email, $tzfd_ct, $tzfd_secret, $tzfd_version, $tzfd_expires ) );

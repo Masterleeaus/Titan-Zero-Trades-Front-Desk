@@ -89,7 +89,7 @@ $d = $R::decide_reply( 'book', $ok );
 tz_check( 'book replies with the booking link template', 'respond' === $d['action'] && 'book_link' === $d['template'] && true === $d['uses_turn'] );
 
 $d = $R::decide_reply( 'cancel', $ok );
-tz_check( 'cancel never cancels: it is a staff review task with an acknowledgement', 'respond' === $d['action'] && 'cancel_review' === $d['task'] && 'cancel_received' === $d['template'] );
+tz_check( 'cancel never cancels from one text: it asks for the two-step code confirmation', 'respond' === $d['action'] && null === $d['task'] && 'cancel_code_sent' === $d['template'] && true === $d['uses_turn'] );
 tz_check( 'no decision ever names a cancellation action', ! in_array( $d['action'], array( 'cancel', 'cancel_booking', 'cancelled' ), true ) );
 
 $d = $R::decide_reply( 'stop', $ok );
@@ -125,7 +125,7 @@ for ( $i = 0; $i < 5; $i++ ) {
 tz_check( 'three automated turns per conversation, then the cap holds', 3 === $sent && 3 === $turns );
 
 $d = $R::decide_reply( 'cancel', array_merge( $ok, array( 'turns_used' => 3 ) ) );
-tz_check( 'after the cap a cancel request still becomes a staff task, with no reply', 'turn_limit' === $d['action'] && 'cancel_review' === $d['task'] && false === $d['uses_turn'] );
+tz_check( 'after the cap a cancel request still becomes a staff task, with no reply', 'turn_limit' === $d['action'] && 'staff_review' === $d['task'] && false === $d['uses_turn'] );
 
 $d = $R::decide_reply( 'book', array_merge( $ok, array( 'turns_used' => 3 ) ) );
 tz_check( 'after the cap a booking request gets a staff task and no reply', 'turn_limit' === $d['action'] && 'staff_review' === $d['task'] );
@@ -134,9 +134,9 @@ tz_check( 'after the cap a booking request gets a staff task and no reply', 'tur
 $t = $R::template_text( 'book_link', 'https://example.test/book' );
 tz_check( 'template includes the link and opt-out line', false !== strpos( $t, 'https://example.test/book' ) && false !== strpos( $t, 'Reply STOP to opt out' ) );
 tz_check( 'unknown template key gives empty text', '' === $R::template_text( 'nope', 'x' ) );
-tz_check( 'every template keeps the opt-out line', 4 === count( array_filter( array_map( function ( $k ) use ( $R ) {
+tz_check( 'every template keeps the opt-out line', 10 === count( array_filter( array_map( function ( $k ) use ( $R ) {
     return false !== strpos( $R::template_text( $k, 'x' ), 'Reply STOP to opt out' ) ? 1 : 0;
-}, array( 'book_link', 'cancel_received', 'quote_received', 'callback_received' ) ) ) ) );
+}, array( 'book_link', 'cancel_received', 'cancel_code_sent', 'cancel_need_code', 'cancel_need_yes', 'cancel_wrong_code', 'cancel_locked', 'cancel_done', 'quote_received', 'callback_received' ) ) ) ) );
 
 echo esc_html( "\nSummary: {$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n" );
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

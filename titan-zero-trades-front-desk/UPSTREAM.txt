@@ -17,7 +17,7 @@ This plugin is GPLv2 (LICENSE.txt), not "GPLv2 or later". The inherited code is 
 
 ## Scope of the rebrand
 
-The original user-facing rebrand used Titan Zero Trades: Front Desk. Version 2.0.55 changes the visible product name to Titan Zero Trades: Front Desk while retaining the plugin folder, text domain and tzfd identifiers for upgrade compatibility. The deactivation survey (cp-feedback.php) and the promotional banner (banner.php) are not in this plugin; both are in the upstream package. The CodePeople and dwbooster names appear in this plugin only in credits (readme.txt, js/jQuery.stringify.js, js/src/tzfdform-public.src.js and THIRD-PARTY-NOTICES.txt). Vendor help links and the vendor-hosted AI gateway option were also removed in an earlier pass; this pass did not re-check them.
+The plugin header and readme display name are now "Scheduling & Enquiries Manager" (2026-11-16). The plugin folder, main file, text domain and tzfd identifiers are unchanged. The earlier user-facing rebrand used Titan Zero Trades: Front Desk. Version 2.0.55 changes the visible product name to Titan Zero Trades: Front Desk while retaining the plugin folder, text domain and tzfd identifiers for upgrade compatibility. The deactivation survey (cp-feedback.php) and the promotional banner (banner.php) are not in this plugin; both are in the upstream package. The CodePeople and dwbooster names appear in this plugin only in credits (readme.txt, js/jQuery.stringify.js, js/src/tzfdform-public.src.js and THIRD-PARTY-NOTICES.txt). Vendor help links and the vendor-hosted AI gateway option were also removed in an earlier pass; this pass did not re-check them.
 
 ## Compatibility
 
@@ -27,12 +27,13 @@ Database tables were renamed (this build uses tzfd_forms and tzfd_messages; upst
 
 Upstream paths are from the 1.5.98 package. The calendar folder was named mv/ upstream and is tzfd-calendar/ here.
 
-- Renamed, content identical to upstream: mv/css/cupertino/calendar.css, mv/css/main.css and mv/language/multiview_lang_*.js (here tzfd-calendar/css/ and tzfd-calendar/language/tzfdcalendar_lang_*.js).
+- Renamed, with one added attribution comment line: mv/css/cupertino/calendar.css and mv/css/main.css (here tzfd-calendar/css/). Checked 2026-11-16 by byte comparison: calendar.css differs from upstream only by that line; main.css differs by one comment line (THIRD-PARTY-NOTICES.txt, section 7). The language files are renamed to tz_fd_calendar_lang_*.js (here tzfd-calendar/language/); their content was not re-compared on 2026-11-16.
 - Renamed and changed: mv/js/jquery.calendar.js (here tzfd-calendar/js/jquery.calendar.js) and js/fbuilder-admin.js (here js/tzfdform-admin.js). The changes are listed in THIRD-PARTY-NOTICES.txt, section 7.
-- Identical to upstream: js/tzfdform-admin-fields/00_jquery.parse.min.js (same as js/fields-admin/00_jquery.parse.min.js); css/cupertino/jquery-ui-1.8.20.custom.css and the 59 files in js/languages/ (same as the upstream files of the same name).
+- Identical to upstream: js/tzfdform-admin-fields/00_jquery.parse.min.js (same as js/fields-admin/00_jquery.parse.min.js) and the 59 files in js/languages/ (same as the upstream files of the same name).
+- Replaced, not identical: css/cupertino/jquery-ui-1.8.20.custom.css. The file keeps its legacy name but holds jQuery UI 1.14.2 Cupertino CSS, with a header comment (THIRD-PARTY-NOTICES.txt, section 4). Checked 2026-11-16: its bytes differ from upstream.
 - Changed by a few lines: js/jQuery.stringify.js. Its code is upstream's; it has a header comment added and three alias lines renamed (fbuilderjQuery to tzfdformjQuery). See section 6 of THIRD-PARTY-NOTICES.txt.
-- Replaced after the upstream release: js/chart.js. The upstream copy is Chart.js 4.4.4 (its header); this build ships 4.6.1 from npm (js/chart.js header: "Chart.js v4.6.1"; byte-identical to the npm dist, see THIRD-PARTY-NOTICES.txt section 2).
-- Added from npm, not in upstream: js/jquery.validate.js (jquery-validation 1.22.1, with four local changes) and tzfd-calendar/js/rrule.js (rrule 2.8.1, with a wrapper appended).
+- Replaced after the upstream release: js/chart.js. The upstream copy is Chart.js 4.4.4 (its header); this build ships Chart.js 4.6.1 (its header, checked 2026-11-16).
+- Replaced from npm: js/jquery.validate.js (upstream minified copy replaced by jquery-validation 1.22.1, with four local changes) and added from npm: tzfd-calendar/js/rrule.js (rrule 2.8.1, with a wrapper appended; not in upstream).
 - Not compared line by line in this pass: other renamed files (for example js/tzfdform-admin-fields/ from js/fields-admin/, js/tzfdform-core-*.jquery.js from js/fbuilder-pro-*.jquery.js, and the add-on, template and CSS folders). Their changes are not yet recorded file by file.
 
 ## Readable source

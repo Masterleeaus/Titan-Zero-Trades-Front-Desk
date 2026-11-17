@@ -150,7 +150,7 @@ No. This version contains no AI feature and does not contact any AI provider. Bo
 
 
 
-No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and settings. It also deletes the photos customers attached in the chat and the calendar invitation files the plugin created. To delete the plugin's tables and settings as well, add define( 'TZ_DELETE_DATA_ON_UNINSTALL', true ) to wp-config.php before you delete the plugin.
+No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and settings. It also deletes the calendar invitation files the plugin created. To delete the plugin's tables and settings as well, add define( 'TZ_DELETE_DATA_ON_UNINSTALL', true ) to wp-config.php before you delete the plugin.
 
 
 

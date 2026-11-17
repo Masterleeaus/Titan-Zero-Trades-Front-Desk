@@ -10,7 +10,7 @@
 //   define( 'TZ_DELETE_DATA_ON_UNINSTALL', true );
 // it also drops Front Desk's own tables (TZFD_Tables::owned()) and deletes its settings.
 // Shell-owned tables (tz_customers, tz_sites) are never dropped by this plugin.
-// Always, it removes the chat photos and calendar invitation files the plugin wrote to the uploads folder.
+// Always, it removes the calendar invitation files the plugin wrote to its uploads folder.
 //
 // Without that line, bookings, enquiries and settings are kept, so deleting the
 // plugin cannot remove customer records by accident.
@@ -66,9 +66,8 @@ if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL ===
 // Internal worker cursor is disposable even when booking records are retained.
 delete_option( 'tzfd_customer_event_company_cursor_v1' );
 
-// Generated files: chat photos and invitation files are removed on every uninstall.
-// Only the plugin's own folder in the uploads directory is read, plus the chat photos version 2.0.0 saved at the
-// uploads root. Other files in the uploads folder are not touched.
+// Generated files: calendar invitation files are removed on every uninstall.
+// Only the plugin's own folder in the uploads directory is read. Other files in the uploads folder are not touched.
 $tz_uploads = wp_upload_dir();
 $tz_base    = isset( $tz_uploads['basedir'] ) ? $tz_uploads['basedir'] : '';
 if ( $tz_base ) {

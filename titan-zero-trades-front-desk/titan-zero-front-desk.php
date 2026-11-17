@@ -9,6 +9,7 @@ Author: Titan Zero
 License: GPL-2.0-only
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: titan-zero-trades-front-desk
+Domain Path: /languages
 */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -99,6 +100,14 @@ if ( ! function_exists( 'titan_zero_front_desk_translate_legacy_value' ) ) {
         return $tz_value;
     }
 }
+
+/**
+ * Loads translations from the plugin's languages folder on init.
+ */
+function tzfd_load_textdomain() {
+    load_plugin_textdomain( 'titan-zero-trades-front-desk', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'tzfd_load_textdomain' );
 
 //define("TZFD_DYNAMIC_LOADING", true);
 

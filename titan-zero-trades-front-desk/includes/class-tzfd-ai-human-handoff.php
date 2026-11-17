@@ -159,15 +159,10 @@ final class TZFD_AI_Human_Handoff {
 		return '' !== TZFD_Outbox::queue( 'email', (string) $owner, $body, 0, self::SOURCE );
 	}
 
-	/** WordPress wiring: at most RATE_LIMIT handoffs per contact per RATE_WINDOW, counted in transients. */
+	/** WordPress wiring: at most RATE_LIMIT handoffs per contact per RATE_WINDOW, counted atomically (TZFD_Rate_Limit). */
 	public static function rate_allow( $contact_key ) {
-		$key   = 'tzfd_ah_' . md5( (string) $contact_key );
-		$count = (int) get_transient( $key );
-		if ( $count >= self::RATE_LIMIT ) {
-			return false;
-		}
-		set_transient( $key, $count + 1, self::RATE_WINDOW );
-		return true;
+		require_once __DIR__ . '/class-tzfd-rate-limit.php';
+		return TZFD_Rate_Limit::allow( 'ah|' . (string) $contact_key, self::RATE_LIMIT, self::RATE_WINDOW );
 	}
 
 	private static function result( $status, array $errors ) {

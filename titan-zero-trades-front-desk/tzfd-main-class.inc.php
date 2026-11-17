@@ -12,7 +12,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 
     private $menu_parameter = 'tzfd';
     private $prefix = 'tz_fd_frontdesk';
-    private $plugin_name = 'Titan Zero Trades: Front Desk';
+    private $plugin_name = 'Scheduling & Enquiries Manager';
     private $plugin_URL = '';
     public $table_items = TZFD_Tables::FORMS;
     public $table_messages = TZFD_Tables::BOOKINGS;
@@ -167,7 +167,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         if ( !$tz_count && TZFD_Scoped_Store::company_id() > 0 )
         {
             define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
-            define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_BOOK_DEFAULT_fp_from_email);
+            define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_Settings_Extras::default_notify_email( TZFD_BOOK_DEFAULT_fp_from_email ));
             $wpdb->insert( $wpdb->prefix.TZFD_Tables::FORMS, array( 'company_id' => TZFD_Scoped_Store::company_id(), 'id' => 1,
                                       'form_name' => 'Form 1',
 
@@ -1078,7 +1078,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         ) );
         wp_add_inline_script( 'tz_fd_hour_classic_editor', 'document.addEventListener("click",function(e){var a=e.target.closest?e.target.closest("a.tzfdhbinsertb"):null;if(a){e.preventDefault();if(typeof tz_fd_appointments_fpanel!=="undefined"){tz_fd_appointments_fpanel.open();}}});' );
 
-        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Titan Zero Trades: Front Desk booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Titan Zero Trades: Front Desk booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
+        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Titan Zero Trades: Front Desk booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
     }
 
     function getThisUserForms() {

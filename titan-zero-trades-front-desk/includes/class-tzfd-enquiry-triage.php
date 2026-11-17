@@ -163,10 +163,12 @@ final class TZFD_Enquiry_Triage {
         if ( ! $company_id || ! $ids ) { return array(); }
         self::ensure_table();
         $placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
+        // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders holds only '%d' tokens, one per id, so the IN list stays prepared.
         $rows = $wpdb->get_results( $wpdb->prepare(
-            "SELECT * FROM %i WHERE company_id = %d AND enquiry_id IN ({$placeholders})", // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.UnsupportedPlaceholder -- placeholders are %d only.
+            "SELECT * FROM %i WHERE company_id = %d AND enquiry_id IN ({$placeholders})",
             array_merge( array( self::table(), $company_id ), $ids )
         ) );
+        // phpcs:enable WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         $map = array();
         foreach ( (array) $rows as $r ) { $map[ (int) $r->enquiry_id ] = $r; }
         return $map;

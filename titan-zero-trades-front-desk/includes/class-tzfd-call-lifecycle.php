@@ -19,11 +19,19 @@ final class TZFD_Call_Lifecycle {
         return array( 'calls' => TZFD_Tables::name( TZFD_Tables::CALLS ), 'events' => TZFD_Tables::name( TZFD_Tables::CALL_EVENTS ) );
     }
 
-    /** This is a reviewed opt-in schema step, not an automatic migration. */
+    /** Administrator-authorised install for a request. Activation uses create_schema() through run_install(). */
     public static function install( $authorized = false ) {
         if ( ! $authorized || ! function_exists( 'current_user_can' ) || ! current_user_can( 'manage_options' ) ) {
             return new WP_Error( 'tzfd_call_install_forbidden', __( 'Administrator authorisation required.', 'titan-zero-trades-front-desk' ) );
         }
+        return self::create_schema();
+    }
+
+    /**
+     * Creates the call tables with dbDelta and records the schema version. Idempotent. No capability check:
+     * every caller is either a checked admin request or plugin activation, which may run with no user.
+     */
+    public static function create_schema() {
         global $wpdb;
         if ( ! function_exists( 'dbDelta' ) ) { require_once ABSPATH . 'wp-admin/includes/upgrade.php'; }
         $tables = self::tables();
@@ -74,9 +82,12 @@ final class TZFD_Call_Lifecycle {
         self::run_install();
     }
 
-    /** Explicit, authorised install. Records the failure code for the admin notice, or clears it on success. */
+    /**
+     * Schema step with failure recording. Callers must check capability first when running for a request
+     * (maybe_install, handle_retry). Plugin activation calls it directly, so the table is made without a user.
+     */
     public static function run_install() {
-        $result = self::install( true );
+        $result = self::create_schema();
         if ( is_wp_error( $result ) ) {
             update_option( self::FAILURE_OPTION, $result->get_error_code(), false );
             return false;

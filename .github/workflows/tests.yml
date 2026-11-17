@@ -73,7 +73,7 @@ jobs:
       # WP-CLI lives outside the folder that holds WordPress. When it sits in the parent folder, `core install` stores
       # siteurl and home as http://localhost:8080/wp-site (WordPress guesses the path from the phar's folder), so the
       # login cookie is scoped to /wp-site/ and the logged-in checks are redirected to login (issue #190).
-      WP_CLI: ${{ runner.temp }}/wp-cli.phar
+      WP_CLI: /tmp/tzfd-ci/wp-cli.phar
       WP_PORT: "8080"
       WP_URL: http://localhost:8080
       DB_NAME: wp_fd_ci
@@ -90,6 +90,7 @@ jobs:
           extensions: mysqli, xml, mbstring, curl, zip, gd, intl
       - name: Get WP-CLI and WordPress
         run: |
+          mkdir -p "$(dirname "$WP_CLI")"
           curl -sS -o "$WP_CLI" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
           curl -sS -o wordpress.zip https://wordpress.org/latest.zip
           unzip -q wordpress.zip && mv wordpress "$WP_DIR"

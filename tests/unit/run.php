@@ -45,6 +45,7 @@ foreach ( array(
 	'class-tzfd-action-receipt.php',
 	'class-tzfd-action-receipt-viewer.php',
 	'class-tzfd-agent-gateway.php',
+	'class-tzfd-booking-report-summary.php',
 ) as $file ) {
 	require_once $root . '/' . $file;
 }

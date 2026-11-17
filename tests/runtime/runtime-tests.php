@@ -94,6 +94,47 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'reclaimed claim is held again', ! TZFD_Signed_Request::claim_signature( $expired_sig, $now + TZFD_Signed_Request::REPLAY_TTL + 1 ) );
     delete_option( $claim_key );
     delete_option( TZFD_Signed_Request::claim_key( $expired_sig ) );
+
+    // 8. Refused requests never claim a slot (issue #52). Drives the missed-call permission callback directly.
+    $claim_rows = function () use ( $wpdb ) {
+        return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name LIKE '" . $wpdb->esc_like( TZFD_Signed_Request::CLAIM_PREFIX ) . "%'" );
+    };
+    if ( class_exists( 'TZFD_MissedCall' ) ) {
+        $addon = ( new ReflectionClass( 'TZFD_MissedCall' ) )->newInstanceWithoutConstructor();
+        $refuse = function ( $ts, $sig ) use ( $addon, $body ) {
+            $req = new WP_REST_Request( 'POST', '/titan-zero-front-desk/v1/missed-call' );
+            $req->set_header( 'content-type', 'application/json' );
+            $req->set_body( $body );
+            $req->set_body_params( json_decode( $body, true ) );
+            if ( null !== $ts ) { $req->set_header( 'x-tzfd-timestamp', $ts ); }
+            if ( null !== $sig ) { $req->set_header( 'x-tzfd-signature', $sig ); }
+            return $addon->rest_permission( $req );
+        };
+        $wrong_sig = 'sha256=' . str_repeat( '0', 64 );
+        $stale_ts  = (string) ( $now - 1000 );
+        $cases = array(
+            'wrong signature is refused' => array( $ts, $wrong_sig ),
+            'missing signature is refused' => array( $ts, null ),
+            'malformed timestamp is refused' => array( 'not-a-time', $wrong_sig ),
+            'stale timestamp is refused' => array( $stale_ts, 'sha256=' . hash_hmac( 'sha256', $stale_ts . '.' . $body, $secret ) ),
+        );
+        foreach ( $cases as $label => $case ) {
+            $before_rows = $claim_rows();
+            $result      = $refuse( $case[0], $case[1] );
+            rt_check( $label, is_wp_error( $result ) && 401 === ( $result->get_error_data()['status'] ?? 0 ), is_wp_error( $result ) ? $result->get_error_code() : 'not an error' );
+            rt_check( $label . ' without claiming', $claim_rows() === $before_rows, 'rows before=' . $before_rows . ' after=' . $claim_rows() );
+        }
+
+        // 9. The claim store stays bounded: an expired claim is purged. The purge runs on about 1 call in 20, so retry.
+        $purge_sig = 'sha256=' . hash_hmac( 'sha256', 'rt-purge-' . $ts, $secret );
+        TZFD_Signed_Request::claim_signature( $purge_sig, $now - TZFD_Signed_Request::REPLAY_TTL - 5 );
+        $purged = 0;
+        for ( $i = 0; $i < 500 && 0 === $purged; $i++ ) { $purged = TZFD_Signed_Request::purge_expired( $now ); }
+        $still_there = (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name = %s", TZFD_Signed_Request::claim_key( $purge_sig ) ) );
+        rt_check( 'expired claim is purged from the store', 0 === $still_there && $purged >= 1, 'purged=' . $purged );
+    } else {
+        rt_check( 'missed-call addon class is loaded for the refusal checks', false, 'TZFD_MissedCall not found' );
+    }
 } else {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }

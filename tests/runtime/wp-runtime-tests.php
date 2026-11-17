@@ -331,5 +331,21 @@ if ( is_multisite() ) {
 	tzfd_rt_skip( 'G1 multisite', 'single-site install; multisite needs provision-wp-site.sh --multisite' );
 }
 
+/* ------------------------------------------------------------------ H. Weekly AI FAQ suggestions (#35) */
+
+tzfd_rt_ok( 'H1 weekly FAQ job is scheduled once, weekly', wp_next_scheduled( TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ) !== false && wp_get_schedule( TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ) === 'weekly' );
+tzfd_rt_ok( 'H2 weekly job is not duplicated by re-registration', count( array_filter( _get_cron_array() ?: array(), static function ( $events ) { return isset( $events[ TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ] ); } ) ) === 1 );
+tzfd_rt_ok( 'H3 review decision handler is registered on admin_post (capability and nonce are checked inside the handler)', has_action( 'admin_post_' . TZFD_Ai_Faq_Suggestions::ACTION ) !== false );
+tzfd_rt_ok( 'H4 knowledge publish invalidates the public answer cache', has_action( TZFD_Ai_Knowledge_Builder::CHANGED_ACTION, array( 'TZFD_AI_Answer_Box', 'invalidate' ) ) !== false );
+$before_v = TZFD_AI_Answer_Box::knowledge_version();
+do_action( TZFD_Ai_Knowledge_Builder::CHANGED_ACTION, 1, 1 );
+tzfd_rt_ok( 'H5 a knowledge change bumps the cached answer version', TZFD_AI_Answer_Box::knowledge_version() === $before_v + 1 );
+if ( TZFD_Ai_Free_Core::consent_granted() ) {
+	tzfd_rt_skip( 'H6 no hosted call without consent', 'consent is already granted on this site; the unit suite covers the refusal' );
+} else {
+	tzfd_rt_ok( 'H6 no hosted call without consent (weekly job returns nothing)', TZFD_Ai_Faq_Suggestions::run_scheduled( time() ) === array() );
+}
+
+echo "\nSummary (wp-runtime-tests): ". (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
 echo "\nSummary (wp-runtime-tests): " . (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
 exit( (int) $GLOBALS['tzfd_rt']['FAIL'] > 0 ? 1 : 0 );

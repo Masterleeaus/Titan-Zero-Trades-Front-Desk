@@ -57,3 +57,14 @@ function esc_html( $s ) {
 function __( $s, $domain = '' ) {
 	return $s;
 }
+function absint( $n ) {
+	return abs( (int) $n );
+}
+/** Scheduling stubs (#35). wp_next_scheduled reads the scheduled hooks recorded by wp_schedule_event. */
+function wp_next_scheduled( $hook ) {
+	return $GLOBALS['tzfd_test_scheduled'][ $hook ] ?? false;
+}
+function wp_schedule_event( $when, $recurrence, $hook ) {
+	$GLOBALS['tzfd_test_scheduled'][ $hook ] = array( 'when' => $when, 'recurrence' => $recurrence );
+	return true;
+}

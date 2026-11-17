@@ -80,6 +80,11 @@ final class TZFD_Telephony_Adapter {
         if ( null === $event ) {
             return new WP_Error( 'tzfd_telephony_unauthorised', __( 'Invalid telephony request.', 'titan-zero-trades-front-desk' ), array( 'status' => 401 ) );
         }
+        // Wrong-tenant denial happens before any write. A verified credential for another business must not
+        // create call or task rows on this site (the call lifecycle write below uses the credential's company).
+        if ( ! class_exists( 'TZFD_Scoped_Store' ) || (int) TZFD_Scoped_Store::company_id() !== (int) $event['company_id'] ) {
+            return new WP_Error( 'tzfd_missed_task_tenant', __( 'This request is not for the active business.', 'titan-zero-trades-front-desk' ), array( 'status' => 403 ) );
+        }
         // Replay window: an identical signed request inside the window is answered without a second write.
         $replay_key = 'tzfd_tel_sig_' . hash( 'sha256', $signature );
         if ( get_transient( $replay_key ) ) {

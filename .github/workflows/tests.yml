@@ -43,6 +43,10 @@ jobs:
             echo "== $f"
             php -d error_reporting=-1 "$f"
           done
+      - name: AI connector offline and consent tests
+        run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
+      - name: Reproducible package and no development files (issue #3)
+        run: bash tests/release/reproducible-build-check.sh
 
   wordpress:
     name: WordPress runtime (latest WordPress, PHP 8.3, MariaDB 10.11)

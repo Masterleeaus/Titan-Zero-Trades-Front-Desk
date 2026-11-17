@@ -180,12 +180,31 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 == Hosted AI ==
 
-Hosted AI is optional and stays off until the site owner turns it on. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
+Hosted AI is on by default. A notice at setup explains what data is sent to the hosted AI service and links to its terms. The AI Services page shows its status and lets the site owner switch it off at any time. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
 
 Booking, customers, calendars, rules, FAQ and reports work without it.
 
 Scheduling & Enquiries Manager is one plugin. It does not install, load or require a separate package or licence key.
 
+
+== Titan Zero products ==
+
+Scheduling & Enquiries Manager is free and works without an account. Optional hosted AI upgrades and related Titan Zero products:
+
+* AI Assistant: hosted conversational AI, from A$29/month. https://titanzero.io/frontdeskai/
+* AI Agent Team: hosted autonomous agent service, from A$99/month. https://titanzero.io/frontdeskagent/
+* Scheduling & Enquiries overview: https://titanzero.io/frontdesk/
+* All plugins: https://titanzero.io/plugins/
+* SuperchargedAt.Work: https://titanzero.io/apps/desk/
+* SkilledAt.Work: https://titanzero.io/apps/skilled/
+* SortedAt.Work: https://titanzero.io/apps/field/
+* ScheduledAt.Work: https://titanzero.io/apps/build/
+
+Terms: https://titanzero.io/scheduling-enquiries-terms/
+Privacy: https://titanzero.io/privacy/
+FAQ: https://titanzero.io/faq/
+Pricing: https://titanzero.io/pricing/
+Support: https://titanzero.io/support/
 
 == External services ==
 

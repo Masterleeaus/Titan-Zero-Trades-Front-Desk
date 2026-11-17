@@ -146,6 +146,60 @@ t( 'undo restores original draft', $u['body'] === $d['original_body'] && $u['edi
 t( 'screen blocks email in output', ! TZFD_AI_Smart_Reply::screen( 'write to a@b.com', $facts ) );
 t( 'quote neutralises markup', strpos( TZFD_AI_Smart_Reply::quote( '<script>x</script>' ), '<script>' ) === false );
 
+// ---- #37 gates: capability, contact redaction, consent-gated hosted gateway ----
+if ( ! class_exists( 'WP_Error' ) ) { class WP_Error { private $c; public function __construct( $c = '', $m = '' ) { $this->c = $c; } public function get_error_code() { return $this->c; } } }
+if ( ! function_exists( 'is_wp_error' ) ) { function is_wp_error( $t ) { return $t instanceof WP_Error; } }
+if ( ! function_exists( '__' ) ) { function __( $s ) { return $s; } }
+if ( ! function_exists( 'get_option' ) ) { function get_option( $k, $d = '' ) { return $GLOBALS['t_opts'][ $k ] ?? $d; } }
+if ( ! function_exists( 'apply_filters' ) ) { function apply_filters( $hook, $value ) { return ( 'tzfd_hosted_ai_connector' === $hook && isset( $GLOBALS['t_connector'] ) ) ? $GLOBALS['t_connector'] : $value; } }
+require_once dirname( $dir ) . '/class-tzfd-hosted-ai-connector.php';
+
+class Fx_Connector_Good { public function send( $cap, array $p ) { $GLOBALS['t_last_payload'] = $p; return array( 'ok' => true, 'text' => 'Hello Sam, thank you for contacting Clean Smart. Hours: Mon-Fri 8am-5pm.' ); } }
+class Fx_Connector_Budget { public function send( $cap, array $p ) { return new WP_Error( 'tzfd_hosted_ai_budget_exhausted', 'x' ); } }
+class Fx_Spy implements TZFD_AI_Hosted_Client {
+    public function translate( $t, $f, $o ) { $GLOBALS['t_spy'] = true; return array( 'ok' => false, 'reason' => 'spy' ); }
+    public function draft( $p, array $f, $q ) { $GLOBALS['t_spy'] = true; return array( 'ok' => false, 'reason' => 'spy' ); }
+}
+$gw = new TZFD_AI_Hosted_Gateway();
+$owner = array( 'tz_fd_access' => true );
+$staff = array();
+
+// Capability gate
+$GLOBALS['t_spy'] = false;
+$g = TZFD_AI_Smart_Reply::draft_for( $staff, $enq, $facts, 'acknowledge', new Fx_Spy() );
+t( 'draft refused without owner capability', $g['status'] === 'forbidden' && $g['body'] === '' );
+t( 'no hosted call when capability missing', $GLOBALS['t_spy'] === false );
+$g = TZFD_AI_Smart_Reply::draft_for( $owner, $enq, $facts, 'acknowledge' );
+t( 'draft allowed with owner capability', $g['status'] === 'draft' && $g['source'] === 'local' );
+$g = TZFD_AI_Smart_Reply::edit_for( $staff, $d, 'Hello Sam, a new line.', $facts );
+t( 'edit refused without owner capability', $g['edit_error'] === 'forbidden' && $g['body'] === $d['body'] );
+$g = TZFD_AI_Smart_Reply::edit_for( $owner, $d, 'Hello Sam, a new line.', $facts );
+t( 'edit allowed with owner capability', $g['body'] === 'Hello Sam, a new line.' && $g['edited'] === true );
+
+// Contact redaction before the owner quote and any hosted prompt
+$q = TZFD_AI_Smart_Reply::quote( 'Call 0412 345 678 or pat@example.org, job on 2026-11-20' );
+t( 'phone and email redacted in quote', strpos( $q, '[phone removed]' ) !== false && strpos( $q, '[email removed]' ) !== false && strpos( $q, '0412' ) === false && strpos( $q, 'pat@' ) === false );
+t( 'dates are not treated as phone numbers', strpos( $q, '2026-11-20' ) !== false );
+
+// Hosted gateway: consent and connector gate, no credentials or contact details in payload
+$GLOBALS['t_opts'] = array(); $GLOBALS['t_connector'] = new Fx_Connector_Good();
+$r = $gw->draft( 'acknowledge', $facts, 'q' );
+t( 'gateway refuses without recorded consent', $r['ok'] === false && $r['reason'] === 'no_consent' );
+$d5 = TZFD_AI_Smart_Reply::build( $enq, $facts, 'acknowledge', $gw );
+t( 'no consent keeps local draft, no network', $d5['source'] === 'local' && $d5['reason'] === 'local_fallback_no_consent' );
+$GLOBALS['t_opts'] = array( 'tzfd_hosted_ai_consent' => 'granted' );
+$d6 = TZFD_AI_Smart_Reply::build( $enq, $facts, 'acknowledge', $gw );
+t( 'consented connector gives hosted draft', $d6['source'] === 'hosted' && $d6['reason'] === 'hosted_draft' );
+$p = json_encode( $GLOBALS['t_last_payload'] );
+t( 'hosted payload carries task and no customer email', $GLOBALS['t_last_payload']['task'] === 'draft' && $GLOBALS['t_last_payload']['purpose'] === 'acknowledge' && strpos( $p, 'sam@example.com' ) === false && strpos( $p, 'x@evil.test' ) === false );
+$GLOBALS['t_connector'] = new Fx_Connector_Budget();
+$d7 = TZFD_AI_Smart_Reply::build( $enq, $facts, 'acknowledge', $gw );
+t( 'exhausted allowance falls back to local with reason', $d7['source'] === 'local' && $d7['reason'] === 'local_fallback_budget_exhausted' );
+$GLOBALS['t_connector'] = null;
+$d8 = TZFD_AI_Smart_Reply::build( $enq, $facts, 'acknowledge', $gw );
+t( 'no registered connector falls back to local', $d8['source'] === 'local' && $d8['reason'] === 'local_fallback_not_connected' );
+$GLOBALS['t_opts'] = array();
+
 // ---- #38 summaries ----
 $owner_caps = array( 'tz_fd_access' => true );
 $thread = array(

@@ -274,6 +274,10 @@ $loc = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, $extra );
 $topics = array_values( array_filter( $loc['sections'], static function ( $s ) { return 'Unanswered FAQ topics' === $s['section']; } ) )[0]['rows'];
 ok( 'insights: rows below minimum cell or base are omitted, not shown', count( $topics ) === 1 && $loc['omitted'] === 2 && $topics[0]['share'] === round( 9 / 45, 4 ) );
 ok( 'insights: local report always produced with denominators', $loc['base'] === 45 && $loc['sections'][0]['rows'][0]['base'] === 45 );
+$pii = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, array( array( 'section' => 'Unanswered FAQ topics', 'rows' => array(
+	array( 'label' => 'refund for jo@example.com 0412 345 678', 'count' => 9, 'base' => 45 ),
+) ) ) );
+ok( 'insights: contact details in topic labels are scrubbed from the local report', false === strpos( json_encode( $pii ), 'jo@example.com' ) && false === strpos( json_encode( $pii ), '0412 345 678' ) && false !== strpos( json_encode( $pii ), '[contact removed]' ) );
 
 reset_state();
 $db2 = new FakeDb(); $db2->rows = $db->rows;

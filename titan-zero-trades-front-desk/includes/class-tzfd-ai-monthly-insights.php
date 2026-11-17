@@ -90,9 +90,9 @@ final class TZFD_Ai_Monthly_Insights {
 				$cnt = (int) ( $r['count'] ?? 0 );
 				$den = (int) ( $r['base'] ?? 0 );
 				if ( $cnt < self::MIN_CELL || $den < self::MIN_BASE ) { $report['omitted']++; continue; }
-				$rows[] = array( 'label' => TZFD_Ai_Free_Core::plain_text( $r['label'] ?? '', 120 ), 'count' => $cnt, 'base' => $den, 'share' => round( $cnt / $den, 4 ) );
+				$rows[] = array( 'label' => TZFD_Ai_Free_Core::scrub( TZFD_Ai_Free_Core::plain_text( $r['label'] ?? '', 120 ) ), 'count' => $cnt, 'base' => $den, 'share' => round( $cnt / $den, 4 ) );
 			}
-			$sections[] = array( 'section' => TZFD_Ai_Free_Core::plain_text( $sec['section'], 80 ), 'rows' => $rows );
+			$sections[] = array( 'section' => TZFD_Ai_Free_Core::scrub( TZFD_Ai_Free_Core::plain_text( $sec['section'], 80 ) ), 'rows' => $rows );
 		}
 		foreach ( $sections as $sec ) {
 			$lines = array();

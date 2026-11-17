@@ -37,7 +37,7 @@ jobs:
         run: |
           set -e
           shopt -s nullglob
-          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/hosted-ai-legacy/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php)
+          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php tests/ai-connector/run-ai-connector-tests.php tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/hosted-ai-legacy/legacy-ai-tests.php)
           if [ ${#files[@]} -eq 0 ]; then echo "No standalone harnesses found"; exit 0; fi
           for f in "${files[@]}"; do
             echo "== $f"

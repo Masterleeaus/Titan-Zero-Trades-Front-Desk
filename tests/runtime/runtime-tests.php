@@ -140,7 +140,14 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
 }
 
 // Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
+$rt_company_before_faq = $company; // the FAQ suite assigns its own $company (a per-run id); keep this suite's tenant
+$GLOBALS['tzfd_nested_suite'] = 'runtime-tests';
 require __DIR__ . '/faq-retrieval-wp-tests.php';
+unset( $GLOBALS['tzfd_nested_suite'] );
+$company = $rt_company_before_faq;
+// The FAQ suite counts its own checks; fold them in so this suite's exit status covers them.
+$GLOBALS['rt_pass'] += (int) $GLOBALS['wp_pass'];
+$GLOBALS['rt_fail'] += (int) $GLOBALS['wp_fail'];
 // 8. Signed call-events path for missed-call callback tasks (issue #30): credential gate, tenant denial
 // before any write, duplicate and replay handling, anonymous caller, and no caller data in the response.
 if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecycle' ) && class_exists( 'TZFD_Missed_Call_Tasks' ) ) {

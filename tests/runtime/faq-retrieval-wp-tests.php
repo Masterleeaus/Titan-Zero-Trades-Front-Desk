@@ -81,4 +81,7 @@ delete_option( TZFD_Scoped_Store::option_name( $R::OPTION_CONSENT, $company ) );
 delete_option( TZFD_Scoped_Store::option_name( $R::OPTION_QUOTA . gmdate( 'Ym' ), $company ) );
 
 echo "Summary: {$GLOBALS['wp_pass']} passed, {$GLOBALS['wp_fail']} failed\n";
-exit( $GLOBALS['wp_fail'] > 0 ? 1 : 0 );
+// runtime-tests.php includes this file and folds its counters into its own exit status, so do not exit when nested.
+if ( empty( $GLOBALS['tzfd_nested_suite'] ) ) {
+	exit( $GLOBALS['wp_fail'] > 0 ? 1 : 0 );
+}

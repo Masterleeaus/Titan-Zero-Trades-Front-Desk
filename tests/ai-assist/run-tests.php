@@ -31,6 +31,12 @@ class Fx_Throws implements TZFD_AI_Hosted_Client {
     public function translate( $text, $from, $to ) { throw new RuntimeException( 'proxy down' ); }
     public function draft( $p, array $f, $q ) { throw new RuntimeException( 'proxy down' ); }
 }
+/** Records every translate() call so the payload sent to the hosted service can be checked. */
+class Fx_Recorder implements TZFD_AI_Hosted_Client {
+    public $calls = array();
+    public function translate( $text, $from, $to ) { $this->calls[] = array( $text, $from, $to ); return array( 'ok' => true, 'text' => 'Responda para confirmar su cita de Deep Clean el 2026-11-20.' ); }
+    public function draft( $p, array $f, $q ) { return array( 'ok' => false, 'reason' => 'not_used' ); }
+}
 $offline = new TZFD_AI_Hosted_Unavailable();
 
 // ---- #26 locale, UTF-8, RTL ----
@@ -68,6 +74,18 @@ t( 'proxy outage does not fatal and hands off', $r['action'] === 'handoff' && $r
 $r = TZFD_AI_Multilingual::reply( 'opening_hours', 'de', $cfg, $offline, array() );
 t( 'unknown locale clarifies in default language', $r['action'] === 'clarify' && $r['locale'] === 'en-AU' && $r['source'] === 'fixed' );
 t( 'unknown intent hands off', TZFD_AI_Multilingual::reply( 'refund_me', 'en-AU', $cfg, $offline )['action'] === 'handoff' );
+
+// Privacy: the hosted payload is the approved template with service and date only, plus two language tags.
+$rec = new Fx_Recorder();
+$pii_vars = $vars + array( 'customer_name' => 'Sam Example', 'customer_phone' => '+61400000000', 'customer_email' => 'sam@example.test' );
+TZFD_AI_Multilingual::reply( 'booking_confirm_request', 'ar', $cfg, $rec, $pii_vars );
+t( 'hosted translation called once for missing locale', count( $rec->calls ) === 1 );
+t( 'hosted payload has no customer name, phone or email', count( $rec->calls ) === 1 && false === strpos( $rec->calls[0][0], 'Sam Example' ) && false === strpos( $rec->calls[0][0], '+614' ) && false === strpos( $rec->calls[0][0], 'sam@example.test' ) );
+t( 'hosted payload is the approved English text', count( $rec->calls ) === 1 && $rec->calls[0][0] === 'Please reply to confirm your booking for Deep Clean on 2026-11-20.' );
+t( 'hosted call carries language tags only', count( $rec->calls ) === 1 && $rec->calls[0][1] === 'en' && $rec->calls[0][2] === 'ar' );
+$rec_fixed = new Fx_Recorder();
+TZFD_AI_Multilingual::reply( 'booking_confirm_request', 'es', $cfg, $rec_fixed, $pii_vars );
+t( 'fixed Spanish text makes no hosted call', count( $rec_fixed->calls ) === 0 );
 t( 'hosted text longer than limit refused', ! TZFD_AI_Multilingual::accept_hosted( str_repeat( 'a', 601 ), array() ) );
 
 // ---- #33 follow-up suggestions ----

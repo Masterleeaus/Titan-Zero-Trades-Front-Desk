@@ -321,10 +321,6 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<?php endif; ?>
 	<p><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=' . TZFD_Admin_Menu::ADDONS ) ); ?>"><?php esc_html_e('Open Add-ons','titan-zero-trades-front-desk'); ?></a></p>
 </div>
-<div class="tzfd-subpane">
-	<?php TZFD_Upgrades::render_cards(); ?>
-</div>
-
 </div>
 
 <!-- Advanced -->

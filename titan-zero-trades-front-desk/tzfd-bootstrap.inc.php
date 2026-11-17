@@ -166,8 +166,6 @@ if ( did_action( 'plugins_loaded' ) ) {
     add_action( 'plugins_loaded', array($tz_plugin, 'data_management_pluginsloaded'), -1);
 }
 
-require_once dirname( __FILE__ ) . '/includes/class-tzfd-upgrades.php';
-
 if ( is_admin() ) {
 
 

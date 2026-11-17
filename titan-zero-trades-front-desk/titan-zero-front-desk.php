@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Titan Zero Front Desk
+Plugin Name: Scheduling & Enquiries Manager
 Description: Bookings, calendar, booking pages and phone answering. Operates standalone with optional Titan Zero integrations.
 Version: 3.0.128
 Requires at least: 6.6
@@ -25,11 +25,13 @@ if ( ! defined( 'TZFD_VERSION' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-tables.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-free-services.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-history-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-migration-handoff.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-record-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-call-lifecycle.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-telephony-adapter.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-messaging-replies.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-telephone-delivery.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-sms.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-status.php';
@@ -57,6 +59,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-waitlist-accept
 add_action( 'init', array( 'TZFD_Booking_Action_Outbox', 'boot' ) );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-frontdesk-api.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-suite-gateway.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-connector.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-tasks.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-outbox.php';
 TZFD_Smart_Task_Outbox::boot();
@@ -71,7 +74,13 @@ TZFD_Smart_Task_Events::register();
 // already contain it render nothing instead of showing raw shortcode text.
 add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-hosted-ai-connector.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-ai-data.php';
+TZFD_Legacy_AI_Data::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
+// Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
+TZFD_AI_Widget::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
 
 /**
@@ -253,6 +262,7 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
         $booted = true;
         // The public webhook routes are registered here, not at file load, so a site without Workspace exposes no endpoint.
         TZFD_Telephony_Adapter::register();
+        TZFD_Messaging_Replies::register();
         TZFD_Twilio_Status::boot();
         TZFD_Access::register();
     TZFD_Lead_Intake::register();

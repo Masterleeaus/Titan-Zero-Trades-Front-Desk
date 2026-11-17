@@ -126,13 +126,14 @@ final class TZFD_Quote_Request_Classifier {
         if ( array_key_exists( 'email', $corrections ) ) { $draft['contact']['email'] = self::form_email( $corrections['email'] ); }
         if ( array_key_exists( 'phone', $corrections ) ) { $draft['contact']['phone'] = self::form_phone( $corrections['phone'] ); }
 
-        $draft['missing'] = array_values( array_filter( $draft['missing'], function ( $field ) use ( $draft ) {
-            if ( 'service' === $field ) { return '' === $draft['service']; }
-            if ( 'requested_date' === $field ) { return '' === $draft['requested_date']; }
-            if ( 'site' === $field ) { return '' === $draft['site']; }
-            if ( 'contact' === $field ) { return '' === $draft['contact']['email'] && '' === $draft['contact']['phone']; }
-            return true;
-        } ) );
+        // Recompute the gaps from the corrected draft, in the same order classify() uses. A field the owner clears
+        // becomes missing again; filtering the old list alone would leave an emptied field looking complete.
+        $quote = 'quote_request' === $draft['intent'];
+        $draft['missing'] = array();
+        if ( $quote && '' === $draft['service'] ) { $draft['missing'][] = 'service'; }
+        if ( $quote && '' === $draft['requested_date'] ) { $draft['missing'][] = 'requested_date'; }
+        if ( $quote && '' === $draft['site'] ) { $draft['missing'][] = 'site'; }
+        if ( '' === $draft['contact']['email'] && '' === $draft['contact']['phone'] ) { $draft['missing'][] = 'contact'; }
         $draft['sources']['owner_corrected'] = array_keys( $corrections );
         $draft['price'] = null;
         $draft['approved'] = false;
@@ -173,7 +174,7 @@ final class TZFD_Quote_Request_Classifier {
     }
 
     private static function contains_price( $lower ) {
-        return (bool) preg_match( '/[$£€]\s*\d|\d\s*(?:dollars|aud|usd)\b/iu', $lower );
+        return (bool) preg_match( '/[$£€]\s*\d|\d\s*(?:dollars|aud|usd)\b|\b(?:aud|usd)\s*\d/iu', $lower );
     }
 
     private static function form_email( $value ) {

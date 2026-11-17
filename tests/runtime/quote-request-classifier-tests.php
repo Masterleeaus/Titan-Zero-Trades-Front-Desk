@@ -84,6 +84,23 @@ check( 'owner correction: requested_date and site cleared from missing', ! in_ar
 check( 'owner correction: still no price, not approved', null === $c['price'] && false === $c['approved'] && false === $c['binding'] );
 check( 'owner correction: attributed to owner', array( 'requested_date', 'site' ) === $c['sources']['owner_corrected'] );
 
+// 12b. Owner clears a field: it becomes missing again instead of looking complete.
+$full = $C::classify( $base + array( 'enquiry' => "Quote for carpet cleaning\nSite: 12 Smith St\nNeeded 2026-12-05." ), $svc, '2026-11-16' );
+check( 'clear: complete draft has nothing missing', array() === $full['missing'] );
+$cleared = $C::apply_owner_correction( $full, array( 'requested_date' => '' ), 7 );
+check( 'clear: requested_date emptied and listed as missing', '' === $cleared['requested_date'] && array( 'requested_date' ) === $cleared['missing'] );
+$cleared = $C::apply_owner_correction( $cleared, array( 'site' => '', 'service' => '' ), 7 );
+check( 'clear: site and service re-listed in classify order', array( 'service', 'requested_date', 'site' ) === $cleared['missing'] );
+$contactless = $C::apply_owner_correction( $full, array( 'email' => '', 'phone' => '' ), 7 );
+check( 'clear: contact re-listed when both emptied', in_array( 'contact', $contactless['missing'], true ) );
+$other_intent = $C::classify( $base + array( 'enquiry' => 'Are you open on Sunday?' ), $svc, '' );
+$other_intent = $C::apply_owner_correction( $other_intent, array( 'site' => '' ), 7 );
+check( 'clear: non-quote intent never lists quote fields', array() === $other_intent['missing'] );
+
+// 12c. Currency word before the amount is also a customer price mention.
+$d = $C::classify( $base + array( 'enquiry' => 'Quote for pool cleaning, AUD 250 is my budget. Site: 1 Main Rd' ), $svc, '' );
+check( 'price: "AUD 250" flagged as customer-mentioned', in_array( 'customer_mentioned_price_ignored', $d['flags'], true ) && null === $d['price'] );
+
 // 13. Owner correction: tenant mismatch, forbidden fields, bad date.
 check( 'owner correction: other tenant refused', 'tenant_mismatch' === $C::apply_owner_correction( $d, array( 'site' => 'x' ), 8 )['error'] );
 check( 'owner correction: zero tenant refused', isset( $C::apply_owner_correction( $d, array( 'site' => 'x' ), 0 )['error'] ) );

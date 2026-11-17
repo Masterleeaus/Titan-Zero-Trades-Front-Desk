@@ -38,6 +38,10 @@ final class TZFD_AI_Connector {
     const MAX_RESPONSE_BYTES = 65536;
     const MIN_SECRET       = 32;     // characters
     const TIMEOUT          = 8;      // seconds
+    const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
+    const EVENT_LIMIT      = 50;     // events kept
+    const RETENTION_DEFAULT = 30;    // days an event is kept
+    const RETENTION_MAX    = 365;    // days
 
     const TIER_FREE     = 'free_ai';
     const TIER_ASSIST   = 'assistant';
@@ -73,10 +77,19 @@ final class TZFD_AI_Connector {
     }
 
     /**
-     * Sends one typed request. Always returns a structured array:
+     * Sends one typed request and records a redacted event (feature name, status, latency only;
+     * never the payload, the response body or the secret). Always returns a structured array:
      * ok, status, use_local, contract, data (and missing_scopes, tier where relevant).
      */
     public static function request( $feature, $payload = array() ) {
+        $started = microtime( true );
+        $result  = self::dispatch( $feature, $payload );
+        $known   = is_string( $feature ) && isset( self::features()[ $feature ] ) ? $feature : 'unknown';
+        self::log_event( $known, $result['status'], (int) round( ( microtime( true ) - $started ) * 1000 ) );
+        return $result;
+    }
+
+    private static function dispatch( $feature, $payload ) {
         $def = is_string( $feature ) && isset( self::features()[ $feature ] ) ? self::features()[ $feature ] : null;
         if ( null === $def ) { return self::result( 'feature_not_allowed' ); }
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
@@ -151,16 +164,48 @@ final class TZFD_AI_Connector {
         $cfg = self::config();
         $has = '' !== self::secret();
         return array(
-            'contract'     => self::CONTRACT,
-            'enabled'      => $cfg['enabled'],
-            'connected'    => self::configured( $cfg, self::secret() ) && $cfg['consent'],
-            'consent'      => $cfg['consent'],
-            'scopes'       => $cfg['scopes'],
-            'entitlements' => $cfg['entitlements'],
-            'endpoint_set' => '' !== $cfg['endpoint'],
-            'secret_set'   => $has,
-            'site_id'      => $cfg['site_id'],
+            'contract'        => self::CONTRACT,
+            'enabled'         => $cfg['enabled'],
+            'connected'       => self::configured( $cfg, self::secret() ) && $cfg['consent'],
+            'consent'         => $cfg['consent'],
+            'consent_version' => self::CONSENT_VERSION,
+            'disclosure'      => self::disclosure(),
+            'scopes'          => $cfg['scopes'],
+            'entitlements'    => $cfg['entitlements'],
+            'endpoint_set'    => '' !== $cfg['endpoint'],
+            'secret_set'      => $has,
+            'site_id'         => $cfg['site_id'],
+            'retention_days'  => self::retention_days(),
+            'event_count'     => count( self::events() ),
         );
+    }
+
+    /** Redacted event log, oldest first. Each entry holds only at, feature, status and latency_ms. */
+    public static function events() {
+        $events = get_option( self::EVENT_OPTION, array() );
+        return is_array( $events ) ? array_values( $events ) : array();
+    }
+
+    /** Deletes the whole event log. Usage counters and budgets are not touched. */
+    public static function clear_events() {
+        delete_option( self::EVENT_OPTION );
+        return true;
+    }
+
+    /** Days an event is kept (1..RETENTION_MAX). */
+    public static function retention_days() {
+        $opt  = self::raw_option();
+        $days = isset( $opt['retention_days'] ) ? (int) $opt['retention_days'] : self::RETENTION_DEFAULT;
+        return max( 1, min( self::RETENTION_MAX, $days ) );
+    }
+
+    /** Sets event retention. Only an integer from 1 to RETENTION_MAX is accepted. */
+    public static function set_retention_days( $days ) {
+        if ( ! is_int( $days ) || $days < 1 || $days > self::RETENTION_MAX ) { return false; }
+        $opt = self::raw_option();
+        $opt['retention_days'] = $days;
+        update_option( self::OPTION, $opt, false );
+        return true;
     }
 
     /** Usage counters and budget use for one month (YYYY-MM, default current). */
@@ -284,8 +329,9 @@ final class TZFD_AI_Connector {
     /** Explicit opt-in for the listed scopes. Unknown scopes are dropped. */
     public static function grant_consent( array $scopes ) {
         $opt = self::raw_option();
-        $opt['consent']     = true;
-        $opt['consent_at']  = time();
+        $opt['consent']         = true;
+        $opt['consent_version'] = self::CONSENT_VERSION;
+        $opt['consent_at']      = time();
         $opt['scopes']      = self::clean_scopes( $scopes );
         update_option( self::OPTION, $opt, false );
         return true;
@@ -341,7 +387,9 @@ final class TZFD_AI_Connector {
         $opt = self::raw_option();
         return array(
             'enabled'      => ! isset( $opt['enabled'] ) || false !== $opt['enabled'],
-            'consent'      => isset( $opt['consent'] ) && true === $opt['consent'],
+            // Consent given under an older disclosure version does not count; the admin must grant again.
+            'consent'      => isset( $opt['consent'] ) && true === $opt['consent']
+                && isset( $opt['consent_version'] ) && self::CONSENT_VERSION === $opt['consent_version'],
             'scopes'       => self::clean_scopes( isset( $opt['scopes'] ) && is_array( $opt['scopes'] ) ? $opt['scopes'] : array() ),
             'endpoint'     => isset( $opt['endpoint'] ) && is_string( $opt['endpoint'] ) ? $opt['endpoint'] : '',
             'site_id'      => isset( $opt['site_id'] ) && is_string( $opt['site_id'] ) ? $opt['site_id'] : '',
@@ -481,6 +529,28 @@ final class TZFD_AI_Connector {
         $used   = isset( $usage['budget'][ $key ] ) ? (int) $usage['budget'][ $key ] : 0;
         $usage['budget'][ $key ] = max( 0, $used - 1 );
         self::write_usage( $period, $usage );
+        self::unlock();
+    }
+
+    /**
+     * Appends one redacted event and prunes entries older than the retention window. Best effort:
+     * skipped when the lock is busy, so it never delays or fails a request.
+     */
+    private static function log_event( $feature, $status, $latency ) {
+        if ( ! self::lock() ) { return; }
+        $now    = time();
+        $cutoff = $now - self::retention_days() * 86400;
+        $kept   = array();
+        foreach ( self::events() as $event ) {
+            if ( is_array( $event ) && isset( $event['at'] ) && (int) $event['at'] >= $cutoff ) { $kept[] = $event; }
+        }
+        $kept[] = array(
+            'at'         => $now,
+            'feature'    => (string) $feature,
+            'status'     => (string) $status,
+            'latency_ms' => max( 0, (int) $latency ),
+        );
+        update_option( self::EVENT_OPTION, array_slice( $kept, -self::EVENT_LIMIT ), false );
         self::unlock();
     }
 

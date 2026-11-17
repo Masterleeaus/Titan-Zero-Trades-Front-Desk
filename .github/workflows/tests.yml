@@ -43,6 +43,8 @@ jobs:
             echo "== $f"
             php -d error_reporting=-1 "$f"
           done
+      - name: Quote request classifier (pure PHP, issue #191)
+        run: php -d error_reporting=-1 tests/runtime/quote-request-classifier-tests.php
       - name: AI connector offline and consent tests
         run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
       - name: Reproducible package and no development files (issue #3)
@@ -158,6 +160,19 @@ jobs:
             echo "== $f"
             php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
           done
+      - name: Cancel/reschedule assistant and service finder runtime checks (issue #191)
+        run: |
+          cd "$WP_DIR"
+          set -o pipefail
+          LOG="$RUNNER_TEMP/runtime-191.log"
+          : > "$LOG"
+          # These two files print PASS and FAIL lines and do not set an exit status, so the step gates on the log.
+          for f in cancel-reschedule-assistant-tests.php service-finder-runtime.php; do
+            echo "== $f"
+            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/$f" 2>&1 | tee -a "$LOG"
+          done
+          if grep -q '^FAIL ' "$LOG"; then echo "Runtime checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
+          test "$(grep -c '^PASS ' "$LOG")" -gt 0 || { echo "No PASS lines: the files did not run"; exit 1; }
       - name: Database integration tests (scratch databases on the service container)
         run: |
           mysql -h127.0.0.1 -P3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS tzfd_lane_test; CREATE DATABASE IF NOT EXISTS tzfd_triage_test;"

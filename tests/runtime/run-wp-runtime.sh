@@ -72,6 +72,8 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --use
 echo "--- real WordPress runtime tests (wp-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
+echo "--- agent gateway (agent-gateway-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/agent-gateway-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- legacy AI data (legacy-ai-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/legacy-ai-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 

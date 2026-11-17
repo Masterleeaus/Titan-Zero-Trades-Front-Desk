@@ -72,6 +72,8 @@ final class TZFD_Enquiry_Triage_Rules {
     /** Normalise text for comparison: NFKC, case fold, zero-width characters removed, apostrophes unified. */
     public static function normalize( $text ) {
         $text = (string) $text;
+        // Invalid UTF-8 has no usable text for comparison. Returning '' keeps it out of every duplicate check.
+        if ( 1 !== preg_match( '//u', $text ) ) { return ''; }
         if ( class_exists( 'Normalizer' ) ) {
             $nfkc = Normalizer::normalize( $text, Normalizer::FORM_KC );
             if ( false !== $nfkc ) { $text = $nfkc; }
@@ -292,7 +294,23 @@ final class TZFD_Enquiry_Triage_Rules {
      *
      * @return array Keys: intents, primary_intent, urgency, urgency_reasons, spam (see spam_assessment), route, signature, quote_draft|null.
      */
-    public static function evaluate( $text, $email, $ip_hash, $now, array $priors = array(), array $service_terms = null, $default_year = null ) {
+    /** Queues an administrator may route an intent to. Anything else in a saved rule is ignored. */
+    const ROUTE_ALLOWLIST = array( 'enquiry_queue', 'quote_review', 'complaint_review', 'spam_review' );
+
+    /** Intents that may carry a business routing rule. Spam is never routed by rule. */
+    const ROUTABLE_INTENTS = array( 'complaint', 'cancel', 'quote', 'booking', 'service_request', 'general' );
+
+    /**
+     * Queue for an intent from allowlisted business rules, or null when no valid rule applies.
+     * Rules are a map of intent => queue. Unknown intents and queues outside ROUTE_ALLOWLIST are dropped.
+     */
+    public static function route_for_intent( $intent, array $route_rules ) {
+        if ( ! in_array( $intent, self::ROUTABLE_INTENTS, true ) || ! isset( $route_rules[ $intent ] ) ) { return null; }
+        $queue = (string) $route_rules[ $intent ];
+        return in_array( $queue, self::ROUTE_ALLOWLIST, true ) ? $queue : null;
+    }
+
+    public static function evaluate( $text, $email, $ip_hash, $now, array $priors = array(), array $service_terms = null, $default_year = null, array $route_rules = array() ) {
         $now     = (int) $now;
         $intent  = self::classify_intents( $text );
         $urgency = self::urgency( $text, $now );
@@ -303,9 +321,12 @@ final class TZFD_Enquiry_Triage_Rules {
         $intents = $spam['hold'] ? array_merge( array( 'spam' ), $intent['intents'] ) : $intent['intents'];
 
         $route = 'enquiry_queue';
-        if ( $spam['hold'] ) { $route = 'spam_review'; }
-        elseif ( 'quote' === $intent['primary'] ) { $route = 'quote_review'; }
+        if ( 'quote' === $intent['primary'] ) { $route = 'quote_review'; }
         elseif ( 'complaint' === $intent['primary'] ) { $route = 'complaint_review'; }
+        $rule_route = self::route_for_intent( $intent['primary'], $route_rules );
+        if ( null !== $rule_route ) { $route = $rule_route; }
+        // A spam hold always goes to spam review. No business rule can move a held enquiry out of that queue.
+        if ( $spam['hold'] ) { $route = 'spam_review'; }
 
         return array(
             'intents'          => array_values( array_unique( $intents ) ),

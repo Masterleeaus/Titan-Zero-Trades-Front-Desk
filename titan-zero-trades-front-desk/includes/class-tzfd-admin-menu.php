@@ -185,7 +185,7 @@ final class TZFD_Admin_Menu {
         $titles = array(
             self::HELP                     => __( 'Help', 'titan-zero-trades-front-desk' ),
             self::PACKS                    => __( 'Industry packs', 'titan-zero-trades-front-desk' ),
-            self::EMAILS                   => __( 'Titan Zero Front Desk Status Emails', 'titan-zero-trades-front-desk' ),
+            self::EMAILS                   => __( 'Scheduling & Enquiries Manager Status Emails', 'titan-zero-trades-front-desk' ),
             'tzfd-customer-portal-manager' => __( 'Customer Portal', 'titan-zero-trades-front-desk' ),
         );
         if ( '' === $page || ! isset( $titles[ $page ] ) ) { return; }

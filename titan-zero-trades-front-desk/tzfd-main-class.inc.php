@@ -2352,7 +2352,7 @@ public function render_form_admin( $atts ) {
                 $tz_params,
                 true
             );
-            wp_safe_redirect( $tzfd_destination, 303, 'Titan Zero Front Desk' );
+            wp_safe_redirect( $tzfd_destination, 303, 'Scheduling & Enquiries Manager' );
             exit();
         }
     }

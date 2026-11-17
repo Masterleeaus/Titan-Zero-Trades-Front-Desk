@@ -57,7 +57,19 @@ final class TZFD_AI_Widget {
 
 		$out  = '<section class="tzfd-ai-box" aria-labelledby="' . esc_attr( $uid ) . '-title">';
 		$out .= '<h2 id="' . esc_attr( $uid ) . '-title">' . esc_html__( 'Ask a question', 'titan-zero-trades-front-desk' ) . '</h2>';
-		$out .= '<form class="tzfd-ai-form" method="get">';
+		// A GET form replaces the query string of its action URL. On plain permalinks the page is ?page_id=N, so that
+		// query is sent as hidden fields. Without this the answer request lands on the home page (#185).
+		$permalink = get_permalink();
+		$permalink = is_string( $permalink ) && '' !== $permalink ? $permalink : home_url( '/' );
+		$parts     = wp_parse_url( $permalink );
+		$action    = ( $parts['scheme'] ?? 'https' ) . '://' . ( $parts['host'] ?? '' ) . ( isset( $parts['port'] ) ? ':' . $parts['port'] : '' ) . ( $parts['path'] ?? '/' );
+		parse_str( $parts['query'] ?? '', $page_query );
+		$out .= '<form class="tzfd-ai-form" action="' . esc_url( $action ) . '" method="get">';
+		foreach ( $page_query as $page_key => $page_value ) {
+			if ( is_string( $page_value ) && preg_match( '/^[A-Za-z0-9_\-]+$/', (string) $page_key ) ) {
+				$out .= '<input type="hidden" name="' . esc_attr( $page_key ) . '" value="' . esc_attr( $page_value ) . '" />';
+			}
+		}
 		$out .= '<label for="' . esc_attr( $uid ) . '-q">' . esc_html__( 'Your question', 'titan-zero-trades-front-desk' ) . '</label>';
 		$out .= '<input type="search" id="' . esc_attr( $uid ) . '-q" name="' . esc_attr( self::PARAM ) . '" maxlength="' . (int) TZFD_AI_Answer_Box::MAX_QUESTION_LENGTH . '" value="' . esc_attr( $question ) . '" autocomplete="off" enterkeyhint="search">';
 		$out .= '<button type="submit">' . esc_html__( 'Get answer', 'titan-zero-trades-front-desk' ) . '</button>';

@@ -41,6 +41,9 @@ function get_current_blog_id() { return 1; }
 function plugins_url( $p, $f ) { return 'https://example.test/' . $p; }
 function wp_enqueue_style( ...$a ) { $GLOBALS['t_styles'][] = $a[0]; }
 function add_query_arg( $args, $url ) { return $url . '?' . http_build_query( $args ); }
+function home_url( $path = '/' ) { return 'https://example.test' . $path; }
+function wp_parse_url( $url, $component = -1 ) { return parse_url( (string) $url, $component ); }
+function get_permalink() { return $GLOBALS['t_permalink'] ?? false; }
 
 $inc = __DIR__ . '/../../../titan-zero-trades-front-desk/includes/';
 require_once __DIR__ . '/../fixtures/fake-rate-limit-wpdb.php';
@@ -270,6 +273,14 @@ check( 'widget without a question shows no answer text', false === strpos( $html
 
 check( 'answer_html escapes model-style markup', false !== strpos( TZFD_AI_Widget::answer_html( array( 'status' => 'answered', 'answer' => '<a href="x">hi</a>', 'source' => 'approved_rule' ) ), '&lt;a href=' ) );
 check( 'model answers carry an automated-answer note', false !== strpos( TZFD_AI_Widget::answer_html( array( 'status' => 'answered', 'answer' => 'hi', 'source' => 'model' ) ), 'Automated answer' ) );
+
+// Plain permalinks: the page query (?page_id=N) must travel as hidden fields, not be dropped by the GET form (#185).
+$GLOBALS['t_permalink'] = 'https://example.test/?page_id=42';
+$_GET = array();
+$html = TZFD_AI_Widget::render();
+check( 'form posts to the page path on plain permalinks', false !== strpos( $html, 'action="https://example.test/"' ) );
+check( 'page_id travels as a hidden field on plain permalinks', false !== strpos( $html, '<input type="hidden" name="page_id" value="42" />' ) );
+$GLOBALS['t_permalink'] = false;
 
 // ---- summary --------------------------------------------------------------------------------
 echo "\nPassed: {$GLOBALS['pass']}  Failed: {$GLOBALS['fail']}\n";

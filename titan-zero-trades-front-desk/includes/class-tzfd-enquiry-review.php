@@ -38,6 +38,7 @@ final class TZFD_Enquiry_Review {
         if ( '' !== $status && in_array( $status, self::STATUSES, true ) ) { $where .= ' AND status = %s'; $args[] = $status; }
         if ( '' !== $queue && in_array( $queue, TZFD_Enquiry_Triage::QUEUES, true ) ) { $where .= ' AND triage_queue = %s'; $args[] = $queue; }
         $args[] = $limit;
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- $where is built only from constant fragments; $args holds one value per placeholder.
         $rows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE ' . $where . ' ORDER BY id DESC LIMIT %d', $args ) );
         return ( is_array( $rows ) && empty( $wpdb->last_error ) ) ? $rows : array();
     }

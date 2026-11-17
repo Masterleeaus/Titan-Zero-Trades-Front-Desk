@@ -313,7 +313,7 @@ final class TZFD_Enquiry_Triage {
         foreach ( $definitions as $column => $definition ) {
             $present = $wpdb->get_results( $wpdb->prepare( 'SHOW COLUMNS FROM %i LIKE %s', $table, $column ) );
             if ( empty( $present ) ) {
-                $added = $wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD COLUMN ' . $column . ' ' . $definition, $table ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- column names and definitions are constants above.
+                $added = $wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD COLUMN ' . $column . ' ' . $definition, $table ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- column names and definitions are constants above.
                 if ( false === $added ) { return false; }
             }
         }

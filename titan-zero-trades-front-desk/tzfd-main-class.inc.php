@@ -7,6 +7,8 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
 
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access-list.php';
 require_once __DIR__ . '/includes/class-tzfd-stored-data.php';
+require_once __DIR__ . '/includes/class-tzfd-public-slot-records.php';
+add_action( 'admin_notices', array( 'TZFD_Public_Slot_Records', 'admin_notice' ) );
 
 class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 
@@ -1766,13 +1768,12 @@ public function render_form_admin( $atts ) {
             if ( method_exists( $wpdb, 'flush' ) ) { $wpdb->flush(); }
             // The same two queries as $dataquery, written out so each prepare() call gets a literal string.
             if ( $tz_include_blocked )
-                $tz_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT data,notifyto,posted_data FROM %i WHERE formid=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::BOOKINGS, $formid, $tzfd_slot_company ) );
+                $tz_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT id,data,notifyto,posted_data FROM %i WHERE formid=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::BOOKINGS, $formid, $tzfd_slot_company ) );
             else
-                $tz_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT data,notifyto,posted_data FROM %i WHERE formid=%d AND company_id=%d AND notifyto<>%s", $wpdb->prefix.TZFD_Tables::BOOKINGS, $formid, $tzfd_slot_company, $this->blocked_by_admin_indicator ) );
+                $tz_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT id,data,notifyto,posted_data FROM %i WHERE formid=%d AND company_id=%d AND notifyto<>%s", $wpdb->prefix.TZFD_Tables::BOOKINGS, $formid, $tzfd_slot_company, $this->blocked_by_admin_indicator ) );
             
             // A failed query must not be interpreted as an empty calendar. Otherwise a
             // public client could offer times already occupied by existing bookings.
-            require_once __DIR__ . '/includes/class-tzfd-public-slot-records.php';
             if ( ! TZFD_Public_Slot_Records::valid_query_result( $tz_myrows, $wpdb->last_error ?? '' ) ) {
                 status_header( 503 );
                 header( 'Content-Type: application/json; charset=UTF-8' );
@@ -1787,18 +1788,15 @@ public function render_form_admin( $atts ) {
 
             $excluded_tzfdcalendar = ',,'.get_option('tz_fd_schcalcontent_exclude','').','; // fields excluded form multi view calendar
 
+            // Owner decision (#183): a stored row with an unreadable payload is skipped, not fatal. The row is logged and
+            // flagged to the admin (Front Desk notice), so the problem stays visible; public booking keeps working.
+            $tz_unreadable = TZFD_Public_Slot_Records::unreadable_row_ids( $tz_myrows );
+            TZFD_Public_Slot_Records::record_skipped_rows( $formid, $tz_unreadable );
             for ($tz_i=0; $tz_i < count($tz_myrows); $tz_i++)
             {
                 $tz_data = TZFD_Stored_Data::decode_booking($tz_myrows[$tz_i]->posted_data);
-                // Never silently ignore invalid booking payloads: that would make occupied
-                // times appear free, potentially allowing a conflicting booking.
                 if ( ! TZFD_Public_Slot_Records::valid_booking_payload( $tz_data ) ) {
-                    status_header( 503 );
-                    header( 'Content-Type: application/json; charset=UTF-8' );
-                    header( 'Cache-Control: no-store, private' );
-                    header( 'X-Content-Type-Options: nosniff' );
-                    echo '[]';
-                    exit;
+                    continue;
                 }
                 if ( is_array( $tz_data['apps'] ) )
                 {

@@ -298,17 +298,17 @@ $f3 = TZFD_Ai_Monthly_Insights::report( $CO, '2026-11', $db2, $extra, $NOW );
 ok( 'insights: provider down falls back to local report with bounded retries', $f1['summary_status'] === 'provider_down' && $f2['summary_status'] === 'provider_down' && $f3['summary_status'] === 'retry_exhausted' && $f3['local']['base'] === 45 && hosted_calls() === 2 );
 
 /* ---------- #36 answer-flow wiring, consent, retention, merges, page helpers ---------- */
-if ( ! class_exists( 'TZFD_Scoped_Store' ) ) {
-	class TZFD_Scoped_Store { public static $company = 0; public static function company_id() { return self::$company; } }
+if ( ! class_exists( 'TZFD_Local_Business', false ) ) {
+	class TZFD_Local_Business { public static $id = 0; public static function id() { return self::$id; } public static function default_id() { return 0; } }
 }
 reset_state();
 $G = 7; $T = time(); $DAY = DAY_IN_SECONDS;
 $VOCAB = array( 'boiler repair', 'drain unblocking' );
-TZFD_Scoped_Store::$company = 0;
+TZFD_Local_Business::$id = 0;
 do_action( 'tzfd_ai_question_handled', 'boiler repair please', array( 'status' => 'refused', 'source' => 'none' ) );
 ok( 'wiring: no company selected means nothing is recorded', ! isset( $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'] ) );
 grant();
-TZFD_Scoped_Store::$company = $G;
+TZFD_Local_Business::$id = $G;
 do_action( 'tzfd_ai_question_handled', 'Do you do boiler repair?', array( 'status' => 'answered', 'source' => 'approved_rule' ) );
 $rep = TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() );
 ok( 'wiring: approved-rule answer counts as handled, not as a gap', $rep['total'] === 1 && $rep['unanswered'] === 0 );
@@ -321,9 +321,9 @@ ok( 'wiring: offline proxy fallback (refusal) makes no hosted call', hosted_call
 do_action( 'tzfd_ai_question_handled', 'Where are you based?', array( 'status' => 'refused', 'source' => 'none' ) );
 $rep = TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() );
 ok( 'dedupe: the same unanswered question inside the window adds to total only', $rep['total'] === 5 && $rep['unanswered'] === 3 );
-TZFD_Scoped_Store::$company = 0;
+TZFD_Local_Business::$id = 0;
 TZFD_Ai_Gap_Detection::on_handled( 'x', array( 'status' => 'answered', 'source' => 'approved_rule' ) );
-TZFD_Scoped_Store::$company = $G;
+TZFD_Local_Business::$id = $G;
 $GLOBALS['tzfd_test_options']['tz_fd_ai_consent'] = array( 'granted' => false, 'at' => $T );
 $before = json_encode( $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'] ?? null );
 do_action( 'tzfd_ai_question_handled', 'boiler repair now', array( 'status' => 'refused', 'source' => 'none' ) );

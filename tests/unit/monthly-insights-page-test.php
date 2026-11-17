@@ -19,11 +19,8 @@ if ( ! function_exists( 'current_time' ) ) { function current_time( $type ) { re
 if ( ! function_exists( 'wp_date' ) ) { function wp_date( $format, $ts ) { return gmdate( $format, $ts ); } }
 if ( ! function_exists( 'add_submenu_page' ) ) { function add_submenu_page( ...$args ) { return true; } }
 if ( ! function_exists( 'wp_die' ) ) { function wp_die( $msg = '', $title = '', $args = array() ) { throw new RuntimeException( 'wp_die' ); } }
-if ( ! class_exists( 'TZFD_Scoped_Store' ) ) {
-	class TZFD_Scoped_Store {
-		public static $company = 7;
-		public static function company_id() { return self::$company; }
-	}
+if ( ! class_exists( 'TZFD_Local_Business', false ) ) {
+	class TZFD_Local_Business { public static $id = 7; public static function id() { return self::$id; } public static function default_id() { return 7; } }
 }
 
 $GLOBALS['tzfd_fail'] = 0;
@@ -69,12 +66,12 @@ mp_ok( 'page reads only the month window', '2026-10-01 00:00:00' === $db->args[2
 mp_ok( 'page output has no contact fields', false === stripos( $html, '@' ) );
 
 // Company without a valid scope: the page says so and shows no counts.
-TZFD_Scoped_Store::$company = 0;
+TZFD_Local_Business::$id = 0;
 ob_start();
 $M::render_page();
 $none = ob_get_clean();
 mp_ok( 'no company shows an error and no table', false !== strpos( $none, 'could not be built' ) && false === strpos( $none, '<table' ) );
-TZFD_Scoped_Store::$company = 7;
+TZFD_Local_Business::$id = 7;
 
 // Capability gate: a user without tz_fd_access is refused before any query runs.
 $GLOBALS['tzfd_test_caps'] = false;

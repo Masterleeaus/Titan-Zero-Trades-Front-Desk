@@ -26,13 +26,16 @@ final class TZFD_Lead_Intake {
     public static function shortcode() {
         if ( ! class_exists( 'TZFD_Scoped_Store' ) || (int) TZFD_Scoped_Store::company_id() < 1 ) { return ''; }
         require_once __DIR__ . '/class-tzfd-ui-graphics.php';
+        require_once __DIR__ . '/class-tzfd-public-form-assets.php';
+        TZFD_Public_Form_Assets::enqueue();
+        $req = TZFD_Public_Form_Assets::required_marker();
         $out = '<form class="tzfd-public-enquiry" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         $out .= '<input type="hidden" name="action" value="tzfd_public_enquiry">';
         $out .= wp_nonce_field( 'tzfd_public_enquiry', '_tzfd_enquiry_nonce', true, false );
-        $out .= '<label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' <input required maxlength="190" name="name" autocomplete="name"></label>';
-        $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'email', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . ' <input required type="email" maxlength="190" name="email" autocomplete="email"></label>';
+        $out .= '<label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <input required aria-required="true" maxlength="190" name="name" autocomplete="name"></label>';
+        $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'email', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <input required aria-required="true" type="email" maxlength="190" name="email" autocomplete="email"></label>';
         $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'phone', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Phone (optional)', 'titan-zero-trades-front-desk' ) . ' <input maxlength="60" name="phone" autocomplete="tel"></label>';
-        $out .= '<label>' . esc_html__( 'How can we help?', 'titan-zero-trades-front-desk' ) . ' <textarea required maxlength="5000" name="enquiry"></textarea></label>';
+        $out .= '<label>' . esc_html__( 'How can we help?', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <textarea required aria-required="true" maxlength="5000" name="enquiry"></textarea></label>';
         $out .= '<div class="tzfd-hp" aria-hidden="true" style="position:absolute;left:-9999px"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>';
         $out .= '<button type="submit">' . esc_html__( 'Send enquiry', 'titan-zero-trades-front-desk' ) . '</button></form>';
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.

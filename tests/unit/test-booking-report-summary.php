@@ -40,3 +40,9 @@ function tzfd_test_booking_report_summary() {
 	tzfd_throws( function () { TZFD_Booking_Reports::csv( array( 'customer' ), array() ); }, 'csv refuses a column outside the allowlist' );
 }
 
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

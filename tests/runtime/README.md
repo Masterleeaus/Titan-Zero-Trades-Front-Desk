@@ -30,7 +30,7 @@ not counted as a pass).
 | `runtime-tests.php` | Privacy export and erase, and signed missed-call requests (21 checks). |
 | `http-auth-tests.sh` | Unauthenticated refusals, plus logged-in admin and subscriber checks for REST nonce and capability. A route that is not registered is reported as FAIL, since a 404 there exercises no authorization. Set `SECRET` to the stored missed-call inbound secret to also check that a valid signature is accepted once and its replay refused. |
 | `uninstall-wipe-check.php` | Destructive: opt-in uninstall (`TZ_DELETE_DATA_ON_UNINSTALL`), run in its own process. |
-| `upgrade-from-3.0.128.sh` | Installs v3.0.128 from git (`git archive`), seeds bookings and settings, swaps in this checkout, reactivates, verifies, then downgrades and verifies again. |
+| `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
 ## Last recorded results (2026-11-16, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11, WP-CLI 2.12.0)
@@ -50,7 +50,7 @@ not counted as a pass).
 - Oversell through the public form (A18), and customer cancel and reschedule end to end (B13): the full submission
   pipeline and the mail capture are not driven. The primitives (capacity lock, hold validation, tokens, compare-and-swap)
   are tested.
-- Reminder dispatch and delivery (C11): sends through a transport; no live provider in this harness.
+- Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.
 - Uninstall with opt-in (F4): covered by `uninstall-wipe-check.php`, which runs as a separate process.
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.
 - PHP 8.1, 8.2, 8.4 and other WordPress versions: only PHP 8.3.6 and WordPress 7.1.4 are provisioned.

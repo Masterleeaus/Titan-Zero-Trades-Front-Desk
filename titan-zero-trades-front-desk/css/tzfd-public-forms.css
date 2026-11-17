@@ -1,0 +1,144 @@
+/* Titan Zero Trades: Front Desk. Public enquiry and callback forms only (.tzfd-public-enquiry, .tzfd-callback-form).
+   Loaded by includes/class-tzfd-public-form-assets.php when one of these shortcodes is rendered. Nothing here targets the page or the theme.
+   Labels inherit the theme's text colour. Inputs carry their own background and text colour so they stay readable on light and dark themes. */
+
+.tzfd-public-enquiry,
+.tzfd-callback-form {
+    box-sizing: border-box;
+    max-width: 36rem;
+    margin: 1rem 0;
+}
+
+.tzfd-public-enquiry *,
+.tzfd-public-enquiry *::before,
+.tzfd-public-enquiry *::after,
+.tzfd-callback-form *,
+.tzfd-callback-form *::before,
+.tzfd-callback-form *::after {
+    box-sizing: border-box;
+}
+
+.tzfd-public-enquiry > label,
+.tzfd-callback-form > label {
+    display: block;
+    margin: 0 0 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.tzfd-public-enquiry > label > svg,
+.tzfd-callback-form > label > svg {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 0.35rem;
+}
+
+.tzfd-public-enquiry > label > input:not([type="checkbox"]):not([type="hidden"]),
+.tzfd-public-enquiry > label > textarea,
+.tzfd-callback-form > label > input:not([type="checkbox"]):not([type="hidden"]),
+.tzfd-callback-form > label > textarea {
+    display: block;
+    width: 100%;
+    margin-top: 0.35rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid #6b7280;
+    border-radius: 4px;
+    background: #ffffff;
+    color: #1d2327;
+    font: inherit;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
+.tzfd-public-enquiry > label > textarea,
+.tzfd-callback-form > label > textarea {
+    min-height: 7rem;
+    resize: vertical;
+}
+
+.tzfd-public-enquiry > label > input:focus,
+.tzfd-public-enquiry > label > textarea:focus,
+.tzfd-callback-form > label > input:focus,
+.tzfd-callback-form > label > textarea:focus,
+.tzfd-public-enquiry > label > input[type="checkbox"]:focus,
+.tzfd-callback-form > label > input[type="checkbox"]:focus {
+    outline: 3px solid #1a56db;
+    outline-offset: 1px;
+}
+
+/* The consent checkbox sits beside its wording, not under a label heading. The wording and the marker stay one inline run. */
+.tzfd-callback-form > label:has(> input[type="checkbox"]) {
+    position: relative;
+    padding-left: 1.75rem;
+    font-weight: 400;
+}
+
+.tzfd-callback-form > label > input[type="checkbox"] {
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    width: 1.1rem;
+    height: 1.1rem;
+    margin: 0;
+}
+
+/* Visible required marker. Text, not colour alone. */
+.tzfd-required-marker {
+    font-weight: 400;
+    font-size: 0.9em;
+    white-space: nowrap;
+}
+
+.tzfd-public-enquiry > button,
+.tzfd-callback-form > button {
+    display: inline-block;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border: 0;
+    border-radius: 4px;
+    background: #1a56db;
+    color: #ffffff;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.tzfd-public-enquiry > button:focus,
+.tzfd-callback-form > button:focus {
+    outline: 3px solid #1d2327;
+    outline-offset: 2px;
+}
+
+/* Dark OS or browser preference: keep the input fields dark with light text. */
+@media (prefers-color-scheme: dark) {
+    .tzfd-public-enquiry > label > input:not([type="checkbox"]):not([type="hidden"]),
+    .tzfd-public-enquiry > label > textarea,
+    .tzfd-callback-form > label > input:not([type="checkbox"]):not([type="hidden"]),
+    .tzfd-callback-form > label > textarea {
+        border-color: #9ca3af;
+        background: #111827;
+        color: #f9fafb;
+    }
+}
+
+/* Narrow screens: fields take the full width, and text is 16px so iOS does not zoom on focus. */
+@media (max-width: 479px) {
+    .tzfd-public-enquiry,
+    .tzfd-callback-form {
+        max-width: 100%;
+    }
+
+    .tzfd-public-enquiry > label > input:not([type="checkbox"]):not([type="hidden"]),
+    .tzfd-public-enquiry > label > textarea,
+    .tzfd-callback-form > label > input:not([type="checkbox"]):not([type="hidden"]),
+    .tzfd-callback-form > label > textarea {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .tzfd-public-enquiry > label > textarea,
+    .tzfd-callback-form > label > textarea {
+        min-height: 7rem;
+    }
+}

@@ -70,9 +70,31 @@ final class TZFD_FAQ_Search {
         $this->site     = isset( $options['site'] ) ? (int) $options['site'] : TZFD_Answer_Cache::site_id();
     }
 
-    /** Knowledge version used for cache keys: registry version plus the fingerprint of servable facts. */
+    /**
+     * Knowledge version used for cache keys: registry version, fingerprint of servable facts, and the
+     * AI knowledge builder version (#39). A builder publish, edit or rollback therefore changes the key,
+     * so cached answers and the vector index never outlive the text they were built from.
+     */
     public function knowledge_version() {
-        return 'r' . $this->faq->version() . '.f' . $this->facts->fingerprint();
+        return 'r' . $this->faq->version() . '.f' . $this->facts->fingerprint() . '.k' . $this->builder_version();
+    }
+
+    /** Version of the builder's published text for this company. 0 when the builder is not loaded. */
+    private function builder_version() {
+        return class_exists( 'TZFD_Ai_Knowledge_Builder', false ) ? (int) TZFD_Ai_Knowledge_Builder::version( $this->faq->company() ) : 0;
+    }
+
+    /**
+     * Published builder entries (#39), shaped like FAQ entries. Only approved, published text is included.
+     * The builder has no language field, so its entries are served for the default language only.
+     */
+    private function builder_entries( $lang ) {
+        if ( 'en' !== $lang || ! class_exists( 'TZFD_Ai_Knowledge_Builder', false ) ) { return array(); }
+        $out = array();
+        foreach ( TZFD_Ai_Knowledge_Builder::published( $this->faq->company() ) as $e ) {
+            $out[ (string) $e['id'] ] = array( 'question' => $e['question'], 'answer' => $e['answer'], 'keywords' => array(), 'lang' => 'en' );
+        }
+        return $out;
     }
 
     /**
@@ -106,15 +128,25 @@ final class TZFD_FAQ_Search {
 
     /**
      * Builds the approved-entry vector index with the hosted provider. Manager only. Entries whose text has not
-     * changed since the last run are skipped. This is the only path that calls the provider for FAQ text.
+     * changed since the last run are skipped, and vectors for entries no longer approved are pruned. This is the
+     * only path that calls the provider for FAQ text.
      *
-     * @return array{ok:bool,code:string,embedded:int}
+     * @return array{ok:bool,code:string,embedded:int,pruned:int}
      */
     public function index_entries() {
-        if ( ! $this->allowed() ) { return array( 'ok' => false, 'code' => 'forbidden', 'embedded' => 0 ); }
+        if ( ! $this->allowed() ) { return array( 'ok' => false, 'code' => 'forbidden', 'embedded' => 0, 'pruned' => 0 ); }
         $index    = $this->read_index();
+        $approved = $this->faq->approved( 'en' );
         $embedded = 0;
-        foreach ( $this->faq->approved( 'en' ) as $id => $e ) {
+        $pruned   = 0;
+
+        // Vectors for deleted or withdrawn entries are removed, so the index never holds an answer that is no longer approved.
+        foreach ( array_diff( array_keys( $index ), array_keys( $approved ) ) as $stale ) {
+            unset( $index[ $stale ] );
+            $pruned++;
+        }
+
+        foreach ( $approved as $id => $e ) {
             $hash = self::entry_hash( $e );
             if ( isset( $index[ $id ]['hash'] ) && hash_equals( $index[ $id ]['hash'], $hash ) ) { continue; }
             try {
@@ -122,12 +154,16 @@ final class TZFD_FAQ_Search {
             } catch ( \Throwable $t ) {
                 $vec = null;
             }
-            if ( ! is_array( $vec ) || ! $vec ) { return array( 'ok' => false, 'code' => 'proxy_unavailable', 'embedded' => $embedded ); }
+            if ( ! is_array( $vec ) || ! $vec ) {
+                // Keep the vectors already built in this run so the next attempt only embeds what is still missing.
+                $this->storage->write( self::VECTOR_KEY, $this->faq->company(), $index );
+                return array( 'ok' => false, 'code' => 'proxy_unavailable', 'embedded' => $embedded, 'pruned' => $pruned );
+            }
             $index[ $id ] = array( 'hash' => $hash, 'vector' => array_map( 'floatval', $vec ) );
             $embedded++;
         }
         $this->storage->write( self::VECTOR_KEY, $this->faq->company(), $index );
-        return array( 'ok' => true, 'code' => 'indexed', 'embedded' => $embedded );
+        return array( 'ok' => true, 'code' => 'indexed', 'embedded' => $embedded, 'pruned' => $pruned );
     }
 
     /**
@@ -153,7 +189,7 @@ final class TZFD_FAQ_Search {
         $q_intent = TZFD_Intent_Engine::confident_intent( $query );
 
         $scored = array();
-        foreach ( $this->faq->approved( $lang ) as $id => $e ) {
+        foreach ( $this->faq->approved( $lang ) + $this->builder_entries( $lang ) as $id => $e ) {
             $s = $this->score( $q_tokens, $q_neg, $q_intent, $e );
             if ( $s >= self::CLARIFY_FLOOR ) {
                 $scored[] = array( 'id' => $id, 'score' => $s, 'entry' => $e );

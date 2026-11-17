@@ -132,7 +132,7 @@ final class TZFD_Admin_Menu {
     public static function add_pages() {
         // Own the Front Desk menu; retain all existing page slugs and callbacks.
         add_menu_page(
-            __( 'Titan Front Desk', 'titan-zero-trades-front-desk' ),
+            __( 'Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk' ),
             __( 'Front Desk', 'titan-zero-trades-front-desk' ),
             'tz_fd_access', self::PARENT,
             array( __CLASS__, 'route_front_desk' ),

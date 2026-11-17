@@ -26,7 +26,7 @@ require_once __DIR__ . '/agents/class-tzfd-orchestrator.php';
  *
  * Hooks:
  *   filter tz_fd_ai_create_booking        creates a booking (AI assistant)
- *   filter tz_fd_pipeline_source          label for where the booking came from, e.g. "pro:whatsapp"
+ *   filter tz_fd_pipeline_source          label for where the booking came from, e.g. "whatsapp:inbound"
  *   filter tz_fd_pipeline_autonomous      true to approve automatically once the slot check passes
  *   filter tz_fd_pipeline_slot_capacity   places per slot (default 1)
  *   filter tz_fd_pipeline_duration        slot length in minutes (default 60)

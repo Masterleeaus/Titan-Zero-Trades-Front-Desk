@@ -28,12 +28,54 @@ final class TZFD_Customer_Rescheduling {
         add_action('admin_post_nopriv_'.self::ACTION, array($this,'handle_public_request'));
     }
 
-    public static function token($id, $tz_form, $email, $version, $secret) {
+    /** Reschedule links are valid for this long from issue, the same as cancellation links. */
+    const TOKEN_TTL = 1209600; // 14 days
+
+    /**
+     * Issues a reschedule link for now: the token plus the issue time and the expiry 14 days later.
+     * Returns null when the inputs are not usable, so no link is ever built without a signature.
+     */
+    public static function issue($id, $tz_form, $email, $version, $secret, $now=null) {
+        $issued=null===$now?time():(int)$now;
+        $token=self::token($id,$tz_form,$email,$version,$secret,$issued,$issued+self::TOKEN_TTL);
+        return $token==='' ? null : array('token'=>$token,'issued'=>$issued,'expires'=>$issued+self::TOKEN_TTL);
+    }
+
+    /** True while a link issued at $issued is still inside its fixed 14 days. Viewing never changes $issued. */
+    public static function is_live($issued, $now=null) {
+        $issued=(int)$issued; $now=null===$now?time():(int)$now;
+        return $issued>0 && $now<=$issued+self::TOKEN_TTL;
+    }
+
+    /**
+     * HMAC over booking, form, e-mail, booking version, issue time and expiry. A token without an issue time,
+     * or whose expiry is not exactly 14 days after its issue time, is not produced.
+     */
+    public static function token($id, $tz_form, $email, $version, $secret, $issued=0, $expires=0) {
         $id=TZFD_Customer_Cancellation::normalize_booking_id($id);
         $tz_form=TZFD_Customer_Cancellation::normalize_booking_id($tz_form);
+        $issued=self::normalize_time($issued); $expires=self::normalize_time($expires);
         if (!$id || !$tz_form || !is_string($email) || !filter_var($email,FILTER_VALIDATE_EMAIL) ||
-            !is_string($version) || !preg_match('/^[a-f0-9]{64}$/D',$version) || !is_string($secret) || $secret==='') { return ''; }
-        return hash_hmac('sha256','titan-zero-trades-front-desk/customer-reschedule/v1|'.$id.'|'.$tz_form.'|'.strtolower($email).'|'.$version,$secret);
+            !is_string($version) || !preg_match('/^[a-f0-9]{64}$/D',$version) || !is_string($secret) || $secret==='' ||
+            !$issued || $expires!==$issued+self::TOKEN_TTL) { return ''; }
+        return hash_hmac('sha256','titan-zero-trades-front-desk/customer-reschedule/v2|'.$id.'|'.$tz_form.'|'.strtolower($email).'|'.$version.'|'.$issued.'|'.$expires,$secret);
+    }
+
+    /** True only for a well-formed token, issued for this booking version, that has not expired. */
+    public static function verify_token($id, $tz_form, $email, $token, $version, $secret, $issued, $expires, $now=null) {
+        if (!is_string($token) || !preg_match('/^[a-f0-9]{64}$/D',$token)) { return false; }
+        $issued=self::normalize_time($issued); $expires=self::normalize_time($expires);
+        $now=null===$now?time():(int)$now;
+        // A link issued well in the future (beyond a small clock-skew allowance) is refused, as is one past its expiry.
+        if (!$issued || !$expires || $issued>$now+300 || $expires<$now) { return false; }
+        $expected=self::token($id,$tz_form,$email,$version,$secret,$issued,$expires);
+        return '' !== $expected && hash_equals($expected,$token);
+    }
+
+    /** Accepts a positive integer or a string of digits, and returns it as an int, or 0. */
+    public static function normalize_time($value) {
+        if (!is_int($value) && !(is_string($value) && ctype_digit($value))) { return 0; }
+        return (int)$value>0 ? (int)$value : 0;
     }
 
     public static function decode($raw) {
@@ -74,10 +116,10 @@ final class TZFD_Customer_Rescheduling {
         try { $tz_data=self::decode($row->posted_data); $this->reconcile($engine,$row,$tz_data,null,null); }
         catch (Throwable $error) { return $tz_message; }
         $version=self::version($row);
-        $token=self::token($row->id,$row->formid,$row->notifyto,$version,wp_salt('auth'));
-        if ($token==='') { return $tz_message; }
+        $link=self::issue($row->id,$row->formid,$row->notifyto,$version,wp_salt('auth'));
+        if (null===$link) { return $tz_message; }
         $url=add_query_arg(array('action'=>self::ACTION,'booking_id'=>(int)$row->id,'form_id'=>(int)$row->formid,
-            'version'=>$version,'token'=>$token),admin_url('admin-post.php'));
+            'version'=>$version,'issued'=>$link['issued'],'expires'=>$link['expires'],'token'=>$link['token']),admin_url('admin-post.php'));
         $tz_label=__( 'Change appointment time', 'titan-zero-trades-front-desk' );
         return $tz_message.($engine->get_option('cu_emailformat','text')==='html'
             ? '<p><a href="'.esc_url($url).'">'.esc_html($tz_label).'</a></p>' : "\n\n".$tz_label.":\n".$url);
@@ -192,7 +234,8 @@ final class TZFD_Customer_Rescheduling {
         $id=TZFD_Customer_Cancellation::normalize_booking_id($input['booking_id']??null);
         $tz_form=TZFD_Customer_Cancellation::normalize_booking_id($input['form_id']??null);
         $version=$input['version']??''; $token=$input['token']??'';
-        if (!$id || !$tz_form || !is_string($version) || !is_string($token) || !preg_match('/^[a-f0-9]{64}$/D',$token)) { return $this->result(404,__( 'This appointment change link is invalid.', 'titan-zero-trades-front-desk' )); }
+        $issued=self::normalize_time($input['issued']??null); $expires=self::normalize_time($input['expires']??null);
+        if (!$id || !$tz_form || !is_string($version) || !is_string($token) || !preg_match('/^[a-f0-9]{64}$/D',$token) || !$issued || !$expires) { return $this->result(404,__( 'This appointment change link is invalid.', 'titan-zero-trades-front-desk' )); }
         // Public signed-link lookups must fail closed even when a database adapter
         // throws, not just when wpdb reports last_error after returning.
         try {
@@ -202,9 +245,9 @@ final class TZFD_Customer_Rescheduling {
             return $this->result(503,__( 'The booking could not be read. Please try again.', 'titan-zero-trades-front-desk' ));
         }
         if (!is_object($row) || self::recipient($row->notifyto ?? null)==='') { return $this->result(404,__( 'This appointment change link is invalid.', 'titan-zero-trades-front-desk' )); }
-        try { $expected=self::token($id,$tz_form,$row->notifyto,$version,wp_salt('auth')); }
+        try { $valid=self::verify_token($id,$tz_form,$row->notifyto,$token,$version,wp_salt('auth'),$issued,$expires); }
         catch (Throwable $tz_error) { return $this->result(503,__( 'Appointment verification is temporarily unavailable.', 'titan-zero-trades-front-desk' )); }
-        if ($expected==='' || !hash_equals($expected,$token)) { return $this->result(404,__( 'This appointment change link is invalid.', 'titan-zero-trades-front-desk' )); }
+        if (!$valid) { return $this->result(404,__( 'This appointment change link is invalid.', 'titan-zero-trades-front-desk' )); }
         // The HMAC above authenticates this booking/form/customer link. A
         // nopriv request may have no active Workspace tenant session; derive
         // its company from the form instead, rejecting explicit mismatches.
@@ -249,7 +292,7 @@ final class TZFD_Customer_Rescheduling {
         try {
             $engine->setId($tz_form); $engine->option_buffered_id=-1; $engine->option_buffered_item=false;
             $base=$this->reconcile($engine,$row,$tz_data,null,null);
-            $context=array('booking_id'=>$id,'form_id'=>$tz_form,'version'=>$version,'token'=>$token,
+            $context=array('booking_id'=>$id,'form_id'=>$tz_form,'version'=>$version,'issued'=>$issued,'expires'=>$expires,'token'=>$token,
                 'date'=>$base['original']['date'],'start'=>substr($base['original']['slot'],0,5));
             if ($method==='GET' && ($input['completed']??null)==='1') {
                 if ($tz_date===$base['original']['date'] && $start===substr($base['original']['slot'],0,5)) {
@@ -367,7 +410,7 @@ final class TZFD_Customer_Rescheduling {
     /** Reads only the fields this handler uses, one at a time, each sanitized. Missing or non-text values are left out. */
     private static function read_fields($source) {
         $input=array();
-        foreach (array('booking_id','form_id','version','token','date','start','completed','confirm_reschedule','notice','notice_token','_wpnonce') as $field) {
+        foreach (array('booking_id','form_id','version','issued','expires','token','date','start','completed','confirm_reschedule','notice','notice_token','_wpnonce') as $field) {
             if (!isset($source[$field])) { continue; }
             $value=wp_unslash($source[$field]);
             if (is_string($value)) { $input[$field]=sanitize_text_field($value); }
@@ -419,7 +462,7 @@ final class TZFD_Customer_Rescheduling {
         // Successful POSTs leave no sensitive POST history entry for Back/Refresh to resubmit.
         // The GET completion view verifies the same signed identity and the saved receipt again.
         if ($method==='POST' && $result['status']===200 && !$result['context'] && !headers_sent()) {
-            $args=array_intersect_key($input,array_flip(array('booking_id','form_id','version','token','date','start')));
+            $args=array_intersect_key($input,array_flip(array('booking_id','form_id','version','issued','expires','token','date','start')));
             $args['action']=self::ACTION;$args['completed']='1';
             if ($result['mail_failed']) {$args['notice']='mail_failed';$args['notice_token']=self::completion_signature($args['token']);}
             if ($result['followup_failed']) {$args['notice']='followup_failed';$args['notice_token']=self::completion_signature($args['token'],'followup_failed');}
@@ -438,7 +481,7 @@ final class TZFD_Customer_Rescheduling {
             $c=$result['context'];
             echo '<p>'.esc_html__( 'Times use the WordPress site timezone. Opening hours, closed dates, booking limits, daylight-saving transitions, capacity and blocks are checked again on confirmation.', 'titan-zero-trades-front-desk' ).'</p>';
             echo '<form method="'.($result['preview']?'post':'get').'" action="'.esc_url(admin_url('admin-post.php')).'">';
-            foreach (array('action'=>self::ACTION,'booking_id'=>$c['booking_id'],'form_id'=>$c['form_id'],'version'=>$c['version'],'token'=>$c['token']) as $tz_key=>$tz_value) {
+            foreach (array('action'=>self::ACTION,'booking_id'=>$c['booking_id'],'form_id'=>$c['form_id'],'version'=>$c['version'],'issued'=>$c['issued'],'expires'=>$c['expires'],'token'=>$c['token']) as $tz_key=>$tz_value) {
                 echo '<input type="hidden" name="'.esc_attr($tz_key).'" value="'.esc_attr((string)$tz_value).'">';
             }
             echo '<p><label for="tzfd-date">'.esc_html__( 'New appointment date', 'titan-zero-trades-front-desk' ).'</label> <input required type="date" id="tzfd-date" name="date" value="'.esc_attr($c['date']).'"'.($result['preview']?' readonly':'').'></p>';
@@ -447,7 +490,7 @@ final class TZFD_Customer_Rescheduling {
             echo $result['preview']?'<button type="submit" name="confirm_reschedule" value="1">'.esc_html__( 'Confirm appointment change', 'titan-zero-trades-front-desk' ).'</button>':'<button type="submit">'.esc_html__( 'Preview appointment change', 'titan-zero-trades-front-desk' ).'</button>';
             echo '</form>';
             if ($result['preview']) {
-                $url=add_query_arg(array('action'=>self::ACTION,'booking_id'=>$c['booking_id'],'form_id'=>$c['form_id'],'version'=>$c['version'],'token'=>$c['token']),admin_url('admin-post.php'));
+                $url=add_query_arg(array('action'=>self::ACTION,'booking_id'=>$c['booking_id'],'form_id'=>$c['form_id'],'version'=>$c['version'],'issued'=>$c['issued'],'expires'=>$c['expires'],'token'=>$c['token']),admin_url('admin-post.php'));
                 echo '<p><a href="'.esc_url($url).'">'.esc_html__( 'Choose a different time', 'titan-zero-trades-front-desk' ).'</a></p>';
             }
         }

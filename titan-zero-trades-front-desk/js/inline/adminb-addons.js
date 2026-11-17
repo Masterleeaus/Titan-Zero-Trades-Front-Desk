@@ -22,4 +22,17 @@
     for (var i = 0; i < buttons.length; i++) {
         buttons[i].addEventListener('click', saveAddons);
     }
+
+    // Settings and Details links point at an add-on panel: open that panel, then bring it into view.
+    function openPanelFromHash() {
+        var id = window.location.hash ? window.location.hash.slice(1) : '';
+        if (!id || id.indexOf('tzfdad-addon-') !== 0) { return; }
+        var panel = document.getElementById(id);
+        if (panel && panel.tagName === 'DETAILS') {
+            panel.open = true;
+            panel.scrollIntoView({ block: 'start' });
+        }
+    }
+    window.addEventListener('hashchange', openPanelFromHash);
+    openPanelFromHash();
 })();

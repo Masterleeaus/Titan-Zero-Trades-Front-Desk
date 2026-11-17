@@ -320,7 +320,7 @@ check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['to
 
 // 18. Tenant ceiling: counts at the contract budget ceilings, no money assumed.
 $t = $C::tenant_ceiling( 100 );
-check( 'tenant ceiling scales each budget by tenant count', 20000 === $t['max_units_by_budget']['model_fallback'] && 80000 === $t['max_units_by_budget']['embedding'] && 102000 === $t['max_units_total'] );
+check( 'tenant ceiling scales each budget by tenant count (contract figures)', 20000 === $t['max_units_by_budget']['model_fallback'] && 80000 === $t['max_units_by_budget']['embedding'] && 102000 === $t['max_units_total'] );
 check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );
 // 19. Consent is bound to the disclosure version; an old consent does not count.
 reset_state();

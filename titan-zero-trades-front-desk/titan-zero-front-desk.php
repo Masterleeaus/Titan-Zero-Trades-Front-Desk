@@ -101,6 +101,14 @@ if ( ! function_exists( 'titan_zero_front_desk_translate_legacy_value' ) ) {
     }
 }
 
+/**
+ * Loads translations from the plugin's languages folder on init.
+ */
+function tzfd_load_textdomain() {
+    load_plugin_textdomain( 'titan-zero-trades-front-desk', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+}
+add_action( 'init', 'tzfd_load_textdomain' );
+
 //define("TZFD_DYNAMIC_LOADING", true);
 
 // Front-end assets must be enqueued through WordPress; legacy in-content script printing is disabled.

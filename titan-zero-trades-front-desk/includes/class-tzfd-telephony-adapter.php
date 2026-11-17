@@ -80,6 +80,11 @@ final class TZFD_Telephony_Adapter {
         if ( null === $event ) {
             return new WP_Error( 'tzfd_telephony_unauthorised', __( 'Invalid telephony request.', 'titan-zero-trades-front-desk' ), array( 'status' => 401 ) );
         }
+        // Wrong-tenant denial happens before any write. A verified credential for another business must not
+        // create call or task rows on this site (the call lifecycle write below uses the credential's company).
+        if ( ! class_exists( 'TZFD_Scoped_Store' ) || (int) TZFD_Scoped_Store::company_id() !== (int) $event['company_id'] ) {
+            return new WP_Error( 'tzfd_missed_task_tenant', __( 'This request is not for the active business.', 'titan-zero-trades-front-desk' ), array( 'status' => 403 ) );
+        }
         // Replay window: the signature is claimed atomically before the write, so two identical requests that
         // arrive together cannot both write. A failed write releases the claim so the provider can retry.
         require_once __DIR__ . '/class-tzfd-signed-request.php';

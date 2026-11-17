@@ -367,12 +367,14 @@ final class TZFD_Client_Portal {
             exit;
         }
 
+        // One sign-in email per address per THROTTLE_TTL. The claim is one atomic statement, so parallel posts
+        // for one address cannot each send an email.
+        require_once __DIR__ . '/class-tzfd-rate-limit.php';
         $throttle = self::token_key( self::THROTTLE_PREFIX, md5( $email ) );
-        if ( false === get_transient( $throttle ) ) {
-            set_transient( $throttle, 1, self::THROTTLE_TTL );
+        if ( TZFD_Rate_Limit::allow( $throttle, 1, self::THROTTLE_TTL ) ) {
             $records = self::records_for( $email );
             if ( empty( $records['booking_available'] ) ) {
-                delete_transient( $throttle );
+                TZFD_Rate_Limit::release( $throttle );
                 wp_safe_redirect( add_query_arg( self::PARAM_NOTICE, 'unavailable', self::portal_url() ) );
                 exit;
             }

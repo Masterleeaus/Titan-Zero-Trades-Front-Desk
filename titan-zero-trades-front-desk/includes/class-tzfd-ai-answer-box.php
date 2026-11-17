@@ -200,20 +200,15 @@ final class TZFD_AI_Answer_Box {
 	/**
 	 * Count this visitor request against the unauthenticated rate limit.
 	 *
-	 * Counting is best-effort (transients are not atomic), so it limits casual abuse and does not
-	 * guarantee an exact ceiling under parallel requests.
+	 * The count is one atomic statement (TZFD_Rate_Limit), so parallel requests cannot exceed RATE_LIMIT
+	 * in one window. Each allowed request is a paid model call, so the ceiling is exact.
 	 *
 	 * @param string $visitor_key Hashed visitor key.
 	 * @return bool True when the request is allowed.
 	 */
 	public static function allow_request( $visitor_key ) {
-		$key   = self::RATE_PREFIX . md5( $visitor_key );
-		$count = (int) get_transient( $key );
-		if ( $count >= self::RATE_LIMIT ) {
-			return false;
-		}
-		set_transient( $key, $count + 1, self::RATE_WINDOW );
-		return true;
+		require_once __DIR__ . '/class-tzfd-rate-limit.php';
+		return TZFD_Rate_Limit::allow( self::RATE_PREFIX . md5( $visitor_key ), self::RATE_LIMIT, self::RATE_WINDOW );
 	}
 
 	/**
@@ -289,12 +284,10 @@ final class TZFD_AI_Answer_Box {
 	 * @return array
 	 */
 	private static function generative_fallback( $norm, $visitor_key, $lang, array $refusal ) {
-		$key   = self::TURNS_PREFIX . md5( $visitor_key );
-		$turns = (int) get_transient( $key );
-		if ( $turns >= self::FALLBACK_TURN_LIMIT ) {
+		require_once __DIR__ . '/class-tzfd-rate-limit.php';
+		if ( ! TZFD_Rate_Limit::allow( self::TURNS_PREFIX . md5( $visitor_key ), self::FALLBACK_TURN_LIMIT, self::RATE_WINDOW ) ) {
 			return $refusal;
 		}
-		set_transient( $key, $turns + 1, self::FALLBACK_WINDOW );
 
 		$text = apply_filters( 'tzfd_ai_generative_fallback', null, $norm, $lang );
 		if ( ! is_string( $text ) || '' === trim( $text ) ) {

@@ -51,6 +51,22 @@ final class TZFD_Uninstaller {
         'tzfd_addon_records',
     );
 
+    /** Credentials, link state, locks and drafts. Removed on every uninstall, even without the data opt-in (ported from main). */
+    const ALWAYS_OPTIONS = array(
+        'tzfd_ai_connector_secret',
+        'tzfd_ai_connector',
+        'tzfd_hosted_ai_consent',
+        'tz_fd_ai_consent',
+        'tz_fd_ai_api_key',
+        'tz_fd_ai_local_key',
+        'tzfd_ai_budget_lock',
+        'tz_fd_migration_lock_v1',
+        'tz_fd_setup_draft',
+    );
+
+    /** Earlier chat table kept by the legacy AI data class. Dropped only on opt-in (ported from main). */
+    const LEGACY_CHAT_TABLE = 'tz_ai_conversations';
+
     /** Option that stores the cursor of a background worker. Always removed. */
     const CURSOR_OPTION = 'tzfd_customer_event_company_cursor_v1';
 
@@ -115,6 +131,7 @@ final class TZFD_Uninstaller {
         self::delete_transients( $wpdb );
         delete_option( self::CURSOR_OPTION );
         self::delete_invitation_files();
+        self::delete_always_options( $wpdb );
 
         if ( true !== $opt_in ) { return; }
 
@@ -122,7 +139,24 @@ final class TZFD_Uninstaller {
         foreach ( self::tables_to_drop() as $bare ) {
             $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . $bare ) );
         }
+        $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . self::LEGACY_CHAT_TABLE ) );
         self::delete_options( $wpdb );
+        self::delete_user_notice_flags( $wpdb );
+    }
+
+    /**
+     * Credentials, link state and locks: always removed by exact name, so a sealed AI secret never outlives the plugin.
+     * Rate-limit counters (tzfd_rl_ rows) are removed with the other settings on opt-in.
+     */
+    private static function delete_always_options( $wpdb ) {
+        foreach ( self::ALWAYS_OPTIONS as $option ) {
+            delete_option( $option );
+        }
+    }
+
+    /** Dismissed admin-notice flags are per-user meta. Only the plugin's own keys are removed. */
+    private static function delete_user_notice_flags( $wpdb ) {
+        $wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE meta_key LIKE %s', $wpdb->usermeta, $wpdb->esc_like( 'tz_fd_notice_dismissed_' ) . '%' ) );
     }
 
     /** Remove every queued event for each hook the plugin schedules. */

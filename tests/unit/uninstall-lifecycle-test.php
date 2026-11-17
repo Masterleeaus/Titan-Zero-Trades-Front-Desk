@@ -23,6 +23,7 @@ function t_ok( $cond, $msg ) {
 class T_Fake_WPDB {
 	public $prefix = 'wp_';
 	public $options = 'wp_options';
+	public $usermeta = 'wp_usermeta';
 	public $blogs = 'wp_blogs';
 	public $queries = array();
 	public $throw_on_drop_for = null;

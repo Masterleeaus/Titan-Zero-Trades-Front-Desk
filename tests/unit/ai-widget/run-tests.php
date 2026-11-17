@@ -42,6 +42,8 @@ function wp_enqueue_style( ...$a ) { $GLOBALS['t_styles'][] = $a[0]; }
 function add_query_arg( $args, $url ) { return $url . '?' . http_build_query( $args ); }
 
 $inc = __DIR__ . '/../../../titan-zero-trades-front-desk/includes/';
+require_once __DIR__ . '/../fixtures/fake-rate-limit-wpdb.php';
+$GLOBALS['wpdb'] = new TZ_Fake_Rate_Limit_Wpdb(); // The rate limiter counts in wp_options through $wpdb.
 require_once $inc . 'class-tzfd-ai-widget.php';
 
 $GLOBALS['fail'] = 0;
@@ -53,6 +55,7 @@ function reset_state() {
 	$GLOBALS['t_filters'] = array();
 	$GLOBALS['t_options'] = array();
 	$GLOBALS['t_transients'] = array();
+	$GLOBALS['wpdb']->rows = array();
 }
 
 $faq = array(
@@ -116,7 +119,7 @@ $a = TZFD_AI_Answer_Box::answer( 'can you help with a leaking roof gutter', 'vis
 $b = TZFD_AI_Answer_Box::answer( 'can you help with a broken fence panel', 'visitor-A' );
 for ( $i = 2; $i < 20; $i++ ) { TZFD_AI_Answer_Box::answer( "can you help with fallback job $i", 'visitor-A' ); }
 // Simulate the 10-minute general request window passing, so only the hourly fallback budget is tested here.
-unset( $GLOBALS['t_transients'][ TZFD_AI_Answer_Box::RATE_PREFIX . md5( 'visitor-A' ) ] );
+unset( $GLOBALS['wpdb']->rows[ TZFD_Rate_Limit::option_name( TZFD_AI_Answer_Box::RATE_PREFIX . md5( 'visitor-A' ) ) ] );
 $c = TZFD_AI_Answer_Box::answer( 'can you help with a blocked chimney flue', 'visitor-A' );
 check( 'first two generative turns are answered by model', 'model' === $a['source'] && 'model' === $b['source'], json_encode( array( $a, $b ) ) );
 check( 'twenty generative turns per hour allowed for one visitor, twenty-first refused', 'refused' === $c['status'] && 20 === $model_calls, "calls=$model_calls" );

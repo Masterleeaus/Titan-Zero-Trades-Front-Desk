@@ -29,7 +29,7 @@ Bookings, calendar, booking pages and phone answering that operates standalone w
 
 
 
-Front Desk has its own WordPress admin menu and can run standalone, without Titan Zero Trades: Front Desk.
+Front Desk has its own WordPress admin menu and can run standalone, without any other Titan Zero plugin.
 
 
 
@@ -104,7 +104,7 @@ Optional external industry presets are examples; native service setup does not r
 
 
 
-= Does Front Desk require Titan Zero Trades: Front Desk? =
+= Does this plugin require another Titan Zero plugin? =
 
 No. Front Desk has native business, customer and service storage. Workspace is an optional integration, not an installation dependency.
 
@@ -191,7 +191,7 @@ Scheduling & Enquiries Manager is one plugin. It does not install, load or requi
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 

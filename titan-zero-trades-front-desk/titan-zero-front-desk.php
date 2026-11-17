@@ -281,11 +281,14 @@ if ( ! function_exists( 'tz_fd_activate' ) ) {
         TZFD_Standalone_Runtime::boot();
         TZFD_Standalone_Runtime::install();
         tz_fd_boot();
-        // Slot holds have no automatic installer, so their table was never created. Install it here.
+        // Activation (and the reactivation that upgrades from 3.0.128) creates every plugin table without
+        // requiring a logged-in administrator, so a WP-CLI or unattended activation still gets the schema.
+        // Each step is idempotent (dbDelta or a checked CREATE), so running it again on reactivation is safe.
         if ( ! class_exists( 'TZFD_Slot_Holds' ) ) { require_once dirname( __FILE__ ) . '/includes/class-tzfd-slot-holds.php'; }
-        if ( class_exists( 'TZFD_Slot_Holds' ) ) { TZFD_Slot_Holds::install(); }
-        // Call lifecycle schema is an explicit, authorised install. Failures are shown as an admin notice.
-        // Reactivation is the retry path, so a stored failure from an earlier attempt is cleared first.
+        if ( class_exists( 'TZFD_Slot_Holds' ) ) { TZFD_Slot_Holds::create_schema(); }
+        if ( class_exists( 'TZFD_Booking_Action_Outbox' ) ) { TZFD_Booking_Action_Outbox::create_schema(); }
+        // Call lifecycle failures are shown as an admin notice. Reactivation is the retry path, so a stored
+        // failure from an earlier attempt is cleared first.
         delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
         TZFD_Call_Lifecycle::run_install();
         if ( class_exists( 'TZFD_Business_Schema' ) ) { TZFD_Business_Schema::run(); }

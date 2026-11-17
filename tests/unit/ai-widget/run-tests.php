@@ -22,7 +22,6 @@ function apply_filters( $hook, $value, ...$args ) {
 }
 function do_action( $hook, ...$args ) { return null; }
 function add_shortcode( $tag, $cb ) { $GLOBALS['t_shortcodes'][ $tag ] = $cb; }
-function do_action( $hook, ...$args ) { return null; }
 function get_option( $k, $d = false ) { return $GLOBALS['t_options'][ $k ] ?? $d; }
 function update_option( $k, $v, $autoload = null ) { $GLOBALS['t_options'][ $k ] = $v; return true; }
 function get_transient( $k ) { return $GLOBALS['t_transients'][ $k ] ?? false; }

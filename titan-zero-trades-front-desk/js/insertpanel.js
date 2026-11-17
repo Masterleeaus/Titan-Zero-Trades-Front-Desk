@@ -7,7 +7,7 @@ var tz_fd_appointments_fpanel = function($){
                 var myoptions = '';            
                 for (var i=0; i<formOptions.length; i++)
                     myoptions += '<option value="'+formOptions[i].value+'">'+formOptions[i].label+'</option>';
-          		$(' <div title="Titan Zero Trades: Front Desk"><div style="padding:20px;">'+
+          		$(' <div title="Scheduling & Enquiries Manager"><div style="padding:20px;">'+
           		   'Select Calendar:<br /><select id="tz_fd_calendar_sel'+tz_fd_counter+'" name="tz_fd_calendar_sel'+tz_fd_counter+'">'+myoptions+'</select>'+
           		   '</div></div>'
           		  ).dialog({

@@ -29,6 +29,7 @@ $wpdb->insert( $tz_probe, array( // phpcs:ignore WordPress.DB.DirectDatabaseQuer
 	'posted_data' => serialize( array( 'formid' => 1 ) ), 'data' => 'WIPE', 'whoadded' => '1', 'company_id' => 1, // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- posted_data must hold the plugin's own PHP-serialized format
 ) );
 update_option( 'tz_fd_wipe_probe', 'set' );
+update_option( 'tzfd_ai_connector_secret', 'probe-secret', false );
 
 $tz_before_owned = 0;
 foreach ( $tz_owned as $tz_bare ) {
@@ -48,7 +49,9 @@ foreach ( $tz_owned as $tz_bare ) {
 $tz_results[] = array( empty( $tz_still ), 'PASS', 'opt-in uninstall drops every table in TZFD_Tables::owned()' . ( $tz_still ? ' (still present: ' . implode( ',', $tz_still ) . ')' : '' ) );
 // Database row, not get_option(): the object cache would still answer after a direct DELETE.
 $tz_results[] = array( 0 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name=%s", 'tz_fd_wipe_probe' ) ), 'PASS', 'opt-in uninstall deletes plugin settings' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw options row count, bypasses the object cache
-$tz_results[] = array( $tz_exists( $wpdb->prefix . 'tzfd_local_customers' ), 'GAP', 'tzfd_local_customers is retained after an opt-in uninstall because it is outside TZFD_Tables::owned(); confirm whether customer records should be erased on opt-in' );
+$tz_results[] = array( ! $tz_exists( $wpdb->prefix . 'tzfd_local_customers' ), 'PASS', 'opt-in uninstall drops tzfd_local_customers (outside TZFD_Tables::owned(), listed in TZFD_Uninstaller)' );
+$tz_results[] = array( ! $tz_exists( $wpdb->prefix . 'tzfd_local_services' ), 'PASS', 'opt-in uninstall drops tzfd_local_services' );
+$tz_results[] = array( 0 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name=%s", 'tzfd_ai_connector_secret' ) ), 'PASS', 'opt-in uninstall deletes the AI connector secret option' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw options row count, bypasses the object cache
 
 foreach ( $tz_results as $tz_r ) {
 	list( $tz_ok, $tz_label, $tz_text ) = $tz_r;

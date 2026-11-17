@@ -134,6 +134,8 @@ add_action('tz_fd_process_data_insert_failed', array($tz_plugin, 'finish_capacit
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-cancellation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-rescheduling.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-client-portal.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-settings-extras.php';
+TZFD_Settings_Extras::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-status-update-emails.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-records.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-outbox.php';
@@ -165,8 +167,6 @@ if ( did_action( 'plugins_loaded' ) ) {
 } else {
     add_action( 'plugins_loaded', array($tz_plugin, 'data_management_pluginsloaded'), -1);
 }
-
-require_once dirname( __FILE__ ) . '/includes/class-tzfd-upgrades.php';
 
 if ( is_admin() ) {
 
@@ -213,7 +213,7 @@ function tz_fd_hour_register_block_category( $categories, $post ) {
         array(
             array(
                 'slug'  => 'tzfdhour',
-                'title' => __( 'Titan Zero Trades: Front Desk', 'titan-zero-trades-front-desk' ),
+                'title' => __( 'Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk' ),
             ),
         )
     );

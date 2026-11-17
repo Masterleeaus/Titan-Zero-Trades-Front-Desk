@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 # HTTP checks on the disposable test site: unauthenticated refusals, and logged-in nonce and capability checks.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
-# Env: B or TZFD_RT_URL (base URL; CI passes B=$WP_URL, default http://127.0.0.1:8080),
-#      TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh).
+# Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh).
+# The script refuses to run without a base URL. A request that gets no response (curl status 000, or an empty code) is a FAIL, never a PASS.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
-B="${TZFD_RT_URL:-${B:-http://127.0.0.1:8080}}"
+B="${B:-${TZFD_RT_URL:-}}"
+if [ -z "$B" ]; then
+  echo "FAIL harness -- base URL not set: export B (or TZFD_RT_URL) before running http-auth-tests.sh" >&2
+  exit 2
+fi
 pass=0; fail=0; skip=0
 report() { # status name detail
   case "$1" in
@@ -13,18 +17,18 @@ report() { # status name detail
     SKIP) echo "SKIP $2 -- $3"; skip=$((skip+1)) ;;
   esac
 }
-check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a refusal)
+check() { # name, code  (refuse = a real HTTP status that is not 2xx)
   local name="$1" code="$2"
-  # 000 means no HTTP response at all: that proves nothing about the endpoint, so it must not count as a refusal.
-  if [[ "$code" == "000" ]]; then report FAIL "$name" "HTTP 000 (no response from $B)";
+  if [[ ! "$code" =~ ^[1-5][0-9][0-9]$ ]]; then report FAIL "$name" "no HTTP response (code '${code:-empty}'): request never reached the server";
   elif [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
   else report PASS "$name" "HTTP $code"; fi
 }
-code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
+# Connection failures give curl status 000; --max-time stops a silent server from hanging the run.
+code() { curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$@" || true; }
 
 # Preflight: abort rather than report a dead server as a pass.
 preflight=$(code "$B/")
-if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
+if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP ${preflight:-empty})"; exit 2; fi
 
 # Unauthenticated refusals.
 check "missed-call, no secret" "$(code -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")"

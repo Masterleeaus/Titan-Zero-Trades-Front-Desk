@@ -1,0 +1,97 @@
+{
+    "contract_version": "1.0.0",
+    "operations": {
+        "service.catalogue.list": [
+            "read",
+            "tz_fd_access",
+            "read_services",
+            false
+        ],
+        "staff.list": [
+            "read",
+            "tz_fd_access",
+            "read_staff",
+            false
+        ],
+        "locations.list": [
+            "read",
+            "tz_fd_access",
+            "read_locations",
+            false
+        ],
+        "form_fields.list": [
+            "read",
+            "tz_fd_access",
+            "read_forms",
+            false
+        ],
+        "booking.list": [
+            "read",
+            "tz_fd_access",
+            "read_bookings",
+            false
+        ],
+        "booking.get": [
+            "read",
+            "tz_fd_access",
+            "read_bookings",
+            false
+        ],
+        "booking.create": [
+            "write",
+            "tz_fd_access",
+            "write_bookings",
+            true
+        ],
+        "booking.status.set": [
+            "write",
+            "tz_fd_access",
+            "write_bookings",
+            true
+        ],
+        "transaction.list": [
+            "read",
+            "tz_fd_access",
+            "read_transactions",
+            false
+        ],
+        "report.summary": [
+            "read",
+            "tz_fd_access",
+            "read_reports",
+            false
+        ],
+        "settings.get": [
+            "read",
+            "manage_options",
+            "read_settings",
+            false
+        ],
+        "capability.check": [
+            "read",
+            "tz_fd_access",
+            "read_settings",
+            false
+        ],
+        "privacy.export": [
+            "read",
+            "manage_options",
+            "privacy_export",
+            true
+        ]
+    },
+    "signature_vector": {
+        "key": "kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk",
+        "envelope": {
+            "v": "1.0.0",
+            "op": "booking.list",
+            "tenant_id": 7,
+            "ts": 1800000000,
+            "nonce": "abcdefghijklmnop1",
+            "payload": {
+                "page": 1
+            }
+        },
+        "sig": "d9eb1efdc3d2408fa1c29d7f9d99e1a783ba10ff76633723c65a14f7f29f371c"
+    }
+}

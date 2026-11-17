@@ -70,9 +70,31 @@ final class TZFD_FAQ_Search {
         $this->site     = isset( $options['site'] ) ? (int) $options['site'] : TZFD_Answer_Cache::site_id();
     }
 
-    /** Knowledge version used for cache keys: registry version plus the fingerprint of servable facts. */
+    /**
+     * Knowledge version used for cache keys: registry version, fingerprint of servable facts, and the
+     * AI knowledge builder version (#39). A builder publish, edit or rollback therefore changes the key,
+     * so cached answers and the vector index never outlive the text they were built from.
+     */
     public function knowledge_version() {
-        return 'r' . $this->faq->version() . '.f' . $this->facts->fingerprint();
+        return 'r' . $this->faq->version() . '.f' . $this->facts->fingerprint() . '.k' . $this->builder_version();
+    }
+
+    /** Version of the builder's published text for this company. 0 when the builder is not loaded. */
+    private function builder_version() {
+        return class_exists( 'TZFD_Ai_Knowledge_Builder', false ) ? (int) TZFD_Ai_Knowledge_Builder::version( $this->faq->company() ) : 0;
+    }
+
+    /**
+     * Published builder entries (#39), shaped like FAQ entries. Only approved, published text is included.
+     * The builder has no language field, so its entries are served for the default language only.
+     */
+    private function builder_entries( $lang ) {
+        if ( 'en' !== $lang || ! class_exists( 'TZFD_Ai_Knowledge_Builder', false ) ) { return array(); }
+        $out = array();
+        foreach ( TZFD_Ai_Knowledge_Builder::published( $this->faq->company() ) as $e ) {
+            $out[ (string) $e['id'] ] = array( 'question' => $e['question'], 'answer' => $e['answer'], 'keywords' => array(), 'lang' => 'en' );
+        }
+        return $out;
     }
 
     /**
@@ -146,7 +168,7 @@ final class TZFD_FAQ_Search {
         $q_intent = TZFD_Intent_Engine::confident_intent( $redacted );
 
         $scored = array();
-        foreach ( $this->faq->approved( $lang ) as $id => $e ) {
+        foreach ( $this->faq->approved( $lang ) + $this->builder_entries( $lang ) as $id => $e ) {
             $s = $this->score( $q_tokens, $q_neg, $q_intent, $e );
             if ( $s >= self::CLARIFY_FLOOR ) {
                 $scored[] = array( 'id' => $id, 'score' => $s, 'entry' => $e );

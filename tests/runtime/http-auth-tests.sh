@@ -3,12 +3,16 @@
 # and an optional signed missed-call replay check.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
 # A route that is not registered (rest_no_route) is reported as FAIL: a 404 there proves nothing about authorization.
-# Env: TZFD_RT_URL (default http://127.0.0.1:8080), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
+# Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
 # SECRET (optional: the stored missed-call inbound secret; enables the signed replay check). The missed-call route
 # needs its addon (tzfd-MissedCall) active.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
-# B (set by the CI workflow and WP-TESTSITE.md to WP_URL) wins over TZFD_RT_URL; both default to the local test site.
-B="${B:-${TZFD_RT_URL:-http://127.0.0.1:8080}}"
+# The script refuses to run without a base URL. A request that gets no response (curl status 000, or an empty code) is a FAIL, never a PASS.
+B="${B:-${TZFD_RT_URL:-}}"
+if [ -z "$B" ]; then
+  echo "FAIL harness -- base URL not set: export B (or TZFD_RT_URL) before running http-auth-tests.sh" >&2
+  exit 2
+fi
 pass=0; fail=0; skip=0
 report() { # status name detail
   case "$1" in
@@ -17,14 +21,14 @@ report() { # status name detail
     SKIP) echo "SKIP $2 -- $3"; skip=$((skip+1)) ;;
   esac
 }
-check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a refusal)
+check() { # name, code  (refuse = a real HTTP status that is not 2xx)
   local name="$1" code="$2"
-  # 000 means no HTTP response at all: that proves nothing about the endpoint, so it must not count as a refusal.
-  if [[ "$code" == "000" ]]; then report FAIL "$name" "HTTP 000 (no response from $B)";
+  if [[ ! "$code" =~ ^[1-5][0-9][0-9]$ ]]; then report FAIL "$name" "no HTTP response (code '${code:-empty}'): request never reached the server";
   elif [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
   else report PASS "$name" "HTTP $code"; fi
 }
-code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
+# Connection failures give curl status 000; --max-time stops a silent server from hanging the run.
+code() { curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$@" || true; }
 
 # Preflight: abort rather than report a dead server as a pass.
 preflight=$(code "$B/?rest_route=/")

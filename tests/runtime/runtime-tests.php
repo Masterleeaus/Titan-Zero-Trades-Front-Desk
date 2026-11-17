@@ -98,4 +98,7 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }
 
+// FAQ knowledge gap detection (issue #36).
+require __DIR__ . '/ai-gap-runtime-checks.php';
+
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";

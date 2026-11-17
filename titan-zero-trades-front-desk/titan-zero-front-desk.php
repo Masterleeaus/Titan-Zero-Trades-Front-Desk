@@ -81,6 +81,8 @@ TZFD_Legacy_AI_Data::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway-admin.php';
 TZFD_Agent_Gateway_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-report-admin.php';
+TZFD_Booking_Report_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 // Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';

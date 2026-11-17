@@ -77,6 +77,9 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/agent-gateway-runtime-te
 echo "--- legacy AI data (legacy-ai-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/legacy-ai-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
+echo "--- booking report (booking-report-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-report-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+
 # Destructive: last, in its own process.
 echo "--- opt-in uninstall (uninstall-wipe-check.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/uninstall-wipe-check.php" --user=1 2>/dev/null | tee -a "$LOG"

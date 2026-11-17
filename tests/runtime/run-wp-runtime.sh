@@ -63,7 +63,8 @@ echo "PASS provision -- WordPress $(grep -m1 -o "wp_version = '[^']*'" "$WP_ROOT
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not enable the missed-call add-on"
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not store the missed-call secret"
 
-php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
+# Several workers so the concurrent replay check can race (PHP's default single worker serialises requests).
+PHP_CLI_SERVER_WORKERS=8 php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
 SERVER_PID=$!
 sleep 2
 
@@ -74,7 +75,18 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
 
 echo "--- http-auth-tests"
-TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" | tee -a "$LOG"
+SECRET="${TZFD_RT_INBOUND_SECRET:-}" TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" 2>&1 | tee -a "$LOG"
+HTTP_RC=${PIPESTATUS[0]}
+[ "$HTTP_RC" -eq 0 ] || echo "FAIL http-auth-tests -- exit status $HTTP_RC (aborted or failed; see above)" | tee -a "$LOG"
+
+echo "--- concurrent replay of a signed missed-call (replay-concurrency-test.sh, issue #52)"
+if [ -n "${TZFD_RT_INBOUND_SECRET:-}" ]; then
+  B="$URL" SECRET="$TZFD_RT_INBOUND_SECRET" N=8 "$HERE/replay-concurrency-test.sh" 2>&1 | tee -a "$LOG"
+  CONC_RC=${PIPESTATUS[0]}
+  [ "$CONC_RC" -eq 0 ] || echo "FAIL replay-concurrency -- exit status $CONC_RC" | tee -a "$LOG"
+else
+  echo "SKIP replay-concurrency -- no inbound secret was provisioned" | tee -a "$LOG"
+fi
 
 echo "--- privacy and signed-request checks (runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"

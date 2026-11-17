@@ -9,7 +9,8 @@ B="${B:-http://localhost:8080}"
 N="${N:-8}"
 if [ -z "${SECRET:-}" ]; then echo "Set SECRET to the inbound secret from the test site."; exit 2; fi
 
-BODY='{"event":"missed","from":"+61400000000"}'
+# A unique body per run: the claim is keyed by signature, so a repeat of an earlier run's body would be refused as a replay.
+BODY="{\"event\":\"missed\",\"from\":\"+61400000000\",\"run\":\"$(date +%s%N)\"}"
 TS="$(date +%s)"
 SIG="sha256=$(printf '%s.%s' "$TS" "$BODY" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
 DIR="$(mktemp -d)"

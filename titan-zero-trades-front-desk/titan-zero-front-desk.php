@@ -9,6 +9,7 @@ Author: Titan Zero
 License: GPL-2.0-only
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 Text Domain: titan-zero-trades-front-desk
+Domain Path: /languages
 */
 
 if ( ! defined( 'ABSPATH' ) ) {

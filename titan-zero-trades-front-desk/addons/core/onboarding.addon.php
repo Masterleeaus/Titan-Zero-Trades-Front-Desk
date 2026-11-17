@@ -794,12 +794,18 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 if ( is_array( $service ) && isset( $service['name'] ) ) $services[] = (string) $service['name'];
             }
             $greeting = TZFD_Scoped_Store::get( 'tz_fd_ai_greeting', '' );
+            // Saved FAQ questions, so an existing FAQ is not suggested again on an upgraded site.
+            $faq_questions = array();
+            $company = TZFD_Scoped_Store::company_id();
+            if ( $company > 0 && class_exists( 'TZFD_Faq_Retrieval' ) && class_exists( 'TZFD_Ai_Setup_Check' ) ) {
+                $faq_questions = TZFD_Ai_Setup_Check::faq_questions_from_entries( TZFD_Faq_Retrieval::all_entries( $company ) );
+            }
             return array(
                 'business_name'       => $name,
                 'services'            => $services,
                 'greeting'            => is_string( $greeting ) ? $greeting : '',
                 'hours_configured'    => false, // This wizard does not collect opening hours, so hours stay a named gap.
-                'faq_questions'       => array(), // Saved FAQ questions are not read here yet, so an existing FAQ could be offered again.
+                'faq_questions'       => $faq_questions,
                 'tags'                => array(),
                 'connector_available' => function_exists( 'has_filter' ) && has_filter( TZFD_Ai_Free_Core::HOSTED_FILTER ),
             );

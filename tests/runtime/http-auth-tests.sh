@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
-# HTTP checks on the disposable test site: unauthenticated refusals, and logged-in nonce and capability checks.
+# HTTP checks on the disposable test site: unauthenticated refusals, logged-in nonce and capability checks,
+# and an optional signed missed-call replay check.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
-# Env: B or TZFD_RT_URL (base URL; CI passes B=$WP_URL, default http://127.0.0.1:8080),
-#      TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh).
+# A route that is not registered (rest_no_route) is reported as FAIL: a 404 there proves nothing about authorization.
+# Env: TZFD_RT_URL (default http://127.0.0.1:8080), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
+# SECRET (optional: the stored missed-call inbound secret; enables the signed replay check). The missed-call route
+# needs its addon (tzfd-MissedCall) active.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
-B="${TZFD_RT_URL:-${B:-http://127.0.0.1:8080}}"
+# B (set by the CI workflow and WP-TESTSITE.md to WP_URL) wins over TZFD_RT_URL; both default to the local test site.
+B="${B:-${TZFD_RT_URL:-http://127.0.0.1:8080}}"
 pass=0; fail=0; skip=0
 report() { # status name detail
   case "$1" in
@@ -23,17 +27,46 @@ check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a
 code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
 
 # Preflight: abort rather than report a dead server as a pass.
-preflight=$(code "$B/")
+preflight=$(code "$B/?rest_route=/")
 if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
+# REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
+rest() { # name, curl args...
+  local name="$1"; shift
+  local out rcode body
+  out=$(curl -s -w '\n%{http_code}' "$@")
+  rcode=$(tail -n1 <<<"$out"); body=$(sed '$d' <<<"$out")
+  if [[ "$body" == *rest_no_route* ]]; then report FAIL "$name" "route not registered (HTTP $rcode), auth not exercised";
+  else check "$name" "$rcode"; fi
+}
 
 # Unauthenticated refusals.
-check "missed-call, no secret" "$(code -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")"
-check "missed-call, bad signature" "$(code -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")"
-check "twilio-status, unsigned" "$(code -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status")"
-check "call-events, unsigned" "$(code -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events")"
-check "booking status, anonymous" "$(code "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1")"
-check "resources catalog, anonymous" "$(code "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog")"
-check "resources preview, anonymous" "$(code -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview")"
+rest "missed-call, no secret" -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
+rest "missed-call, bad signature" -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
+rest "twilio-status, unsigned" -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status"
+rest "call-events, unsigned" -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events"
+rest "booking status, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1"
+rest "resources catalog, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog"
+rest "resources preview, anonymous" -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview"
+
+# Signed replay: a valid signature is accepted once, then refused. Needs SECRET.
+if [[ -n "${SECRET:-}" ]]; then
+  body='{"event":"missed","from":"+61400000000"}'; ts=$(date +%s)
+  sig="sha256=$(printf '%s.%s' "$ts" "$body" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
+  # Route registration: the REST index must list the route, otherwise the signed checks prove nothing.
+  # The index is JSON, so slashes may arrive escaped as \/ : the pattern allows an optional backslash.
+  if curl -s "$B/?rest_route=/" | grep -Eq 'titan-zero-front-desk\\?/v1\\?/missed-call'; then
+    report PASS "missed-call route registered" "listed in REST index"
+  else
+    report FAIL "missed-call route registered" "not in REST index at $B (is the tzfd-MissedCall addon active?)"
+  fi
+  # -sS shows a curl error (e.g. connection refused) on stderr instead of a bare 000; --max-time stops a hang.
+  signed() { curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call" 2>&1 | tr '\n' ' '; }
+  first=$(signed); second=$(signed)
+  if [[ "$first" =~ ^2 ]]; then report PASS "missed-call, valid signature accepted first time" "HTTP $first"; else report FAIL "missed-call, valid signature rejected" "HTTP $first"; fi
+  if [[ "$second" =~ ^4 ]]; then report PASS "missed-call, replayed signature refused" "HTTP $second"; else report FAIL "missed-call, replayed signature accepted" "HTTP $second"; fi
+else
+  report SKIP "missed-call signed replay" "SECRET not set"
+fi
 # No plugin AJAX action is registered in the current source (no wp_ajax_ hook), so this is a weak check: it only shows the core admin-ajax refusal.
 check "unregistered admin-ajax action, anonymous (weak check)" "$(code -X POST -d 'action=tzfd_workspace_customer_sites&nonce=x' "$B/wp-admin/admin-ajax.php")"
 

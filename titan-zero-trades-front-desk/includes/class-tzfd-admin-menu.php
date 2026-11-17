@@ -263,9 +263,9 @@ final class TZFD_Admin_Menu {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing value.
         $page = isset( $_GET['page'] ) ? sanitize_key( tzfd_request_text( 'get', 'page' ) ) : '';
         $tab_pages = array( self::HELP => 'help' );
-        // The add request from the list screen (page=PARENT&a=1) is handled by the settings page.
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only routing value, no change is made.
-        if ( self::PARENT === $page && isset( $_GET['a'] ) ) { $plugin->settings_page(); return; }
+        // The add request from the list screen is handled by the settings page. The list form posts `a` in the body (POST),
+        // so the flag is read from either method; the list handler still checks the nonce and value before it writes.
+        if ( self::PARENT === $page && self::is_calendar_add_request() ) { $plugin->settings_page(); return; }
         if ( isset( $tab_pages[ $page ] ) ) {
             self::render_settings_tabs( $tab_pages[ $page ] );
         }
@@ -281,6 +281,12 @@ final class TZFD_Admin_Menu {
             return;
         }
         $plugin->settings_page();
+    }
+
+    /** True when the request asks to add a calendar: the `a` flag from the list form (POST) or an old link (GET). */
+    public static function is_calendar_add_request() {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Routing check only; the list handler verifies the nonce before any change.
+        return isset( $_GET['a'] ) || isset( $_POST['a'] );
     }
 
     private static function has_calendar_route() {

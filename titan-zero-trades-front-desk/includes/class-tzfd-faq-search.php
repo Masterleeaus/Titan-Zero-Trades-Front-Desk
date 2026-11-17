@@ -14,7 +14,7 @@
  *
  * Thresholds (document-only constants, see PR "Decisions for review"):
  *   ACCEPT 0.55 / CLARIFY_FLOOR 0.40 / COVERAGE_MIN 0.60 / TIE_GAP 0.05 for deterministic matches.
- *   EMBED_ACCEPT 0.82 / EMBED_CLARIFY 0.70 for embeddings. EMBED_MONTHLY_LIMIT 200 per site per month (pilot target).
+ *   EMBED_ACCEPT 0.82 / EMBED_CLARIFY 0.70 for embeddings. EMBED_MONTHLY_LIMIT 800 per site per month (contract figure).
  *
  * Privacy: the query is redacted (emails and phone-like numbers) before any hosted call. It is never stored in
  * clear, only as a hash in the audit log. No customer records are embedded or cached.
@@ -29,7 +29,7 @@ final class TZFD_FAQ_Search {
     const TIE_GAP         = 0.05;
     const EMBED_ACCEPT    = 0.82;
     const EMBED_CLARIFY   = 0.70;
-    const EMBED_MONTHLY_LIMIT = 200;
+    const EMBED_MONTHLY_LIMIT = 800;
     const MAX_CLARIFY     = 3;
 
     const BUDGET_KEY = 'tz_fd_ai_embed_budget_v1';

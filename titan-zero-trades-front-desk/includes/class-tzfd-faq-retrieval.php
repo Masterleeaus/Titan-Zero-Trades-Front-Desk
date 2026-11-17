@@ -28,8 +28,8 @@ final class TZFD_FAQ_Retrieval {
 
     /** Sizing goal for the pilot. A goal for the pilot, not a code limit. */
     const PILOT_ENTRY_GOAL = 100;
-    /** Pilot cap on new hosted query embeddings per site per month. Cost guard, not a licence check. */
-    const EMBED_MONTHLY_LIMIT = 200;
+    /** Standing cap on new hosted query embeddings per site per month (contract figure). Cost guard, not a licence check. */
+    const EMBED_MONTHLY_LIMIT = 800;
 
     const MAX_QUERY_CHARS    = 300;
     const MAX_ANSWER_CHARS   = 2000;

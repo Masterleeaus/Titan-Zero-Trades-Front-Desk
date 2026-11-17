@@ -74,6 +74,13 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             return $now + self::TOKEN_TTL;
         }
 
+        /** True while a link issued at $issued is still inside its fixed 14 days. Viewing never changes $issued. */
+        public static function is_live( $issued, $now = null ) {
+            $issued = (int) $issued;
+            $now    = null === $now ? time() : (int) $now;
+            return $issued > 0 && $now <= $issued + self::TOKEN_TTL;
+        }
+
         public static function normalize_expiry( $expires ) {
             if ( ! is_int( $expires ) && ! ( is_string( $expires ) && ctype_digit( $expires ) ) ) {
                 return 0;

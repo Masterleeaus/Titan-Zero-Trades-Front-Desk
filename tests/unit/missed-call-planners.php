@@ -13,6 +13,41 @@ define( 'ABSPATH', __DIR__ . '/' );
 $GLOBALS['tzfd_test_transients'] = array();
 function get_transient( $key ) { return $GLOBALS['tzfd_test_transients'][ $key ] ?? false; }
 function set_transient( $key, $value, $ttl = 0 ) { $GLOBALS['tzfd_test_transients'][ $key ] = $value; return true; }
+function wp_cache_delete( $key, $group = '' ) { return true; }
+
+/**
+ * In-memory wp_options model for the replay guard (main's TZFD_Signed_Request::claim_signature uses
+ * INSERT IGNORE, a conditional UPDATE and a DELETE). Same behaviour as tests/unit/signed-event-tests.php.
+ */
+final class TZ_Test_Options_Wpdb {
+    public $prefix  = 'wp_';
+    public $options = 'wp_options';
+    public $rows    = array();
+    public function esc_like( $s ) { return addcslashes( $s, '_%\\' ); }
+    public function prepare( $sql, ...$args ) { return array( 'sql' => $sql, 'args' => $args ); }
+    public function query( $p ) {
+        $sql = $p['sql']; $a = $p['args'];
+        if ( 0 === strpos( $sql, 'INSERT IGNORE' ) ) {
+            if ( isset( $this->rows[ $a[0] ] ) ) { return 0; }
+            $this->rows[ $a[0] ] = $a[1];
+            return 1;
+        }
+        if ( 0 === strpos( $sql, 'UPDATE' ) ) {
+            if ( ! isset( $this->rows[ $a[1] ] ) || (int) $this->rows[ $a[1] ] > (int) $a[2] ) { return 0; }
+            $this->rows[ $a[1] ] = $a[0];
+            return 1;
+        }
+        if ( 0 === strpos( $sql, 'DELETE' ) ) {
+            $n = 0; $prefix = rtrim( $a[0], '%' );
+            foreach ( $this->rows as $name => $v ) {
+                if ( 0 === strpos( $name, $prefix ) && (int) $v <= (int) $a[1] ) { unset( $this->rows[ $name ] ); $n++; }
+            }
+            return $n;
+        }
+        return false;
+    }
+}
+$GLOBALS['wpdb'] = new TZ_Test_Options_Wpdb();
 function add_action( ...$args ) { return true; }
 function add_filter( ...$args ) { return true; }
 function apply_filters( $tag, $value, ...$args ) { return $value; }

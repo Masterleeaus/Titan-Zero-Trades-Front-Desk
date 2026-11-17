@@ -5,7 +5,7 @@
  * Answers come only from approved entries supplied through the
  * `tzfd_ai_approved_answers` filter (the interface that the FAQ registry of #42
  * will provide). The model fallback is off by default and, when enabled, is capped
- * at two generative turns per visitor. Price, slot and availability questions never
+ * at twenty generative turns per visitor per hour. Price, slot and availability questions never
  * reach the model. Unmatched questions are refused with a human handoff.
  *
  * GPL-2.0-only.
@@ -22,7 +22,8 @@ final class TZFD_AI_Answer_Box {
 	const MAX_ANSWER_LENGTH   = 600;
 	const RATE_LIMIT          = 20;
 	const RATE_WINDOW         = 600;
-	const FALLBACK_TURN_LIMIT = 2;
+	const FALLBACK_TURN_LIMIT = 20;
+	const FALLBACK_WINDOW     = 3600;
 	const CACHE_TTL           = 3600;
 
 	const STATUS_ANSWERED = 'answered';
@@ -274,7 +275,7 @@ final class TZFD_AI_Answer_Box {
 	}
 
 	/**
-	 * Bounded model fallback. Two turns per visitor; any failure or offline proxy becomes a handoff.
+	 * Bounded model fallback. Twenty turns per visitor per hour; any failure or offline proxy becomes a handoff.
 	 *
 	 * @param string $norm        Normalised question.
 	 * @param string $visitor_key Hashed visitor key.

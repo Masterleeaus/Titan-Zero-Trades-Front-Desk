@@ -9,7 +9,8 @@
  * - A phone number match is a candidate, never authentication. Two or more matches are ambiguous.
  * - Numbers that cannot be normalised to E.164 are refused, not guessed (no country code = no guess).
  * - Replies are rule-based. A model fallback is optional and is counted as an automated turn.
- * - A cancellation is never performed from SMS. A cancel request becomes a staff review task.
+ * - A cancellation is never performed from one text. A cancel request starts a two-step confirmation (see
+ *   TZFD_SMS_Cancel_Confirm): a YES reply plus a one-time code emailed to the booking address.
  *
  * @package TZFDFrontDesk
  */
@@ -142,10 +143,10 @@ final class TZFD_Contact_Rules {
      *
      * $context keys: opted_out (bool), consent_basis (string), turns_used (int), fallback_intent (string|null).
      * Returns: action (opt_out | opt_in | refuse | staff_review | respond | turn_limit),
-     *          intent, task (callback | quote | cancel_review | staff_review | null),
+     *          intent, task (callback | quote | staff_review | null),
      *          template (template key | null), uses_turn (bool).
      *
-     * The outcome of a cancel request never cancels a booking. It can only create a staff review task.
+     * A cancel request never cancels a booking in this decision. It asks for the two-step confirmation.
      */
     public static function decide_reply( $intent, array $context ) {
         $opted_out  = ! empty( $context['opted_out'] );
@@ -170,7 +171,7 @@ final class TZFD_Contact_Rules {
 
         $map = array(
             self::INTENT_BOOK    => array( 'task' => null,          'template' => 'book_link' ),
-            self::INTENT_CANCEL  => array( 'task' => 'cancel_review', 'template' => 'cancel_received' ),
+            self::INTENT_CANCEL  => array( 'task' => null,            'template' => 'cancel_code_sent' ),
             self::INTENT_QUOTE   => array( 'task' => 'quote',       'template' => 'quote_received' ),
             self::INTENT_CALL_ME => array( 'task' => 'callback',    'template' => 'callback_received' ),
         );
@@ -189,6 +190,12 @@ final class TZFD_Contact_Rules {
         $texts = array(
             'book_link'         => 'You can book online here: {link}. Reply STOP to opt out.',
             'cancel_received'   => 'We have received your cancellation request. Our team will confirm it with you. Your booking has not changed. Reply STOP to opt out.',
+            'cancel_code_sent'  => 'To cancel, reply YES and the 6-digit code we emailed you, within 15 minutes. Your booking has not changed yet. Reply STOP to opt out.',
+            'cancel_need_code'  => 'To cancel, reply YES and the 6-digit code from our email. Your booking has not changed. Reply STOP to opt out.',
+            'cancel_need_yes'   => 'Reply YES with the code from our email to confirm the cancellation. Your booking has not changed. Reply STOP to opt out.',
+            'cancel_wrong_code' => 'That code does not match. Check the email we sent and try again. Your booking has not changed. Reply STOP to opt out.',
+            'cancel_locked'     => 'Too many wrong codes, so this cancellation request is closed. Your booking has not changed. Reply STOP to opt out.',
+            'cancel_done'       => 'Your booking has been cancelled. Reply STOP to opt out.',
             'quote_received'    => 'Thanks, we have passed your quote request to our team. Reply STOP to opt out.',
             'callback_received' => 'Thanks, we have asked our team to call you back. Reply STOP to opt out.',
         );

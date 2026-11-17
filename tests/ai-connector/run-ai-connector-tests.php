@@ -109,9 +109,12 @@ check( 'valid configuration accepted', true === $C::configure( 'https://ai.examp
 // 4. Tier and scope gates.
 reset_state();
 connect_all();
-$C::set_entitlements( array( 'free_ai' ) );
+$C::set_entitlements( array( 'free_ai' ) ); // Only the free entitlement reported: no paid tier is required.
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
 $r = $C::request( 'assistant.turn' );
-check( 'unentitled tier is refused before transport', 'tier_not_entitled' === $r['status'] && 0 === calls() );
+check( 'no paid tier gate: assistant turn with consent and scopes reaches transport', 'ok' === $r['status'] && 1 === calls() && false === $r['use_local'] );
+$GLOBALS['tz_calls'] = array();
+$GLOBALS['tz_reply'] = null;
 $C::set_entitlements( array( 'free_ai', 'agent_team' ) );
 $C::grant_consent( array( 'faq.read' ) );
 $r = $C::request( 'agent.run' );
@@ -290,6 +293,7 @@ check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled
 $n = TZFD_AI_Connector::setup_notice();
 check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
+check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
 check( 'terms link comes from the tzfd_ai_terms_url filter', 'https://owner.example.test/terms' === TZFD_AI_Connector::setup_notice()['terms_url'] );
 unset( $GLOBALS['tz_filters']['tzfd_ai_terms_url'] );

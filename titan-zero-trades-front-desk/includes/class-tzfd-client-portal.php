@@ -106,16 +106,19 @@ final class TZFD_Client_Portal {
             );
         }
 
+        // Reschedule links carry their own issue time and 14-day expiry, the same rule as the emailed link.
         $version = TZFD_Customer_Rescheduling::version( $row );
-        $move    = TZFD_Customer_Rescheduling::token( $id, (int) $row->formid, $email, $version, $secret );
-        if ( '' !== $move ) {
+        $move    = TZFD_Customer_Rescheduling::issue( $id, (int) $row->formid, $email, $version, $secret );
+        if ( null !== $move ) {
             $links['reschedule'] = add_query_arg(
                 array(
                     'action'     => TZFD_Customer_Rescheduling::ACTION,
                     'booking_id' => $id,
                     'form_id'    => (int) $row->formid,
                     'version'    => $version,
-                    'token'      => $move,
+                    'issued'     => $move['issued'],
+                    'expires'    => $move['expires'],
+                    'token'      => $move['token'],
                 ),
                 admin_url( 'admin-post.php' )
             );

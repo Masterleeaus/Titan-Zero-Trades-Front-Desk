@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # HTTP checks on the disposable test site: unauthenticated refusals, logged-in nonce and capability checks,
-# and an optional signed missed-call replay check.
+# forged public enquiry refusal, and an optional signed missed-call replay check.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
 # A route that is not registered (rest_no_route) is reported as FAIL: a 404 there proves nothing about authorization.
 # Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
@@ -48,6 +48,8 @@ rest "missed-call, no secret" -X POST -H 'Content-Type: application/json' -d '{"
 rest "missed-call, bad signature" -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
 rest "twilio-status, unsigned" -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status"
 rest "call-events, unsigned" -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events"
+rest "messaging-events (SMS reply), unsigned" -X POST -H 'Content-Type: application/json' -d '{"event":"inbound_sms","event_id":"m1","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
+rest "messaging-events (SMS reply), forged signature" -X POST -H 'Content-Type: application/json' -H 'X-TZFD-Key-Id: forged-key' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: 0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"inbound_sms","event_id":"m2","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
 rest "booking status, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1"
 rest "resources catalog, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog"
 rest "resources preview, anonymous" -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview"
@@ -114,6 +116,14 @@ else
   fi
   rm -f "$JAR_ADMIN" "$JAR_SUB"
 fi
+
+# Forged public enquiry: the nonce gate must answer exactly 403. A success path redirects (302), so require the exact code.
+forged_body='name=Forged&email=forged@example.test&enquiry=forged&website='
+for label in "no nonce" "wrong nonce"; do
+  if [ "$label" = "no nonce" ]; then extra=''; else extra='&_tzfd_enquiry_nonce=0000000000'; fi
+  fcode=$(code -X POST -H 'Content-Type: application/x-www-form-urlencoded' -d "action=tzfd_public_enquiry&$forged_body$extra" "$B/wp-admin/admin-post.php")
+  if [ "$fcode" = "403" ]; then report PASS "forged public enquiry ($label) refused" "HTTP $fcode"; else report FAIL "forged public enquiry ($label)" "HTTP $fcode (expected 403)"; fi
+done
 
 echo "Note: a weak check is labelled above; it does not prove the plugin's own nonce handling."
 echo "Summary: $pass passed, $fail failed, $skip skipped"

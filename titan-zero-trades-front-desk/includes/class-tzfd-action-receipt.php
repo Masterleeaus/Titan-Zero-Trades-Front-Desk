@@ -74,6 +74,11 @@ final class TZFD_Action_Receipt {
 		return array( 'valid' => true, 'broken_at' => null );
 	}
 
+	/** Canonical JSON used for signing. Exposed so the request contract hashes exactly the same bytes. */
+	public static function canonical_json( $value ) {
+		return self::canonical( $value );
+	}
+
 	/** Digest of the arguments a receipt refers to, so the receipt never holds raw customer data. */
 	public static function args_digest( $args ) {
 		return hash( 'sha256', self::canonical( is_array( $args ) ? $args : array() ) );

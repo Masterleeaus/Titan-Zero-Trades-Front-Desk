@@ -130,20 +130,27 @@ final class TZFD_FAQ_Search {
         return array( 'ok' => true, 'code' => 'indexed', 'embedded' => $embedded );
     }
 
-    /** Removes personal data from text before any hosted call: email addresses and phone-like numbers. */
+    /**
+     * Removes personal data from text before any hosted call. Same placeholders and rule as the embedding path in
+     * TZFD_FAQ_Retrieval: every email address becomes [email] and every run of 8 or more digits (separators allowed)
+     * becomes [number]. Fails closed: returns an empty string when the pattern engine fails, so nothing raw is sent.
+     */
     public static function redact( $text ) {
         $text = is_string( $text ) ? $text : '';
-        $text = preg_replace( '/[\p{L}\p{N}._%+-]+@[\p{L}\p{N}.-]+\.[\p{L}]{2,}/u', '[redacted]', $text );
-        $text = preg_replace( '/\+?\d[\d\s().-]{6,}\d/', '[redacted]', (string) $text );
-        return (string) $text;
+        $text = preg_replace( '/[^\s@]+@[^\s@]+\.[^\s@]+/', '[email]', $text );
+        if ( null === $text ) { return ''; }
+        $text = preg_replace( '/\+?\d(?:[\s\-().]?\d){7,}/', '[number]', $text );
+        return null === $text ? '' : (string) $text;
     }
 
     /* ----- core ----- */
 
     private function compute( $query, $redacted, $lang ) {
+        // Tokens come from the redacted text, which is what the hosted call sees. Intent and negation are read from the
+        // raw query on this site only: placeholders such as [number] must not change the detected intent.
         $q_tokens = self::meaningful( $redacted );
-        $q_neg    = TZFD_Intent_Engine::has_negation( $redacted );
-        $q_intent = TZFD_Intent_Engine::confident_intent( $redacted );
+        $q_neg    = TZFD_Intent_Engine::has_negation( $query );
+        $q_intent = TZFD_Intent_Engine::confident_intent( $query );
 
         $scored = array();
         foreach ( $this->faq->approved( $lang ) as $id => $e ) {
@@ -168,7 +175,7 @@ final class TZFD_FAQ_Search {
             return $this->clarify( array_values( $distinct ), 'tied_matches' );
         }
 
-        $fact_key = TZFD_Business_Facts::fact_for_intent( TZFD_Intent_Engine::confident_intent( $redacted ) );
+        $fact_key = TZFD_Business_Facts::fact_for_intent( TZFD_Intent_Engine::confident_intent( $query ) );
         $fact_reason = 'no_match';
         if ( null !== $fact_key ) {
             $fact = $this->facts->get( $fact_key );

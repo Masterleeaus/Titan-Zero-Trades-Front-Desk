@@ -221,7 +221,8 @@ t_eq( 'no_answer', $bres['status'], 'exhausted budget refuses the hosted stage' 
 t_eq( $before_calls, $p->calls, 'exhausted budget makes no provider call' );
 
 // Privacy: email and phone are redacted before any hosted call, and the audit log holds no raw text.
-t_eq( '[redacted] and [redacted]', TZFD_FAQ_Search::redact( 'jane@example.com and 0412 345 678' ), 'email and phone are redacted' );
+t_eq( '[email] and [number]', TZFD_FAQ_Search::redact( 'jane@example.com and 0412 345 678' ), 'email and phone are redacted' );
+t_eq( 'Email [email] or call [number]', TZFD_FAQ_Search::redact( 'Email a.b+tag@mail.example.org or call +61 412 345 678' ), 'mixed query uses the shared placeholder format' );
 $pv = fs_build();
 fs_entry( $pv['store'], 'Do you charge a call out fee?', 'Yes.', array( 'call out', 'fee' ) );
 $pr = $pv['search']->answer( 'call out fee for jane@example.com 0412 345 678' );

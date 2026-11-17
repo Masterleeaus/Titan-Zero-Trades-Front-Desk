@@ -1,4 +1,4 @@
-=== Titan Zero Front Desk ===
+=== Scheduling & Enquiries Manager ===
 
 Contributors: titan0
 
@@ -29,13 +29,13 @@ Bookings, calendar, booking pages and phone answering that operates standalone w
 
 
 
-Front Desk has its own WordPress admin menu and can run standalone, without Titan Zero Trades: Front Desk.
+Front Desk has its own WordPress admin menu and can run standalone, without any other Titan Zero plugin.
 
 
 
 
 
-Titan Zero Front Desk gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
+Scheduling & Enquiries Manager gives front-desk staff a place to take and manage bookings in WordPress. Front Desk includes a local company context, customer records and service catalogue. Optional Titan Zero integrations can extend those capabilities. Quotes and invoices are not required for booking.
 
 
 
@@ -69,7 +69,7 @@ Compatibility modules. In this version these are kept from earlier releases. The
 
 
 
-Titan Zero Front Desk is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
+Scheduling & Enquiries Manager is a free, GPL-licensed plugin. Nothing in it is locked behind a paid version or licence key.
 
 
 
@@ -89,9 +89,9 @@ Optional external industry presets are examples; native service setup does not r
 
    This is a new plugin, not an upgrade. Do not install it over Appointment Hour Booking or Titan Front Desk; see the FAQ below.
 
-2. Activate Titan Zero Front Desk on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
+2. Activate Scheduling & Enquiries Manager on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
 
-3. Open Titan Zero Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
+3. Open Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
 
 4. Create a calendar, then publish its booking form on a page or post. The publishing interface explains the options.
 
@@ -104,7 +104,7 @@ Optional external industry presets are examples; native service setup does not r
 
 
 
-= Does Front Desk require Titan Zero Trades: Front Desk? =
+= Does this plugin require another Titan Zero plugin? =
 
 No. Front Desk has native business, customer and service storage. Workspace is an optional integration, not an installation dependency.
 
@@ -150,7 +150,7 @@ No. This version contains no AI feature and does not contact any AI provider. Bo
 
 
 
-No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and settings. It also deletes the photos customers attached in the chat and the calendar invitation files the plugin created. To delete the plugin's tables and settings as well, add define( 'TZ_DELETE_DATA_ON_UNINSTALL', true ) to wp-config.php before you delete the plugin.
+No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and settings. It also deletes the calendar invitation files the plugin created. To delete the plugin's tables and settings as well, add define( 'TZ_DELETE_DATA_ON_UNINSTALL', true ) to wp-config.php before you delete the plugin.
 
 
 
@@ -178,21 +178,20 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 
 
-== Optional upgrades ==
+== Hosted AI ==
 
-Front Desk shows optional upgrade links in two places: the Integrations tab of Settings, and the Upgrade link on the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
+Hosted AI is optional and stays off until the site owner turns it on. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
 
-* Front Desk Pro is a separate download. This plugin does not install, load or check for it.
-* AI Assistant and AI Agent are paid, hosted services that run outside WordPress and need a subscription. Their product pages are at titanzero.io/frontdeskai and titanzero.io/frontdeskagent. Each service's data handling will be listed under External services before any site data is sent to it.
-* Front Desk Pro's product page is at titanzero.io/frontdeskpro.
+Booking, customers, calendars, rules, FAQ and reports work without it.
 
-Front Desk works fully without any of these upgrades.
+Scheduling & Enquiries Manager is one plugin. It does not install, load or require a separate package or licence key.
+
 
 == External services ==
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 
@@ -330,7 +329,6 @@ The complete source code is in this plugin folder and is licensed under GPLv2. N
 == Support ==
 
 Support: support@titanzero.io
-Licences and upgrades: sales@titanzero.io
 
 == Changelog ==
 

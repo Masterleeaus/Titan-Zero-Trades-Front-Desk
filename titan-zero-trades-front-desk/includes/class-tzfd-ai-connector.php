@@ -168,6 +168,73 @@ final class TZFD_AI_Connector {
     }
 
     /**
+     * What the administrator is told before consenting: provider, data classes (scopes), hosted quota and
+     * the consent version. Retention is null until the owner decides it, so no retention promise is made here.
+     */
+    public static function disclosure() {
+        $scopes = array();
+        foreach ( self::features() as $def ) { $scopes = array_merge( $scopes, $def['scopes'] ); }
+        return array(
+            'contract'         => self::CONTRACT,
+            'consent_version'  => self::CONSENT_VERSION,
+            'provider'         => 'Titan hosted AI service (endpoint set by the site administrator)',
+            'data_classes'     => array_values( array_unique( $scopes ) ),
+            'quota'            => self::budget_limits(),
+            'retention'        => null,
+            'owner_decisions'  => array( 'retention', 'consent_wording', 'provider_legal_name' ),
+        );
+    }
+
+    /**
+     * Metered cost for one month. $unit_costs is the owner's price per 1,000 tokens:
+     * array( 'input' => n, 'output' => n, 'embedding' => n ). Without a complete price table no money figure
+     * is produced, so no cost is invented. Cache hit ratio = hosted cache hits / successful calls.
+     */
+    public static function cost_report( array $unit_costs = array(), $period = '' ) {
+        $usage  = self::usage( $period );
+        $totals = array( 'calls' => 0, 'ok' => 0, 'fallback_local' => 0, 'cache_hits' => 0, 'tokens_in' => 0, 'tokens_out' => 0, 'embedding_tokens' => 0, 'latency_ms' => 0 );
+        foreach ( $usage['features'] as $f ) {
+            foreach ( array_keys( $totals ) as $key ) {
+                $totals[ $key ] += isset( $f[ $key ] ) ? max( 0, (int) $f[ $key ] ) : 0;
+            }
+        }
+        $keys  = array( 'input', 'output', 'embedding' );
+        $known = true;
+        foreach ( $keys as $key ) {
+            if ( ! isset( $unit_costs[ $key ] ) || ! is_numeric( $unit_costs[ $key ] ) || (float) $unit_costs[ $key ] < 0 ) { $known = false; }
+        }
+        $cost = null;
+        if ( $known ) {
+            $cost = round(
+                ( $totals['tokens_in'] * (float) $unit_costs['input'] + $totals['tokens_out'] * (float) $unit_costs['output'] + $totals['embedding_tokens'] * (float) $unit_costs['embedding'] ) / 1000,
+                6
+            );
+        }
+        return array(
+            'period'          => $usage['period'],
+            'totals'          => $totals,
+            'cache_hit_ratio' => $totals['ok'] > 0 ? round( $totals['cache_hits'] / $totals['ok'], 4 ) : 0.0,
+            'cost_known'      => $known,
+            'cost'            => $cost,
+        );
+    }
+
+    /**
+     * Upper bound on metered units across $tenants sites at the pilot budget ceilings. Counts only: money
+     * needs the owner's unit prices (see cost_report) and a per-unit cost is not assumed here.
+     */
+    public static function tenant_ceiling( $tenants ) {
+        $tenants = max( 0, (int) $tenants );
+        $units   = array();
+        $total   = 0;
+        foreach ( self::budget_limits() as $key => $limit ) {
+            $units[ $key ] = $tenants * (int) $limit;
+            $total        += $units[ $key ];
+        }
+        return array( 'tenants' => $tenants, 'max_units_by_budget' => $units, 'max_units_total' => $total );
+    }
+
+    /**
      * Pairs the site with the hosted service. Endpoint must be https. Returns false on invalid input.
      */
     public static function configure( $endpoint, $site_id, $secret ) {

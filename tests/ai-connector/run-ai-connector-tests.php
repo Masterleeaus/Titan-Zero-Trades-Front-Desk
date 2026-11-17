@@ -259,5 +259,38 @@ check( 'lock is released after use', ! array_key_exists( TZFD_AI_Connector::LOCK
 // 15. Entitlements and budgets are per feature.
 check( 'budget table covers pilot limits', array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ) === ( function () use ( $C ) { $GLOBALS['tz_filters']['tzfd_ai_connector_budget_limits'] = array(); return $C::budget_limits(); } )() );
 
+// 16. Disclosure: provider, data classes, quota; retention is an owner decision (null), never a promise.
+reset_state();
+$d = $C::disclosure();
+check( 'disclosure names provider, data classes and quota', isset( $d['provider'] ) && in_array( 'customer.read', $d['data_classes'], true ) && 50 === $d['quota']['model_fallback'] );
+check( 'disclosure leaves retention to the owner (null)', array_key_exists( 'retention', $d ) && null === $d['retention'] && in_array( 'retention', $d['owner_decisions'], true ) );
+check( 'disclosure never includes the secret', false === strpos( json_encode( $d ), SECRET ) );
+
+// 17. Cost report: counters are summed, cache ratio is hits over successes, money only with a full price table.
+reset_state();
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::USAGE_PREFIX . gmdate( 'Y-m' ) ] = array(
+    'budget'   => array( 'model_fallback' => 3 ),
+    'features' => array(
+        'faq.answer'      => array( 'calls' => 4, 'ok' => 3, 'fallback_local' => 1, 'tokens_in' => 1000, 'tokens_out' => 500, 'embedding_tokens' => 0, 'cache_hits' => 1, 'latency_ms' => 90 ),
+        'faq.embed_query' => array( 'calls' => 2, 'ok' => 2, 'fallback_local' => 0, 'tokens_in' => 0, 'tokens_out' => 0, 'embedding_tokens' => 2000, 'cache_hits' => 0, 'latency_ms' => 40 ),
+    ),
+);
+$cr = $C::cost_report();
+check( 'cost report sums calls, tokens and embedding tokens', 6 === $cr['totals']['calls'] && 5 === $cr['totals']['ok'] && 1000 === $cr['totals']['tokens_in'] && 2000 === $cr['totals']['embedding_tokens'] );
+check( 'cache hit ratio is hits over successful calls', 0.2 === $cr['cache_hit_ratio'] );
+check( 'no money figure without a price table', false === $cr['cost_known'] && null === $cr['cost'] );
+check( 'incomplete price table produces no cost', false === $C::cost_report( array( 'input' => 0.5, 'output' => 1.5 ) )['cost_known'] );
+check( 'negative price is rejected, not used', false === $C::cost_report( array( 'input' => -1, 'output' => 1, 'embedding' => 1 ) )['cost_known'] );
+$priced = $C::cost_report( array( 'input' => 0.5, 'output' => 1.5, 'embedding' => 0.1 ) );
+check( 'cost equals priced tokens per 1,000 (1000*0.5+500*1.5+2000*0.1)/1000 = 1.45', true === $priced['cost_known'] && 1.45 === $priced['cost'] );
+reset_state();
+$empty = $C::cost_report( array( 'input' => 1, 'output' => 1, 'embedding' => 1 ) );
+check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['totals']['calls'] && 0.0 === $empty['cache_hit_ratio'] && 0.0 === $empty['cost'] );
+
+// 18. Tenant ceiling: counts at the pilot budget ceilings, no money assumed.
+$t = $C::tenant_ceiling( 100 );
+check( 'tenant ceiling scales each budget by tenant count', 5000 === $t['max_units_by_budget']['model_fallback'] && 20000 === $t['max_units_by_budget']['embedding'] && 25500 === $t['max_units_total'] );
+check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );
+
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

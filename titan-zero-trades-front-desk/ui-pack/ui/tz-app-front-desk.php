@@ -26,6 +26,7 @@ final class TZ_UI_Front_Desk extends TZ_UI_Core {
 			array( 'page' => 'tz_fd_calendar', 'label' => __( 'Calendar', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
 			array( 'page' => 'tz_fd_bookings', 'label' => __( 'Bookings', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
 			array( 'page' => 'tz_fd_enquiries', 'label' => __( 'Enquiries', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
+				array( 'page' => 'tz-customers', 'label' => __( 'Customers', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
 			array( 'page' => 'tz_pipeline', 'label' => __( 'Pipeline', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
 			array( 'page' => 'tz_fd_services', 'label' => __( 'Services', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),
 			array( 'page' => 'tzfd-resources', 'label' => __( 'Workers', 'titan-zero-trades-front-desk' ), 'cap' => 'tz_fd_access' ),

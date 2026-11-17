@@ -57,7 +57,7 @@ final class TZFD_Lead_Urgency {
         foreach ( self::COLUMNS as $column => $definition ) {
             $found = $wpdb->get_results( $wpdb->prepare( 'SHOW COLUMNS FROM %i LIKE %s', $table, $column ) );
             if ( ! empty( $found ) ) { continue; }
-            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Fixed plugin table and column names from constants.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- Fixed plugin table and column names from constants.
             if ( false === $wpdb->query( $wpdb->prepare( 'ALTER TABLE %i ADD COLUMN ' . $column . ' ' . $definition, $table ) ) ) { return false; }
         }
         update_option( self::SCHEMA_OPTION, 1, false );
@@ -66,6 +66,7 @@ final class TZFD_Lead_Urgency {
 
     /** String value of one POST field. Arrays and objects read as empty, so they cannot reach a sanitiser. */
     private static function post_text( $key, $default = '' ) {
+        // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Only called by the save handler after check_admin_referer(); value is scalar-checked below.
         $value = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : $default;
         return is_scalar( $value ) ? (string) $value : '';
     }
@@ -270,8 +271,8 @@ final class TZFD_Lead_Urgency {
         $company = (int) TZFD_Scoped_Store::company_id();
         if ( $company < 1 ) { wp_die( esc_html__( 'No company is selected.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
 
-        $enabled_in = isset( $_POST['urgency_enabled'] ) && is_array( $_POST['urgency_enabled'] ) ? $_POST['urgency_enabled'] : array();
-        $phrases_in = isset( $_POST['urgency_phrases'] ) && is_array( $_POST['urgency_phrases'] ) ? $_POST['urgency_phrases'] : array();
+        $enabled_in = isset( $_POST['urgency_enabled'] ) && is_array( $_POST['urgency_enabled'] ) ? array_map( 'sanitize_text_field', wp_unslash( $_POST['urgency_enabled'] ) ) : array();
+        $phrases_in = isset( $_POST['urgency_phrases'] ) && is_array( $_POST['urgency_phrases'] ) ? array_map( 'sanitize_textarea_field', wp_unslash( $_POST['urgency_phrases'] ) ) : array();
         $raw_rules = array();
         foreach ( self::CATEGORIES as $cat ) {
             $text = isset( $phrases_in[ $cat ] ) && is_scalar( $phrases_in[ $cat ] ) ? sanitize_textarea_field( wp_unslash( (string) $phrases_in[ $cat ] ) ) : '';

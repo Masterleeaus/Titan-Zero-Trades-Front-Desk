@@ -42,7 +42,7 @@ class TZFD_Privacy_Exporter {
 			return;
 		}
 		wp_add_privacy_policy_content(
-			__( 'Titan Zero Front Desk', 'titan-zero-trades-front-desk' ),
+			__( 'Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk' ),
 			wp_kses_post( self::policy_text() )
 		);
 	}
@@ -52,11 +52,11 @@ class TZFD_Privacy_Exporter {
 		$sections = array(
 			array(
 				__( 'Bookings and booking forms', 'titan-zero-trades-front-desk' ),
-				__( 'Each booking or form submission stores what the customer entered, such as name, email address, phone number, address, booking date and time, and the answers to the form fields. While the setting "Store user\'s IP address?" is on (it is on by default), the IP address of the request is stored with the booking too. The activity log records booking changes with the booking number, the time and the logged-in user who made the change. Booking records are kept until you delete them in Titan Zero Trades: Front Desk. Calendar invitation files that contain booking details are saved in your uploads folder and are normally deleted once the email is sent.', 'titan-zero-trades-front-desk' ),
+				__( 'Each booking or form submission stores what the customer entered, such as name, email address, phone number, address, booking date and time, and the answers to the form fields. While the setting "Store user\'s IP address?" is on (it is on by default), the IP address of the request is stored with the booking too. The activity log records booking changes with the booking number, the time and the logged-in user who made the change. Booking records are kept until you delete them in Scheduling & Enquiries Manager. Calendar invitation files that contain booking details are saved in your uploads folder and are normally deleted once the email is sent.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Enquiries, customers and staff contacts', 'titan-zero-trades-front-desk' ),
-				__( 'Website enquiries store the name, email address, phone number, preferred contact method and enquiry text. Enquiry triage stores the intent, urgency and spam assessment for each enquiry, a draft quote, and a hashed IP address. Local customer records store the name, email address, phone number, address and notes you enter. The staff contact list stores the name, phone number and email address of each staff member you add. These records are kept until you delete them in Titan Zero Trades: Front Desk.', 'titan-zero-trades-front-desk' ),
+				__( 'Website enquiries store the name, email address, phone number, preferred contact method and enquiry text. Enquiry triage stores the intent, urgency and spam assessment for each enquiry, a draft quote, and a hashed IP address. Local customer records store the name, email address, phone number, address and notes you enter. The staff contact list stores the name, phone number and email address of each staff member you add. These records are kept until you delete them in Scheduling & Enquiries Manager.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Client portal', 'titan-zero-trades-front-desk' ),
@@ -100,7 +100,7 @@ class TZFD_Privacy_Exporter {
 			),
 		);
 
-		$html = '<p>' . esc_html__( 'Titan Zero Front Desk stores the personal data below in your WordPress database. It does not create an account, collect a licence key or report usage to its author, and nothing is sent to the plugin author.', 'titan-zero-trades-front-desk' ) . '</p>';
+		$html = '<p>' . esc_html__( 'Scheduling & Enquiries Manager stores the personal data below in your WordPress database. It does not create an account, collect a licence key or report usage to its author, and nothing is sent to the plugin author.', 'titan-zero-trades-front-desk' ) . '</p>';
 		foreach ( $sections as $section ) {
 			$html .= '<h4>' . esc_html( $section[0] ) . '</h4><p>' . esc_html( $section[1] ) . '</p>';
 		}
@@ -128,7 +128,7 @@ class TZFD_Privacy_Exporter {
 	 */
 	public static function register_eraser( $erasers ) {
 		$erasers['tzfd-bookings'] = array(
-			'eraser_friendly_name' => __( 'Titan Zero Front Desk records', 'titan-zero-trades-front-desk' ),
+			'eraser_friendly_name' => __( 'Scheduling & Enquiries Manager records', 'titan-zero-trades-front-desk' ),
 			'callback'             => array( __CLASS__, 'erase' ),
 		);
 		return $erasers;
@@ -292,7 +292,7 @@ class TZFD_Privacy_Exporter {
 	 */
 	public static function register_exporter( $exporters ) {
 		$exporters['tzfd-bookings'] = array(
-			'exporter_friendly_name' => __( 'Titan Zero Front Desk bookings', 'titan-zero-trades-front-desk' ),
+			'exporter_friendly_name' => __( 'Scheduling & Enquiries Manager bookings', 'titan-zero-trades-front-desk' ),
 			'callback'               => array( __CLASS__, 'export' ),
 		);
 		foreach ( self::email_tables() as $tz_key => $tz_table ) {
@@ -724,7 +724,7 @@ class TZFD_Privacy_Exporter {
 			}
 			$tz_data[] = array(
 				'group_id'    => 'tzfd-bookings',
-				'group_label' => __( 'Titan Zero Front Desk bookings', 'titan-zero-trades-front-desk' ),
+				'group_label' => __( 'Scheduling & Enquiries Manager bookings', 'titan-zero-trades-front-desk' ),
 				'item_id'     => 'booking-' . absint( isset( $row->id ) ? $row->id : 0 ),
 				'data'        => array_merge(
 					array(
@@ -850,7 +850,7 @@ class TZFD_Privacy_Exporter {
 	private static function erase_unavailable( array $removed = array() ) {
 		$response = self::erase_response( $removed, true );
 		$response['items_retained'] = true;
-		$response['messages'][]     = __( 'Titan Zero Front Desk records could not be checked. Please retry.', 'titan-zero-trades-front-desk' );
+		$response['messages'][]     = __( 'Scheduling & Enquiries Manager records could not be checked. Please retry.', 'titan-zero-trades-front-desk' );
 		return $response;
 	}
 

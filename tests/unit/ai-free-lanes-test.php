@@ -273,6 +273,11 @@ $extra = array( array( 'section' => 'Unanswered FAQ topics', 'rows' => array(
 $loc = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, $extra );
 $topics = array_values( array_filter( $loc['sections'], static function ( $s ) { return 'Unanswered FAQ topics' === $s['section']; } ) )[0]['rows'];
 ok( 'insights: rows below minimum cell or base are omitted, not shown', count( $topics ) === 1 && $loc['omitted'] === 2 && $topics[0]['share'] === round( 9 / 45, 4 ) );
+$leaky = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, array( array( 'section' => 'Callers jo@example.com', 'rows' => array(
+	array( 'label' => 'call 0412 345 678 about boiler jo@example.com', 'count' => 9, 'base' => 45 ),
+) ) ) );
+$leak_text = json_encode( $leaky );
+ok( 'insights: labels and section names drop email and phone (scrub on top of plain text)', false === strpos( $leak_text, '@' ) && false === strpos( $leak_text, '0412 345 678' ) && false !== strpos( $leak_text, '[contact removed]' ) );
 ok( 'insights: local report always produced with denominators', $loc['base'] === 45 && $loc['sections'][0]['rows'][0]['base'] === 45 );
 
 reset_state();

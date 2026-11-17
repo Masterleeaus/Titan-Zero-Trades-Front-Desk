@@ -7,6 +7,13 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
 global $tz_plugin, $tz_addons_active_list, $tz_addons_objs_list;
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-business-schema.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-scoped-store.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-tenant-storage.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-intent-engine.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-knowledge-store.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-answer-cache.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-business-facts.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-embedding-provider.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-faq-search.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-form-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-vertical-registry.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-page.php';
@@ -72,6 +79,8 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-scheduling-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-intake-mode.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-menu.php';
 TZFD_Admin_Menu::register();
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-services-page.php';
+TZFD_AI_Services_Page::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-notices.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-view.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-layout.php';
@@ -96,6 +105,8 @@ TZFD_Resource_Admin::register();
 TZFD_Service_Details::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-review.php';
 TZFD_Enquiry_Review::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-triage.php';
+TZFD_Enquiry_Triage::register();
 // Booking pipeline: managers, approval and supervisor for assistant and channel bookings.
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline.php';
@@ -123,6 +134,8 @@ add_action('tz_fd_process_data_insert_failed', array($tz_plugin, 'finish_capacit
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-cancellation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-rescheduling.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-client-portal.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-settings-extras.php';
+TZFD_Settings_Extras::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-status-update-emails.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-records.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-outbox.php';
@@ -155,14 +168,11 @@ if ( did_action( 'plugins_loaded' ) ) {
     add_action( 'plugins_loaded', array($tz_plugin, 'data_management_pluginsloaded'), -1);
 }
 
-require_once dirname( __FILE__ ) . '/includes/class-tzfd-upgrades.php';
-
 if ( is_admin() ) {
 
 
     add_action('admin_enqueue_scripts', array($tz_plugin,'insert_adminScripts'), 1);
     add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array($tz_plugin,'plugin_page_links'));
-    add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array('TZFD_Upgrades','plugin_row_link'));
     add_action('admin_menu', array($tz_plugin,'admin_menu') );
     add_action('enqueue_block_editor_assets', array($tz_plugin,'gutenberg_block'));
 
@@ -203,7 +213,7 @@ function tz_fd_hour_register_block_category( $categories, $post ) {
         array(
             array(
                 'slug'  => 'tzfdhour',
-                'title' => __( 'Titan Zero Trades: Front Desk', 'titan-zero-trades-front-desk' ),
+                'title' => __( 'Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk' ),
             ),
         )
     );

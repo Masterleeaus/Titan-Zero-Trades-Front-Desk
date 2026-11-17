@@ -302,3 +302,12 @@ body.tzfd-screen #wpbody-content .tzfd-set-card a,
 body.tzfd-screen #wpbody-content .tzfd-set-card a:hover{color:#9ed8ff;}
 /* Add-on settings panels with a white form box (.postbox) need dark labels and help text. Dark panels are left as they are. */
 body.tzfd-screen #wpbody-content details.tzfdad-addon-details[open] .postbox :is(label, p, h3, h4, th, td, legend, .description, small, strong, span, li, em, i, code, div){color:#172334 !important;}
+
+/* Readability and column fixes (r25): labels were squeezed to a letter wide, and names rendered dark on dark. */
+body.tzfd-screen #wpbody-content table.form-table {table-layout:fixed;width:100%;}
+body.tzfd-screen #wpbody-content table.form-table > tbody > tr > th[scope="row"] {width:220px;min-width:200px;white-space:normal;vertical-align:top;}
+body.tzfd-screen #wpbody-content table.tzfd-calendars-list th:first-child,
+body.tzfd-screen #wpbody-content table.tzfd-calendars-list td:first-child {width:64px;white-space:nowrap;}
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table,table) tbody td strong,
+body.tzfd-screen #wpbody-content :is(.tzfd-table,.widefat,.wp-list-table,table) tbody td a strong {color:#e9f5ff!important;}
+

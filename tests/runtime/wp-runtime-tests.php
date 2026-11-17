@@ -346,6 +346,5 @@ if ( TZFD_Ai_Free_Core::consent_granted() ) {
 	tzfd_rt_ok( 'H6 no hosted call without consent (weekly job returns nothing)', TZFD_Ai_Faq_Suggestions::run_scheduled( time() ) === array() );
 }
 
-echo "\nSummary (wp-runtime-tests): ". (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
 echo "\nSummary (wp-runtime-tests): " . (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
 exit( (int) $GLOBALS['tzfd_rt']['FAIL'] > 0 ? 1 : 0 );

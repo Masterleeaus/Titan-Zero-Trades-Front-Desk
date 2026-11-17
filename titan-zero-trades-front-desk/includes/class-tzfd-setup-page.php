@@ -15,7 +15,9 @@ final class TZFD_Setup_Page {
 	const CAP  = 'manage_options';
 
 	public static function register() {
-		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 5 );
+		// Priority 15: the top-level Front Desk menu is added at priority 11 (class-tzfd-admin-menu.php). Registering this
+		// submenu earlier gives it a hook name the parent never matches, so admin.php?page=tzfd-get-started returns 403.
+		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 15 );
 		add_action( 'admin_post_tzfd_setup_manual', array( __CLASS__, 'handle_manual' ) );
 		add_action( 'admin_post_tzfd_setup_consent', array( __CLASS__, 'handle_consent' ) );
 	}

@@ -167,7 +167,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         if ( !$tz_count && TZFD_Scoped_Store::company_id() > 0 )
         {
             define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
-            define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_BOOK_DEFAULT_fp_from_email);
+            define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_Settings_Extras::default_notify_email( TZFD_BOOK_DEFAULT_fp_from_email ));
             $wpdb->insert( $wpdb->prefix.TZFD_Tables::FORMS, array( 'company_id' => TZFD_Scoped_Store::company_id(), 'id' => 1,
                                       'form_name' => 'Form 1',
 

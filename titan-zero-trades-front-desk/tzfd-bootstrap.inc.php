@@ -134,6 +134,8 @@ add_action('tz_fd_process_data_insert_failed', array($tz_plugin, 'finish_capacit
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-cancellation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-customer-rescheduling.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-client-portal.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-settings-extras.php';
+TZFD_Settings_Extras::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-status-update-emails.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-records.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-outbox.php';

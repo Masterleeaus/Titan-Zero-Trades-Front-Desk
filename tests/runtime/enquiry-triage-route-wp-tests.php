@@ -64,6 +64,10 @@ etr_check( 'rule applies to the company that saved it', $r_other && 'enquiry_que
 // 6. Cleanup: remove the saved maps so later checks start from the default.
 TZFD_Scoped_Store::delete( $option, $company );
 TZFD_Scoped_Store::delete( $option, $other );
+// Remove the enquiries and triage rows this run stored for the other company. The quote-request isolation check
+// (quote-request-runtime-tests.php) assumes that company id has no enquiries, so leaving them failed that check in CI.
+$wpdb->delete( $table, array( 'company_id' => $other ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- removes this run's own test rows
+$wpdb->delete( $wpdb->prefix . TZFD_Tables::ENQUIRIES, array( 'company_id' => $other ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- removes this run's own test rows
 
 echo 'Passed ' . $GLOBALS['etr_pass'] . ', Failed ' . $GLOBALS['etr_fail'] . "\n";
 if ( $GLOBALS['etr_fail'] > 0 ) { exit( 1 ); }

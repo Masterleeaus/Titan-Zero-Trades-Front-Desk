@@ -44,7 +44,6 @@ foreach ( array(
 	'class-tzfd-agent-tool-permissions.php',
 	'class-tzfd-action-receipt.php',
 	'class-tzfd-action-receipt-viewer.php',
-	'class-tzfd-upgrade-discovery.php',
 ) as $file ) {
 	require_once $root . '/' . $file;
 }

@@ -48,6 +48,7 @@ final class TZFD_Client_Portal {
     const LINK_PREFIX    = 'tz_fd_portal_link_';
     const SESSION_PREFIX = 'tz_fd_portal_session_';
     const THROTTLE_PREFIX = 'tz_fd_portal_throttle_';
+    const LINK_ISSUE_PREFIX = 'tz_fd_portal_link_issued_';
     const LINK_TTL       = 1200;   // 20 minutes
     const SESSION_TTL    = 7200;   // 2 hours
     const THROTTLE_TTL   = 60;     // one sign-in email per address per minute
@@ -90,32 +91,59 @@ final class TZFD_Client_Portal {
         return $prefix . hash( 'sha256', (string) $token );
     }
 
+    /**
+     * The issue time of one portal link, recorded the first time the portal shows it and reused on every later view.
+     * Expiry is fixed from issue, so viewing never moves it. Kept in an option (not a transient) so cache eviction
+     * cannot restart the clock. Each booking version gets its own record, so a changed booking starts a new one.
+     */
+    private static function link_issued_at( $kind, $booking_id, $form_id, $email, $version, $now ) {
+        $name   = self::LINK_ISSUE_PREFIX . md5( $kind . '|' . (int) $booking_id . '|' . (int) $form_id . '|' . strtolower( (string) $email ) . '|' . (string) $version );
+        $issued = (int) get_option( $name, 0 );
+        if ( $issued <= 0 ) {
+            add_option( $name, (int) $now, '', 'no' );
+            $issued = (int) get_option( $name, 0 );
+        }
+        return $issued;
+    }
+
     /** Booking links shown in the portal: cancel and reschedule, the same signed links the emails carry. */
     public static function booking_links( $row, $email ) {
         $secret = wp_salt( 'auth' );
         $links  = array();
         $id     = (int) $row->id;
+        $form   = (int) $row->formid;
+        $now    = time();
 
-        // Same version and expiry rules as the emailed link, so a rescheduled or cancelled booking refuses old links.
-        $cancel_expires = TZFD_Customer_Cancellation::new_expiry();
-        $cancel         = TZFD_Customer_Cancellation::create_token( $id, $email, $secret, TZFD_Customer_Cancellation::row_version( $row ), $cancel_expires );
-        if ( '' !== $cancel ) {
-            $links['cancel'] = add_query_arg(
-                array( 'action' => TZFD_Customer_Cancellation::ACTION, 'booking_id' => $id, 'expires' => $cancel_expires, 'token' => $cancel ),
-                admin_url( 'admin-post.php' )
-            );
+        // Both link types expire a fixed 14 days after their recorded issue time. An expired link is left out, never renewed.
+        $cancel_version = TZFD_Customer_Cancellation::row_version( $row );
+        $cancel_issued  = self::link_issued_at( 'cancel', $id, $form, $email, $cancel_version, $now );
+        if ( TZFD_Customer_Cancellation::is_live( $cancel_issued, $now ) ) {
+            $cancel_expires = $cancel_issued + TZFD_Customer_Cancellation::TOKEN_TTL;
+            $cancel         = TZFD_Customer_Cancellation::create_token( $id, $email, $secret, $cancel_version, $cancel_expires );
+            if ( '' !== $cancel ) {
+                $links['cancel'] = add_query_arg(
+                    array( 'action' => TZFD_Customer_Cancellation::ACTION, 'booking_id' => $id, 'expires' => $cancel_expires, 'token' => $cancel ),
+                    admin_url( 'admin-post.php' )
+                );
+            }
         }
 
-        $version = TZFD_Customer_Rescheduling::version( $row );
-        $move    = TZFD_Customer_Rescheduling::token( $id, (int) $row->formid, $email, $version, $secret );
-        if ( '' !== $move ) {
+        // Reschedule links rebuild from their recorded issue time, so the token and expiry stay those of the first view.
+        $version     = TZFD_Customer_Rescheduling::version( $row );
+        $move_issued = self::link_issued_at( 'reschedule', $id, $form, $email, $version, $now );
+        $move        = TZFD_Customer_Rescheduling::is_live( $move_issued, $now )
+            ? TZFD_Customer_Rescheduling::issue( $id, $form, $email, $version, $secret, $move_issued )
+            : null;
+        if ( null !== $move ) {
             $links['reschedule'] = add_query_arg(
                 array(
                     'action'     => TZFD_Customer_Rescheduling::ACTION,
                     'booking_id' => $id,
                     'form_id'    => (int) $row->formid,
                     'version'    => $version,
-                    'token'      => $move,
+                    'issued'     => $move['issued'],
+                    'expires'    => $move['expires'],
+                    'token'      => $move['token'],
                 ),
                 admin_url( 'admin-post.php' )
             );
@@ -364,12 +392,14 @@ final class TZFD_Client_Portal {
             exit;
         }
 
+        // One sign-in email per address per THROTTLE_TTL. The claim is one atomic statement, so parallel posts
+        // for one address cannot each send an email.
+        require_once __DIR__ . '/class-tzfd-rate-limit.php';
         $throttle = self::token_key( self::THROTTLE_PREFIX, md5( $email ) );
-        if ( false === get_transient( $throttle ) ) {
-            set_transient( $throttle, 1, self::THROTTLE_TTL );
+        if ( TZFD_Rate_Limit::allow( $throttle, 1, self::THROTTLE_TTL ) ) {
             $records = self::records_for( $email );
             if ( empty( $records['booking_available'] ) ) {
-                delete_transient( $throttle );
+                TZFD_Rate_Limit::release( $throttle );
                 wp_safe_redirect( add_query_arg( self::PARAM_NOTICE, 'unavailable', self::portal_url() ) );
                 exit;
             }

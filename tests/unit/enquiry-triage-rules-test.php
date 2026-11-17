@@ -207,6 +207,23 @@ t_check( 'second urgent alert inside window is throttled', 'throttled' === $R::a
 t_check( 'alert sends again after window', true === $R::alert_decision( true, 'urgent', $NOW - TZFD_Enquiry_Triage_Rules::ALERT_WINDOW, $NOW )['send'] );
 t_check( 'alert decision is deterministic', $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) === $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) );
 
+// ---- Allowlisted business routing rules ----------------------------------------------------
+$rules = array( 'cancel' => 'quote_review', 'booking' => 'not_a_queue', 'general' => 'spam_review', 'spam' => 'enquiry_queue' );
+t_check( 'rule routes intent to allowlisted queue', 'quote_review' === $R::route_for_intent( 'cancel', $rules ) );
+t_check( 'rule with queue outside allowlist is dropped', null === $R::route_for_intent( 'booking', $rules ) );
+t_check( 'rule for spam intent is refused', null === $R::route_for_intent( 'spam', $rules ) );
+t_check( 'rule for unknown intent is refused', null === $R::route_for_intent( 'unknown', $rules ) );
+t_check( 'no rules leaves default route', null === $R::route_for_intent( 'cancel', array() ) );
+$cancel_rule = $R::evaluate( 'Please cancel my booking', 'a@x.com', '', $NOW, array(), null, 2026, $rules );
+t_check( 'evaluate applies allowlisted rule', 'quote_review' === $cancel_rule['route'] && 'cancel' === $cancel_rule['primary_intent'] );
+$bad_rule = $R::evaluate( 'Can you book Friday', 'a@x.com', '', $NOW, array(), null, 2026, $rules );
+t_check( 'evaluate ignores non-allowlisted queue and keeps default', 'enquiry_queue' === $bad_rule['route'] );
+$quote_default = $R::evaluate( 'Quote for gutter cleaning', 'a@x.com', '', $NOW, array(), null, 2026, array( 'quote' => 'enquiry_queue' ) );
+t_check( 'quote rule can move quote to enquiry queue', 'enquiry_queue' === $quote_default['route'] );
+$held_rule = $R::evaluate( $spam_text, 'x@example.com', 'ip9', $NOW, array(), null, 2026, array( 'booking' => 'enquiry_queue', 'general' => 'enquiry_queue' ) );
+t_check( 'spam hold cannot be routed away by rule', 'spam_review' === $held_rule['route'] && true === $held_rule['spam']['hold'] );
+t_check( 'routing is deterministic with rules', $cancel_rule === $R::evaluate( 'Please cancel my booking', 'a@x.com', '', $NOW, array(), null, 2026, $rules ) );
+
 // Offline and no hosted call: the rules file must not reach any network or remote API.
 $src = file_get_contents( dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-enquiry-triage-rules.php' );
 t_check( 'rules file has no network calls', 0 === preg_match( '/wp_remote_|curl_|file_get_contents\s*\(\s*[\'"]https?:|fsockopen|stream_socket/i', $src ) );

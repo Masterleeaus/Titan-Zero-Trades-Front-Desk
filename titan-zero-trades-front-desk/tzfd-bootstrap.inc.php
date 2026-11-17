@@ -157,7 +157,7 @@ TZFD_Outbox::boot();
 add_action( 'admin_notices', function () {
     if ( function_exists( 'imagecreatetruecolor' ) || ! current_user_can( 'tz_fd_access' ) ) { return; }
     if ( 'false' === get_option( 'cv_enable_captcha', 'true' ) ) { return; }
-    echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Titan Zero Front Desk: the PHP GD library is not installed, so the booking CAPTCHA is turned off. Ask your host to enable GD to protect your booking form from automated submissions.', 'titan-zero-trades-front-desk' ) . '</p></div>';
+    echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Scheduling & Enquiries Manager: the PHP GD library is not installed, so the booking CAPTCHA is turned off. Ask your host to enable GD to protect your booking form from automated submissions.', 'titan-zero-trades-front-desk' ) . '</p></div>';
 } );
 add_action( 'media_buttons', array($tz_plugin, 'insert_button'), 11);
 add_action( 'init', array($tz_plugin, 'data_management'));

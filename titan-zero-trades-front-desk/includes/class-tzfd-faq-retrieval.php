@@ -301,8 +301,8 @@ final class TZFD_FAQ_Retrieval {
     }
 
     /**
-     * Second stage. Runs only when keywords are not confident. Requires owner consent, the free_ai entitlement and the
-     * monthly cap not reached. Query and questions are redacted before the provider sees them. Any failure ends in
+     * Second stage. Runs only when keywords are not confident. Requires owner consent, a configured hosted connection
+     * and the monthly cap not reached. Query and questions are redacted before the provider sees them. Any failure ends in
      * clarification.
      */
     private static function embedding_or_clarify( $company, $raw, $norm, array $entries, array $ranked, $version ) {
@@ -313,8 +313,8 @@ final class TZFD_FAQ_Retrieval {
         if ( ! self::has_embedding_consent( $company ) ) {
             return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'low_confidence', $company, $version, $suggestions );
         }
-        if ( ! self::hosted_entitlement_allowed() ) {
-            return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'hosted_ai_not_entitled', $company, $version, $suggestions );
+        if ( ! self::hosted_connection_allowed() ) {
+            return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'hosted_ai_not_connected', $company, $version, $suggestions );
         }
         if ( self::embedding_calls_this_month( $company ) >= self::EMBED_MONTHLY_LIMIT ) {
             return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'monthly_embedding_cap', $company, $version, $suggestions );
@@ -378,16 +378,15 @@ final class TZFD_FAQ_Retrieval {
      * ------------------------------------------------------------------ */
 
     /**
-     * Entitlement gate for hosted calls, read from the single AI connector without sending anything. Requires a
-     * configured connection, recorded connector consent, the free_ai tier and the faq.read scope. Fails closed when
-     * the connector is not loaded.
+     * Connection gate for hosted calls, read from the single AI connector without sending anything. Requires a
+     * configured connection, recorded connector consent and the faq.read scope. No paid tier gates this path.
+     * Fails closed when the connector is not loaded.
      */
-    private static function hosted_entitlement_allowed() {
+    private static function hosted_connection_allowed() {
         if ( ! class_exists( 'TZFD_AI_Connector' ) ) { return false; }
         $status = TZFD_AI_Connector::status();
         return ! empty( $status['connected'] )
             && ! empty( $status['consent'] )
-            && in_array( 'free_ai', (array) ( $status['entitlements'] ?? array() ), true )
             && in_array( 'faq.read', (array) ( $status['scopes'] ?? array() ), true );
     }
 

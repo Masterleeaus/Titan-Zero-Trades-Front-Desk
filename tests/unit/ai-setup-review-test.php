@@ -93,6 +93,21 @@ rv_ok( 'review leaves AI consent off', false === TZFD_Ai_Free_Core::consent_gran
 // Replay: the same state gives the same review.
 rv_ok( 'review is deterministic on replay', $S::review( $full ) === $S::review( $full ) );
 
+// Saved FAQ entries are read for the duplicate check (upgraded sites). Reads only, skips unusable rows.
+$saved = $S::faq_questions_from_entries( array(
+	array( 'id' => 'a', 'question' => 'Do you offer Drain unblocking?', 'answer' => 'Yes.' ),
+	array( 'id' => 'b', 'question' => '   ', 'answer' => 'Blank question is skipped.' ),
+	array( 'id' => 'c', 'answer' => 'No question key is skipped.' ),
+	'not-an-array',
+	array( 'id' => 'd', 'question' => array( 'nested' ) ),
+) );
+rv_ok( 'saved FAQ entries give only usable questions', array( 'Do you offer Drain unblocking?' ) === $saved );
+rv_ok( 'no saved entries gives an empty list', array() === $S::faq_questions_from_entries( array() ) );
+$saved_review = $S::review( array_merge( $full, array( 'faq_questions' => $saved ) ) );
+$saved_faq = array_values( array_filter( $saved_review['suggestions'], static function ( $s ) { return 'faq' === $s['type']; } ) );
+rv_ok( 'saved FAQ question is not suggested again', 1 === count( $saved_faq ) && false !== strpos( $saved_faq[0]['value']['question'], 'Hot water' ) );
+rv_ok( 'duplicate match ignores case and spacing', 1 === count( array_filter( $S::review( array_merge( $full, array( 'faq_questions' => array( '  do you OFFER drain unblocking?  ' ) ) ) )['suggestions'], static function ( $s ) { return 'faq' === $s['type']; } ) ) );
+
 // describe ignores unknown types.
 rv_ok( 'describe ignores unknown suggestion types', '' === $S::describe( array( 'type' => 'price', 'value' => '60' ) ) );
 

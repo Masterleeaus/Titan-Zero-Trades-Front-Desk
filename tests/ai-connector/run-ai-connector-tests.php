@@ -280,7 +280,7 @@ check( 'budget table has no pilot values left', ! in_array( $defaults['model_fal
 // 16. Disclosure: provider, data classes, quota; retention is an owner decision (null), never a promise.
 reset_state();
 $d = $C::disclosure();
-check( 'disclosure names provider, data classes and quota', isset( $d['provider'] ) && in_array( 'customer.read', $d['data_classes'], true ) && 50 === $d['quota']['model_fallback'] );
+check( 'disclosure names provider, data classes and quota', isset( $d['provider'] ) && in_array( 'customer.read', $d['data_classes'], true ) && 200 === $d['quota']['model_fallback'] );
 check( 'disclosure leaves retention to the owner (null)', array_key_exists( 'retention', $d ) && null === $d['retention'] && in_array( 'retention', $d['owner_decisions'], true ) );
 check( 'disclosure never includes the secret', false === strpos( json_encode( $d ), SECRET ) );
 
@@ -320,7 +320,7 @@ check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['to
 
 // 18. Tenant ceiling: counts at the pilot budget ceilings, no money assumed.
 $t = $C::tenant_ceiling( 100 );
-check( 'tenant ceiling scales each budget by tenant count', 5000 === $t['max_units_by_budget']['model_fallback'] && 20000 === $t['max_units_by_budget']['embedding'] && 25500 === $t['max_units_total'] );
+check( 'tenant ceiling scales each budget by tenant count', 20000 === $t['max_units_by_budget']['model_fallback'] && 80000 === $t['max_units_by_budget']['embedding'] && 1600 === $t['max_units_by_budget']['faq_batch'] && 400 === $t['max_units_by_budget']['insight'] && 102000 === $t['max_units_total'] );
 check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );
 // 19. Consent is bound to the disclosure version; an old consent does not count.
 reset_state();

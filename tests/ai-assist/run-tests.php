@@ -250,5 +250,13 @@ t( 'no open question when owner replied last', count( $s5['outstanding'] ) === 0
 $s6 = TZFD_AI_Conversation_Summary::summarise( array_merge( $thread, array( array( 'id' => 'm4', 'from' => 'customer', 'text' => 'Is Friday still possible? Also what is the price?', 'at_utc' => '2026-11-14 03:00:00' ) ) ), true, array(), $owner_caps );
 t( 'customer question after owner reply is outstanding with source', count( $s6['outstanding'] ) === 2 && $s6['outstanding'][0]['source'] === 'm4' );
 
+// #38 negative and privacy checks. Summaries are generated on demand, so no storage path or exporter entry is needed.
+$sum_src = file_get_contents( $dir . 'class-tzfd-ai-conversation-summary.php' );
+t( 'summary class writes nothing to storage (no exporter or eraser entry needed)', ! preg_match( '/update_option|add_option|\$wpdb|->insert\(|->update\(|set_transient|wp_insert/', $sum_src ) );
+t( 'summary class makes no hosted call (local path has zero hosted cost)', ! preg_match( '/hosted|apply_filters|wp_remote_/i', $sum_src ) );
+$ph = TZFD_AI_Conversation_Summary::summarise( array( array( 'id' => 'p1', 'from' => 'customer', 'text' => 'Call me on +61412345678 please?' ) ), true, array(), $owner_caps );
+t( 'compact phone number redacted from output', strpos( json_encode( $ph ), '61412345678' ) === false && $ph['redacted'] === true );
+t( 'customer-level role without tz_fd_access cannot read summaries', TZFD_AI_Conversation_Summary::can_read( array( 'read' => true ) ) === false );
+
 printf( "\n%d passed, %d failed\n", $GLOBALS['t_pass'], $GLOBALS['t_fail'] );
 exit( $GLOBALS['t_fail'] > 0 ? 1 : 0 );

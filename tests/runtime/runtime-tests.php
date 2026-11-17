@@ -100,6 +100,8 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
 
 // FAQ knowledge gap detection (issue #36).
 require __DIR__ . '/ai-gap-runtime-checks.php';
+// Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
+require __DIR__ . '/faq-retrieval-wp-tests.php';
 // 8. Signed call-events path for missed-call callback tasks (issue #30): credential gate, tenant denial
 // before any write, duplicate and replay handling, anonymous caller, and no caller data in the response.
 if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecycle' ) && class_exists( 'TZFD_Missed_Call_Tasks' ) ) {

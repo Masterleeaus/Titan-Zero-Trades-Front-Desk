@@ -29,10 +29,22 @@ check() { # name, code  (refuse = a real HTTP status that is not 2xx)
 }
 # Connection failures give curl status 000; --max-time stops a silent server from hanging the run.
 code() { curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$@" || true; }
+# Diagnostics (issue #190): HTTP status and Location header of one request, printed as DIAG lines.
+# DIAG lines never count as PASS or FAIL.
+diag() { # label, curl args...
+  local label="$1"; shift
+  local hdr dcode loc
+  hdr=$(mktemp)
+  dcode=$(curl -s --max-time 30 -D "$hdr" -o /dev/null -w '%{http_code}' "$@" || true)
+  loc=$(tr -d '\r' < "$hdr" | grep -i '^location:' | tail -1)
+  echo "DIAG $label -- HTTP ${dcode:-000}; ${loc:-no Location header}"
+  rm -f "$hdr"
+}
 
 # Preflight: abort rather than report a dead server as a pass.
 preflight=$(code "$B/?rest_route=/")
 if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
+echo "DIAG WordPress version: $(curl -s --max-time 30 "$B/feed/" | grep -o '?v=[0-9][0-9.]*' | head -1)"
 # REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
 rest() { # name, curl args...
   local name="$1"; shift
@@ -90,6 +102,8 @@ else
   }
   JAR_ADMIN=$(mktemp); JAR_SUB=$(mktemp)
   if login rtadmin "$TZFD_RT_ADMIN_PASS" "$JAR_ADMIN"; then
+    diag "admin dashboard /wp-admin/index.php (admin cookie)" -b "$JAR_ADMIN" "$B/wp-admin/index.php"
+    echo "DIAG nonce-like markers on admin dashboard: $(curl -s -b "$JAR_ADMIN" "$B/wp-admin/index.php" | grep -c '"nonce"' || true)"
     ADMIN_NONCE=$(nonce_of "$JAR_ADMIN")
     if [ -n "$ADMIN_NONCE" ]; then
       report PASS "admin login yields a REST nonce" "positive control"
@@ -120,6 +134,21 @@ else
   POST_BODY='action=tzfd_ai_gap_merge&proposal_id=none&decision=reject'
   ADMIN_PAGE_REVIEW="$B/wp-admin/admin.php?page=tzfd-ai-faq-review"
   POST_BODY_REVIEW='action=tzfd_ai_faq_decide&proposal_id=none&decision=reject'
+  # DIAG: status and Location for each FAQ gap and review request (admin, subscriber, anonymous, no or bad nonce).
+  diag "FAQ gap screen, anonymous" "$ADMIN_PAGE"
+  diag "FAQ gap screen, admin" -b "$JAR_ADMIN" "$ADMIN_PAGE"
+  diag "FAQ gap screen, subscriber" -b "$JAR_SUB" "$ADMIN_PAGE"
+  diag "FAQ gap handler, anonymous" -d "$POST_BODY" "$ADMIN_POST"
+  diag "FAQ gap handler, subscriber" -b "$JAR_SUB" -d "$POST_BODY" "$ADMIN_POST"
+  diag "FAQ gap handler, admin no nonce" -b "$JAR_ADMIN" -d "$POST_BODY" "$ADMIN_POST"
+  diag "FAQ gap handler, admin bad nonce" -b "$JAR_ADMIN" -d "$POST_BODY&_wpnonce=0123456789" "$ADMIN_POST"
+  diag "FAQ review screen, anonymous" "$ADMIN_PAGE_REVIEW"
+  diag "FAQ review screen, admin" -b "$JAR_ADMIN" "$ADMIN_PAGE_REVIEW"
+  diag "FAQ review screen, subscriber" -b "$JAR_SUB" "$ADMIN_PAGE_REVIEW"
+  diag "FAQ review handler, anonymous" -d "$POST_BODY_REVIEW" "$ADMIN_POST"
+  diag "FAQ review handler, subscriber" -b "$JAR_SUB" -d "$POST_BODY_REVIEW" "$ADMIN_POST"
+  diag "FAQ review handler, admin no nonce" -b "$JAR_ADMIN" -d "$POST_BODY_REVIEW" "$ADMIN_POST"
+  diag "FAQ review handler, admin bad nonce" -b "$JAR_ADMIN" -d "$POST_BODY_REVIEW&_wpnonce=0123456789" "$ADMIN_POST"
   expect() { # name, expected, actual
     if [ "$3" = "$2" ]; then report PASS "$1" "HTTP $3"; else report FAIL "$1" "expected HTTP $2, got HTTP $3"; fi
   }

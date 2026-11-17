@@ -88,7 +88,7 @@ $before = $GLOBALS['tzfd_test_options'];
 $S::review( $full );
 $S::review( array() );
 rv_ok( 'review writes no option', $before === $GLOBALS['tzfd_test_options'] );
-rv_ok( 'review leaves AI consent off', false === TZFD_Ai_Free_Core::consent_granted() );
+rv_ok( 'review leaves AI consent as it was (on by default)', true === TZFD_Ai_Free_Core::consent_granted() );
 
 // Replay: the same state gives the same review.
 rv_ok( 'review is deterministic on replay', $S::review( $full ) === $S::review( $full ) );

@@ -180,7 +180,7 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 == Hosted AI ==
 
-Hosted AI is optional and stays off until the site owner turns it on. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
+Hosted AI is on by default, but nothing is sent to it until the site owner connects a hosted service. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
 
 Booking, customers, calendars, rules, FAQ and reports work without it.
 

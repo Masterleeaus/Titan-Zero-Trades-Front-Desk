@@ -269,9 +269,9 @@ final class TZFD_AI_Answer_Box {
 		return self::generative_fallback( $norm, (string) $visitor_key, $lang, $refusal );
 	}
 
-	/** @return bool Whether the proxy fallback is switched on. Off unless the site enables it. */
+	/** @return bool Whether the proxy fallback is switched on. On by default; it only consults a provider filter and never sends data itself. */
 	public static function fallback_enabled() {
-		return (bool) apply_filters( 'tzfd_ai_fallback_enabled', false );
+		return (bool) apply_filters( 'tzfd_ai_fallback_enabled', true );
 	}
 
 	/**

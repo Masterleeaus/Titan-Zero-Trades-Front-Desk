@@ -25,9 +25,14 @@ final class TZFD_Ai_Free_Core {
 		'message', 'enquiry', 'transcript', 'raw', 'notes', 'password', 'token', 'secret', 'api_key',
 	);
 
+	/**
+	 * On by default: with no stored choice the free AI lanes are enabled. Nothing is sent until a hosted
+	 * service is connected (see TZFD_AI_Hosted_Client). An administrator who withdraws consent stores false.
+	 */
 	public static function consent_granted() {
-		$c = get_option( self::CONSENT_OPTION, array() );
-		return is_array( $c ) && ! empty( $c['granted'] );
+		$c = get_option( self::CONSENT_OPTION, null );
+		if ( null === $c || false === $c ) { return true; }
+		return is_array( $c ) && array_key_exists( 'granted', $c ) && ! empty( $c['granted'] );
 	}
 
 	/** Granting stores consent. Withdrawing stores the refusal and fires the purge action for the lanes. */

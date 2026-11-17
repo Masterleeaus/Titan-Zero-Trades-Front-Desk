@@ -123,10 +123,17 @@ final class TZFD_Setup_Page {
 		echo '<p>' . esc_html__( 'Booking, the calendar, customer records, reports, exports and staff access all work with this plugin alone. Nothing here is needed to take bookings.', 'titan-zero-trades-front-desk' ) . '</p>';
 		echo '<ul>';
 		echo '<li><strong>' . esc_html__( 'Titan Zero AI Assistant (hosted, paid).', 'titan-zero-trades-front-desk' ) . '</strong> '
-			. esc_html__( 'Answers customer questions from the business details you publish. It stays off until you connect it and record consent on the Integrations tab. Without it, the plugin answers from its own rules.', 'titan-zero-trades-front-desk' ) . '</li>';
+			. esc_html__( 'On by default. Answers customer questions from the business details you publish. Nothing is sent until you connect a hosted service on the Integrations tab. Once connected, the customer question text and the approved business details needed to answer it are sent to that service. Without a connection, the plugin answers from its own rules.', 'titan-zero-trades-front-desk' )
+			. self::ai_terms_html() . '</li>';
 		echo '<li><strong>' . esc_html__( 'Titan Zero AI Agent Team (hosted, paid).', 'titan-zero-trades-front-desk' ) . '</strong> '
 			. esc_html__( 'Acts only through the tools you grant on the Agent permissions screen. Each action it tries is recorded in a receipt you can read there.', 'titan-zero-trades-front-desk' ) . '</li>';
 		echo '</ul>';
 		echo '</div>';
+	}
+	/** Terms link for the hosted AI service. The URL comes from the tzfd_ai_terms_url filter; none is shipped. */
+	private static function ai_terms_html() {
+		$url = function_exists( 'apply_filters' ) ? (string) apply_filters( 'tzfd_ai_terms_url', '' ) : '';
+		if ( '' === $url || 0 !== strpos( $url, 'https://' ) ) { return ''; }
+		return ' <a href="' . esc_url( $url ) . '" target="_blank" rel="noopener">' . esc_html__( 'Terms of the hosted AI service', 'titan-zero-trades-front-desk' ) . '</a>.';
 	}
 }

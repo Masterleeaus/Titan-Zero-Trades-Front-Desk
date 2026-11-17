@@ -22,10 +22,10 @@ $tz_connector = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/class-tz
 if ( ! class_exists( 'TZFD_AI_Connector' ) && is_readable( $tz_connector ) ) { require_once $tz_connector; }
 ci_check( 'connector class loads on a clean install', class_exists( 'TZFD_AI_Connector' ) );
 
-// 1. No AI connection, secret, consent or entitlement is stored by default.
+// 1. No AI connection, secret or entitlement is stored by default; consent is on, but nothing is sent until connected.
 $status = class_exists( 'TZFD_AI_Connector' ) ? TZFD_AI_Connector::status() : array();
 ci_check( 'AI connector reports not connected', isset( $status['connected'] ) && false === $status['connected'] );
-ci_check( 'AI connector has no consent recorded', isset( $status['consent'] ) && false === $status['consent'] );
+ci_check( 'AI connector consent is on by default', isset( $status['consent'] ) && true === $status['consent'] );
 ci_check( 'AI connector has no entitlement', empty( $status['entitlements'] ) );
 ci_check( 'no AI connector secret stored', false === get_option( 'tzfd_ai_connector_secret', false ) || '' === get_option( 'tzfd_ai_connector_secret', '' ) );
 ci_check( 'no legacy AI API key option stored', false === get_option( 'tz_fd_ai_api_key', false ) && false === get_option( 'tz_fd_ai_local_key', false ) );
@@ -50,12 +50,12 @@ $refused = 0;
 if ( class_exists( 'TZFD_AI_Connector' ) ) {
 	foreach ( array_keys( TZFD_AI_Connector::features() ) as $feature ) {
 		$result = TZFD_AI_Connector::request( $feature, array( 'question' => 'clean install probe' ) );
-		if ( isset( $result['status'] ) && 'consent_required' === $result['status'] ) { $refused++; }
+		if ( isset( $result['status'] ) && in_array( $result['status'], array( 'consent_required', 'not_configured', 'tier_not_entitled', 'scope_not_granted' ), true ) ) { $refused++; }
 	}
 }
 remove_filter( 'tzfd_ai_connector_transport', $probe, 10 );
 ci_check( 'no transport call for any hosted AI feature', 0 === $transport_calls, 'calls=' . $transport_calls );
-ci_check( 'every hosted AI feature refused without consent', class_exists( 'TZFD_AI_Connector' ) && $refused === count( TZFD_AI_Connector::features() ) );
+ci_check( 'every hosted AI feature refused without a connection', class_exists( 'TZFD_AI_Connector' ) && $refused === count( TZFD_AI_Connector::features() ) );
 
 echo 'Summary: ' . $GLOBALS['ci_pass'] . ' passed, ' . $GLOBALS['ci_fail'] . " failed\n";
 if ( $GLOBALS['ci_fail'] > 0 ) { exit( 1 ); }

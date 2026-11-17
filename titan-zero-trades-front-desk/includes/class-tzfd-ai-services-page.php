@@ -70,7 +70,7 @@ final class TZFD_AI_Services_Page {
                     <tr><th scope="row"><?php esc_html_e( 'Local features', 'titan-zero-trades-front-desk' ); ?></th>
                         <td><?php esc_html_e( 'Always enabled', 'titan-zero-trades-front-desk' ); ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted data consent', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php esc_html_e( 'None recorded. Hosted processing stays off until you agree to it.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                        <td><?php esc_html_e( 'None recorded. Nothing is sent to a hosted service until you connect one.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
 

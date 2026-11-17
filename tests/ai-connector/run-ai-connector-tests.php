@@ -87,10 +87,10 @@ function with_limits( array $limits ) {
 }
 $C = 'TZFD_AI_Connector';
 
-// 1. Defaults are off: no consent, no transport.
+// 1. Consent is on by default, but a fresh install is not connected: no transport, local fallback.
 reset_state();
 $r = $C::request( 'faq.answer', array( 'q' => 'hours' ) );
-check( 'consent is off by default and blocks the call', 'consent_required' === $r['status'] && true === $r['use_local'] && 0 === calls() );
+check( 'consent is on by default and a fresh install sends nothing', true === $r['use_local'] && 0 === calls() && in_array( $r['status'], array( 'tier_not_entitled', 'not_configured', 'scope_not_granted' ), true ) );
 
 // 2. Consent without a configured endpoint fails safe.
 reset_state();

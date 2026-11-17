@@ -245,7 +245,7 @@ final class TZFD_AI_Connector {
     private static function config() {
         $opt = self::raw_option();
         return array(
-            'consent'      => isset( $opt['consent'] ) && true === $opt['consent'],
+            'consent'      => ! isset( $opt['consent'] ) || true === $opt['consent'],
             'scopes'       => self::clean_scopes( isset( $opt['scopes'] ) && is_array( $opt['scopes'] ) ? $opt['scopes'] : array() ),
             'endpoint'     => isset( $opt['endpoint'] ) && is_string( $opt['endpoint'] ) ? $opt['endpoint'] : '',
             'site_id'      => isset( $opt['site_id'] ) && is_string( $opt['site_id'] ) ? $opt['site_id'] : '',

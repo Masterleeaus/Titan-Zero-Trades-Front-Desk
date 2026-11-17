@@ -33,6 +33,8 @@ function fired( $hook ) {
 	return array_values( array_filter( $GLOBALS['tzfd_test_fired'], static function ( $f ) use ( $hook ) { return $f[0] === $hook; } ) );
 }
 function grant() { TZFD_Ai_Free_Core::set_consent( true, 1 ); }
+// Withdrawn consent, written directly so no purge action fires (AI is on by default).
+function ai_off() { $GLOBALS['tzfd_test_options']['tz_fd_ai_consent'] = array( 'granted' => false, 'at' => 1 ); }
 function reply( $env, array $data, $usage = array() ) {
 	return array( 'ok' => true, 'company_id' => $env['company_id'], 'data' => $data, 'usage' => $usage );
 }
@@ -47,7 +49,8 @@ $FACTS = array(
 
 /* ---------- core ---------- */
 reset_state();
-ok( 'consent off by default', TZFD_Ai_Free_Core::consent_granted() === false );
+ok( 'consent on by default', TZFD_Ai_Free_Core::consent_granted() === true );
+ai_off();
 connector( static function ( $v, $env ) { return reply( $env, array() ); } );
 $r = TZFD_Ai_Free_Core::hosted_call( 'faq.weekly', array(), $CO );
 ok( 'no hosted call without consent', $r['ok'] === false && $r['error'] === 'consent_required' && hosted_calls() === 0 );
@@ -73,6 +76,7 @@ ok( 'withdrawing consent fires the purge action', count( fired( TZFD_Ai_Free_Cor
 
 /* ---------- #35 weekly FAQ suggestions ---------- */
 reset_state();
+ai_off();
 $themes = array( array( 'label' => 'boiler repair', 'count' => 9 ), array( 'label' => 'drain unblocking', 'count' => 4 ), array( 'label' => 'zero', 'count' => 0 ) );
 $r = TZFD_Ai_Faq_Suggestions::run_weekly( $CO, $NOW, $themes, $FACTS );
 ok( 'weekly batch needs consent and writes no state without it', $r['status'] === 'consent_required' && hosted_calls() === 0 && ! isset( $GLOBALS['tzfd_test_options'][ 'tz_fd_ai_faq_batch_' . $CO . '_2026-W47' ] ) );
@@ -137,6 +141,7 @@ ok( 'approving again is refused', TZFD_Ai_Faq_Suggestions::decide( $CO, $p2[0]['
 
 /* ---------- #36 gap detection ---------- */
 reset_state();
+ai_off();
 $vocab = array( 'boiler repair', 'drain unblocking' );
 ok( 'gap: no recording without consent', TZFD_Ai_Gap_Detection::record( $CO, 'boiler repair?', false, 0, $vocab, $NOW ) === 'consent_off' && TZFD_Ai_Gap_Detection::report( $CO, $NOW, 30, array(), array() )['total'] === 0 );
 grant();
@@ -218,7 +223,8 @@ $miss = array_column( TZFD_Ai_Setup_Check::missing( $empty ), 'key' );
 ok( 'setup: empty site lists every missing item', in_array( 'business_name', $miss, true ) && in_array( 'services', $miss, true ) && in_array( 'hours', $miss, true ) && in_array( 'hosted_connector', $miss, true ) );
 ok( 'setup: AI gate closed on empty site', TZFD_Ai_Setup_Check::ai_gate( $empty )['allowed'] === false );
 ok( 'setup: no suggestions and no fatal on empty or absent provider', TZFD_Ai_Setup_Check::suggestions( $empty ) === array() );
-ok( 'setup: AI stays off by default', TZFD_Ai_Free_Core::consent_granted() === false );
+ok( 'setup: AI is on by default', TZFD_Ai_Free_Core::consent_granted() === true );
+ai_off();
 $enable_blocked = TZFD_Ai_Setup_Check::enable_ai( $empty, true, $NOW );
 ok( 'setup: enabling AI lists missing configuration', $enable_blocked['ok'] === false && in_array( 'business_name', $enable_blocked['missing'], true ) && TZFD_Ai_Free_Core::consent_granted() === false );
 
@@ -234,7 +240,7 @@ $upgraded['tags'] = array( 'boiler-repair' );
 $up = TZFD_Ai_Setup_Check::suggestions( $upgraded );
 ok( 'setup: upgraded site keeps existing greeting, FAQ and tag', ! in_array( 'greeting', array_column( $up, 'type' ), true ) && count( array_filter( $up, static function ( $s ) { return 'faq' === $s['type'] && 'do you offer boiler repair?' === strtolower( $s['value']['question'] ); } ) ) === 0 && count( array_filter( $up, static function ( $s ) { return 'tags' === $s['type'] && in_array( 'boiler-repair', $s['value'], true ); } ) ) === 0 );
 ok( 'setup: AI gate passes once required items exist', TZFD_Ai_Setup_Check::ai_gate( $fresh )['allowed'] === true );
-ok( 'setup: enabling AI needs admin confirmation', TZFD_Ai_Setup_Check::enable_ai( $fresh, false, $NOW )['error'] === 'admin_confirmation_required' && TZFD_Ai_Free_Core::consent_granted() === false );
+ok( 'setup: enabling AI needs admin confirmation', TZFD_Ai_Setup_Check::enable_ai( $fresh, false, $NOW )['error'] === 'admin_confirmation_required' );
 ok( 'setup: confirmed enable records consent', TZFD_Ai_Setup_Check::enable_ai( $fresh, true, $NOW )['ok'] === true && TZFD_Ai_Free_Core::consent_granted() === true );
 ok( 'setup: confirm refuses without admin confirmation', TZFD_Ai_Setup_Check::confirm( $sgs[1], array() )['error'] === 'admin_confirmation_required' );
 $drain = array_values( array_filter( $sgs, static function ( $s ) { return 'faq' === $s['type'] && 'service:Drain unblocking' === $s['source']; } ) )[0];
@@ -277,6 +283,7 @@ ok( 'insights: local report always produced with denominators', $loc['base'] ===
 
 reset_state();
 $db2 = new FakeDb(); $db2->rows = $db->rows;
+ai_off();
 $no_consent = TZFD_Ai_Monthly_Insights::report( $CO, '2026-11', $db2, $extra, $NOW );
 ok( 'insights: local report works without consent or connector', $no_consent['ok'] && $no_consent['summary'] === null && $no_consent['summary_status'] === 'consent_required' && $no_consent['local']['base'] === 45 );
 grant();

@@ -1,0 +1,1 @@
+{"name":"over budget drops to free","now":1900000000,"site_company_id":1,"payload":{"schema_version":1,"company_id":1,"state":"over_budget","entitlements":["assistant"],"expires_at":1900003600},"expect":{"level":"free_ai","reason":"over_budget"}}

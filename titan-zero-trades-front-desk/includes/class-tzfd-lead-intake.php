@@ -55,7 +55,8 @@ final class TZFD_Lead_Intake {
         $key = 'tzfd_enq_' . md5( $company . '|' . (string) sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
         if ( get_transient( $key ) ) { wp_die( esc_html__( 'Please wait before submitting another enquiry', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
         set_transient( $key, 1, MINUTE_IN_SECONDS );
-        $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form' ) );
+        $ip_hash = hash_hmac( 'sha256', sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ), wp_salt( 'auth' ) );
+        $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form', 'triage_ip_hash' => $ip_hash ) );
         if ( ! $saved ) { wp_die( esc_html__( 'Your enquiry could not be saved. Please contact us directly.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }
         $referer = wp_get_referer();
         wp_safe_redirect( add_query_arg( 'tzfd_enquiry_sent', '1', $referer ? $referer : home_url( '/' ) ) );
@@ -122,6 +123,11 @@ final class TZFD_Lead_Intake {
         $ok    = $wpdb->insert( $table, $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Front Desk's own table; company_id set above.
         if ( ! $ok ) { return 0; }
         $id = (int) $wpdb->insert_id;
+        // Rules triage after the enquiry is saved. A triage failure never loses or changes the enquiry.
+        if ( class_exists( 'TZFD_Enquiry_Triage' ) ) {
+            $ip_hash = isset( $payload['triage_ip_hash'] ) && is_string( $payload['triage_ip_hash'] ) ? $payload['triage_ip_hash'] : '';
+            TZFD_Enquiry_Triage::record_safely( $company_id, $id, $enquiry, $email, $ip_hash );
+        }
         // Urgent alert only when the admin has opted in and the throttle window allows it. Duplicates returned above.
         TZFD_Lead_Urgency::maybe_alert( $company_id, $id, $name, $urgency );
         return $id;

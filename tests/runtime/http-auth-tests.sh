@@ -12,9 +12,10 @@ report() { # status name detail
     SKIP) echo "SKIP $2 -- $3"; skip=$((skip+1)) ;;
   esac
 }
-check() { # name, code  (refuse = not 2xx)
+check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a refusal)
   local name="$1" code="$2"
-  if [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
+  if [[ "$code" == "000" ]]; then report FAIL "$name" "no HTTP response (server unreachable)";
+  elif [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
   else report PASS "$name" "HTTP $code"; fi
 }
 code() { curl -s -o /dev/null -w '%{http_code}' "$@"; }

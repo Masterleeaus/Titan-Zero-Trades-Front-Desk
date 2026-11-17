@@ -107,6 +107,12 @@ jobs:
       - name: HTTP auth tests
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"
+          # The server started in an earlier step does not answer here, so start it again in its own session.
+          if [ "$(curl -s -o /dev/null -w '%{http_code}' "$WP_URL/" || true)" != "200" ]; then
+            setsid nohup php -S localhost:$WP_PORT -t "$WP_DIR" > "$GITHUB_WORKSPACE/server-http.log" 2>&1 < /dev/null &
+            for i in $(seq 1 30); do c=$(curl -s -o /dev/null -w '%{http_code}' "$WP_URL/" || true); [ "$c" = "200" ] && break; sleep 1; done
+            test "$c" = "200"
+          fi
           B="$WP_URL" SECRET="$(cat /tmp/fd-secret.txt)" bash http-auth-tests.sh
       - name: Extra WordPress test files (if any)
         run: |

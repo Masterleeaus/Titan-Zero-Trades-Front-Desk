@@ -41,6 +41,12 @@ final class TZFD_Customer_Rescheduling {
         return $token==='' ? null : array('token'=>$token,'issued'=>$issued,'expires'=>$issued+self::TOKEN_TTL);
     }
 
+    /** True while a link issued at $issued is still inside its fixed 14 days. Viewing never changes $issued. */
+    public static function is_live($issued, $now=null) {
+        $issued=(int)$issued; $now=null===$now?time():(int)$now;
+        return $issued>0 && $now<=$issued+self::TOKEN_TTL;
+    }
+
     /**
      * HMAC over booking, form, e-mail, booking version, issue time and expiry. A token without an issue time,
      * or whose expiry is not exactly 14 days after its issue time, is not produced.

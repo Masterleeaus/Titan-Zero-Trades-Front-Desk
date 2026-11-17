@@ -12,6 +12,7 @@ function admin_url( $path = '' ) { return 'https://example.test/wp-admin/' . $pa
 function sanitize_text_field( $s ) { return trim( (string) $s ); }
 function wp_unslash( $s ) { return $s; }
 
+require_once __DIR__ . '/../titan-zero-trades-front-desk/includes/class-tzfd-customer-cancellation.php';
 require_once __DIR__ . '/../titan-zero-trades-front-desk/includes/class-tzfd-customer-rescheduling.php';
 require_once __DIR__ . '/../titan-zero-trades-front-desk/includes/class-tzfd-sms-cancel-confirm.php';
 require_once __DIR__ . '/../titan-zero-trades-front-desk/includes/class-tzfd-contact-rules.php';
@@ -52,6 +53,12 @@ check( 'R16 a flipped character is refused', ! TZFD_Customer_Rescheduling::verif
 check( 'R17 an empty secret issues no link', null === TZFD_Customer_Rescheduling::issue( 42, 7, $email, $version, '', $t0 ) );
 check( 'R18 e-mail case does not change the token', $link['token'] === TZFD_Customer_Rescheduling::token( 42, 7, strtoupper( $email ), $version, $secret, $t0, $t0 + $ttl ) );
 check( 'R19 cancellation links keep their 14-day expiry', 1209600 === TZFD_Customer_Cancellation::TOKEN_TTL );
+// Fixed expiry: a link is live only until issue + 14 days, and showing it again (re-issue from the stored issue time) never moves that.
+check( 'R20 reschedule link is live until exactly 14 days after issue', TZFD_Customer_Rescheduling::is_live( $t0, $t0 + $ttl ) && ! TZFD_Customer_Rescheduling::is_live( $t0, $t0 + $ttl + 1 ) );
+check( 'R21 reschedule link re-issued from its stored issue time keeps the same token and expiry', $link === TZFD_Customer_Rescheduling::issue( 42, 7, $email, $version, $secret, $t0 ) && $link['expires'] === $t0 + $ttl );
+check( 'R22 reschedule link with no recorded issue time is not live', ! TZFD_Customer_Rescheduling::is_live( 0, $t0 ) );
+check( 'R23 cancellation link is live until exactly 14 days after issue', TZFD_Customer_Cancellation::is_live( $t0, $t0 + $ttl ) && ! TZFD_Customer_Cancellation::is_live( $t0, $t0 + $ttl + 1 ) );
+check( 'R24 cancellation and reschedule share the same 14-day window', TZFD_Customer_Cancellation::TOKEN_TTL === TZFD_Customer_Rescheduling::TOKEN_TTL );
 
 // ---------- Part 1: SMS two-step cancellation ----------
 fwrite( STDOUT, '-- SMS cancel confirmation' . PHP_EOL );

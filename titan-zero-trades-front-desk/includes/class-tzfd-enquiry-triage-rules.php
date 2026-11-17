@@ -72,6 +72,8 @@ final class TZFD_Enquiry_Triage_Rules {
     /** Normalise text for comparison: NFKC, case fold, zero-width characters removed, apostrophes unified. */
     public static function normalize( $text ) {
         $text = (string) $text;
+        // Invalid UTF-8 has no usable text for comparison. Returning '' keeps it out of every duplicate check.
+        if ( 1 !== preg_match( '//u', $text ) ) { return ''; }
         if ( class_exists( 'Normalizer' ) ) {
             $nfkc = Normalizer::normalize( $text, Normalizer::FORM_KC );
             if ( false !== $nfkc ) { $text = $nfkc; }

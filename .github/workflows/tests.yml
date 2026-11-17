@@ -70,7 +70,10 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=20
     env:
       WP_DIR: ${{ github.workspace }}/wp-site
-      WP_CLI: ${{ github.workspace }}/wp-cli.phar
+      # WP-CLI must not sit in the folder that holds WordPress or its parent. WordPress derives siteurl and home from
+      # the phar's location when it is in the workspace root, so core install stored http://localhost:8080/wp-site, the
+      # login cookie was scoped to /wp-site/, and the logged-in checks were redirected to login (refs #190, #159).
+      WP_CLI: /tmp/tzfd-ci/wp-cli.phar
       WP_PORT: "8080"
       WP_URL: http://localhost:8080
       DB_NAME: wp_fd_ci
@@ -87,6 +90,7 @@ jobs:
           extensions: mysqli, xml, mbstring, curl, zip, gd, intl
       - name: Get WP-CLI and WordPress
         run: |
+          mkdir -p "$(dirname "$WP_CLI")"
           curl -sS -o "$WP_CLI" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
           curl -sS -o wordpress.zip https://wordpress.org/latest.zip
           unzip -q wordpress.zip && mv wordpress "$WP_DIR"
@@ -96,6 +100,9 @@ jobs:
           cd "$WP_DIR"
           php "$WP_CLI" --allow-root config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --dbhost=127.0.0.1:3306 --skip-check
           php "$WP_CLI" --allow-root core install --url=$WP_URL --title="FD CI" --admin_user=fdadmin --admin_password=fdadmin-test-pass --admin_email=admin@example.test --skip-email
+          # Fail fast if the site was installed under a URL path: every login cookie and link would then be wrong.
+          test "$(php "$WP_CLI" --allow-root option get siteurl)" = "$WP_URL" || { echo "siteurl is not $WP_URL"; exit 1; }
+          test "$(php "$WP_CLI" --allow-root option get home)" = "$WP_URL" || { echo "home is not $WP_URL"; exit 1; }
       - name: Install plugin
         run: |
           cp -r "$PLUGIN_SRC" "$WP_DIR/wp-content/plugins/titan-zero-trades-front-desk"

@@ -73,7 +73,7 @@ final class TZFD_Signed_Request {
 
         // Row already exists. Take it over only when its claim has expired.
         $taken = $wpdb->query( $wpdb->prepare(
-            "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND CAST(option_value AS UNSIGNED) <= %d",
+            "UPDATE {$wpdb->options} SET option_value = %s WHERE option_name = %s AND option_value REGEXP '^[0-9]+$' AND CAST(option_value AS UNSIGNED) <= %d",
             (string) $now,
             $name,
             $now - self::REPLAY_TTL

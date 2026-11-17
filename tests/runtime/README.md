@@ -42,13 +42,8 @@ not counted as a pass).
 
 ## Gaps observed (reported, not fixed here)
 
-- **Reminder outbox table is never created.** `tz_booking_actions` is absent after activation; nothing in the plugin
-  calls `TZFD_Booking_Action_Outbox::install()`. Enqueue refuses until an administrator triggers an install.
 - **Opt-in uninstall keeps `tzfd_local_customers`.** The table is outside `TZFD_Tables::owned()`. Decide whether
   customer records should be erased when the owner opts in.
-- **Activation without an administrator.** `TZFD_Slot_Holds::install()` and the call-lifecycle install require
-  `manage_options`. Activating with no user (for example `wp plugin activate` without `--user`) leaves `tz_slot_holds`
-  and `tz_calls` uncreated and does not report it.
 - **dbDelta on MariaDB 10.11.** Installing the slot-hold table printed `Invalid default value for 'id'` from
   `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed.
 

@@ -153,10 +153,11 @@ tzfd_rt_skip( 'A18 end-to-end oversell prevention through the public form', 'the
 
 /* ------------------------------------------------------------------ B. Reschedule and cancel tokens */
 
-$tzfd_rs = TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret );
-tzfd_rt_ok( 'B1 reschedule token is issued for a well-formed request', 64 === strlen( $tzfd_rs ) );
-tzfd_rt_ok( 'B2 reschedule token ignores e-mail case', $tzfd_rs === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, strtoupper( $tzfd_email ), $tzfd_version, $tzfd_secret ) );
-tzfd_rt_ok( 'B3 reschedule token fails closed on an empty secret or bad version', '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, '' ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, 'nope', $tzfd_secret ) );
+$tzfd_rl = TZFD_Customer_Rescheduling::issue( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret, time() );
+$tzfd_rs = is_array( $tzfd_rl ) ? $tzfd_rl['token'] : '';
+tzfd_rt_ok( 'B1 reschedule token is issued for a well-formed request, with a 14-day expiry', 64 === strlen( $tzfd_rs ) && 1209600 === $tzfd_rl['expires'] - $tzfd_rl['issued'] );
+tzfd_rt_ok( 'B2 reschedule token ignores e-mail case', $tzfd_rs === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, strtoupper( $tzfd_email ), $tzfd_version, $tzfd_secret, $tzfd_rl['issued'], $tzfd_rl['expires'] ) );
+tzfd_rt_ok( 'B3 reschedule token fails closed on an empty secret, bad version or missing issue time', '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, '', $tzfd_rl['issued'], $tzfd_rl['expires'] ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, 'nope', $tzfd_secret, $tzfd_rl['issued'], $tzfd_rl['expires'] ) && '' === TZFD_Customer_Rescheduling::token( $tzfd_id, $tzfd_form, $tzfd_email, $tzfd_version, $tzfd_secret ) );
 
 $tzfd_ct = TZFD_Customer_Cancellation::create_token( $tzfd_id, $tzfd_email, $tzfd_secret, $tzfd_version, $tzfd_expires );
 tzfd_rt_ok( 'B4 cancel token verifies for the same booking, e-mail, version and expiry', TZFD_Customer_Cancellation::verify_token( $tzfd_id, $tzfd_email, $tzfd_ct, $tzfd_secret, $tzfd_version, $tzfd_expires ) );
@@ -192,10 +193,7 @@ tzfd_rt_ok( 'C2 no reminder when unverified, unapproved, opted out, or outside t
 	false === TZFD_Booking_Reminder_Bridge::due( $tzfd_booking_facts, 7, 60, $tzfd_expires + 7200 + 1 ) );
 
 $tzfd_outbox = TZFD_Booking_Action_Outbox::table();
-$tzfd_was_installed = TZFD_Booking_Action_Outbox::installed();
-if ( ! $tzfd_was_installed ) {
-	tzfd_rt_gap( 'C3 reminder outbox table after activation', 'tz_booking_actions is not created by plugin activation; no caller of TZFD_Booking_Action_Outbox::install() exists in the plugin. Reminders cannot be queued until it is installed.' );
-}
+tzfd_rt_ok( 'C3 reminder outbox table exists after activation (activation creates it)', TZFD_Booking_Action_Outbox::installed(), 'table=' . $tzfd_outbox );
 $tzfd_installed = TZFD_Booking_Action_Outbox::installed() ? true : ( true === TZFD_Booking_Action_Outbox::install() );
 tzfd_rt_ok( 'C4 outbox table installs for an administrator (explicit install)', $tzfd_installed, 'table=' . $tzfd_outbox );
 
@@ -280,6 +278,50 @@ if ( ! defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) ) {
 	tzfd_rt_skip( 'F1-F3 uninstall without opt-in', 'TZ_DELETE_DATA_ON_UNINSTALL was already defined in this process' );
 }
 tzfd_rt_skip( 'F4 uninstall with the opt-in (drops tables)', 'destructive; run in a separate process by run-wp-runtime.sh (uninstall-wipe-check.php)' );
+
+/* ------------------------------------------------------------------ H. Activation without a logged-in administrator */
+
+// Disposable site only. Drop the tables that activation creates, then activate with no current user (as WP-CLI does
+// without --user). Activation must recreate all four tables and the call-schema marker, with no failure recorded.
+$tzfd_act_tables = array( TZFD_Tables::SLOT_HOLDS, TZFD_Tables::CALLS, TZFD_Tables::CALL_EVENTS, TZFD_Tables::BOOKING_ACTIONS );
+foreach ( $tzfd_act_tables as $tzfd_act_bare ) {
+	$tzfd_act_full = TZFD_Tables::name( $tzfd_act_bare );
+	if ( is_string( $tzfd_act_full ) ) {
+		$wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $tzfd_act_full ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- disposable test site; recreated by the activation under test
+	}
+}
+delete_option( TZFD_Call_Lifecycle::VERSION_OPTION );
+delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
+
+wp_set_current_user( 0 );
+$tzfd_act_error = '';
+try {
+	if ( function_exists( 'tz_fd_activate' ) ) {
+		ob_start();
+		tz_fd_activate();
+		ob_end_clean();
+	} else {
+		$tzfd_act_error = 'tz_fd_activate is not defined';
+	}
+} catch ( Throwable $e ) {
+	if ( ob_get_level() > 0 ) { ob_end_clean(); }
+	$tzfd_act_error = $e->getMessage();
+}
+wp_set_current_user( $tzfd_admin_id );
+
+tzfd_rt_ok( 'H1 activation with no logged-in user completes without an exception', '' === $tzfd_act_error, $tzfd_act_error );
+foreach ( $tzfd_act_tables as $tzfd_act_bare ) {
+	$tzfd_act_full = TZFD_Tables::name( $tzfd_act_bare );
+	$tzfd_act_seen = is_string( $tzfd_act_full ) ? $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $tzfd_act_full ) ) ) : null; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- schema check, must not be cached
+	tzfd_rt_ok( 'H2 activation with no user creates ' . $tzfd_act_bare, is_string( $tzfd_act_seen ) && $tzfd_act_seen === $tzfd_act_full, 'table=' . (string) $tzfd_act_full );
+}
+tzfd_rt_ok( 'H3 activation with no user records the call schema version and no failure', TZFD_Call_Lifecycle::SCHEMA_VERSION === get_option( TZFD_Call_Lifecycle::VERSION_OPTION, '' ) && '' === get_option( TZFD_Call_Lifecycle::FAILURE_OPTION, '' ) );
+tzfd_rt_ok( 'H4 the outbox and slot-hold schema pass their checks after a no-user activation', true === TZFD_Booking_Action_Outbox::create_schema() && TZFD_Booking_Action_Outbox::schema_ready() && true === TZFD_Slot_Holds::create_schema() );
+tzfd_rt_ok( 'H5 the call schema step is idempotent when run again with no user', true === TZFD_Call_Lifecycle::run_install() );
+wp_set_current_user( 0 );
+$tzfd_h6 = is_wp_error( TZFD_Slot_Holds::install() ) && false === TZFD_Booking_Action_Outbox::install() && is_wp_error( TZFD_Call_Lifecycle::install( true ) );
+wp_set_current_user( $tzfd_admin_id );
+tzfd_rt_ok( 'H6 request install still refuses without an administrator', $tzfd_h6 );
 
 /* ------------------------------------------------------------------ G. Multisite */
 

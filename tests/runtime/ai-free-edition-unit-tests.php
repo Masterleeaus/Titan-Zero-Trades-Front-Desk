@@ -44,7 +44,6 @@ if ( ! function_exists( 'apply_filters' ) ) {
 }
 
 require_once $inc . '/class-tzfd-addon-loader.php';
-require_once $inc . '/class-tzfd-upgrades.php';
 
 // 1. Add-on manifest and catalogue.
 $ai_files = array();
@@ -86,24 +85,8 @@ ai_check( 'listed base file is loaded', in_array( $tmp . '/core/base.addon.php',
 @rmdir( $tmp . '/core' );
 @rmdir( $tmp );
 
-// 4. Upgrade links: no sales or checkout URL in the free build.
-$GLOBALS['ai_test_filter'] = null;
-ai_check( 'no upgrade cards without a filter', array() === TZFD_Upgrades::cards() );
-ai_check( 'plugin-row upgrade link method is removed on main', ! method_exists( 'TZFD_Upgrades', 'plugin_row_link' ) );
-
-// Positive: a verified https URL supplied through the filter is shown.
-$GLOBALS['ai_test_filter'] = function ( $url, $product ) {
-	return 'ai' === $product ? 'https://example.test/assistant' : $url;
-};
-$cards = TZFD_Upgrades::cards();
-ai_check( 'filter-supplied https URL produces one card', 1 === count( $cards ) && 'https://example.test/assistant' === $cards[0]['url'] );
-
-// Negative: a plain http URL from the filter is refused.
-$GLOBALS['ai_test_filter'] = function ( $url, $product ) {
-	return 'ai' === $product ? 'http://example.test/assistant' : $url;
-};
-ai_check( 'non-https filter URL is refused', array() === TZFD_Upgrades::cards() );
-$GLOBALS['ai_test_filter'] = null;
+// 4. Upgrade links: the upgrade class is removed in the free build (main), so no sales or checkout URL can render.
+ai_check( 'upgrade class is removed in the free build', ! file_exists( $inc . '/class-tzfd-upgrades.php' ) && ! class_exists( 'TZFD_Upgrades', false ) );
 
 // 5. Notice dismissal accepts only the speed reminder.
 $notices = file_get_contents( $inc . '/class-tzfd-admin-notices.php' );

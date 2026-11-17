@@ -51,9 +51,11 @@ final class TZFD_Lead_Intake {
         $name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
         $message = sanitize_textarea_field( wp_unslash( $_POST['enquiry'] ?? '' ) );
         if ( ! is_email( $email ) || '' === trim( $name ) || '' === trim( $message ) || strlen( $message ) > 5000 ) { wp_die( esc_html__( 'Please complete all required fields', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
-        $key = 'tzfd_enq_' . md5( $company . '|' . (string) sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
-        if ( get_transient( $key ) ) { wp_die( esc_html__( 'Please wait before submitting another enquiry', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
-        set_transient( $key, 1, MINUTE_IN_SECONDS );
+        // One enquiry per address per company per minute. TZFD_Rate_Limit claims the slot in one atomic statement,
+        // so parallel posts from one address cannot all pass a check that ran before any of them wrote.
+        require_once __DIR__ . '/class-tzfd-rate-limit.php';
+        $key = 'lead-intake|' . $company . '|' . (string) sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+        if ( ! TZFD_Rate_Limit::allow( $key, 1, MINUTE_IN_SECONDS ) ) { wp_die( esc_html__( 'Please wait before submitting another enquiry', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
         $ip_hash = hash_hmac( 'sha256', sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ), wp_salt( 'auth' ) );
         $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form', 'triage_ip_hash' => $ip_hash ) );
         if ( ! $saved ) { wp_die( esc_html__( 'Your enquiry could not be saved. Please contact us directly.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }

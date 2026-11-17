@@ -178,12 +178,20 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 
 
+== Hosted AI ==
+
+Hosted AI is optional and stays off until the site owner turns it on. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
+
+Booking, customers, calendars, rules, FAQ and reports work without it.
+
+Scheduling & Enquiries Manager is one plugin. It does not install, load or require a separate package or licence key.
+
 
 == External services ==
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 

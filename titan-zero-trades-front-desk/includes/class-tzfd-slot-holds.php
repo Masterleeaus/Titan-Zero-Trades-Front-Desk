@@ -7,10 +7,18 @@ require_once __DIR__.'/class-tzfd-tables.php';
 final class TZFD_Slot_Holds {
     const TABLE = 'tz_slot_holds';
     const MAX_TTL = 900;
-    /** Explicit, authorised schema installation; not called automatically. */
+    /** Explicit, authorised schema installation for an administrator request. */
     public static function install() {
-        global $wpdb;
         if (!function_exists('current_user_can') || !current_user_can('manage_options')) return new WP_Error('tzfd_forbidden',__( 'Administrator permission required', 'titan-zero-trades-front-desk' ));
+        return self::create_schema();
+    }
+
+    /**
+     * Creates or upgrades the table with dbDelta. Idempotent. No capability check: the caller must be a
+     * trusted server path (plugin activation runs with or without a logged-in user). Use install() from requests.
+     */
+    public static function create_schema() {
+        global $wpdb;
         $table=TZFD_Tables::checked_name(self::TABLE);
         if (is_wp_error($table)) return $table;
         require_once ABSPATH.'wp-admin/includes/upgrade.php';

@@ -71,7 +71,7 @@ if ( 'verify' === $tz_phase ) {
 		echo ( $tz_has ? 'PASS' : 'FAIL' ) . ' table ' . esc_html( $tz_bare ) . " present after activation on this version\n";
 	}
 	$tz_outbox = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . 'tz_booking_actions' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- schema check, must not be cached
-	echo ( $tz_outbox ? 'PASS' : 'GAP' ) . " tz_booking_actions present after activation (absent is the known outbox gap)\n";
+	echo ( $tz_outbox ? 'PASS' : 'FAIL' ) . " tz_booking_actions present after activation on this version\n";
 	// Both versions may report the same number, so the check is which source folder is actually loaded.
 	$tz_expect = getenv( 'TZFD_RT_EXPECT_DIR' ) ?: '';
 	$tz_active = realpath( WP_PLUGIN_DIR . '/titan-zero-trades-front-desk' );

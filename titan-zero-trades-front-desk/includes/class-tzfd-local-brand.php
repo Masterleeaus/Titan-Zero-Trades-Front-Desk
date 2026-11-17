@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class TZFD_Local_Brand {
     public static function allowed_html() { return array( 'span' => array( 'class' => true, 'aria-label' => true ), 'strong' => array(), 'em' => array(), 'div' => array( 'class' => true ), 'p' => array(), 'img' => array( 'src' => true, 'alt' => true, 'loading' => true ) ); }
     public static function status_tag( $icon, $label = '' ) { return '<span class="tzfd-status">' . esc_html( (string) $label ) . '</span>'; }
-    public static function empty_state( $type, $message = '' ) { $map = array( 'bookings' => 'calendar-empty.png', 'calendar' => 'calendar-empty.png', 'services' => 'briefcase-empty.png', 'customers' => 'users-empty.png', 'workers' => 'users-empty.png', 'messages' => 'chat-empty.png', 'search' => 'search-empty.png', 'equipment' => 'briefcase-empty.png', 'reception' => 'chat-empty.png' );
+    public static function empty_state( $type, $message = '' ) { $map = array( 'bookings' => 'calendar-empty.png', 'calendar' => 'calendar-empty.png', 'services' => 'briefcase-empty.png', 'customers' => 'users-empty.png', 'workers' => 'workers-empty.png', 'messages' => 'chat-empty.png', 'search' => 'search-empty.png', 'equipment' => 'equipment-empty.png', 'reception' => 'chat-empty.png' );
         $asset = isset( $map[ $type ] ) ? $map[ $type ] : 'search-empty.png';
         $url = plugin_dir_url( dirname( __FILE__ ) ) . 'images/ui-graphics/05-Empty-States/' . $asset;
         echo '<div class="tzfd-empty-state tzfd-empty-state--illustrated"><img loading="lazy" width="160" height="120" alt="" src="' . esc_url( $url ) . '"><p>' . esc_html( (string) $message ) . '</p></div>'; }

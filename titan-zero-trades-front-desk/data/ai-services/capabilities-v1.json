@@ -1,0 +1,38 @@
+{
+  "schema_version": 1,
+  "status": "descriptor only; no hosted service is live until the verified Titan connector (#16, #43) reports it",
+  "single_plugin": true,
+  "separate_plugin_or_licence": false,
+  "levels": {
+    "free_ai": {
+      "label": "Free",
+      "includes": [],
+      "local_features": "always_enabled",
+      "remote_services": ["basic_ai"],
+      "remote_consent_required": true,
+      "price": null,
+      "disclosure": "Local booking, customers, calendars, rules, FAQ and reports work with no Titan account. Basic hosted AI is off until the owner opts in."
+    },
+    "assistant": {
+      "label": "Titan Zero AI Assistant",
+      "includes": ["free_ai"],
+      "local_features": "always_enabled",
+      "remote_services": ["assistant_conversation", "draft_replies", "draft_quotes", "summaries", "suggestions", "owner_handoff"],
+      "remote_consent_required": true,
+      "price": null,
+      "usage_model": "fair use with published hosted budgets; not unlimited",
+      "disclosure": "Conversations and drafts are processed by Titan-hosted AI. Owner approves customer-facing replies."
+    },
+    "agent_team": {
+      "label": "Titan Zero AI Agent Team",
+      "includes": ["assistant"],
+      "billing_entitlement": "agent_team",
+      "local_features": "always_enabled",
+      "remote_services": ["enquiry_agent", "booking_agent", "follow_up_agent", "quote_intake_agent", "supervisor"],
+      "remote_consent_required": true,
+      "price": null,
+      "usage_model": "hosted budgets per company; SMS and voice are passed through at disclosed provider cost",
+      "disclosure": "Agents act only inside owner-set scopes and approval rules. Every action produces a signed receipt. Voice is not live unless a telephony provider is connected."
+    }
+  }
+}

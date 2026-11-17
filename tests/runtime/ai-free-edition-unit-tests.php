@@ -118,7 +118,9 @@ foreach ( $php_files as $file ) {
 	}
 }
 // The AI connector POSTs only after an admin configures an https endpoint, site id and secret (main's gated connector).
-ai_check( 'only the Twilio SMS transport and the gated AI connector make outbound HTTP calls', array( 'includes/class-tzfd-twilio-sms.php', 'includes/class-tzfd-ai-connector.php' ) === $remote, implode( ',', $remote ) );
+sort( $remote );
+$expected_remote = array( 'includes/class-tzfd-ai-connector.php', 'includes/class-tzfd-twilio-sms.php' );
+ai_check( 'only the Twilio SMS transport and the gated AI connector make outbound HTTP calls', $expected_remote === $remote, implode( ',', $remote ) );
 ai_check( 'no AI provider host or endpoint in plugin PHP', array() === $ai_hosts, implode( ',', $ai_hosts ) );
 
 echo "\n$pass passed, $fail failed\n";

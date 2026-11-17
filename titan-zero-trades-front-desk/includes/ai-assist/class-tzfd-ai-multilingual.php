@@ -12,6 +12,48 @@ require_once __DIR__ . '/class-tzfd-ai-hosted-client.php';
 
 final class TZFD_AI_Multilingual {
     const MAX_HOSTED_CHARS = 600;
+    const OPTION           = 'tzfd_ai_languages';
+    const MAX_LOCALES      = 5;
+    const SAVE_CAPABILITY  = 'manage_options';
+
+    /** Administrator-configured locales (canonical tags, first entry is the default). Empty until an administrator saves a list. */
+    public static function configured_locales() {
+        $stored = get_option( self::OPTION, array() );
+        return self::clean_locales( is_array( $stored ) ? $stored : array() );
+    }
+
+    /**
+     * Saves the administrator's language list. Only administrators may change it. Invalid tags are dropped, duplicates
+     * removed and the list capped at MAX_LOCALES. Returns the saved list, or false when the caller is not allowed.
+     */
+    public static function save_configured_locales( array $tags ) {
+        if ( ! current_user_can( self::SAVE_CAPABILITY ) ) {
+            return false;
+        }
+        $clean = self::clean_locales( $tags );
+        update_option( self::OPTION, $clean, false );
+        return $clean;
+    }
+
+    /** Reply using the saved language list and the hosted translation connector. Consent is enforced by the connector. */
+    public static function reply_configured( $intent, $requested, array $vars = array() ) {
+        return self::reply( $intent, $requested, self::configured_locales(), new TZFD_AI_Hosted_Connector_Client(), $vars );
+    }
+
+    /** Keeps valid tags only, in their given order, without duplicates, up to MAX_LOCALES. */
+    public static function clean_locales( array $tags ) {
+        $out = array();
+        foreach ( $tags as $tag ) {
+            $canonical = TZFD_AI_Locale::normalise_tag( $tag );
+            if ( null !== $canonical && ! in_array( $canonical, $out, true ) ) {
+                $out[] = $canonical;
+            }
+            if ( count( $out ) >= self::MAX_LOCALES ) {
+                break;
+            }
+        }
+        return $out;
+    }
 
     /**
      * Approved English intent texts. Placeholders are {service} and {date}, filled from validated values only.

@@ -12,5 +12,7 @@ require_once __DIR__ . '/class-tzfd-ai-gap-page.php';
 require_once __DIR__ . '/class-tzfd-ai-faq-suggestions.php';
 require_once __DIR__ . '/class-tzfd-ai-setup-check.php';
 require_once __DIR__ . '/class-tzfd-ai-monthly-insights.php';
+// Basic multilingual replies (#26): locale rules, reviewed fixed texts and consent-gated hosted translation.
+require_once __DIR__ . '/ai-assist/class-tzfd-ai-multilingual.php';
 TZFD_Ai_Gap_Detection::register();
 TZFD_Ai_Gap_Page::register();

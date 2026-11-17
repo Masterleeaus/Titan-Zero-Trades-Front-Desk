@@ -129,6 +129,16 @@ jobs:
           for check in 'signed missed call is accepted' 'anonymous caller task is marked no_callback_number' 'identical signed request is answered as replayed' 'ambiguous caller match still creates a task'; do
             grep -q "^PASS .*$check" "$LOG" || { echo "Missed-call check did not pass or did not run: $check"; exit 1; }
           done
+      - name: Logged-in test users for the HTTP auth checks (as provision-wp-site.sh does)
+        run: |
+          cd "$WP_DIR"
+          # Random per-run passwords: passed to later steps through GITHUB_ENV and never printed.
+          ADMIN_PASS="rt_admin_$(openssl rand -hex 9)"
+          SUB_PASS="rt_sub_$(openssl rand -hex 9)"
+          echo "TZFD_RT_ADMIN_PASS=$ADMIN_PASS" >> "$GITHUB_ENV"
+          echo "TZFD_RT_SUB_PASS=$SUB_PASS" >> "$GITHUB_ENV"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtadmin rt-admin@example.test --role=administrator --user_pass="$ADMIN_PASS" --quiet
+          php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtsub rt-sub@example.test --role=subscriber --user_pass="$SUB_PASS" --quiet
       - name: HTTP auth tests
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"
@@ -154,10 +164,16 @@ jobs:
           cd "$WP_DIR"
           files=$(find "$GITHUB_WORKSPACE/tests" \( -name '*-wp-tests.php' -o -name '*-runtime-tests.php' -o -name 'wp-integration.php' \) ! -name 'runtime-tests.php' | sort)
           if [ -z "$files" ]; then echo "No extra WordPress test files"; exit 0; fi
+          set -o pipefail
+          LOG="$RUNNER_TEMP/extra-wp-tests.log"
+          : > "$LOG"
           for f in $files; do
             echo "== $f"
-            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
+            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f" 2>&1 | tee -a "$LOG"
           done
+          # Some of these files print FAIL lines and still exit 0 (quote-request-runtime-tests.php and
+          # security-runtime-tests.php have no exit status), so the step gates on the log like the runtime step.
+          if grep -q '^FAIL ' "$LOG"; then echo "Extra WordPress checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
       - name: Database integration tests (scratch databases on the service container)
         run: |
           mysql -h127.0.0.1 -P3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS tzfd_lane_test; CREATE DATABASE IF NOT EXISTS tzfd_triage_test;"

@@ -605,7 +605,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             header("Content-Type: text/calendar; charset=utf-8");
             header("Content-Disposition: attachment; filename=\"events_".gmdate("Y-m-d_H-i-s").".ics\"");
             echo "BEGIN:VCALENDAR\n";
-            echo "PRODID:-//Titan Zero Front Desk for WordPress//EN\n";
+            echo "PRODID:-//Scheduling & Enquiries Manager for WordPress//EN\n";
             echo "VERSION:2.0\n";
 
             $tz_blockedstatuses = explode(",", get_option('tz_fd_statuses_block',''));
@@ -743,7 +743,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     $base_description = str_replace(array("<br>", "<br />"), "\n", str_replace("\r", '', $base_description));
 
                     $buffer  = "BEGIN:VCALENDAR\n";
-                    $buffer .= "PRODID:-//Titan Zero Trades: Front Desk for WordPress//EN\n";
+                    $buffer .= "PRODID:-//Scheduling & Enquiries Manager for WordPress//EN\n";
                     $buffer .= "VERSION:2.0\n";
                     $buffer .= "X-MS-OLK-FORCEINSPECTOROPEN:TRUE\n";
 

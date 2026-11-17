@@ -43,23 +43,24 @@ final class TZFD_AI_Connector {
     const RETENTION_DEFAULT = 30;    // days an event is kept
     const RETENTION_MAX    = 365;    // days
 
+    // Entitlement names reported by the hosted service. Informational only: they never gate a feature.
     const TIER_FREE     = 'free_ai';
     const TIER_ASSIST   = 'assistant';
     const TIER_AGENT    = 'agent_team';
 
     /**
-     * Feature registry. A feature needs its tier entitled, every listed scope granted by the
-     * site administrator, and (when budget is non-empty) budget left this month.
+     * Feature registry. A feature needs every listed scope granted by the site administrator and,
+     * when budget is non-empty, budget left this month. No paid tier gates a feature.
      * Scopes are granted only through grant_consent(), never by model output.
      */
     public static function features() {
         return array(
-            'faq.answer'        => array( 'tier' => self::TIER_FREE,  'scopes' => array( 'faq.read' ), 'budget' => 'model_fallback' ),
-            'faq.embed_query'   => array( 'tier' => self::TIER_FREE,  'scopes' => array( 'faq.read' ), 'budget' => 'embedding' ),
-            'faq.suggest_batch' => array( 'tier' => self::TIER_FREE,  'scopes' => array( 'faq.read' ), 'budget' => 'faq_batch' ),
-            'insight.monthly'   => array( 'tier' => self::TIER_FREE,  'scopes' => array( 'reports.read' ), 'budget' => 'insight' ),
-            'assistant.turn'    => array( 'tier' => self::TIER_ASSIST, 'scopes' => array( 'faq.read', 'customer.read' ), 'budget' => '' ),
-            'agent.run'         => array( 'tier' => self::TIER_AGENT, 'scopes' => array( 'booking.read', 'booking.write', 'customer.read' ), 'budget' => '' ),
+            'faq.answer'        => array( 'scopes' => array( 'faq.read' ), 'budget' => 'model_fallback' ),
+            'faq.embed_query'   => array( 'scopes' => array( 'faq.read' ), 'budget' => 'embedding' ),
+            'faq.suggest_batch' => array( 'scopes' => array( 'faq.read' ), 'budget' => 'faq_batch' ),
+            'insight.monthly'   => array( 'scopes' => array( 'reports.read' ), 'budget' => 'insight' ),
+            'assistant.turn'    => array( 'scopes' => array( 'faq.read', 'customer.read' ), 'budget' => '' ),
+            'agent.run'         => array( 'scopes' => array( 'booking.read', 'booking.write', 'customer.read' ), 'budget' => '' ),
         );
     }
 
@@ -79,7 +80,7 @@ final class TZFD_AI_Connector {
     /**
      * Sends one typed request and records a redacted event (feature name, status, latency only;
      * never the payload, the response body or the secret). Always returns a structured array:
-     * ok, status, use_local, contract, data (and missing_scopes, tier where relevant).
+     * ok, status, use_local, contract, data (and missing_scopes where relevant).
      */
     public static function request( $feature, $payload = array() ) {
         $started = microtime( true );
@@ -97,9 +98,6 @@ final class TZFD_AI_Connector {
         $cfg = self::config();
         if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
         if ( ! $cfg['consent'] ) { return self::result( 'consent_required' ); }
-        if ( ! in_array( $def['tier'], $cfg['entitlements'], true ) ) {
-            return self::result( 'tier_not_entitled', array(), array( 'tier' => $def['tier'] ) );
-        }
         $missing = array_values( array_diff( $def['scopes'], $cfg['scopes'] ) );
         if ( array() !== $missing ) {
             return self::result( 'scope_not_granted', array(), array( 'missing_scopes' => $missing ) );
@@ -283,7 +281,8 @@ final class TZFD_AI_Connector {
 
     /**
      * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
-     * OWNER REVIEW REQUIRED: the wording and the terms link are placeholders until the owner approves them.
+     * OWNER REVIEW REQUIRED: the wording is a placeholder until the owner approves it. The default terms link
+     * is a draft page pending legal review.
      * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
      */
     public static function setup_notice() {
@@ -291,7 +290,8 @@ final class TZFD_AI_Connector {
         $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
             . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
             . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
-        $url  = 'https://example.invalid/OWNER-REVIEW-AI-TERMS';
+        // DRAFT: this terms page is pending legal review. Replace or confirm it before AI is offered to real sites.
+        $url  = 'https://titanzero.io/scheduling-enquiries-terms/';
         if ( function_exists( 'apply_filters' ) ) {
             $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
             $url  = apply_filters( 'tzfd_ai_terms_url', $url );

@@ -265,6 +265,25 @@ $e = TZFD_Legacy_AI_Data::privacy_erase( 'a@example.test', 1 );
 check( 'privacy erase: deletes both chats for the address and keeps other people\'s chats', true === $e['items_removed'] && false === $e['items_retained'] && 1 === count( $wpdb->rows ) && 'b@example.test' === $wpdb->rows[0]['user_email'] );
 check( 'privacy erase: no chats left for the address', 0 === count( TZFD_Legacy_AI_Data::privacy_export( 'a@example.test', 1 )['data'] ) );
 
+// ---- 8b. Outage: the chat table is missing (site without the table, or a partial restore) ----------------------
+reset_state();
+$full_export = TZFD_Legacy_AI_Data::export_json(); // taken while the table exists, so it carries three chat rows
+$wpdb->exists = false;
+$a = TZFD_Legacy_AI_Data::audit();
+check( 'outage: audit reports no chat table and zero rows', false === $a['chats']['exists'] && 0 === $a['chats']['rows'] );
+check( 'outage: audit still lists legacy options', count( array_filter( $a['options'], function ( $o ) { return $o['present']; } ) ) >= 4 );
+$json = TZFD_Legacy_AI_Data::export_json();
+$exp  = json_decode( $json, true );
+check( 'outage: export succeeds with empty chats and no credential value', is_array( $exp ) && array() === $exp['chats'] && false === strpos( $json, 'sk-TEST-SECRET-9f3a' ) );
+check( 'outage: export still records a receipt for the current data', true === TZFD_Legacy_AI_Data::backup_current() );
+$d = TZFD_Legacy_AI_Data::delete_scope( 'chats', TZFD_Legacy_AI_Data::PHRASE );
+check( 'outage: chat delete with no table is a clean no-op', true === $d['ok'] && 0 === $d['removed'] );
+check( 'outage: privacy export with no table returns no rows', array() === TZFD_Legacy_AI_Data::privacy_export( 'a@example.test', 1 )['data'] );
+$r = TZFD_Legacy_AI_Data::restore_from_json( $full_export );
+check( 'outage: restore of an export with chats is refused, not fatal', false === $r['ok'] && 'chat_table_missing' === $r['code'] );
+check( 'outage: refused restore adds no chat rows', 3 === count( $wpdb->rows ) );
+$wpdb->exists = true;
+
 // ---- 9. Static guarantees: nothing deletes on load, no network, no key fields -----------------------------------
 $files = array(
     dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-legacy-ai-data.php',

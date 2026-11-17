@@ -27,7 +27,7 @@ check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a
 code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
 
 # Preflight: abort rather than report a dead server as a pass.
-preflight=$(code "$B/")
+preflight=$(code "$B/?rest_route=/")
 if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
 # REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
 rest() { # name, curl args...

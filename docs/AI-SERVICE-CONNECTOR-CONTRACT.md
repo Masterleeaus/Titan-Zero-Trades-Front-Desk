@@ -15,7 +15,15 @@ Result keys: `ok`, `status`, `use_local` (always true unless ok), `contract`, `d
 
 Statuses: `ok`, `feature_not_allowed`, `invalid_request`, `consent_required`, `not_configured`, `tier_not_entitled`, `scope_not_granted`, `allowance_exhausted`, `busy`, `offline`, `service_error`, `invalid_response`, `contract_unsupported`.
 
-Other methods: `status()` (never returns the secret), `usage( $period )`, `configure( $endpoint, $site_id, $secret )`, `grant_consent( array $scopes )`, `revoke_consent()`, `set_entitlements( array $tiers )`, `disconnect()`, `features()`, `budget_limits()`.
+Other methods: `status()` (never returns the secret), `usage( $period )`, `configure( $endpoint, $site_id, $secret )`, `grant_consent( array $scopes )`, `revoke_consent()`, `set_entitlements( array $tiers )`, `disconnect()`, `features()`, `budget_limits()`, `disclosure()`, `events()`, `clear_events()`, `retention_days()`, `set_retention_days( int $days )`.
+
+## Privacy disclosure, event log and retention
+
+- `disclosure()` is the text an administrator must accept before consent. Consent is stored with `consent_version` (`tzfd-ai-consent-1`). Consent recorded under any other version is ignored, so a changed disclosure needs a fresh grant. `status()` returns the disclosure text and the version.
+- `events()` returns the redacted event log, newest last. Each entry holds only `at`, `feature`, `status` and `latency_ms`. A feature name that is not in the registry is logged as `unknown`. Neither the payload, the response body nor the secret is logged. The log holds at most 50 entries (`EVENT_LIMIT`).
+- `set_retention_days( int $days )` accepts an integer from 1 to 365 (default 30). Events older than the window are pruned on the next write. Other integers and non-integer values are refused.
+- `clear_events()` deletes the whole log. Revocation and `disconnect()` do not clear it. Usage counters and monthly budgets are kept separately and are not pruned by retention.
+- Logging is best effort. It is skipped when the budget lock is busy, so it never delays or fails a request.
 
 ## Feature registry
 

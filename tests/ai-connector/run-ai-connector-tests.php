@@ -304,6 +304,47 @@ check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['to
 $t = $C::tenant_ceiling( 100 );
 check( 'tenant ceiling scales each budget by tenant count', 5000 === $t['max_units_by_budget']['model_fallback'] && 20000 === $t['max_units_by_budget']['embedding'] && 25500 === $t['max_units_total'] );
 check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );
+// 19. Consent is bound to the disclosure version; an old consent does not count.
+reset_state();
+connect_all();
+check( 'structured disclosure is present in status', isset( $C::status()['disclosure']['provider'] ) && 'tzfd-ai-consent-1' === $C::status()['consent_version'] );
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::OPTION ]['consent_version'] = 'tzfd-ai-consent-0';
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$before = calls();
+check( 'consent under an older disclosure version is refused without transport', 'consent_required' === $C::request( 'faq.answer' )['status'] && $before === calls() );
+check( 'status reports consent false for an older disclosure version', false === $C::status()['consent'] );
+$C::grant_consent( array( 'faq.read' ) );
+check( 'granting again under the current version restores the call', 'ok' === $C::request( 'faq.answer' )['status'] );
+
+// 20. Event log: redacted, bounded, cleared on demand, never holds the secret or payload.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$C::request( 'faq.answer', array( 'question' => 'PRIVATE-QUESTION-TEXT' ) );
+$C::request( 'shell.exec' );
+$events = $C::events();
+check( 'each request writes one event', 2 === count( $events ) && 'faq.answer' === $events[0]['feature'] && 'ok' === $events[0]['status'] );
+check( 'unknown feature is logged as unknown, not as the caller string', 'unknown' === $events[1]['feature'] && 'feature_not_allowed' === $events[1]['status'] );
+check( 'event entries hold only at, feature, status, latency_ms', array( 'at', 'feature', 'status', 'latency_ms' ) === array_keys( $events[0] ) );
+$blob = json_encode( array( $events, $C::status() ) );
+check( 'payload and secret never appear in the event log or status', false === strpos( $blob, 'PRIVATE-QUESTION-TEXT' ) && false === strpos( $blob, SECRET ) );
+for ( $i = 0; $i < 60; $i++ ) { $C::request( 'faq.answer' ); }
+check( 'event log is bounded to EVENT_LIMIT', TZFD_AI_Connector::EVENT_LIMIT === count( $C::events() ) );
+check( 'clear_events empties the log', true === $C::clear_events() && array() === $C::events() );
+
+// 21. Retention: only integers 1..365 accepted; events older than the window are pruned on write.
+check( 'retention default is 30 days', 30 === $C::retention_days() );
+check( 'retention 0 is refused', false === $C::set_retention_days( 0 ) );
+check( 'retention 366 is refused', false === $C::set_retention_days( 366 ) );
+check( 'retention string "7" is refused (must be an integer)', false === $C::set_retention_days( '7' ) );
+check( 'retention 7 is accepted', true === $C::set_retention_days( 7 ) && 7 === $C::retention_days() );
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::EVENT_OPTION ] = array(
+    array( 'at' => time() - 8 * 86400, 'feature' => 'faq.answer', 'status' => 'ok', 'latency_ms' => 1 ),
+    array( 'at' => time() - 86400, 'feature' => 'faq.answer', 'status' => 'ok', 'latency_ms' => 1 ),
+);
+$C::request( 'faq.answer' );
+$ages = array_map( function ( $e ) { return time() - $e['at']; }, $C::events() );
+check( 'event older than retention is pruned on the next write', 2 === count( $C::events() ) && max( $ages ) < 7 * 86400 + 5 );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

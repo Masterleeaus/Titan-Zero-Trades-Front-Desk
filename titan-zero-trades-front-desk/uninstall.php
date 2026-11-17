@@ -33,6 +33,8 @@ $tz_transient_prefixes = array_merge( $tz_prefixes, array( 'tzfd-' ) );
 foreach ( $tz_transient_prefixes as $tz_prefix ) {
     $wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( '_transient_' . $tz_prefix ) . '%', $wpdb->esc_like( '_transient_timeout_' . $tz_prefix ) . '%') );
 }
+// Rate-limit counters (includes/class-tzfd-rate-limit.php) are wp_options rows with this prefix. Counters only, always removed.
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'tzfd_rl_' ) . '%' ) );
 
 // 2a. Credentials, link state, locks, cursors and dismissal flags: always removed, even without the data opt-in.
 // A sealed AI connector secret or link must not outlive the plugin.

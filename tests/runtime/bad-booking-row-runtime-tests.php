@@ -59,6 +59,8 @@ $br_flag = get_option( $BR::SKIPPED_OPTION, array() );
 tzfd_br_ok( 'bad-row: a repaired row clears its flag on the next build', ! isset( $br_flag[7] ) );
 
 // 4. Admin notice: shown to a Front Desk user, names the calendar and the row, and does not hide the problem.
+// WP-CLI runs as no user unless one is set; the notice is for administrators (tz_fd_access), as in the other runtime tests.
+wp_set_current_user( 1 );
 $BR::record_skipped_rows( 7, array( 9 ) );
 $br_notice = '';
 ob_start();

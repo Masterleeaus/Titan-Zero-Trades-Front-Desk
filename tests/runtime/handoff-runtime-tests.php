@@ -4,7 +4,11 @@
  * Run from the WordPress root: wp --allow-root eval-file tests/runtime/handoff-runtime-tests.php
  * Not shipped in the plugin.
  */
-$tz_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR : '/var/www/html/wp-content/plugins' ) . '/titan-zero-trades-front-desk/includes/';
+if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
+    fwrite( STDERR, "FAIL harness -- WP_PLUGIN_DIR is not defined; run through WP-CLI inside a WordPress root\n" );
+    exit( 2 );
+}
+$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-request-value.php', 'class-tzfd-scoped-store.php', 'class-tzfd-lead-intake.php', 'class-tzfd-enquiry-review.php', 'class-tzfd-human-handoff.php' ) as $tz_file ) {
     require_once $tz_inc . $tz_file;
 }

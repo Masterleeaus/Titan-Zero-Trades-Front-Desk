@@ -2307,6 +2307,7 @@ public function render_form_admin( $atts ) {
         if ( TZFD_Intake_Mode::MODE_REQUEST === $titan_zero_front_desk_intake_mode ) {
             add_filter( 'titan_zero_front_desk_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
         }
+        require_once __DIR__ . '/includes/class-tzfd-post-commit-dispatch.php';
         // Notifications and optional integrations are secondary to a committed
         // booking. Do not throw a post-commit callback error back to the visitor:
         // the appointment already exists, and a retry could create a duplicate.

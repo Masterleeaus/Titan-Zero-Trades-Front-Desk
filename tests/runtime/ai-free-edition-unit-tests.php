@@ -89,7 +89,7 @@ ai_check( 'listed base file is loaded', in_array( $tmp . '/core/base.addon.php',
 // 4. Upgrade links: no sales or checkout URL in the free build.
 $GLOBALS['ai_test_filter'] = null;
 ai_check( 'no upgrade cards without a filter', array() === TZFD_Upgrades::cards() );
-ai_check( 'no plugin-row upgrade link without a filter', array() === TZFD_Upgrades::plugin_row_link( array() ) );
+ai_check( 'plugin-row upgrade link method is removed on main', ! method_exists( 'TZFD_Upgrades', 'plugin_row_link' ) );
 
 // Positive: a verified https URL supplied through the filter is shown.
 $GLOBALS['ai_test_filter'] = function ( $url, $product ) {
@@ -134,7 +134,8 @@ foreach ( $php_files as $file ) {
 		$ai_hosts[] = $name;
 	}
 }
-ai_check( 'only the Twilio SMS transport makes outbound HTTP calls', array( 'includes/class-tzfd-twilio-sms.php' ) === $remote, implode( ',', $remote ) );
+// The AI connector POSTs only after an admin configures an https endpoint, site id and secret (main's gated connector).
+ai_check( 'only the Twilio SMS transport and the gated AI connector make outbound HTTP calls', array( 'includes/class-tzfd-twilio-sms.php', 'includes/class-tzfd-ai-connector.php' ) === $remote, implode( ',', $remote ) );
 ai_check( 'no AI provider host or endpoint in plugin PHP', array() === $ai_hosts, implode( ',', $ai_hosts ) );
 
 echo "\n$pass passed, $fail failed\n";

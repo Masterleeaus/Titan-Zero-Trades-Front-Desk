@@ -139,6 +139,8 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }
 
+// FAQ knowledge gap detection (issue #36).
+require __DIR__ . '/ai-gap-runtime-checks.php';
 // Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
 require __DIR__ . '/faq-retrieval-wp-tests.php';
 // 8. Signed call-events path for missed-call callback tasks (issue #30): credential gate, tenant denial

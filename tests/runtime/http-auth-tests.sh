@@ -77,6 +77,24 @@ else
   else
     report FAIL "subscriber login" "could not sign in as rtsub"
   fi
+  # FAQ gap admin screen and admin-post handler: capability refused first, then nonce. Refusals are exact 403s.
+  ADMIN_POST="$B/wp-admin/admin-post.php"
+  ADMIN_PAGE="$B/wp-admin/admin.php?page=tzfd-ai-gaps"
+  POST_BODY='action=tzfd_ai_gap_merge&proposal_id=none&decision=reject'
+  expect() { # name, expected, actual
+    if [ "$3" = "$2" ]; then report PASS "$1" "HTTP $3"; else report FAIL "$1" "expected HTTP $2, got HTTP $3"; fi
+  }
+  c=$(code -b "$JAR_ADMIN" "$ADMIN_PAGE")
+  [[ "$c" =~ ^2 ]] && report PASS "FAQ gap screen, admin (positive control)" "HTTP $c" || report FAIL "FAQ gap screen, admin (positive control)" "HTTP $c"
+  expect "FAQ gap screen, subscriber (capability refusal)" 403 "$(code -b "$JAR_SUB" "$ADMIN_PAGE")"
+  c=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -d "$POST_BODY" "$ADMIN_POST")
+  case "$c" in
+    "400 "*|"403 "*|"302 "*wp-login*) report PASS "FAQ gap handler, anonymous" "refused ($c)" ;;
+    *) report FAIL "FAQ gap handler, anonymous" "unexpected ($c)" ;;
+  esac
+  expect "FAQ gap handler, subscriber (capability refusal)" 403 "$(code -b "$JAR_SUB" -d "$POST_BODY" "$ADMIN_POST")"
+  expect "FAQ gap handler, admin without nonce" 403 "$(code -b "$JAR_ADMIN" -d "$POST_BODY" "$ADMIN_POST")"
+  expect "FAQ gap handler, admin with invalid nonce" 403 "$(code -b "$JAR_ADMIN" -d "$POST_BODY&_wpnonce=0123456789" "$ADMIN_POST")"
   rm -f "$JAR_ADMIN" "$JAR_SUB"
 fi
 

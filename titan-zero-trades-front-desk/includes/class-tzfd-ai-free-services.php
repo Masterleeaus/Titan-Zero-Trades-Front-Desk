@@ -8,7 +8,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/class-tzfd-ai-free-core.php';
 require_once __DIR__ . '/class-tzfd-ai-knowledge-builder.php';
 require_once __DIR__ . '/class-tzfd-ai-gap-detection.php';
+require_once __DIR__ . '/class-tzfd-ai-gap-page.php';
 require_once __DIR__ . '/class-tzfd-ai-faq-suggestions.php';
 require_once __DIR__ . '/class-tzfd-ai-setup-check.php';
 require_once __DIR__ . '/class-tzfd-ai-monthly-insights.php';
 TZFD_Ai_Gap_Detection::register();
+TZFD_Ai_Gap_Page::register();

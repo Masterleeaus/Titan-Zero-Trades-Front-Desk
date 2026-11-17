@@ -47,6 +47,8 @@ final class TZFD_AI_Widget {
 		$answer_html = '';
 		if ( '' !== trim( $question ) ) {
 			$result      = TZFD_AI_Answer_Box::answer( $question, self::visitor_key() );
+			// Gap detection (#36) listens here. Every outcome counts, including cached answers.
+			do_action( 'tzfd_ai_question_handled', $question, $result );
 			$answer_html = self::answer_html( $result );
 		}
 

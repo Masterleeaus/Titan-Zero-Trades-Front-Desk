@@ -42,6 +42,8 @@ function wp_enqueue_style( ...$a ) { $GLOBALS['t_styles'][] = $a[0]; }
 function add_query_arg( $args, $url ) { return $url . '?' . http_build_query( $args ); }
 
 $inc = __DIR__ . '/../../../titan-zero-trades-front-desk/includes/';
+require_once __DIR__ . '/../fixtures/fake-rate-limit-wpdb.php';
+$GLOBALS['wpdb'] = new TZ_Fake_Rate_Limit_Wpdb(); // The rate limiter counts in wp_options through $wpdb.
 require_once $inc . 'class-tzfd-ai-widget.php';
 
 $GLOBALS['fail'] = 0;
@@ -53,6 +55,7 @@ function reset_state() {
 	$GLOBALS['t_filters'] = array();
 	$GLOBALS['t_options'] = array();
 	$GLOBALS['t_transients'] = array();
+	$GLOBALS['wpdb']->rows = array();
 }
 
 $faq = array(

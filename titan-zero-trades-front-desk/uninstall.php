@@ -32,6 +32,8 @@ $tz_prefixes = array( 'tz_fd_', 'titan_zero_front_desk_' );
 foreach ( $tz_prefixes as $tz_prefix ) {
     $wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( '_transient_' . $tz_prefix ) . '%', $wpdb->esc_like( '_transient_timeout_' . $tz_prefix ) . '%') );
 }
+// Rate-limit counters (includes/class-tzfd-rate-limit.php) are wp_options rows with this prefix. Counters only, always removed.
+$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'tzfd_rl_' ) . '%' ) );
 
 // 3. Data: only when the site owner has opted in.
 if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL === true ) {

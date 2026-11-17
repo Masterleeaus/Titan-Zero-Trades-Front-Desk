@@ -1,0 +1,18 @@
+# path (relative to plugin root)	fixed string that must be present in that file
+includes/class-tzfd-bookings.php	class TZFD_Bookings
+includes/class-tzfd-booking-create-transaction.php	class TZFD_Booking_Create_Transaction
+includes/class-tzfd-customer-cancellation.php	class TZFD_Customer_Cancellation
+includes/class-tzfd-booking-reminder-bridge.php	class TZFD_Booking_Reminder_Bridge
+addons/messaging/reminder.addon.php	class TZFD_Reminder
+includes/class-tzfd-call-lifecycle.php	class TZFD_Call_Lifecycle
+includes/class-tzfd-call-recovery.php	class TZFD_Call_Recovery
+includes/class-tzfd-telephony-adapter.php	class TZFD_Telephony_Adapter
+addons/messaging/missed-call.addon.php	class TZFD_MissedCall
+includes/class-tzfd-signed-request.php	class TZFD_Signed_Request
+includes/class-tzfd-privacy-exporter.php	wp_privacy_personal_data_exporters
+includes/class-tzfd-privacy-exporter.php	wp_privacy_personal_data_erasers
+readme.txt	== Credits ==
+readme.txt	Appointment Hour Booking 1.5.98 by CodePeople
+LICENSE.txt	GNU GENERAL PUBLIC LICENSE
+UPSTREAM.txt	Appointment Hour Booking, version 1.5.98
+THIRD-PARTY-NOTICES.txt	Appointment Hour Booking

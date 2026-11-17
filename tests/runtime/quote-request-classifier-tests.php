@@ -1,11 +1,13 @@
 <?php
 /**
  * Pure PHP checks for the quote request classifier. No WordPress needed.
- * Run: php -d display_errors=1 /path/to/quote-request-classifier-tests.php /path/to/includes/class-tzfd-quote-request-classifier.php
+ * Run: php -d display_errors=1 tests/runtime/quote-request-classifier-tests.php [path/to/class-tzfd-quote-request-classifier.php]
+ * The class path defaults to the plugin's includes folder in this checkout (issue #191: the empty include path was the failure).
  */
 if ( PHP_SAPI !== 'cli' ) { exit( 1 ); }
 define( 'ABSPATH', __DIR__ . '/' );
-require_once $argv[1];
+$classifier = isset( $argv[1] ) && '' !== $argv[1] ? $argv[1] : dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-quote-request-classifier.php';
+require_once $classifier;
 
 $fail = 0;
 $pass = 0;

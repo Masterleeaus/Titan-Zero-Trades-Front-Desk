@@ -43,6 +43,13 @@ if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL ===
         $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . $tz_fd_bare ) );
     }
 
+    // Standalone customer and service records, created by this plugin's dbDelta calls (class-tzfd-local-customers.php, class-tzfd-local-services.php).
+    // Not in TZFD_Tables::owned(), so they are listed here. Shell-owned tz_customers is never touched.
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Opt-in uninstall of plugin-owned tables.
+    $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'tzfd_local_customers' ) );
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Opt-in uninstall of plugin-owned tables.
+    $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'tzfd_local_services' ) );
+
     // The legacy customer lifecycle outbox is plugin-owned, but
     // predates the canonical tz_ table registry. Drop it only with explicit
     // data-erasure consent; never add it to Workspace-owned table lists.

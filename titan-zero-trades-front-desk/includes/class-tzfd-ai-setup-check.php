@@ -43,6 +43,19 @@ final class TZFD_Ai_Setup_Check {
 		return $out;
 	}
 
+	/**
+	 * Question text from saved FAQ entries, for the duplicate check in suggestions(). Reads only; nothing is written.
+	 * Entries without a usable question are skipped.
+	 */
+	public static function faq_questions_from_entries( array $entries ) {
+		$out = array();
+		foreach ( $entries as $entry ) {
+			if ( ! is_array( $entry ) || ! isset( $entry['question'] ) || ! is_string( $entry['question'] ) ) { continue; }
+			if ( '' !== trim( $entry['question'] ) ) { $out[] = $entry['question']; }
+		}
+		return $out;
+	}
+
 	/** AI can be enabled only when every required item is present. */
 	public static function ai_gate( array $state ) {
 		$required = array_filter( self::missing( $state ), static function ( $i ) { return $i['required']; } );

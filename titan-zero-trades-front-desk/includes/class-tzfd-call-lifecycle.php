@@ -99,7 +99,7 @@ final class TZFD_Call_Lifecycle {
     public static function render_failure() {
         $code = get_option( self::FAILURE_OPTION, '' );
         if ( ! is_string( $code ) || '' === $code || ! current_user_can( 'manage_options' ) ) { return; }
-        echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Titan Zero Front Desk could not set up call event storage, so provider call events are not recorded. Check that the database supports InnoDB tables, then use the retry button to try again.', 'titan-zero-trades-front-desk' ) . ' <code>' . esc_html( $code ) . '</code></p><p><a class="button" href="' . esc_url( self::retry_url() ) . '">' . esc_html__( 'Retry call event storage setup', 'titan-zero-trades-front-desk' ) . '</a></p></div>';
+        echo '<div class="notice notice-error is-dismissible"><p>' . esc_html__( 'Scheduling & Enquiries Manager could not set up call event storage, so provider call events are not recorded. Check that the database supports InnoDB tables, then use the retry button to try again.', 'titan-zero-trades-front-desk' ) . ' <code>' . esc_html( $code ) . '</code></p><p><a class="button" href="' . esc_url( self::retry_url() ) . '">' . esc_html__( 'Retry call event storage setup', 'titan-zero-trades-front-desk' ) . '</a></p></div>';
     }
 
     /** Nonce-protected admin-post link. Only administrators can use it. */

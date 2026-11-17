@@ -1,247 +1,201 @@
 <?php
 /**
- * Smart Service Finder (deterministic core).
+ * Smart service finder (issue #23).
  *
- * Maps a customer's wording onto the existing service catalogue of one calendar
- * (the `fapp` services already stored in the form structure). It never creates,
- * prices, renames or removes a service, and it never queries the database with
- * customer text. Text is treated as data: it is normalised, length-capped and
- * compared against catalogue names only.
+ * Maps customer wording onto the existing service catalogue with deterministic rules and
+ * synonyms. It only ever returns records that already exist in the catalogue, never invents a
+ * service, price or duration, and it never edits the catalogue. The selected identifier is
+ * validated again on the server against the visible (non-archived, company-scoped) list.
  *
  * GPL-2.0-only.
- *
- * @package titan-zero-trades-front-desk
  */
-
 if ( ! defined( 'ABSPATH' ) ) { exit; }
+
+require_once __DIR__ . '/class-tzfd-ai-answer-box.php';
 
 final class TZFD_Service_Finder {
 
-	const MAX_QUERY_CHARS = 300;
-	const MAX_RESULTS     = 5;
-	const MAX_SERVICE_IDX = 9999;
+	const MAX_MATCH_LIST = 5;
 
-	const STATUS_NONE     = 'none';
-	const STATUS_SINGLE   = 'single';
-	const STATUS_MULTIPLE = 'multiple';
-	const STATUS_EMPTY    = 'clarify';
-
-	/**
-	 * Words that carry no service meaning. Removed before matching.
-	 *
-	 * @var string[]
-	 */
-	private static $stopwords = array(
-		'a', 'an', 'the', 'i', 'me', 'my', 'we', 'our', 'you', 'to', 'for', 'of', 'in', 'on', 'at', 'it',
-		'is', 'are', 'do', 'does', 'can', 'could', 'would', 'please', 'need', 'want', 'like', 'get', 'have',
-		'help', 'with', 'and', 'or', 'some', 'looking', 'book', 'booking', 'service', 'services',
+	/** Canonical concept => customer wording that maps to it. Lowercase, normalised tokens. */
+	const SYNONYMS = array(
+		'clean'     => array( 'clean', 'cleaning', 'cleaner', 'cleans', 'tidy', 'wash', 'washing', 'scrub', 'vacuum', 'mop' ),
+		'repair'    => array( 'repair', 'repairs', 'fix', 'fixing', 'mend', 'broken', 'broke', 'faulty', 'damaged' ),
+		'install'   => array( 'install', 'installation', 'installing', 'fit', 'fitting', 'setup', 'mount', 'mounting' ),
+		'inspect'   => array( 'inspect', 'inspection', 'check', 'checkup', 'assess', 'assessment', 'look', 'survey' ),
+		'estimate'  => array( 'estimate', 'quote', 'quotation', 'price', 'pricing', 'cost', 'how much' ),
+		'drain'     => array( 'drain', 'drains', 'blocked', 'blockage', 'clog', 'clogged', 'unblock' ),
+		'urgent'    => array( 'urgent', 'emergency', 'asap', 'today', 'now', 'immediately' ),
+		'garden'    => array( 'garden', 'gardening', 'lawn', 'mow', 'mowing', 'hedge', 'yard' ),
+		'pool'      => array( 'pool', 'pools', 'spa' ),
+		'water'     => array( 'water', 'leak', 'leaking', 'leaks', 'tap', 'pipe', 'pipes' ),
+		'electric'  => array( 'electric', 'electrical', 'electrician', 'power', 'wiring', 'outlet', 'socket' ),
+		'deep'      => array( 'deep', 'thorough', 'full', 'detailed' ),
+		'regular'   => array( 'regular', 'weekly', 'fortnightly', 'monthly', 'recurring' ),
+		'move'      => array( 'move', 'moving', 'bond', 'vacate', 'vacating', 'end' ),
 	);
 
-	/**
-	 * Synonym groups per language. Each key is the canonical token; the values are customer words that
-	 * map to it. Languages without an entry match literal words only.
-	 *
-	 * @var array<string, array<string, string[]>>
-	 */
-	private static $synonyms = array(
-		'en' => array(
-			'clean'     => array( 'clean', 'cleaning', 'cleaner', 'cleaners', 'tidy', 'wash', 'washing', 'housekeeping', 'maid' ),
-			'repair'    => array( 'repair', 'fix', 'fixing', 'broken', 'mend', 'handyman' ),
-			'plumb'     => array( 'plumb', 'plumbing', 'plumber', 'leak', 'leaking', 'pipe', 'drain', 'blocked', 'tap' ),
-			'electric'  => array( 'electric', 'electrical', 'electrician', 'wiring', 'socket', 'power' ),
-			'paint'     => array( 'paint', 'painting', 'painter', 'decorate', 'decorating' ),
-			'garden'    => array( 'garden', 'gardening', 'gardener', 'lawn', 'mow', 'mowing', 'landscape', 'landscaping', 'hedge' ),
-			'consult'   => array( 'consult', 'consultation', 'advice', 'assessment', 'inspection', 'inspect', 'quote', 'estimate' ),
-		),
-	);
+	/** Words with no service meaning. */
+	const STOPWORDS = array( 'a', 'an', 'the', 'my', 'our', 'i', 'we', 'need', 'want', 'to', 'for', 'of', 'and', 'or', 'please', 'can', 'you', 'book', 'get', 'some', 'with', 'at', 'in', 'on', 'is', 'it', 'do', 'be', 'me', 'us', 'service', 'appointment' );
 
 	/**
-	 * Language part of a locale, lower-cased. "en_AU" and "en-GB" both give "en". Unknown input gives "".
+	 * Concept lookup built once: customer token => canonical concept.
 	 *
-	 * @param mixed $locale Locale string.
-	 * @return string
+	 * @return array<string, string>
 	 */
-	public static function language( $locale ) {
-		if ( ! is_string( $locale ) || ! preg_match( '/\A([a-z]{2,3})(?:[_-][A-Za-z0-9]{2,8})*\z/D', $locale, $m ) ) {
-			return '';
+	private static function concept_map() {
+		static $map = null;
+		if ( null !== $map ) {
+			return $map;
 		}
-		return strtolower( $m[1] );
-	}
-
-	/**
-	 * Normalise customer text: strip tags and control characters, lower-case, drop punctuation,
-	 * cap length. The result is only ever used as a list of tokens.
-	 *
-	 * @param mixed $raw Raw text.
-	 * @return string
-	 */
-	public static function normalise_query( $raw ) {
-		if ( ! is_string( $raw ) ) { return ''; }
-		$text = strip_tags( $raw );
-		$text = preg_replace( '/[\x00-\x1F\x7F]+/u', ' ', $text );
-		$text = function_exists( 'mb_substr' ) ? mb_substr( (string) $text, 0, self::MAX_QUERY_CHARS, 'UTF-8' ) : substr( (string) $text, 0, self::MAX_QUERY_CHARS );
-		$text = function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $text, 'UTF-8' ) : strtolower( (string) $text );
-		$text = preg_replace( '/[^\p{L}\p{N}]+/u', ' ', (string) $text );
-		return trim( preg_replace( '/\s+/u', ' ', (string) $text ) );
-	}
-
-	/**
-	 * Canonical tokens for a piece of text in one language.
-	 *
-	 * @param string $text   Normalised text.
-	 * @param string $locale Locale used to pick synonym groups.
-	 * @return string[] Unique canonical tokens, in order of appearance.
-	 */
-	public static function tokens( $text, $locale ) {
-		$text = self::normalise_query( $text );
-		if ( '' === $text ) { return array(); }
-		$lang   = self::language( $locale );
-		$groups = isset( self::$synonyms[ $lang ] ) ? self::$synonyms[ $lang ] : array();
-		$lookup = array();
-		foreach ( $groups as $canonical => $words ) {
-			foreach ( $words as $word ) { $lookup[ $word ] = $canonical; }
-		}
-
-		$out = array();
-		foreach ( explode( ' ', $text ) as $word ) {
-			if ( '' === $word || in_array( $word, self::$stopwords, true ) ) { continue; }
-			$plain = ( strlen( $word ) > 3 && 's' === substr( $word, -1 ) && 'ss' !== substr( $word, -2 ) ) ? substr( $word, 0, -1 ) : $word;
-			$token = isset( $lookup[ $word ] ) ? $lookup[ $word ] : ( isset( $lookup[ $plain ] ) ? $lookup[ $plain ] : $plain );
-			if ( ! in_array( $token, $out, true ) ) { $out[] = $token; }
-		}
-		return $out;
-	}
-
-	/**
-	 * Services of one calendar's form structure that a customer may be offered: `fapp` fields only,
-	 * disabled or archived services removed. The catalogue itself is read-only here.
-	 *
-	 * @param int    $calendar_id Calendar (form) ID, used to build the identifier.
-	 * @param string $structure   Form structure JSON, as stored on the calendar.
-	 * @return array<int, array{id: string, calendar_id: int, field: int, index: int, name: string, duration: string, price: string}>
-	 */
-	public static function visible_services( $calendar_id, $structure ) {
-		$calendar_id = (int) $calendar_id;
-		if ( $calendar_id < 1 ) { return array(); }
-		$data = json_decode( (string) $structure, true );
-		if ( ! is_array( $data ) || ! isset( $data[0] ) || ! is_array( $data[0] ) ) { return array(); }
-
-		$out = array();
-		foreach ( $data[0] as $field_pos => $field ) {
-			if ( ! is_array( $field ) || ( $field['ftype'] ?? '' ) !== 'fapp' || ! isset( $field['services'] ) || ! is_array( $field['services'] ) ) { continue; }
-			foreach ( $field['services'] as $index => $service ) {
-				if ( ! is_array( $service ) || ! is_string( $service['name'] ?? null ) || '' === trim( $service['name'] ) ) { continue; }
-				if ( ! is_int( $index ) || $index < 0 || $index > self::MAX_SERVICE_IDX ) { continue; }
-				if ( self::is_switched_off( $service ) ) { continue; }
-				$out[] = array(
-					'id'          => $calendar_id . ':' . (int) $field_pos . ':' . $index,
-					'calendar_id' => $calendar_id,
-					'field'       => (int) $field_pos,
-					'index'       => $index,
-					'name'        => (string) $service['name'],
-					'duration'    => isset( $service['duration'] ) && is_scalar( $service['duration'] ) ? (string) $service['duration'] : '',
-					'price'       => isset( $service['price'] ) && is_scalar( $service['price'] ) ? (string) $service['price'] : '',
-				);
+		$map = array();
+		foreach ( self::SYNONYMS as $concept => $words ) {
+			foreach ( $words as $word ) {
+				$map[ $word ] = $concept;
 			}
 		}
-		return $out;
+		return $map;
 	}
 
 	/**
-	 * Disabled, hidden or archived services are never offered to customers.
+	 * Concepts found in a normalised text. Stopwords and unknown words are dropped.
 	 *
-	 * @param array $service Service row from the form structure.
-	 * @return bool
+	 * @param string $text Normalised text.
+	 * @return string[] Unique concept tokens. Plain words without a synonym group stay as themselves.
 	 */
-	private static function is_switched_off( array $service ) {
-		foreach ( array( 'disabled', 'hidden', 'archived', 'inactive' ) as $flag ) {
-			if ( isset( $service[ $flag ] ) && in_array( $service[ $flag ], array( true, 1, '1', 'true', 'yes', 'on' ), true ) ) { return true; }
+	public static function concepts( $text ) {
+		$text = TZFD_AI_Answer_Box::normalize( $text );
+		if ( '' === $text ) {
+			return array();
 		}
-		return false;
+		$map    = self::concept_map();
+		$out    = array();
+		$tokens = explode( ' ', $text );
+		foreach ( $tokens as $token ) {
+			if ( '' === $token || in_array( $token, self::STOPWORDS, true ) ) {
+				continue;
+			}
+			$out[] = isset( $map[ $token ] ) ? $map[ $token ] : $token;
+		}
+		// Multi-word synonyms such as "how much" map as phrases.
+		foreach ( array( 'how much' ) as $phrase ) {
+			if ( false !== strpos( ' ' . $text . ' ', ' ' . $phrase . ' ' ) ) {
+				$out[] = $map[ $phrase ];
+			}
+		}
+		return array_values( array_unique( $out ) );
+	}
+
+	/**
+	 * Visible services only: non-archived records with a positive ID and a non-empty name.
+	 *
+	 * @param array $services Records from TZFD_Local_Services::list() or a fixture.
+	 * @return array<int, array{id: int, name: string, description: string}>
+	 */
+	public static function visible( array $services ) {
+		$out = array();
+		foreach ( $services as $service ) {
+			if ( ! is_array( $service ) || ! empty( $service['archived'] ) ) {
+				continue;
+			}
+			$id = isset( $service['id'] ) ? filter_var( $service['id'], FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) ) : false;
+			$name = isset( $service['name'] ) && is_string( $service['name'] ) ? trim( $service['name'] ) : '';
+			if ( false === $id || '' === $name ) {
+				continue;
+			}
+			$out[] = array(
+				'id'          => (int) $id,
+				'name'        => $name,
+				'description' => isset( $service['description'] ) && is_string( $service['description'] ) ? $service['description'] : '',
+			);
+		}
+		return $out;
 	}
 
 	/**
 	 * Match customer wording to visible services.
 	 *
-	 * @param string $query    Customer text.
-	 * @param array  $services Output of visible_services() for one calendar, already tenant-verified.
-	 * @param string $locale   Locale of the customer's request, for example "en_AU".
-	 * @return array{status: string, matches: array, clarify: bool}
+	 * @param string $text     Customer wording (at most 300 characters are considered).
+	 * @param array  $services Catalogue records.
+	 * @return array{status: string, matches: array<int, array{id: int, name: string}>, question: string}
+	 *         status is one of none, one, many or invalid.
 	 */
-	public static function match( $query, array $services, $locale ) {
-		$query_tokens = self::tokens( $query, $locale );
-		if ( empty( $query_tokens ) ) {
-			return array( 'status' => self::STATUS_EMPTY, 'matches' => array(), 'clarify' => true );
+	public static function match( $text, array $services ) {
+		if ( ! is_string( $text ) || strlen( $text ) > TZFD_AI_Answer_Box::MAX_QUESTION_LENGTH ) {
+			return array( 'status' => 'invalid', 'matches' => array(), 'question' => '' );
+		}
+		$wanted = self::concepts( $text );
+		if ( empty( $wanted ) ) {
+			return array( 'status' => 'none', 'matches' => array(), 'question' => '' );
 		}
 
 		$scored = array();
-		foreach ( $services as $service ) {
-			if ( ! is_array( $service ) || ! isset( $service['id'], $service['name'] ) ) { continue; }
-			$service_tokens = self::tokens( (string) $service['name'], $locale );
-			$shared         = count( array_intersect( $query_tokens, $service_tokens ) );
-			if ( $shared < 1 ) { continue; }
-			$scored[] = array( 'score' => $shared, 'service' => $service );
+		foreach ( self::visible( $services ) as $service ) {
+			$name_concepts = self::concepts( $service['name'] );
+			$all_concepts  = self::concepts( $service['name'] . ' ' . $service['description'] );
+			$score = 0;
+			foreach ( $wanted as $concept ) {
+				if ( in_array( $concept, $name_concepts, true ) ) {
+					$score += 2;
+				} elseif ( in_array( $concept, $all_concepts, true ) ) {
+					$score += 1;
+				}
+			}
+			if ( $score > 0 ) {
+				$scored[] = array( 'id' => $service['id'], 'name' => $service['name'], 'score' => $score );
+			}
 		}
 
 		if ( empty( $scored ) ) {
-			return array( 'status' => self::STATUS_NONE, 'matches' => array(), 'clarify' => true );
+			return array( 'status' => 'none', 'matches' => array(), 'question' => '' );
 		}
 
-		usort( $scored, static function ( $a, $b ) {
-			if ( $a['score'] !== $b['score'] ) { return $b['score'] <=> $a['score']; }
-			return strcmp( (string) $a['service']['name'], (string) $b['service']['name'] );
-		} );
+		usort(
+			$scored,
+			function ( $a, $b ) {
+				return $b['score'] <=> $a['score'] ?: $a['id'] <=> $b['id'];
+			}
+		);
+		$top = $scored[0]['score'];
+		$best = array_values( array_filter( $scored, function ( $row ) use ( $top ) {
+			return $row['score'] === $top;
+		} ) );
 
-		$matches = array();
-		foreach ( array_slice( $scored, 0, self::MAX_RESULTS ) as $row ) {
-			$matches[] = self::public_row( $row['service'] );
+		if ( 1 === count( $best ) && ( count( $scored ) === 1 || $scored[1]['score'] < $top ) ) {
+			return array(
+				'status'   => 'one',
+				'matches'  => array( array( 'id' => $best[0]['id'], 'name' => $best[0]['name'] ) ),
+				'question' => '',
+			);
 		}
 
-		if ( 1 === count( $scored ) ) {
-			return array( 'status' => self::STATUS_SINGLE, 'matches' => $matches, 'clarify' => false );
-		}
-		return array( 'status' => self::STATUS_MULTIPLE, 'matches' => $matches, 'clarify' => true );
-	}
-
-	/**
-	 * Only the fields a customer needs to choose, as stored. Nothing is computed or invented.
-	 *
-	 * @param array $service Visible service row.
-	 * @return array{id: string, name: string, duration: string, price: string}
-	 */
-	public static function public_row( array $service ) {
+		$list = array_slice( $scored, 0, self::MAX_MATCH_LIST );
 		return array(
-			'id'       => (string) $service['id'],
-			'name'     => (string) $service['name'],
-			'duration' => (string) ( $service['duration'] ?? '' ),
-			'price'    => (string) ( $service['price'] ?? '' ),
+			'status'   => 'many',
+			'matches'  => array_map( function ( $row ) {
+				return array( 'id' => $row['id'], 'name' => $row['name'] );
+			}, $list ),
+			'question' => __( 'Which of these services is closest to what you need?', 'titan-zero-trades-front-desk' ),
 		);
 	}
 
 	/**
-	 * Check that a selected identifier names a visible service of the current company's calendar.
-	 * Returns the service row, or null for anything else (malformed, other tenant, disabled, unknown).
+	 * Accept a selected service ID only if it is one of the visible services.
 	 *
-	 * @param mixed $selected   Identifier posted by the customer, "calendar:field:index".
-	 * @param int   $company_id Company the request is scoped to (already verified by the caller).
-	 * @param array $services_by_calendar Map of calendar ID => visible_services() output for that calendar.
-	 * @param callable $owner_of_calendar Returns the owning company ID for a calendar ID.
-	 * @return array|null
+	 * @param mixed $service_id Submitted ID.
+	 * @param array $services   Catalogue records.
+	 * @return int Valid service ID, or 0.
 	 */
-	public static function validate_selection( $selected, $company_id, array $services_by_calendar, callable $owner_of_calendar ) {
-		if ( ! is_string( $selected ) || ! preg_match( '/\A([1-9][0-9]{0,9}):([0-9]{1,4}):([0-9]{1,4})\z/D', $selected, $m ) ) {
-			return null;
+	public static function validate_selection( $service_id, array $services ) {
+		if ( ! is_int( $service_id ) && ! ( is_string( $service_id ) && preg_match( '/\A[1-9][0-9]{0,18}\z/D', $service_id ) ) ) {
+			return 0;
 		}
-		$calendar_id = (int) $m[1];
-		$company_id  = (int) $company_id;
-		if ( $company_id < 1 || (int) $owner_of_calendar( $calendar_id ) !== $company_id ) { return null; }
-		if ( ! isset( $services_by_calendar[ $calendar_id ] ) || ! is_array( $services_by_calendar[ $calendar_id ] ) ) { return null; }
-
-		foreach ( $services_by_calendar[ $calendar_id ] as $service ) {
-			if ( is_array( $service ) && isset( $service['id'] ) && hash_equals( (string) $service['id'], $selected ) ) {
-				return $service;
+		$wanted = (int) $service_id;
+		foreach ( self::visible( $services ) as $service ) {
+			if ( $service['id'] === $wanted ) {
+				return $wanted;
 			}
 		}
-		return null;
+		return 0;
 	}
 }

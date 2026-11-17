@@ -1,10 +1,10 @@
 <?php
 /**
- * Unit checks for TZFD_Service_Finder. Pure PHP, no WordPress needed.
+ * Unit checks for TZFD_Service_Finder_Core. Pure PHP, no WordPress needed.
  * Run: php tests/unit/service-finder-tests.php
  */
 define( 'ABSPATH', __DIR__ . '/' );
-require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-service-finder.php';
+require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-service-finder-core.php';
 
 $GLOBALS['sf_pass'] = 0;
 $GLOBALS['sf_fail'] = 0;
@@ -13,7 +13,7 @@ function sf_check( $name, $ok, $detail = '' ) {
 	echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
 }
 
-$F = 'TZFD_Service_Finder';
+$F = 'TZFD_Service_Finder_Core';
 
 // Catalogue fixture: calendar 12 owned by company 1; calendar 13 owned by company 2.
 $structure = json_encode( array( array(

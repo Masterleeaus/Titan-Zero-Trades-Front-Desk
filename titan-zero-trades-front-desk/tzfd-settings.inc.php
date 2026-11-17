@@ -105,6 +105,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 		<h2><?php esc_html_e('Time zone','titan-zero-trades-front-desk'); ?></h2>
 		<p><?php esc_html_e('Times use the WordPress site time zone:','titan-zero-trades-front-desk'); ?> <strong><?php echo esc_html( wp_timezone_string() ); ?></strong>. <a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e('Change it in WordPress settings','titan-zero-trades-front-desk'); ?></a>.</p>
 	</div>
+<?php TZFD_Settings_Extras::render_profile_card(); ?>
 <?php TZFD_Client_Portal::render_settings_card(); ?>
 </div>
 
@@ -283,6 +284,9 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
      <div class="clear"></div>
      <p><?php esc_html_e('Note: For setting up a report only for a specific form use the setting area available for that when editing each form settings','titan-zero-trades-front-desk'); ?>.</p>
 
+</div>
+<div class="tzfd-subpane">
+<?php TZFD_Settings_Extras::render_notify_card(); ?>
 </div>
 <div class="tzfd-subpane">
 	<h2><?php esc_html_e('Status update emails','titan-zero-trades-front-desk'); ?></h2>

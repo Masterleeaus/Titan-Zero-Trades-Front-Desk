@@ -128,6 +128,44 @@ final class TZFD_Location_Policy {
 		return is_string( $staff_id ) && in_array( $staff_id, $decision['allowed_staff_ids'], true );
 	}
 
+	/**
+	 * Bulk enable or disable stored rules by id. Atomic: every stored rule is validated first, and any
+	 * unknown, duplicate or foreign-company id, or any malformed stored rule, throws and returns nothing.
+	 * Only the enabled flag changes; all other fields are kept as validated.
+	 *
+	 * @param array  $rules      Stored rules.
+	 * @param array  $ids        Rule ids to change (1 to 100 unique ids).
+	 * @param bool   $enabled    New enabled flag.
+	 * @param string $company_id Company scope of the caller.
+	 * @return array Updated, validated rule list in stored order.
+	 * @throws InvalidArgumentException
+	 */
+	public static function bulk_set_enabled( $rules, $ids, $enabled, $company_id ) {
+		if ( ! is_array( $rules ) || ! is_array( $ids ) || ! is_bool( $enabled ) || ! self::is_id( $company_id ) ) { throw new InvalidArgumentException( 'invalid_bulk_inputs' ); }
+		if ( empty( $ids ) || count( $ids ) > 100 ) { throw new InvalidArgumentException( 'bulk_size_out_of_range' ); }
+		foreach ( $ids as $id ) {
+			if ( ! self::is_id( $id ) ) { throw new InvalidArgumentException( 'invalid_bulk_rule_id' ); }
+		}
+		if ( count( array_unique( $ids ) ) !== count( $ids ) ) { throw new InvalidArgumentException( 'duplicate_bulk_rule_id' ); }
+
+		$out   = array();
+		$seen  = array();
+		$found = array();
+		foreach ( $rules as $raw ) {
+			$rule = self::validate_rule( $raw );
+			if ( $rule['company_id'] !== $company_id ) { throw new InvalidArgumentException( 'cross_company_rule' ); }
+			if ( isset( $seen[ $rule['id'] ] ) ) { throw new InvalidArgumentException( 'duplicate_rule_id' ); }
+			$seen[ $rule['id'] ] = true;
+			if ( in_array( $rule['id'], $ids, true ) ) {
+				$rule['enabled'] = $enabled;
+				$found[]         = $rule['id'];
+			}
+			$out[] = $rule;
+		}
+		if ( count( $found ) !== count( $ids ) ) { throw new InvalidArgumentException( 'unknown_rule_ids' ); }
+		return $out;
+	}
+
 	private static function is_id( $value ) {
 		return is_string( $value ) && (bool) preg_match( TZFD_Delegated_Roles::ID_PATTERN, $value );
 	}

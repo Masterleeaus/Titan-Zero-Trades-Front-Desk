@@ -12,7 +12,7 @@ $tz_help_sections = array(
         'id'    => 'start',
         'title' => __( 'Getting started', 'titan-zero-trades-front-desk' ),
         'items' => array(
-            array( __( 'What does Titan Zero Front Desk do?', 'titan-zero-trades-front-desk' ),
+            array( __( 'What does Scheduling & Enquiries Manager do?', 'titan-zero-trades-front-desk' ),
                    __( 'It takes appointments and bookings for services that have set schedules, durations and capacity. You define calendars, services and working hours, customers book through a form on your site, and you manage every booking from the WordPress admin.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'How do I set it up?', 'titan-zero-trades-front-desk' ),
                    __( 'On Dashboard, choose Start setup. The setup wizard starts a calendar from a vertical preset with ready-made services and answers, and asks whether bookings are instant or held as requests. You can also reopen it from Settings, then Preset Setup, You can skip any of these and configure everything by hand.', 'titan-zero-trades-front-desk' ) ),
@@ -153,7 +153,7 @@ $tz_help_sections = array(
             array( __( 'Who can open the Front Desk menu?', 'titan-zero-trades-front-desk' ),
                    __( 'Administrators and the Titan Zero Worker and Titan Zero Manager roles can open it. Editors cannot. Each person then sees only the calendars they have been given access to.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'Who can change the settings?', 'titan-zero-trades-front-desk' ),
-                   __( 'Front Desk screens are for Administrators and for the Titan Zero Worker and Titan Zero Manager WordPress roles. Editors and other roles have no Front Desk access. Which screens each role may use is set in Titan Zero Trades: Front Desk.', 'titan-zero-trades-front-desk' ) ),
+                   __( 'Front Desk screens are for Administrators and for the Titan Zero Worker and Titan Zero Manager WordPress roles. Editors and other roles have no Front Desk access. Which screens each role may use is set in Scheduling & Enquiries Manager.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'How do I let a staff member manage one calendar?', 'titan-zero-trades-front-desk' ),
                    __( 'Open that calendar’s settings and turn on Allow selected users access also to the calendar settings. Then choose the users under Select users with access. Administrators always see every calendar.', 'titan-zero-trades-front-desk' ) ),
         ),

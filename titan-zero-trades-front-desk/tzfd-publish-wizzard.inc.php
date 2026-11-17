@@ -11,7 +11,7 @@
 ?>
 <div class="tzfd-pwizard">
 
-<h1><?php esc_html_e('Publish Titan Zero Front Desk Form','titan-zero-trades-front-desk'); ?></h1>
+<h1><?php esc_html_e('Publish Scheduling & Enquiries Manager Form','titan-zero-trades-front-desk'); ?></h1>
 
 
 
@@ -109,7 +109,7 @@ if ($this->get_param('tz_fd_do_action_loaded') == 'wizard') {
                        <br />
                        <h3 style="background:#cccccc; padding:5px;"><?php esc_html_e('Using classic WordPress editor or other editors?','titan-zero-trades-front-desk'); ?></h3>
 
-                        <?php esc_html_e('You can also publish the form in a post/page, use the dedicated icon','titan-zero-trades-front-desk'); ?> <?php echo '<img hspace="5" src="'.esc_url(plugins_url('/images/tz_fd_form.gif', __FILE__)).'" alt="'.esc_attr(__('Insert Titan Zero Trades: Front Desk','titan-zero-trades-front-desk')).'" />';     ?>
+                        <?php esc_html_e('You can also publish the form in a post/page, use the dedicated icon','titan-zero-trades-front-desk'); ?> <?php echo '<img hspace="5" src="'.esc_url(plugins_url('/images/tz_fd_form.gif', __FILE__)).'" alt="'.esc_attr(__('Insert Scheduling & Enquiries Manager','titan-zero-trades-front-desk')).'" />';     ?>
                         <?php esc_html_e('which has been added to your Upload/Insert Menu, just below the title of your Post/Page', 'titan-zero-trades-front-desk'); ?>
 
                     </td>
@@ -132,7 +132,7 @@ if ($this->get_param('tz_fd_do_action_loaded') == 'wizard') {
 <div id="metabox_basic_settings" class="postbox" >
   <h3 class='hndle' style="padding:5px;"><span><?php esc_html_e('Note','titan-zero-trades-front-desk'); ?></span></h3>
   <div class="inside">
-   <?php esc_html_e('You can also publish the form in a post/page, use the dedicated icon','titan-zero-trades-front-desk'); ?> <?php echo '<img hspace="5" src="'.esc_url(plugins_url('/images/tz_fd_form.gif', __FILE__)).'" alt="'.esc_attr(__('Insert Titan Zero Trades: Front Desk','titan-zero-trades-front-desk')).'" />';     ?>
+   <?php esc_html_e('You can also publish the form in a post/page, use the dedicated icon','titan-zero-trades-front-desk'); ?> <?php echo '<img hspace="5" src="'.esc_url(plugins_url('/images/tz_fd_form.gif', __FILE__)).'" alt="'.esc_attr(__('Insert Scheduling & Enquiries Manager','titan-zero-trades-front-desk')).'" />';     ?>
    <?php esc_html_e('which has been added to your Upload/Insert Menu, just below the title of your Post/Page or under the "+" icon if using the Gutenberg editor.','titan-zero-trades-front-desk'); ?>
    <br /><br />
   </div>

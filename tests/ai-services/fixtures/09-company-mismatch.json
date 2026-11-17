@@ -1,0 +1,1 @@
+{"name":"other company payload refused","now":1900000000,"site_company_id":2,"payload":{"schema_version":1,"company_id":1,"state":"active","entitlements":["agent_team"],"expires_at":1900003600},"expect":{"level":"free_ai","reason":"company_mismatch"}}

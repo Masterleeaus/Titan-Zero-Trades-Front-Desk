@@ -124,6 +124,7 @@ final class TZFD_Action_Receipt_Viewer {
 	}
 
 	private static function t( $text ) {
+		// phpcs:ignore WordPress.WP.I18n.NonSingularStringLiteralText -- every caller passes a literal string; this wrapper only forwards it to __().
 		return function_exists( '__' ) ? __( $text, 'titan-zero-trades-front-desk' ) : $text;
 	}
 }

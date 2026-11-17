@@ -118,7 +118,7 @@ final class TZFD_AI_Smart_Reply {
 
     private static function fact( array $facts, $key ) {
         $value = isset( $facts[ $key ] ) ? TZFD_AI_Locale::clean_text( (string) $facts[ $key ] ) : null;
-        return ( null === $value || '' === $value ) ? null : strip_tags( $value );
+        return ( null === $value || '' === $value ) ? null : wp_strip_all_tags( $value );
     }
 
     private static function fill( $template, array $vars ) {

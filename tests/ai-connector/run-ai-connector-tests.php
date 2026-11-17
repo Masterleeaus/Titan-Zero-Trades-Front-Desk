@@ -8,6 +8,9 @@
  */
 define( 'ABSPATH', __DIR__ . '/' );
 
+// Shim for WordPress core wp_parse_url(); the fixtures need only the scheme, host and port parts.
+if ( ! function_exists( 'wp_parse_url' ) ) { function wp_parse_url( $url, $component = -1 ) { return parse_url( $url, $component ); } }
+
 $GLOBALS['tz_opts']    = array();
 $GLOBALS['tz_filters'] = array();
 $GLOBALS['tz_calls']   = array();

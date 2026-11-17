@@ -173,7 +173,9 @@ final class TZFD_Enquiry_Review {
             $contact = trim( (string) $r->email . ' ' . (string) $r->phone );
             echo '<tr><td>' . esc_html( (string) $r->received_utc ) . ' UTC</td><td>' . esc_html( (string) $r->name ) . '</td><td>' . esc_html( $contact ) . '</td>';
             $triage_row = $triage_map[ (int) $r->id ] ?? null;
-            echo '<td>' . esc_html( (string) $r->enquiry ) . ( class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::row_html( (int) $r->id, $triage_row ) : '' ) . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
+            $triage_html = class_exists( 'TZFD_Enquiry_Triage' ) ? TZFD_Enquiry_Triage::row_html( (int) $r->id, $triage_row ) : '';
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- row_html() escapes every stored value it prints with esc_html() and returns trusted markup.
+            echo '<td>' . esc_html( (string) $r->enquiry ) . $triage_html . '</td><td>' . esc_html( (string) $r->source ) . '</td><td>' . wp_kses( self::status_badge_html( (string) $r->status ), TZFD_UI_Graphics::allowed_html() ) . esc_html( ucfirst( (string) $r->status ) ) . '</td><td>';
             echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '" /><input type="hidden" name="enquiry" value="' . (int) $r->id . '" />';
             wp_nonce_field( self::NONCE, self::NONCE_FIELD );
             echo '<select name="status" aria-label="' . esc_attr__( 'New status', 'titan-zero-trades-front-desk' ) . '">';

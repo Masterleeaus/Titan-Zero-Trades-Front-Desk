@@ -53,6 +53,7 @@ class FakeWpdb {
         $i = 0;
         return preg_replace_callback( '/%[sdi]/', function ( $m ) use ( &$args, &$i ) {
             $v = $args[ $i++ ];
+            if ( '%i' === $m[0] ) { return '`' . str_replace( '`', '``', (string) $v ) . '`'; }
             return '%d' === $m[0] ? (string) (int) $v : "'" . addslashes( (string) $v ) . "'";
         }, $sql );
     }

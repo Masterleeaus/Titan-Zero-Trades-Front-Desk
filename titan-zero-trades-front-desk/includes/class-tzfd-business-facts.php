@@ -172,7 +172,7 @@ final class TZFD_Business_Facts {
     }
 
     public static function clean( $value ) {
-        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( (string) $value ) : strip_tags( (string) $value );
+        $value = wp_strip_all_tags( (string) $value );
         $value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', (string) $value );
         $value = trim( preg_replace( '/\s+/u', ' ', (string) $value ) );
         if ( mb_strlen( $value ) > self::MAX_VALUE ) {

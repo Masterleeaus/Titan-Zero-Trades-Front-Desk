@@ -89,7 +89,7 @@ final class TZFD_Signed_Request {
     public static function purge_expired( $now = null ) {
         global $wpdb;
         if ( ! isset( $wpdb ) || ! is_object( $wpdb ) ) return 0;
-        if ( 1 !== mt_rand( 1, 20 ) ) return 0;
+        if ( 1 !== random_int( 1, 20 ) ) return 0;
         $now = null === $now ? time() : (int) $now;
         $deleted = $wpdb->query( $wpdb->prepare(
             "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s AND CAST(option_value AS UNSIGNED) <= %d",

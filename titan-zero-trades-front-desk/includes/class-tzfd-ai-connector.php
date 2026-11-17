@@ -172,7 +172,7 @@ final class TZFD_AI_Connector {
      */
     public static function configure( $endpoint, $site_id, $secret ) {
         if ( ! is_string( $endpoint ) || ! is_string( $site_id ) || ! is_string( $secret ) ) { return false; }
-        $parts = parse_url( $endpoint );
+        $parts = wp_parse_url( $endpoint );
         if ( ! is_array( $parts ) || ! isset( $parts['scheme'], $parts['host'] ) || 'https' !== strtolower( $parts['scheme'] ) ) {
             return false;
         }
@@ -260,7 +260,7 @@ final class TZFD_AI_Connector {
 
     private static function configured( array $cfg, $secret ) {
         if ( '' === $cfg['endpoint'] || '' === $cfg['site_id'] ) { return false; }
-        $parts = parse_url( $cfg['endpoint'] );
+        $parts = wp_parse_url( $cfg['endpoint'] );
         return is_array( $parts ) && isset( $parts['scheme'], $parts['host'] )
             && 'https' === strtolower( $parts['scheme'] )
             && 1 === preg_match( '/^[A-Za-z0-9_.-]{1,64}$/D', $cfg['site_id'] )

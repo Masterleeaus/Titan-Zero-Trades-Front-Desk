@@ -6,6 +6,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 
+// Shim for WordPress core, matching its behaviour closely enough for these fixtures: tags removed, then trimmed.
+if ( ! function_exists( 'wp_strip_all_tags' ) ) { function wp_strip_all_tags( $s ) { return trim( preg_replace( '/<[^>]*>?/', '', (string) $s ) ); } }
+
 $plugin_inc = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/';
 foreach ( array(
     'class-tzfd-intent-engine.php',

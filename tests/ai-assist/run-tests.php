@@ -4,6 +4,9 @@
  * Run: php tests/ai-assist/run-tests.php   (from the repository root)
  */
 define( 'ABSPATH', __DIR__ );
+
+// Shim for WordPress core, matching its behaviour closely enough for these fixtures: tags removed, then trimmed.
+if ( ! function_exists( 'wp_strip_all_tags' ) ) { function wp_strip_all_tags( $s ) { return trim( preg_replace( '/<[^>]*>?/', '', (string) $s ) ); } }
 $dir = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/ai-assist/';
 foreach ( array( 'class-tzfd-ai-locale.php', 'class-tzfd-ai-hosted-client.php', 'class-tzfd-ai-multilingual.php', 'class-tzfd-ai-followup-rules.php', 'class-tzfd-ai-followup-log.php', 'class-tzfd-ai-smart-reply.php', 'class-tzfd-ai-conversation-summary.php' ) as $file ) {
     require_once $dir . $file;

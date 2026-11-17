@@ -211,7 +211,7 @@ final class TZFD_Knowledge_Store {
 
     private static function clean_text( $value ) {
         $value = is_scalar( $value ) ? (string) $value : '';
-        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $value ) : strip_tags( $value );
+        $value = wp_strip_all_tags( $value );
         $value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value );
         $value = preg_replace( '/\s+/u', ' ', (string) $value );
         return trim( (string) $value );

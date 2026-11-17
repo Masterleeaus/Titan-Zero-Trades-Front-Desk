@@ -169,11 +169,11 @@ add_filter( 'tzfd_faq_embedding_provider', function ( $v, $q, $questions ) {
     return array( 'query' => array( 0.0, 1.0 ), 'entries' => array_map( function () { return array( 1.0, 0.0 ); }, $questions ) );
 } );
 $capHit = null;
-for ( $i = 0; $i < 205; $i++ ) {
+for ( $i = 0; $i < 805; $i++ ) {
     $r = $R::answer( $A, "unmatched widget number $i" );
     if ( 'monthly_embedding_cap' === $r['reason'] ) { $capHit = $i; break; }
 }
-check( 'monthly cap stops embedding calls at 200', 200 === $R::embedding_calls_this_month( $A ) && 200 === $capHit, 'calls=' . $R::embedding_calls_this_month( $A ) . ' capAt=' . var_export( $capHit, true ) );
+check( 'monthly cap stops embedding calls at 800', 800 === $R::embedding_calls_this_month( $A ) && 800 === $capHit, 'calls=' . $R::embedding_calls_this_month( $A ) . ' capAt=' . var_export( $capHit, true ) );
 
 /* Proxy down: provider returns nothing, throws, or returns malformed data */
 reset_all();

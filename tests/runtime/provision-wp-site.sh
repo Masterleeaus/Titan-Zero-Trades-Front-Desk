@@ -51,6 +51,18 @@ fi
 # Activate as user 1 so the activation hook sees an administrator (manage_options).
 $WP_CLI --allow-root --path="$WP_ROOT" plugin activate titan-zero-trades-front-desk --user=1 --quiet || fail "plugin activation failed"
 
+# Enable the missed-call add-on for the company (the add-on list is company-scoped, and the REST route
+# registers only when the add-on is active), and store a generated inbound secret so the signed HTTP checks
+# can run (when the plugin supports it). The secret is random, printed to the caller's environment only, and never written into the code.
+INBOUND_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '
+$b = TZFD_Local_Business::id();
+update_option( TZFD_Scoped_Store::option_name( "tz_fd_addons_active_list", $b ), array( "tzfd-Onboarding", "tzfd-DashboardWidget", "tzfd-MissedCall" ) );
+$s = TZFD_Signed_Request::new_secret();
+$opt = TZFD_Addon_Support::global_option_name( "missed_call" );
+$cur = get_option( $opt, array() ); if ( ! is_array( $cur ) ) { $cur = array(); }
+$cur["inbound_secret"] = $s; update_option( $opt, $cur );
+echo "\nTZFD_RT_INBOUND_SECRET=" . $s . "\n";' --user=1 2>/dev/null | grep '^TZFD_RT_INBOUND_SECRET=')" || INBOUND_LINE=""  # not every baseline (for example v3.0.128) has these classes; then no secret is exported
+
 # Subscriber for capability tests (password is disposable and printed only to the caller's environment).
 $WP_CLI --allow-root --path="$WP_ROOT" user create rtsub rt-sub@example.test --role=subscriber --user_pass="$SUB_PASS" --quiet || fail "subscriber create failed"
 
@@ -60,4 +72,5 @@ TZFD_RT_DB_NAME=$DB_NAME
 TZFD_RT_URL=$URL
 TZFD_RT_ADMIN_PASS=$ADMIN_PASS
 TZFD_RT_SUB_PASS=$SUB_PASS
+$INBOUND_LINE
 EOF

@@ -299,5 +299,7 @@ if ( $rt_fa_ok ) {
     TZFD_Scoped_Store::delete( TZFD_FAQ_Search::AUDIT_KEY, $company );
 }
 
+// Issue #21: FAQ retrieval checks run last. Their option and filter changes would otherwise break the signed call-events checks above.
+require __DIR__ . '/faq-retrieval-wp-tests.php';
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";
 exit( $GLOBALS['rt_fail'] > 0 ? 1 : 0 );

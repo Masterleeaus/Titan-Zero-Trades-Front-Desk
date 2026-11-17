@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
-# HTTP checks on the disposable test site: unauthenticated refusals, and logged-in nonce and capability checks.
+# HTTP checks on the disposable test site: unauthenticated refusals, logged-in nonce and capability checks,
+# forged public enquiry refusal, and an optional signed missed-call replay check.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
-# Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh).
-# The script refuses to run without a base URL. A request that gets no response (curl status 000, or an empty code) is a FAIL, never a PASS.
+# A route that is not registered (rest_no_route) is reported as FAIL: a 404 there proves nothing about authorization.
+# Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
+# SECRET (optional: the stored missed-call inbound secret; enables the signed replay check). The missed-call route
+# needs its addon (tzfd-MissedCall) active.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
+# The script refuses to run without a base URL. A request that gets no response (curl status 000, or an empty code) is a FAIL, never a PASS.
 B="${B:-${TZFD_RT_URL:-}}"
 if [ -z "$B" ]; then
   echo "FAIL harness -- base URL not set: export B (or TZFD_RT_URL) before running http-auth-tests.sh" >&2
@@ -26,16 +30,49 @@ check() { # name, code  (refuse = a real HTTP status that is not 2xx)
 # Connection failures give curl status 000; --max-time stops a silent server from hanging the run.
 code() { curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$@" || true; }
 
+# Preflight: abort rather than report a dead server as a pass.
+preflight=$(code "$B/?rest_route=/")
+if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
+# REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
+rest() { # name, curl args...
+  local name="$1"; shift
+  local out rcode body
+  out=$(curl -s -w '\n%{http_code}' "$@")
+  rcode=$(tail -n1 <<<"$out"); body=$(sed '$d' <<<"$out")
+  if [[ "$body" == *rest_no_route* ]]; then report FAIL "$name" "route not registered (HTTP $rcode), auth not exercised";
+  else check "$name" "$rcode"; fi
+}
+
 # Unauthenticated refusals.
-check "missed-call, no secret" "$(code -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")"
-check "missed-call, bad signature" "$(code -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")"
-check "twilio-status, unsigned" "$(code -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status")"
-check "call-events, unsigned" "$(code -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events")"
-check "messaging-events (SMS reply), unsigned" "$(code -X POST -H 'Content-Type: application/json' -d '{"event":"inbound_sms","event_id":"m1","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events")"
-check "messaging-events (SMS reply), forged signature" "$(code -X POST -H 'Content-Type: application/json' -H 'X-TZFD-Key-Id: forged-key' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: 0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"inbound_sms","event_id":"m2","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events")"
-check "booking status, anonymous" "$(code "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1")"
-check "resources catalog, anonymous" "$(code "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog")"
-check "resources preview, anonymous" "$(code -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview")"
+rest "missed-call, no secret" -X POST -H 'Content-Type: application/json' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
+rest "missed-call, bad signature" -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
+rest "twilio-status, unsigned" -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status"
+rest "call-events, unsigned" -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events"
+rest "messaging-events (SMS reply), unsigned" -X POST -H 'Content-Type: application/json' -d '{"event":"inbound_sms","event_id":"m1","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
+rest "messaging-events (SMS reply), forged signature" -X POST -H 'Content-Type: application/json' -H 'X-TZFD-Key-Id: forged-key' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: 0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"inbound_sms","event_id":"m2","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
+rest "booking status, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1"
+rest "resources catalog, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog"
+rest "resources preview, anonymous" -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview"
+
+# Signed replay: a valid signature is accepted once, then refused. Needs SECRET.
+if [[ -n "${SECRET:-}" ]]; then
+  body='{"event":"missed","from":"+61400000000"}'; ts=$(date +%s)
+  sig="sha256=$(printf '%s.%s' "$ts" "$body" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
+  # Route registration: the REST index must list the route, otherwise the signed checks prove nothing.
+  # The index is JSON, so slashes may arrive escaped as \/ : the pattern allows an optional backslash.
+  if curl -s "$B/?rest_route=/" | grep -Eq 'titan-zero-front-desk\\?/v1\\?/missed-call'; then
+    report PASS "missed-call route registered" "listed in REST index"
+  else
+    report FAIL "missed-call route registered" "not in REST index at $B (is the tzfd-MissedCall addon active?)"
+  fi
+  # -sS shows a curl error (e.g. connection refused) on stderr instead of a bare 000; --max-time stops a hang.
+  signed() { curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call" 2>&1 | tr '\n' ' '; }
+  first=$(signed); second=$(signed)
+  if [[ "$first" =~ ^2 ]]; then report PASS "missed-call, valid signature accepted first time" "HTTP $first"; else report FAIL "missed-call, valid signature rejected" "HTTP $first"; fi
+  if [[ "$second" =~ ^4 ]]; then report PASS "missed-call, replayed signature refused" "HTTP $second"; else report FAIL "missed-call, replayed signature accepted" "HTTP $second"; fi
+else
+  report SKIP "missed-call signed replay" "SECRET not set"
+fi
 # No plugin AJAX action is registered in the current source (no wp_ajax_ hook), so this is a weak check: it only shows the core admin-ajax refusal.
 check "unregistered admin-ajax action, anonymous (weak check)" "$(code -X POST -d 'action=tzfd_workspace_customer_sites&nonce=x' "$B/wp-admin/admin-ajax.php")"
 
@@ -97,6 +134,14 @@ else
   expect "FAQ gap handler, admin with invalid nonce" 403 "$(code -b "$JAR_ADMIN" -d "$POST_BODY&_wpnonce=0123456789" "$ADMIN_POST")"
   rm -f "$JAR_ADMIN" "$JAR_SUB"
 fi
+
+# Forged public enquiry: the nonce gate must answer exactly 403. A success path redirects (302), so require the exact code.
+forged_body='name=Forged&email=forged@example.test&enquiry=forged&website='
+for label in "no nonce" "wrong nonce"; do
+  if [ "$label" = "no nonce" ]; then extra=''; else extra='&_tzfd_enquiry_nonce=0000000000'; fi
+  fcode=$(code -X POST -H 'Content-Type: application/x-www-form-urlencoded' -d "action=tzfd_public_enquiry&$forged_body$extra" "$B/wp-admin/admin-post.php")
+  if [ "$fcode" = "403" ]; then report PASS "forged public enquiry ($label) refused" "HTTP $fcode"; else report FAIL "forged public enquiry ($label)" "HTTP $fcode (expected 403)"; fi
+done
 
 echo "Note: a weak check is labelled above; it does not prove the plugin's own nonce handling."
 echo "Summary: $pass passed, $fail failed, $skip skipped"

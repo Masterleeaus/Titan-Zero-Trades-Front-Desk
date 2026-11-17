@@ -7,7 +7,8 @@
 # SECRET (optional: the stored missed-call inbound secret; enables the signed replay check). The missed-call route
 # needs its addon (tzfd-MissedCall) active.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
-B="${TZFD_RT_URL:-http://127.0.0.1:8080}"
+# B (set by the CI workflow and WP-TESTSITE.md to WP_URL) wins over TZFD_RT_URL; both default to the local test site.
+B="${B:-${TZFD_RT_URL:-http://127.0.0.1:8080}}"
 pass=0; fail=0; skip=0
 report() { # status name detail
   case "$1" in
@@ -45,7 +46,15 @@ rest "resources preview, anonymous" -X POST -H 'Content-Type: application/json' 
 if [[ -n "${SECRET:-}" ]]; then
   body='{"event":"missed","from":"+61400000000"}'; ts=$(date +%s)
   sig="sha256=$(printf '%s.%s' "$ts" "$body" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
-  signed() { curl -s -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"; }
+  # Route registration: the REST index must list the route, otherwise the signed checks prove nothing.
+  # The index is JSON, so slashes may arrive escaped as \/ : the pattern allows an optional backslash.
+  if curl -s "$B/?rest_route=/" | grep -Eq 'titan-zero-front-desk\\?/v1\\?/missed-call'; then
+    report PASS "missed-call route registered" "listed in REST index"
+  else
+    report FAIL "missed-call route registered" "not in REST index at $B (is the tzfd-MissedCall addon active?)"
+  fi
+  # -sS shows a curl error (e.g. connection refused) on stderr instead of a bare 000; --max-time stops a hang.
+  signed() { curl -sS --max-time 30 -o /dev/null -w '%{http_code}' -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call" 2>&1 | tr '\n' ' '; }
   first=$(signed); second=$(signed)
   if [[ "$first" =~ ^2 ]]; then report PASS "missed-call, valid signature accepted first time" "HTTP $first"; else report FAIL "missed-call, valid signature rejected" "HTTP $first"; fi
   if [[ "$second" =~ ^4 ]]; then report PASS "missed-call, replayed signature refused" "HTTP $second"; else report FAIL "missed-call, replayed signature accepted" "HTTP $second"; fi

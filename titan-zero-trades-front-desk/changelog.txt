@@ -1,3 +1,6 @@
+= Unreleased =
+* Missed-call webhook: a repeated signed request is refused atomically. The signature claim is a single INSERT IGNORE on the unique option name, so two identical requests arriving together cannot both be accepted. Expired claims are removed as they are found.
+
 = 3.0.128 =
 * Missed-call webhook: the plugin generates the inbound secret and shows it once. Each request is signed with HMAC-SHA256 over its timestamp and raw body, and is refused when it is more than five minutes off or repeated. The X-TZFD-Secret header is removed.
 * Personal data erase deletes the booking records that match the requested email address. Client-portal sign-in links and sessions for that address are removed as before.

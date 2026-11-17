@@ -441,7 +441,7 @@ $tz_help_pages = array(
 
         <h2 id="tzfd-help-pages"><?php esc_html_e( 'Page reference', 'titan-zero-trades-front-desk' ); ?></h2>
         <div class="tzfd-help-section">
-            <p><?php esc_html_e( 'Each page of Titan Zero Trades: Front Desk, what it is for, and where to find it. The Front Desk menu lists the main pages; the Settings tabs hold the rest.', 'titan-zero-trades-front-desk' ); ?></p>
+            <p><?php esc_html_e( 'Each page of Scheduling & Enquiries Manager, what it is for, and where to find it. The Front Desk menu lists the main pages; the Settings tabs hold the rest.', 'titan-zero-trades-front-desk' ); ?></p>
             <?php foreach ( $tz_help_pages as $tz_page_area ) : ?>
                 <h3><?php echo esc_html( $tz_page_area['title'] ); ?></h3>
                 <table class="widefat striped tzfd-help-table">

@@ -217,12 +217,12 @@ final class TZFD_Vertical_Registry {
     /** A plain-language message for a choose_primary() error code, for the onboarding wizard. */
     public static function message( $code ) {
         $messages = array(
-            'tz_forbidden'         => 'Your vertical was not saved. Only a manager or supervisor can change the business verticals in Titan Zero Trades: Front Desk. Ask one to set it, then try this step again.',
-            'tz_vertical_too_many' => 'Your vertical was not saved. This business already has five verticals. Remove one in Titan Zero Trades: Front Desk first.',
-            'tz_vertical_unknown'  => 'Your vertical was not saved. That vertical is not in the Titan Zero Trades: Front Desk list.',
-            'unavailable'          => 'Your vertical was not saved. Titan Zero Trades: Front Desk is not available right now.',
+            'tz_forbidden'         => 'Your vertical was not saved. Only a manager or supervisor can change the business verticals in Scheduling & Enquiries Manager. Ask one to set it, then try this step again.',
+            'tz_vertical_too_many' => 'Your vertical was not saved. This business already has five verticals. Remove one in Scheduling & Enquiries Manager first.',
+            'tz_vertical_unknown'  => 'Your vertical was not saved. That vertical is not in the Scheduling & Enquiries Manager list.',
+            'unavailable'          => 'Your vertical was not saved. Scheduling & Enquiries Manager is not available right now.',
         );
-        return isset( $messages[ (string) $code ] ) ? $messages[ (string) $code ] : 'Your vertical was not saved in Titan Zero Trades: Front Desk. Try again, or ask a manager to set it.';
+        return isset( $messages[ (string) $code ] ) ? $messages[ (string) $code ] : 'Your vertical was not saved in Scheduling & Enquiries Manager. Try again, or ask a manager to set it.';
     }
 
     /* ---------- cleaning ---------- */

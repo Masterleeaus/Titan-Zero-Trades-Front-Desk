@@ -74,6 +74,13 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             return $now + self::TOKEN_TTL;
         }
 
+        /** True while a link issued at $issued is still inside its fixed 14 days. Viewing never changes $issued. */
+        public static function is_live( $issued, $now = null ) {
+            $issued = (int) $issued;
+            $now    = null === $now ? time() : (int) $now;
+            return $issued > 0 && $now <= $issued + self::TOKEN_TTL;
+        }
+
         public static function normalize_expiry( $expires ) {
             if ( ! is_int( $expires ) && ! ( is_string( $expires ) && ctype_digit( $expires ) ) ) {
                 return 0;
@@ -419,13 +426,32 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                 $this->respond( 400, __( 'Confirm the cancellation using the button below.', 'titan-zero-trades-front-desk' ) );
             }
 
+            $outcome = self::commit_verified( $row, $booking_id, $company );
+            if ( 'lock' === $outcome ) {
+                $this->respond( 503, __( 'Cancellation could not be checked safely. Your booking has not changed. Please try again.', 'titan-zero-trades-front-desk' ) );
+            }
+            if ( 'conflict' === $outcome ) {
+                $this->respond( 409, __( 'This booking changed and could not be cancelled.', 'titan-zero-trades-front-desk' ) );
+            }
+            if ( 'ok' !== $outcome ) {
+                $this->respond( 503, __( 'Cancellation could not be confirmed safely. Check your booking status before retrying.', 'titan-zero-trades-front-desk' ) );
+            }
+            $this->respond( 200, __( 'Your booking has been cancelled.', 'titan-zero-trades-front-desk' ) );
+        }
+
+        /**
+         * Cancels a booking whose signed link has already been verified: capacity lock, compare-and-swap and the
+         * customer event staged in one transaction. Shared by the public confirm POST and the SMS two-step confirmation.
+         * Returns 'ok', 'lock', 'conflict' or 'failed'. The caller maps each outcome to its own response.
+         */
+        public static function commit_verified( $row, $booking_id, $company ) {
             global $wpdb;
             // Share the same per-form capacity mutex used by rescheduling,
             // intake, and approval. Never mutate calendar state if the lock
             // cannot be acquired, including on storage/connection failure.
             $tz_capacity_lock = TZFD_Capacity_Lock::acquire( $wpdb, (int) $row->formid );
             if ( false === $tz_capacity_lock ) {
-                $this->respond( 503, __( 'Cancellation could not be checked safely. Your booking has not changed. Please try again.', 'titan-zero-trades-front-desk' ) );
+                return 'lock';
             }
             $tz_committed = false;
             $tz_result = 'failure';
@@ -451,13 +477,10 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                 TZFD_Capacity_Lock::release( $wpdb, $tz_capacity_lock );
             }
             if ( ! $tz_committed ) {
-                if ( 'conflict' === $tz_result ) {
-                    $this->respond( 409, __( 'This booking changed and could not be cancelled.', 'titan-zero-trades-front-desk' ) );
-                }
-                $this->respond( 503, __( 'Cancellation could not be confirmed safely. Check your booking status before retrying.', 'titan-zero-trades-front-desk' ) );
+                return 'conflict' === $tz_result ? 'conflict' : 'failed';
             }
             TZFD_Customer_Event_Outbox::schedule();
-            $this->respond( 200, __( 'Your booking has been cancelled.', 'titan-zero-trades-front-desk' ) );
+            return 'ok';
         }
 
         /**

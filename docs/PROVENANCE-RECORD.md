@@ -77,8 +77,18 @@ Status: steps 1 to 4 are not done. Only the base and ours sides exist in this la
 - The readme still says "This is a new plugin, not an upgrade" (Installation step 1). That conflicts with the acceptance criterion of a clean update from the previous ZIP. Left for the lead to decide.
 - The `shortcode`, option keys, table names and slugs are unchanged.
 
+## Reconciliation with main (2026-11-18)
+
+- This branch merged `origin/main` (6e7c6ca) with a normal merge. The plugin tree now equals `origin/main` byte for byte (`git diff origin/main -- titan-zero-trades-front-desk` is empty).
+- New manifest: `tools/release/baseline-main-6e7c6ca.sha256` (762 files, `manifest.sh` output). Comparison with the earlier pinned manifest `baseline-main-1094336.sha256` via `compare-manifests.sh`: 56 added, 33 changed, 1 removed.
+- Removed: `includes/class-tzfd-upgrades.php`. Main removed it in b40fa29 ("Remove paid-product references from the free plugin"). Its upgrade behaviour is not replaced in this tree. Owner decision needed: confirm the removal is intended for the upgrade path from v3.0.128.
+- `tools/release/preservation-check.sh`: 17 of 17 markers pass on the merged tree.
+- Build determinism: two `build-zip.sh` runs with the default `SOURCE_DATE_EPOCH` gave the same SHA-256 (`fb918334ac269ca1995060d4ba0a32f38cda58eebe9ddc4cf9b5e963c004cfe0`).
+- `php -l` on every plugin PHP file: no errors. `php tests/unit/run.php`: 213 passed, 0 failed; free AI cases 139 passed, 0 failed.
+- Woo/payment hooks: still not present in the tree (no check possible).
+
 ## Gaps (explicit)
 
-- No v3.0.128 ZIP and no Pass 03 candidate were available. The three-way merge has not been run.
-- Current GitHub main was not reconciled with this branch.
+- No v3.0.128 ZIP and no Pass 03 candidate were available. The three-way merge has not been run (steps 1 to 3 above need those ZIPs).
 - The file-by-file record for renamed files (INHERITED-FILE-CHANGES.txt section A) was not re-checked beyond the two calendar CSS files.
+- WordPress runtime tests (`tests/runtime/`) were not run: no `wp` CLI or disposable WordPress site in this sandbox.

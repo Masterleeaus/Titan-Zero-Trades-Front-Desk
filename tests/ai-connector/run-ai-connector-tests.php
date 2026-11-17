@@ -201,6 +201,17 @@ connect_all();
 $GLOBALS['tz_reply'] = function ( $req ) { $r = fake_reply( $req ); $r['headers'] = array_map( 'strval', $r['headers'] ); unset( $r['headers']['X-TZFD-Signature'] ); return $r; };
 check( 'missing signature header is rejected', 'invalid_response' === $C::request( 'faq.answer' )['status'] );
 
+// 10b. Replay: a validly signed reply captured for one request must not satisfy the next request.
+reset_state();
+connect_all();
+$captured = null;
+$GLOBALS['tz_reply'] = function ( $req ) use ( &$captured ) { $captured = fake_reply( $req ); return $captured; };
+$first_reply = $C::request( 'faq.answer' );
+$GLOBALS['tz_reply'] = function ( $req ) use ( &$captured ) { return $captured; };
+$replayed    = $C::request( 'faq.answer' );
+check( 'the first signed reply verifies', 'ok' === $first_reply['status'] );
+check( 'a captured valid reply replayed on a new request is refused', 'invalid_response' === $replayed['status'] && true === $replayed['use_local'], $replayed['status'] );
+
 // 11. Service status codes and signed service statuses.
 $statuses = array(
     'http 500 is service_error'          => array( 'code' => 500 ),

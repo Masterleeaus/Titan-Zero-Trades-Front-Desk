@@ -17,12 +17,18 @@ report() { # status name detail
     SKIP) echo "SKIP $2 -- $3"; skip=$((skip+1)) ;;
   esac
 }
-check() { # name, code  (refuse = not 2xx)
+check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a refusal)
   local name="$1" code="$2"
-  if [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
+  # 000 means no HTTP response at all: that proves nothing about the endpoint, so it must not count as a refusal.
+  if [[ "$code" == "000" ]]; then report FAIL "$name" "HTTP 000 (no response from $B)";
+  elif [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
   else report PASS "$name" "HTTP $code"; fi
 }
-code() { curl -s -o /dev/null -w '%{http_code}' "$@"; }
+code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
+
+# Preflight: abort rather than report a dead server as a pass.
+preflight=$(code "$B/")
+if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
 # REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
 rest() { # name, curl args...
   local name="$1"; shift

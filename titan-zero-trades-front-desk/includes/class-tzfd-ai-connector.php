@@ -38,6 +38,10 @@ final class TZFD_AI_Connector {
     const MAX_RESPONSE_BYTES = 65536;
     const MIN_SECRET       = 32;     // characters
     const TIMEOUT          = 8;      // seconds
+    const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
+    const EVENT_LIMIT      = 50;     // events kept
+    const RETENTION_DEFAULT = 30;    // days an event is kept
+    const RETENTION_MAX    = 365;    // days
 
     const TIER_FREE     = 'free_ai';
     const TIER_ASSIST   = 'assistant';
@@ -73,15 +77,25 @@ final class TZFD_AI_Connector {
     }
 
     /**
-     * Sends one typed request. Always returns a structured array:
+     * Sends one typed request and records a redacted event (feature name, status, latency only;
+     * never the payload, the response body or the secret). Always returns a structured array:
      * ok, status, use_local, contract, data (and missing_scopes, tier where relevant).
      */
     public static function request( $feature, $payload = array() ) {
+        $started = microtime( true );
+        $result  = self::dispatch( $feature, $payload );
+        $known   = is_string( $feature ) && isset( self::features()[ $feature ] ) ? $feature : 'unknown';
+        self::log_event( $known, $result['status'], (int) round( ( microtime( true ) - $started ) * 1000 ) );
+        return $result;
+    }
+
+    private static function dispatch( $feature, $payload ) {
         $def = is_string( $feature ) && isset( self::features()[ $feature ] ) ? self::features()[ $feature ] : null;
         if ( null === $def ) { return self::result( 'feature_not_allowed' ); }
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
 
         $cfg = self::config();
+        if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
         if ( ! $cfg['consent'] ) { return self::result( 'consent_required' ); }
         if ( ! in_array( $def['tier'], $cfg['entitlements'], true ) ) {
             return self::result( 'tier_not_entitled', array(), array( 'tier' => $def['tier'] ) );
@@ -150,21 +164,147 @@ final class TZFD_AI_Connector {
         $cfg = self::config();
         $has = '' !== self::secret();
         return array(
-            'contract'     => self::CONTRACT,
-            'connected'    => self::configured( $cfg, self::secret() ) && $cfg['consent'],
-            'consent'      => $cfg['consent'],
-            'scopes'       => $cfg['scopes'],
-            'entitlements' => $cfg['entitlements'],
-            'endpoint_set' => '' !== $cfg['endpoint'],
-            'secret_set'   => $has,
-            'site_id'      => $cfg['site_id'],
+            'contract'        => self::CONTRACT,
+            'enabled'         => $cfg['enabled'],
+            'connected'       => self::configured( $cfg, self::secret() ) && $cfg['consent'],
+            'consent'         => $cfg['consent'],
+            'consent_version' => self::CONSENT_VERSION,
+            'disclosure'      => self::disclosure(),
+            'scopes'          => $cfg['scopes'],
+            'entitlements'    => $cfg['entitlements'],
+            'endpoint_set'    => '' !== $cfg['endpoint'],
+            'secret_set'      => $has,
+            'site_id'         => $cfg['site_id'],
+            'retention_days'  => self::retention_days(),
+            'event_count'     => count( self::events() ),
         );
+    }
+
+    /** Redacted event log, oldest first. Each entry holds only at, feature, status and latency_ms. */
+    public static function events() {
+        $events = get_option( self::EVENT_OPTION, array() );
+        return is_array( $events ) ? array_values( $events ) : array();
+    }
+
+    /** Deletes the whole event log. Usage counters and budgets are not touched. */
+    public static function clear_events() {
+        delete_option( self::EVENT_OPTION );
+        return true;
+    }
+
+    /** Days an event is kept (1..RETENTION_MAX). */
+    public static function retention_days() {
+        $opt  = self::raw_option();
+        $days = isset( $opt['retention_days'] ) ? (int) $opt['retention_days'] : self::RETENTION_DEFAULT;
+        return max( 1, min( self::RETENTION_MAX, $days ) );
+    }
+
+    /** Sets event retention. Only an integer from 1 to RETENTION_MAX is accepted. */
+    public static function set_retention_days( $days ) {
+        if ( ! is_int( $days ) || $days < 1 || $days > self::RETENTION_MAX ) { return false; }
+        $opt = self::raw_option();
+        $opt['retention_days'] = $days;
+        update_option( self::OPTION, $opt, false );
+        return true;
     }
 
     /** Usage counters and budget use for one month (YYYY-MM, default current). */
     public static function usage( $period = '' ) {
         $period = '' === $period ? gmdate( 'Y-m' ) : (string) $period;
         return self::read_usage( $period );
+    }
+
+    /**
+     * What the administrator is told before consenting: provider, data classes (scopes), hosted quota and
+     * the consent version. Retention is null until the owner decides it, so no retention promise is made here.
+     */
+    public static function disclosure() {
+        $scopes = array();
+        foreach ( self::features() as $def ) { $scopes = array_merge( $scopes, $def['scopes'] ); }
+        return array(
+            'contract'         => self::CONTRACT,
+            'consent_version'  => self::CONSENT_VERSION,
+            'provider'         => 'Titan hosted AI service (endpoint set by the site administrator)',
+            'data_classes'     => array_values( array_unique( $scopes ) ),
+            'quota'            => self::budget_limits(),
+            'retention'        => null,
+            'owner_decisions'  => array( 'retention', 'consent_wording', 'provider_legal_name' ),
+        );
+    }
+
+    /**
+     * Metered cost for one month. $unit_costs is the owner's price per 1,000 tokens:
+     * array( 'input' => n, 'output' => n, 'embedding' => n ). Without a complete price table no money figure
+     * is produced, so no cost is invented. Cache hit ratio = hosted cache hits / successful calls.
+     */
+    public static function cost_report( array $unit_costs = array(), $period = '' ) {
+        $usage  = self::usage( $period );
+        $totals = array( 'calls' => 0, 'ok' => 0, 'fallback_local' => 0, 'cache_hits' => 0, 'tokens_in' => 0, 'tokens_out' => 0, 'embedding_tokens' => 0, 'latency_ms' => 0 );
+        foreach ( $usage['features'] as $f ) {
+            foreach ( array_keys( $totals ) as $key ) {
+                $totals[ $key ] += isset( $f[ $key ] ) ? max( 0, (int) $f[ $key ] ) : 0;
+            }
+        }
+        $keys  = array( 'input', 'output', 'embedding' );
+        $known = true;
+        foreach ( $keys as $key ) {
+            if ( ! isset( $unit_costs[ $key ] ) || ! is_numeric( $unit_costs[ $key ] ) || (float) $unit_costs[ $key ] < 0 ) { $known = false; }
+        }
+        $cost = null;
+        if ( $known ) {
+            $cost = round(
+                ( $totals['tokens_in'] * (float) $unit_costs['input'] + $totals['tokens_out'] * (float) $unit_costs['output'] + $totals['embedding_tokens'] * (float) $unit_costs['embedding'] ) / 1000,
+                6
+            );
+        }
+        return array(
+            'period'          => $usage['period'],
+            'totals'          => $totals,
+            'cache_hit_ratio' => $totals['ok'] > 0 ? round( $totals['cache_hits'] / $totals['ok'], 4 ) : 0.0,
+            'cost_known'      => $known,
+            'cost'            => $cost,
+        );
+    }
+
+    /**
+     * Upper bound on metered units across $tenants sites at the pilot budget ceilings. Counts only: money
+     * needs the owner's unit prices (see cost_report) and a per-unit cost is not assumed here.
+     */
+    public static function tenant_ceiling( $tenants ) {
+        $tenants = max( 0, (int) $tenants );
+        $units   = array();
+        $total   = 0;
+        foreach ( self::budget_limits() as $key => $limit ) {
+            $units[ $key ] = $tenants * (int) $limit;
+            $total        += $units[ $key ];
+        }
+        return array( 'tenants' => $tenants, 'max_units_by_budget' => $units, 'max_units_total' => $total );
+    }
+
+    /**
+     * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
+     * OWNER REVIEW REQUIRED: the wording and the terms link are placeholders until the owner approves them.
+     * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
+     */
+    public static function setup_notice() {
+        $d    = self::disclosure();
+        $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
+            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
+            . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
+        $url  = 'https://example.invalid/OWNER-REVIEW-AI-TERMS';
+        if ( function_exists( 'apply_filters' ) ) {
+            $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
+            $url  = apply_filters( 'tzfd_ai_terms_url', $url );
+        }
+        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => true );
+    }
+
+    /** Turns AI on or off for the free plugin. AI is on until an administrator turns it off. */
+    public static function set_enabled( $on ) {
+        $opt = self::raw_option();
+        $opt['enabled'] = (bool) $on;
+        update_option( self::OPTION, $opt, false );
+        return true;
     }
 
     /**
@@ -189,8 +329,9 @@ final class TZFD_AI_Connector {
     /** Explicit opt-in for the listed scopes. Unknown scopes are dropped. */
     public static function grant_consent( array $scopes ) {
         $opt = self::raw_option();
-        $opt['consent']     = true;
-        $opt['consent_at']  = time();
+        $opt['consent']         = true;
+        $opt['consent_version'] = self::CONSENT_VERSION;
+        $opt['consent_at']      = time();
         $opt['scopes']      = self::clean_scopes( $scopes );
         update_option( self::OPTION, $opt, false );
         return true;
@@ -245,7 +386,10 @@ final class TZFD_AI_Connector {
     private static function config() {
         $opt = self::raw_option();
         return array(
-            'consent'      => isset( $opt['consent'] ) && true === $opt['consent'],
+            'enabled'      => ! isset( $opt['enabled'] ) || false !== $opt['enabled'],
+            // Consent given under an older disclosure version does not count; the admin must grant again.
+            'consent'      => isset( $opt['consent'] ) && true === $opt['consent']
+                && isset( $opt['consent_version'] ) && self::CONSENT_VERSION === $opt['consent_version'],
             'scopes'       => self::clean_scopes( isset( $opt['scopes'] ) && is_array( $opt['scopes'] ) ? $opt['scopes'] : array() ),
             'endpoint'     => isset( $opt['endpoint'] ) && is_string( $opt['endpoint'] ) ? $opt['endpoint'] : '',
             'site_id'      => isset( $opt['site_id'] ) && is_string( $opt['site_id'] ) ? $opt['site_id'] : '',
@@ -385,6 +529,28 @@ final class TZFD_AI_Connector {
         $used   = isset( $usage['budget'][ $key ] ) ? (int) $usage['budget'][ $key ] : 0;
         $usage['budget'][ $key ] = max( 0, $used - 1 );
         self::write_usage( $period, $usage );
+        self::unlock();
+    }
+
+    /**
+     * Appends one redacted event and prunes entries older than the retention window. Best effort:
+     * skipped when the lock is busy, so it never delays or fails a request.
+     */
+    private static function log_event( $feature, $status, $latency ) {
+        if ( ! self::lock() ) { return; }
+        $now    = time();
+        $cutoff = $now - self::retention_days() * 86400;
+        $kept   = array();
+        foreach ( self::events() as $event ) {
+            if ( is_array( $event ) && isset( $event['at'] ) && (int) $event['at'] >= $cutoff ) { $kept[] = $event; }
+        }
+        $kept[] = array(
+            'at'         => $now,
+            'feature'    => (string) $feature,
+            'status'     => (string) $status,
+            'latency_ms' => max( 0, (int) $latency ),
+        );
+        update_option( self::EVENT_OPTION, array_slice( $kept, -self::EVENT_LIMIT ), false );
         self::unlock();
     }
 

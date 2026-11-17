@@ -201,6 +201,17 @@ connect_all();
 $GLOBALS['tz_reply'] = function ( $req ) { $r = fake_reply( $req ); $r['headers'] = array_map( 'strval', $r['headers'] ); unset( $r['headers']['X-TZFD-Signature'] ); return $r; };
 check( 'missing signature header is rejected', 'invalid_response' === $C::request( 'faq.answer' )['status'] );
 
+// 10b. Replay: a validly signed reply captured for one request must not satisfy the next request.
+reset_state();
+connect_all();
+$captured = null;
+$GLOBALS['tz_reply'] = function ( $req ) use ( &$captured ) { $captured = fake_reply( $req ); return $captured; };
+$first_reply = $C::request( 'faq.answer' );
+$GLOBALS['tz_reply'] = function ( $req ) use ( &$captured ) { return $captured; };
+$replayed    = $C::request( 'faq.answer' );
+check( 'the first signed reply verifies', 'ok' === $first_reply['status'] );
+check( 'a captured valid reply replayed on a new request is refused', 'invalid_response' === $replayed['status'] && true === $replayed['use_local'], $replayed['status'] );
+
 // 11. Service status codes and signed service statuses.
 $statuses = array(
     'http 500 is service_error'          => array( 'code' => 500 ),
@@ -265,6 +276,93 @@ check( 'default embedding budget is 800 per site per month', 800 === $defaults['
 check( 'default faq_batch budget is 16 per site per month', 16 === $defaults['faq_batch'] );
 check( 'default insight budget is 4 per site per month', 4 === $defaults['insight'] );
 check( 'budget table has no pilot values left', ! in_array( $defaults['model_fallback'], array( 50 ), true ) && ! in_array( $defaults['faq_batch'], array( 4 ), true ) && ! in_array( $defaults['insight'], array( 1 ), true ) );
+
+// 16. Disclosure: provider, data classes, quota; retention is an owner decision (null), never a promise.
+reset_state();
+$d = $C::disclosure();
+check( 'disclosure names provider, data classes and quota', isset( $d['provider'] ) && in_array( 'customer.read', $d['data_classes'], true ) && 50 === $d['quota']['model_fallback'] );
+check( 'disclosure leaves retention to the owner (null)', array_key_exists( 'retention', $d ) && null === $d['retention'] && in_array( 'retention', $d['owner_decisions'], true ) );
+check( 'disclosure never includes the secret', false === strpos( json_encode( $d ), SECRET ) );
+
+// 16b. AI is on by default; a setup notice names the data and the terms link (placeholder, owner review).
+reset_state();
+check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
+$n = TZFD_AI_Connector::setup_notice();
+check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
+$GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
+check( 'terms link comes from the tzfd_ai_terms_url filter', 'https://owner.example.test/terms' === TZFD_AI_Connector::setup_notice()['terms_url'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_terms_url'] );
+TZFD_AI_Connector::set_enabled( false );
+check( 'turning AI off makes requests return ai_disabled without transport', 'ai_disabled' === $C::request( 'faq.answer' )['status'] && 0 === count( $GLOBALS['tz_calls'] ) );
+TZFD_AI_Connector::set_enabled( true );
+
+// 17. Cost report: counters are summed, cache ratio is hits over successes, money only with a full price table.
+reset_state();
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::USAGE_PREFIX . gmdate( 'Y-m' ) ] = array(
+    'budget'   => array( 'model_fallback' => 3 ),
+    'features' => array(
+        'faq.answer'      => array( 'calls' => 4, 'ok' => 3, 'fallback_local' => 1, 'tokens_in' => 1000, 'tokens_out' => 500, 'embedding_tokens' => 0, 'cache_hits' => 1, 'latency_ms' => 90 ),
+        'faq.embed_query' => array( 'calls' => 2, 'ok' => 2, 'fallback_local' => 0, 'tokens_in' => 0, 'tokens_out' => 0, 'embedding_tokens' => 2000, 'cache_hits' => 0, 'latency_ms' => 40 ),
+    ),
+);
+$cr = $C::cost_report();
+check( 'cost report sums calls, tokens and embedding tokens', 6 === $cr['totals']['calls'] && 5 === $cr['totals']['ok'] && 1000 === $cr['totals']['tokens_in'] && 2000 === $cr['totals']['embedding_tokens'] );
+check( 'cache hit ratio is hits over successful calls', 0.2 === $cr['cache_hit_ratio'] );
+check( 'no money figure without a price table', false === $cr['cost_known'] && null === $cr['cost'] );
+check( 'incomplete price table produces no cost', false === $C::cost_report( array( 'input' => 0.5, 'output' => 1.5 ) )['cost_known'] );
+check( 'negative price is rejected, not used', false === $C::cost_report( array( 'input' => -1, 'output' => 1, 'embedding' => 1 ) )['cost_known'] );
+$priced = $C::cost_report( array( 'input' => 0.5, 'output' => 1.5, 'embedding' => 0.1 ) );
+check( 'cost equals priced tokens per 1,000 (1000*0.5+500*1.5+2000*0.1)/1000 = 1.45', true === $priced['cost_known'] && 1.45 === $priced['cost'] );
+reset_state();
+$empty = $C::cost_report( array( 'input' => 1, 'output' => 1, 'embedding' => 1 ) );
+check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['totals']['calls'] && 0.0 === $empty['cache_hit_ratio'] && 0.0 === $empty['cost'] );
+
+// 18. Tenant ceiling: counts at the pilot budget ceilings, no money assumed.
+$t = $C::tenant_ceiling( 100 );
+check( 'tenant ceiling scales each budget by tenant count', 5000 === $t['max_units_by_budget']['model_fallback'] && 20000 === $t['max_units_by_budget']['embedding'] && 25500 === $t['max_units_total'] );
+check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );
+// 19. Consent is bound to the disclosure version; an old consent does not count.
+reset_state();
+connect_all();
+check( 'structured disclosure is present in status', isset( $C::status()['disclosure']['provider'] ) && 'tzfd-ai-consent-1' === $C::status()['consent_version'] );
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::OPTION ]['consent_version'] = 'tzfd-ai-consent-0';
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$before = calls();
+check( 'consent under an older disclosure version is refused without transport', 'consent_required' === $C::request( 'faq.answer' )['status'] && $before === calls() );
+check( 'status reports consent false for an older disclosure version', false === $C::status()['consent'] );
+$C::grant_consent( array( 'faq.read' ) );
+check( 'granting again under the current version restores the call', 'ok' === $C::request( 'faq.answer' )['status'] );
+
+// 20. Event log: redacted, bounded, cleared on demand, never holds the secret or payload.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$C::request( 'faq.answer', array( 'question' => 'PRIVATE-QUESTION-TEXT' ) );
+$C::request( 'shell.exec' );
+$events = $C::events();
+check( 'each request writes one event', 2 === count( $events ) && 'faq.answer' === $events[0]['feature'] && 'ok' === $events[0]['status'] );
+check( 'unknown feature is logged as unknown, not as the caller string', 'unknown' === $events[1]['feature'] && 'feature_not_allowed' === $events[1]['status'] );
+check( 'event entries hold only at, feature, status, latency_ms', array( 'at', 'feature', 'status', 'latency_ms' ) === array_keys( $events[0] ) );
+$blob = json_encode( array( $events, $C::status() ) );
+check( 'payload and secret never appear in the event log or status', false === strpos( $blob, 'PRIVATE-QUESTION-TEXT' ) && false === strpos( $blob, SECRET ) );
+for ( $i = 0; $i < 60; $i++ ) { $C::request( 'faq.answer' ); }
+check( 'event log is bounded to EVENT_LIMIT', TZFD_AI_Connector::EVENT_LIMIT === count( $C::events() ) );
+check( 'clear_events empties the log', true === $C::clear_events() && array() === $C::events() );
+
+// 21. Retention: only integers 1..365 accepted; events older than the window are pruned on write.
+check( 'retention default is 30 days', 30 === $C::retention_days() );
+check( 'retention 0 is refused', false === $C::set_retention_days( 0 ) );
+check( 'retention 366 is refused', false === $C::set_retention_days( 366 ) );
+check( 'retention string "7" is refused (must be an integer)', false === $C::set_retention_days( '7' ) );
+check( 'retention 7 is accepted', true === $C::set_retention_days( 7 ) && 7 === $C::retention_days() );
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::EVENT_OPTION ] = array(
+    array( 'at' => time() - 8 * 86400, 'feature' => 'faq.answer', 'status' => 'ok', 'latency_ms' => 1 ),
+    array( 'at' => time() - 86400, 'feature' => 'faq.answer', 'status' => 'ok', 'latency_ms' => 1 ),
+);
+$C::request( 'faq.answer' );
+$ages = array_map( function ( $e ) { return time() - $e['at']; }, $C::events() );
+check( 'event older than retention is pruned on the next write', 2 === count( $C::events() ) && max( $ages ) < 7 * 86400 + 5 );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

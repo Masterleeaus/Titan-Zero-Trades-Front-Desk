@@ -155,14 +155,17 @@ final class TZFD_Human_Handoff {
     /** Callback form. Shown only for the current company; the company is never taken from the request. */
     public static function shortcode() {
         if ( ! class_exists( 'TZFD_Scoped_Store' ) || (int) TZFD_Scoped_Store::company_id() < 1 ) { return ''; }
+        require_once __DIR__ . '/class-tzfd-public-form-assets.php';
+        TZFD_Public_Form_Assets::enqueue();
+        $req = TZFD_Public_Form_Assets::required_marker();
         $out  = '<form class="tzfd-callback-form" method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
         $out .= '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '">';
         $out .= wp_nonce_field( self::NONCE, self::NONCE_FLD, true, false );
-        $out .= '<label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' <input required maxlength="190" name="name" autocomplete="name"></label>';
+        $out .= '<label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <input required aria-required="true" maxlength="190" name="name" autocomplete="name"></label>';
         $out .= '<label>' . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . ' <input type="email" maxlength="190" name="email" autocomplete="email"></label>';
         $out .= '<label>' . esc_html__( 'Phone', 'titan-zero-trades-front-desk' ) . ' <input maxlength="60" name="phone" autocomplete="tel"></label>';
         $out .= '<label>' . esc_html__( 'What would you like us to call you about?', 'titan-zero-trades-front-desk' ) . ' <textarea maxlength="5000" name="message"></textarea></label>';
-        $out .= '<label><input type="checkbox" required name="consent" value="1"> ' . esc_html__( 'I agree that this business may contact me about this enquiry using the details I have given.', 'titan-zero-trades-front-desk' ) . '</label>';
+        $out .= '<label><input type="checkbox" required aria-required="true" name="consent" value="1"> ' . esc_html__( 'I agree that this business may contact me about this enquiry using the details I have given.', 'titan-zero-trades-front-desk' ) . ' ' . $req . '</label>';
         $out .= '<div class="tzfd-hp" aria-hidden="true" style="position:absolute;left:-9999px"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>';
         $out .= '<button type="submit">' . esc_html__( 'Request a callback', 'titan-zero-trades-front-desk' ) . '</button></form>';
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only confirmation flag; no state change.

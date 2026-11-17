@@ -63,7 +63,7 @@ final class TZFD_Customer_Admin {
         exit;
     }
     public static function page() {
-        if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'Not permitted.', 'titan-zero-trades-front-desk' ) ); }
+        if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'Not permitted.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
         // This read-only selector must not coerce floats, signed numbers or arrays to another customer ID.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.
         $customer_selector = isset( $_GET['customer'] ) && is_string( $_GET['customer'] ) ? sanitize_text_field( wp_unslash( $_GET['customer'] ) ) : '';
@@ -93,7 +93,11 @@ final class TZFD_Customer_Admin {
         }
         echo '</div><div class="tzfd-actions"><button class="button button-primary" type="submit">' . esc_html__( 'Save customer', 'titan-zero-trades-front-desk' ) . '</button></div></form></div>';
         echo '<h2>' . esc_html__( 'Existing customers', 'titan-zero-trades-front-desk' ) . '</h2><table class="widefat striped"><thead><tr><th>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Phone', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Action', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
-        foreach ( TZFD_Local_Customers::search( '', array( 'limit' => 200 ) ) as $row ) {
+        $customer_rows = TZFD_Local_Customers::search( '', array( 'limit' => 200 ) );
+        if ( empty( $customer_rows ) ) {
+            echo '<tr><td colspan="4">' . esc_html__( 'No customers yet. Customer records will appear here.', 'titan-zero-trades-front-desk' ) . '</td></tr>';
+        }
+        foreach ( $customer_rows as $row ) {
             echo '<tr><td>' . esc_html( $row['name'] ) . '</td><td>' . wp_kses( TZFD_UI_Graphics::channel_html( 'email', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html( $row['email'] ) . '</td><td>' . wp_kses( TZFD_UI_Graphics::channel_html( 'phone', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html( $row['phone'] ) . '</td><td><a href="' . esc_url( add_query_arg( array( 'page' => 'tz-customers', 'customer' => (int) $row['id'] ), admin_url( 'admin.php' ) ) ) . '">' . esc_html__( 'Edit', 'titan-zero-trades-front-desk' ) . '</a></td></tr>';
         }
         echo '</tbody></table></div>';

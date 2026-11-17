@@ -229,7 +229,49 @@ if ( $tzfd_installed ) {
 	$tzfd_queued_again = TZFD_Booking_Reminder_Bridge::queue_due( $tzfd_booking_facts, 7, 60, $tzfd_now );
 	tzfd_rt_ok( 'C10 queue_due refuses when the verification filters are removed', false === $tzfd_queued_again );
 }
-tzfd_rt_skip( 'C11 reminder dispatch and delivery', 'dispatch sends messages through a transport; no live provider is called in this harness' );
+if ( $tzfd_installed ) {
+	// C11: dispatch through a local transport stub (filter tzfd_booking_deliver_v1). No provider is called: the stub
+	// returns a receipt for the claimed job, or nothing, and records each job it was given. The owner, recipient, action
+	// and reminder-current checks are allowed here only for this run and removed afterwards.
+	$tzfd_c11_jobs = array();
+	$tzfd_c11_mode = 'ack';
+	$tzfd_c11_allow = static function () { return true; };
+	$tzfd_c11_stub  = static function ( $receipt, $job ) use ( &$tzfd_c11_jobs, &$tzfd_c11_mode ) {
+		$tzfd_c11_jobs[] = $job;
+		if ( 'ack' !== $tzfd_c11_mode ) { return null; }
+		return array( 'ok' => true, 'company_id' => $job['company_id'], 'action' => $job['action'], 'delivery_id' => $job['delivery_id'], 'receipt_id' => 'rt-receipt-' . substr( (string) $job['delivery_id'], 0, 16 ) );
+	};
+	add_filter( 'tzfd_booking_verify_owner_v1', $tzfd_c11_allow, 10, 3 );
+	add_filter( 'tzfd_booking_verify_recipient_v1', $tzfd_c11_allow, 10, 4 );
+	add_filter( 'tzfd_booking_verify_action_v1', $tzfd_c11_allow, 10, 5 );
+	add_filter( 'tzfd_booking_reminder_current_v1', $tzfd_c11_allow, 10, 5 );
+	add_filter( 'tzfd_booking_deliver_v1', $tzfd_c11_stub, 10, 2 );
+
+	$tzfd_c11_hash = hash( 'sha256', $tzfd_company . ':' . $tzfd_id . ':reminder:' . $tzfd_event );
+	$tzfd_c11_sent = TZFD_Booking_Action_Outbox::dispatch( 25 );
+	$tzfd_c11_row  = $wpdb->get_row( $wpdb->prepare( 'SELECT state, receipt_id FROM %i WHERE company_id=%d AND event_hash=%s', $tzfd_outbox, $tzfd_company, $tzfd_c11_hash ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read after the dispatch worker ran
+	$tzfd_c11_seen = array_values( array_filter( $tzfd_c11_jobs, static function ( $job ) use ( $tzfd_c11_hash ) { return isset( $job['delivery_id'] ) && $tzfd_c11_hash === $job['delivery_id']; } ) );
+	tzfd_rt_ok( 'C11 a due reminder is handed to the transport once and accepted with its receipt', 1 === count( $tzfd_c11_seen ) && is_array( $tzfd_c11_row ) && 'accepted' === $tzfd_c11_row['state'] && 0 === strpos( (string) $tzfd_c11_row['receipt_id'], 'rt-receipt-' ), 'accepted=' . (int) ( $tzfd_c11_sent['accepted'] ?? 0 ) . ' state=' . ( $tzfd_c11_row['state'] ?? 'none' ) );
+	tzfd_rt_ok( 'C11 the job given to the transport carries the company, booking, action and recipient', 1 === count( $tzfd_c11_seen ) && $tzfd_company === $tzfd_c11_seen[0]['company_id'] && $tzfd_id === $tzfd_c11_seen[0]['booking_id'] && 'reminder' === $tzfd_c11_seen[0]['action'] && 7 === $tzfd_c11_seen[0]['recipient_id'] );
+
+	// A transport that returns no receipt must leave the row queued for retry, never accepted.
+	$tzfd_c11_fail_event = 'reminder-v1:rt-c11-fail-' . substr( md5( uniqid( '', true ) ), 0, 12 );
+	$tzfd_c11_fail_hash  = hash( 'sha256', $tzfd_company . ':' . $tzfd_id . ':reminder:' . $tzfd_c11_fail_event );
+	$tzfd_c11_queued     = TZFD_Booking_Action_Outbox::enqueue( $tzfd_company, $tzfd_id, 'reminder', 7, $tzfd_c11_fail_event );
+	$tzfd_c11_mode       = 'no_receipt';
+	TZFD_Booking_Action_Outbox::dispatch( 25 );
+	$tzfd_c11_fail_row = $wpdb->get_row( $wpdb->prepare( 'SELECT state, receipt_id, last_error FROM %i WHERE company_id=%d AND event_hash=%s', $tzfd_outbox, $tzfd_company, $tzfd_c11_fail_hash ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read after the dispatch worker ran
+	tzfd_rt_ok( 'C11 a reminder without a transport receipt is not accepted and is queued for retry', is_array( $tzfd_c11_queued ) && is_array( $tzfd_c11_fail_row ) && 'pending' === $tzfd_c11_fail_row['state'] && empty( $tzfd_c11_fail_row['receipt_id'] ) && 'unacknowledged' === $tzfd_c11_fail_row['last_error'] );
+
+	remove_filter( 'tzfd_booking_verify_owner_v1', $tzfd_c11_allow, 10 );
+	remove_filter( 'tzfd_booking_verify_recipient_v1', $tzfd_c11_allow, 10 );
+	remove_filter( 'tzfd_booking_verify_action_v1', $tzfd_c11_allow, 10 );
+	remove_filter( 'tzfd_booking_reminder_current_v1', $tzfd_c11_allow, 10 );
+	remove_filter( 'tzfd_booking_deliver_v1', $tzfd_c11_stub, 10 );
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id=%d AND event_hash=%s', $tzfd_outbox, $tzfd_company, $tzfd_c11_fail_hash ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- removes this run's own retry row
+} else {
+	tzfd_rt_skip( 'C11 reminder dispatch and delivery', 'outbox table not installed; dispatch has nothing to run' );
+}
 
 /* ------------------------------------------------------------------ E. Capability checks (in-process) */
 

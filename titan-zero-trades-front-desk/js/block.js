@@ -72,7 +72,7 @@ jQuery(function() {
 
         blocks.registerBlockType( 'tzfdhour/form-rendering', {
             apiVersion: 3, 
-            title: 'Titan Zero Trades: Front Desk', 
+            title: 'Scheduling & Enquiries Manager',
             icon: 'calendar-alt',    
             category: 'tzfdhour',
             supports: {

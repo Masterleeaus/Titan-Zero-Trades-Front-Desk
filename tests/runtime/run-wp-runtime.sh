@@ -63,6 +63,12 @@ php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
 SERVER_PID=$!
 sleep 2
 
+# Same setup as the CI workflow: the missed-call addon is enabled and given an inbound secret before any
+# suite runs, so its route and refusal checks are exercised rather than skipped.
+echo "--- missed-call addon enabled with inbound secret (as CI)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
+$WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
+
 echo "--- http-auth-tests"
 TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" | tee -a "$LOG"
 

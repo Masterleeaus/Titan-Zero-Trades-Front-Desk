@@ -1,9 +1,10 @@
 <?php
 /**
  * Runtime checks for the Smart Service Finder against the live tenant lookup (not shipped in the plugin).
- * Run through the lock: /home/claude/issues/wp-run.sh <worktree> service-finder
+ * Run by the WordPress runtime job in CI: wp eval-file tests/runtime/service-finder-runtime.php (not shipped in the plugin).
  */
-$tz_inc = '/var/www/html/wp-content/plugins/titan-zero-trades-front-desk/includes/';
+// Path from WordPress itself, so it matches the file the plugin loads (issue #191: was a hard-coded /var/www/html path).
+$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 require_once $tz_inc . 'class-tzfd-service-finder-core.php';
 
 $GLOBALS['sfr_pass'] = 0; $GLOBALS['sfr_fail'] = 0;

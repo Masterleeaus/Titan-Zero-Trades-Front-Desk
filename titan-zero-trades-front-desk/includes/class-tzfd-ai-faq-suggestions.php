@@ -29,10 +29,13 @@ final class TZFD_Ai_Faq_Suggestions {
 	const ACTION       = 'tzfd_ai_faq_decide';
 	const NONCE        = 'tzfd_ai_faq_decide';
 
-	/** Hooks the weekly job and the admin review screen. Scheduling is created once and never duplicated. */
+	/** Owner switch for the weekly job. Off by default, so a fresh install schedules no AI cron event. */
+	const ENABLE_OPTION = 'tzfd_ai_faq_weekly_enabled';
+
+	/** Hooks the weekly job and the admin review screen. Scheduling is created once, only when enabled. */
 	public static function register() {
 		add_action( self::WEEKLY_HOOK, array( __CLASS__, 'run_scheduled' ) );
-		if ( ! wp_next_scheduled( self::WEEKLY_HOOK ) ) {
+		if ( get_option( self::ENABLE_OPTION, false ) && ! wp_next_scheduled( self::WEEKLY_HOOK ) ) {
 			wp_schedule_event( time() + 3600, 'weekly', self::WEEKLY_HOOK );
 		}
 		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 13 );

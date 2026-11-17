@@ -53,6 +53,10 @@ function record_boiler_questions( $cid, $now ) {
 
 /* ---------- scheduling ---------- */
 reset_state();
+TZFD_Ai_Faq_Suggestions::register();
+ok( 'register: weekly job is not scheduled by default', empty( $GLOBALS['tzfd_test_scheduled'][ TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ] ) );
+reset_state();
+update_option( TZFD_Ai_Faq_Suggestions::ENABLE_OPTION, true );
 ok( 'register: weekly job is scheduled on first registration', ( TZFD_Ai_Faq_Suggestions::register() === null ) && ( $GLOBALS['tzfd_test_scheduled'][ TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ]['recurrence'] ?? '' ) === 'weekly' );
 $GLOBALS['tzfd_test_scheduled'][ TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ]['when'] = 12345;
 TZFD_Ai_Faq_Suggestions::register();

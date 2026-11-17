@@ -333,6 +333,8 @@ if ( is_multisite() ) {
 
 /* ------------------------------------------------------------------ H. Weekly AI FAQ suggestions (#35) */
 
+update_option( TZFD_Ai_Faq_Suggestions::ENABLE_OPTION, 1 );
+TZFD_Ai_Faq_Suggestions::register();
 tzfd_rt_ok( 'H1 weekly FAQ job is scheduled once, weekly', wp_next_scheduled( TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ) !== false && wp_get_schedule( TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ) === 'weekly' );
 tzfd_rt_ok( 'H2 weekly job is not duplicated by re-registration', count( array_filter( _get_cron_array() ?: array(), static function ( $events ) { return isset( $events[ TZFD_Ai_Faq_Suggestions::WEEKLY_HOOK ] ); } ) ) === 1 );
 tzfd_rt_ok( 'H3 review decision handler is registered on admin_post (capability and nonce are checked inside the handler)', has_action( 'admin_post_' . TZFD_Ai_Faq_Suggestions::ACTION ) !== false );

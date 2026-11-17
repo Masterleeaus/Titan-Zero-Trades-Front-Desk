@@ -37,7 +37,7 @@ final class TZFD_AI_Multilingual {
 
     /** Reply using the saved language list and the hosted translation connector. Consent is enforced by the connector. */
     public static function reply_configured( $intent, $requested, array $vars = array() ) {
-        return self::reply( $intent, $requested, self::configured_locales(), new TZFD_AI_Hosted_Connector_Client(), $vars );
+        return self::reply( $intent, $requested, self::configured_locales(), new TZFD_AI_Hosted_Gateway(), $vars );
     }
 
     /** Keeps valid tags only, in their given order, without duplicates, up to MAX_LOCALES. */

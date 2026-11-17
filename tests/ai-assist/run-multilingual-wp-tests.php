@@ -132,7 +132,7 @@ $connector = mt_connector( array( 'ok' => true, 'text' => 'مرحبا Deep Clean
 mt_set_connector( $connector );
 $r = TZFD_AI_Multilingual::reply_configured( 'contact_human', 'ar', $vars );
 mt( 'without consent no hosted call is made', count( $connector->calls ) === 0 );
-mt( 'without consent English is returned with handoff', $r['action'] === 'handoff' && $r['source'] === 'english' && $r['reason'] === 'hosted_tzfd_hosted_ai_no_consent' );
+mt( 'without consent English is returned with handoff', $r['action'] === 'handoff' && $r['source'] === 'english' && $r['reason'] === 'hosted_no_consent' );
 
 // ---- With consent and a connector: accepted hosted translation, minimal payload ------------------------------------
 mt_option( TZFD_Hosted_AI_Connector::CONSENT, 'granted' );
@@ -140,9 +140,9 @@ $connector = mt_connector( array( 'ok' => true, 'text' => 'يرجى الرد ل�
 mt_set_connector( $connector );
 $r = TZFD_AI_Multilingual::reply_configured( 'booking_confirm_request', 'ar', $vars );
 mt( 'consented hosted translation accepted and RTL', $r['source'] === 'hosted' && $r['action'] === 'use' && $r['dir'] === 'rtl' );
-mt( 'hosted call uses the translate capability', count( $connector->calls ) === 1 && $connector->calls[0]['capability'] === 'translate' );
+mt( 'hosted call goes through the single gateway capability free_ai with task translate', count( $connector->calls ) === 1 && $connector->calls[0]['capability'] === 'free_ai' && $connector->calls[0]['payload']['task'] === 'translate' );
 $payload = count( $connector->calls ) ? $connector->calls[0]['payload'] : array();
-mt( 'payload holds only approved text and language tags', array_keys( $payload ) === array( 'text', 'from_locale', 'to_locale' ) );
+mt( 'payload holds only the task, approved text and language tags', array_keys( $payload ) === array( 'task', 'text', 'from_locale', 'to_locale' ) );
 mt( 'payload carries the service name and date verbatim', strpos( $payload['text'] ?? '', 'Deep Clean' ) !== false && strpos( $payload['text'] ?? '', '2026-11-20' ) !== false );
 mt( 'payload has no customer contact details', strpos( json_encode( $payload ), '@' ) === false );
 
@@ -162,12 +162,12 @@ foreach ( $bad as $label => $response ) {
 // ---- Connector error codes are reported, never fatal -------------------------------------------------------------
 mt_set_connector( new WP_Error( 'tzfd_hosted_ai_not_connected' ) );
 $r = TZFD_AI_Multilingual::reply_configured( 'contact_human', 'ar', $vars );
-mt( 'connector error reported as reason', $r['reason'] === 'hosted_tzfd_hosted_ai_not_connected' && $r['action'] === 'handoff' );
+mt( 'connector error reported as reason', $r['reason'] === 'hosted_not_connected' && $r['action'] === 'handoff' );
 
 // ---- Invalid input never reaches the connector --------------------------------------------------------------------
 $probe = mt_connector( array( 'ok' => true, 'text' => 'x' ) );
 mt_set_connector( $probe );
-$client = new TZFD_AI_Hosted_Connector_Client();
+$client = new TZFD_AI_Hosted_Gateway();
 $out = $client->translate( "bad \xC3\x28 text", 'en-AU', 'ar' );
 mt( 'invalid UTF-8 text refused before the connector', $out['ok'] === false && $out['reason'] === 'invalid_input' && count( $probe->calls ) === 0 );
 $out = $client->translate( 'Hello', 'en-AU', '<script>' );

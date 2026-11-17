@@ -16,7 +16,7 @@ final class TZFD_Hosted_AI_Connector {
     const CONTRACT     = 'tzfd-hosted-ai-connector/1';
     const CONSENT      = 'tzfd_hosted_ai_consent';
     const FILTER       = 'tzfd_hosted_ai_connector';
-    const CAPABILITIES = array( 'free_ai', 'assistant', 'agent_team', 'translate' );
+    const CAPABILITIES = array( 'free_ai', 'assistant', 'agent_team' );
 
     /** Consent is recorded by an administrator in the AI Services screen. Nothing is stored by default. */
     public static function consent_granted() {

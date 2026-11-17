@@ -1,0 +1,14 @@
+/* Public AI answer box (issue #20). Mobile-first, works with or without JavaScript. */
+.tzfd-ai-box { max-width: 40rem; margin: 1.5rem 0; box-sizing: border-box; }
+.tzfd-ai-box * { box-sizing: border-box; }
+.tzfd-ai-form { display: flex; flex-wrap: wrap; gap: .5rem; align-items: flex-end; }
+.tzfd-ai-form label { flex: 1 1 100%; font-weight: 600; }
+.tzfd-ai-form input[type="search"] { flex: 1 1 14rem; min-height: 44px; font-size: 16px; padding: .5rem .75rem; border: 2px solid #5f6368; border-radius: 4px; max-width: 100%; }
+.tzfd-ai-form button { min-height: 44px; min-width: 44px; padding: .5rem 1rem; font-size: 16px; cursor: pointer; border: 2px solid #1a4f8b; background: #1a4f8b; color: #fff; border-radius: 4px; }
+.tzfd-ai-form input:focus-visible, .tzfd-ai-form button:focus-visible, .tzfd-ai-links a:focus-visible { outline: 3px solid #ffbf47; outline-offset: 2px; }
+.tzfd-ai-answer { margin-top: 1rem; min-height: 1px; overflow-wrap: anywhere; }
+.tzfd-ai-answer p { margin: .25rem 0; }
+.tzfd-ai-note { font-size: .9em; color: #3c4043; }
+.tzfd-ai-links { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: .75rem; }
+.tzfd-ai-links a { min-height: 44px; display: inline-flex; align-items: center; color: #1a4f8b; }
+@media (prefers-reduced-motion: no-preference) { .tzfd-ai-answer { transition: opacity .2s; } }

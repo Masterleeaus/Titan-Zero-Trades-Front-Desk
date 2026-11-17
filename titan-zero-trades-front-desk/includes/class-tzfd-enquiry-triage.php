@@ -82,6 +82,19 @@ final class TZFD_Enquiry_Triage {
         }
     }
 
+    /** Option holding one company's intent => queue map. Empty by default, so routing is unchanged until it is set. */
+    const ROUTE_RULES_OPTION = 'tz_fd_enquiry_route_rules';
+
+    /**
+     * Returns the company's saved intent => queue map. Only a plain array is used; the rules class drops any intent or
+     * queue outside its allowlists, so a malformed saved value can only fall back to the default routes.
+     */
+    public static function route_rules( $company_id ) {
+        if ( ! class_exists( 'TZFD_Scoped_Store', false ) ) { return array(); }
+        $saved = TZFD_Scoped_Store::get( self::ROUTE_RULES_OPTION, array(), $company_id );
+        return is_array( $saved ) ? $saved : array();
+    }
+
     public static function record( $company_id, $enquiry_id, $text, $email, $ip_hash ) {
         global $wpdb;
         $company_id = TZFD_Request_Value::id( $company_id );
@@ -110,7 +123,7 @@ final class TZFD_Enquiry_Triage {
             );
         }
 
-        $result = TZFD_Enquiry_Triage_Rules::evaluate( (string) $text, (string) $email, $ip_hash, $now, $priors, null, (int) wp_date( 'Y', $now ) );
+        $result = TZFD_Enquiry_Triage_Rules::evaluate( (string) $text, (string) $email, $ip_hash, $now, $priors, null, (int) wp_date( 'Y', $now ), self::route_rules( $company_id ) );
         $draft  = $result['quote_draft'];
         $spam   = $result['spam'];
 

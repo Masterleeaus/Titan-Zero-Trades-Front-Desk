@@ -25,13 +25,34 @@ foreach ( (array) $tz_hooks as $tz_hook ) {
     tz_fd_unschedule_all_events( $tz_hook );
 }
 
-// Option-name prefixes the plugin owns.
-$tz_prefixes = array( 'tz_fd_', 'titan_zero_front_desk_' );
+// Option-name prefixes the plugin owns. Matching is case-insensitive in MySQL, so TZFD_ and tzfd_ are covered together.
+$tz_prefixes = array( 'tz_fd_', 'titan_zero_front_desk_', 'tzfd_', 'TZFD_' );
 
-// 2. Transients: cache only, always removed.
-foreach ( $tz_prefixes as $tz_prefix ) {
+// 2. Transients: cache only, always removed. Captcha and portal transients use a hyphen after tzfd.
+$tz_transient_prefixes = array_merge( $tz_prefixes, array( 'tzfd-' ) );
+foreach ( $tz_transient_prefixes as $tz_prefix ) {
     $wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s OR option_name LIKE %s", $wpdb->esc_like( '_transient_' . $tz_prefix ) . '%', $wpdb->esc_like( '_transient_timeout_' . $tz_prefix ) . '%') );
 }
+
+// 2a. Credentials, link state, locks, cursors and dismissal flags: always removed, even without the data opt-in.
+// A sealed AI connector secret or link must not outlive the plugin.
+$tz_always_options = array(
+    'tzfd_ai_connector_secret',
+    'tzfd_ai_connector',
+    'tzfd_hosted_ai_consent',
+    'tz_fd_ai_consent',
+    'tz_fd_ai_api_key',
+    'tz_fd_ai_local_key',
+    'tzfd_ai_budget_lock',
+    'tz_fd_migration_lock_v1',
+    'tzfd_customer_event_company_cursor_v1',
+    'tz_fd_setup_draft',
+);
+foreach ( $tz_always_options as $tz_option ) {
+    delete_option( $tz_option );
+}
+// Dismissed admin-notice flags are per-user meta; the plugin's own keys only.
+$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE meta_key LIKE %s', $wpdb->usermeta, $wpdb->esc_like( 'tz_fd_notice_dismissed_' ) . '%' ) );
 
 // 3. Data: only when the site owner has opted in.
 if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL === true ) {
@@ -55,10 +76,14 @@ if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) && TZ_DELETE_DATA_ON_UNINSTALL ===
     // data-erasure consent; never add it to Workspace-owned table lists.
     // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Opt-in uninstall of the plugin's dedicated outbox.
     $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'tzfd_customer_event_outbox' ) );
+    // Legacy AI chat table kept from earlier versions (class-tzfd-legacy-ai-data.php, CHAT_TABLE). Opt-in only.
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange -- Opt-in uninstall of the plugin's legacy chat table.
+    $wpdb->query( $wpdb->prepare( 'DROP TABLE IF EXISTS %i', $wpdb->prefix . 'tz_ai_conversations' ) );
 
     // Settings, business profile, add-on state (option names keep the tz_fd_ prefix).
     foreach ( $tz_prefixes as $tz_prefix ) {
         $wpdb->query( $wpdb->prepare("DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( $tz_prefix ) . '%') );
+        $wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE meta_key LIKE %s', $wpdb->usermeta, $wpdb->esc_like( $tz_prefix ) . '%' ) );
     }
 
 }

@@ -213,7 +213,7 @@ function tz_fd_hour_register_block_category( $categories, $post ) {
         array(
             array(
                 'slug'  => 'tzfdhour',
-                'title' => __( 'Titan Zero Trades: Front Desk', 'titan-zero-trades-front-desk' ),
+                'title' => __( 'Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk' ),
             ),
         )
     );

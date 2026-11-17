@@ -318,7 +318,7 @@ reset_state();
 $empty = $C::cost_report( array( 'input' => 1, 'output' => 1, 'embedding' => 1 ) );
 check( 'empty month reports zero calls and a zero cache ratio', 0 === $empty['totals']['calls'] && 0.0 === $empty['cache_hit_ratio'] && 0.0 === $empty['cost'] );
 
-// 18. Tenant ceiling: counts at the pilot budget ceilings, no money assumed.
+// 18. Tenant ceiling: counts at the standing budget ceilings (200 / 800 / 16 / 4 per site), no money assumed.
 $t = $C::tenant_ceiling( 100 );
 check( 'tenant ceiling scales each budget by tenant count', 20000 === $t['max_units_by_budget']['model_fallback'] && 80000 === $t['max_units_by_budget']['embedding'] && 1600 === $t['max_units_by_budget']['faq_batch'] && 400 === $t['max_units_by_budget']['insight'] && 102000 === $t['max_units_total'] );
 check( 'negative tenant count is clamped to zero', 0 === $C::tenant_ceiling( -5 )['max_units_total'] );

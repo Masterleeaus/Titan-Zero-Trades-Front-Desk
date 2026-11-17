@@ -42,8 +42,6 @@ not counted as a pass).
 
 ## Gaps observed (reported, not fixed here)
 
-- **Opt-in uninstall keeps `tzfd_local_customers`.** The table is outside `TZFD_Tables::owned()`. Decide whether
-  customer records should be erased when the owner opts in.
 - **dbDelta on MariaDB 10.11.** Installing the slot-hold table printed `Invalid default value for 'id'` from
   `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed.
 

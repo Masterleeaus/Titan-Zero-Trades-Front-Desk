@@ -100,6 +100,32 @@ Source: https://github.com/Masterleeaus/Titan-zero-front-desk-pro
 - No staging of enabled features, pricing/checkout links or production status in customer-facing marketing before true backend readiness.
 - Reconcile website source/generated pages and Central catalogue; preserve /frontdeskpro legacy SEO links as redirects/explanations, not a product for sale.
 
+## Free edition AI audit: code map and legacy migration (issue #2)
+
+Audit of the add-on registry, admin pages, AJAX, REST, scripts, settings and shortcodes in the plugin tree at `titan-zero-trades-front-desk/`.
+
+**Result:** the free build contains no AI execution path. It makes no AI provider call, sends no AI credential and prompts for none in a clean install. The only outbound HTTP call in the plugin is the Twilio SMS transport (`includes/class-tzfd-twilio-sms.php`), which runs only when administrator-provisioned constants are set.
+
+| Location | Status | Action |
+|---|---|---|
+| `includes/class-tzfd-addon-loader.php` manifest | No AI file listed; unlisted files cannot load | none |
+| `includes/class-tzfd-addon-loader.php` `domain_ids()` | `tzfd-AISetup` and `tzfd-AIAssistant` had no shipped module | removed; a saved legacy selection is dropped on the next catalogue save |
+| `includes/class-tzfd-upgrades.php` | Pro, AI Assistant and AI Agent sales URLs | URL constants emptied; the `tzfd_upgrade_url` filter still accepts a verified https URL |
+| `includes/class-tzfd-admin-notices.php` | `ai_key` dismiss key with no notice rendered | removed; only `speed` remains |
+| `titan-zero-front-desk.php` `tz_fd_ai_assistant` shortcode | Renders nothing | kept so old pages do not show raw shortcode text |
+| `includes/class-tzfd-pipeline.php` filter `tz_fd_ai_create_booking` | Compatibility hook, no caller in the free build | kept; bookings still pass the same pipeline checks |
+| `includes/tzfd-cron-hooks.php` `tz_fd_ai_cascade_tick`, `tz_fd_ai_prune_cron` | Nothing schedules them now | kept so deactivation and uninstall clear events from older installs |
+| `includes/class-tzfd-scoped-store.php` `tz_fd_ai_*` keys | Stored text for the receptionist prompt, service list, area, greeting, fee and price ranges; never executed | kept as data |
+| `addons/core/vertical-packs.addon.php` | Writes pack text into `tz_fd_ai_system_prompt` and related keys | kept as data; the copy still says "AI receptionist" and is a follow-up |
+
+**Migration of pre-existing AI settings and data**
+- No data is deleted. Legacy `tz_fd_ai_*` options move with the company-scoped store exactly as before, so an older install keeps its booking, customer and pack data and can roll back.
+- Saved `tzfd-AISetup` or `tzfd-AIAssistant` selections in the add-on list have no module to run. They are removed on the next add-on save.
+- Pre-existing scheduled AI cron events are still stopped by the shared hook list on deactivation and uninstall.
+- No remote delete or opt-out is needed, because the free build sends nothing to an AI service.
+
+**Regression evidence:** `tests/runtime/ai-free-edition-unit-tests.php` (17 checks, PHP CLI, no WordPress needed). It covers the manifest, the catalogue, negative cases for legacy AI selections and unlisted files, upgrade-link refusal of non-https URLs, the dismiss-key list, the retired shortcode, and a static scan for outbound AI calls.
+
 ## Authoritative issue tracker
 
 - [Single-plugin master epic #45](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/45)

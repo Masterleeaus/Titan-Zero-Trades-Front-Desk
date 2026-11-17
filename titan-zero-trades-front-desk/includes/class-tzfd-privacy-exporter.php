@@ -45,7 +45,7 @@ class TZFD_Privacy_Exporter {
 			),
 			array(
 				__( 'Customers and staff contacts', 'titan-zero-trades-front-desk' ),
-				__( 'The staff contact list stores the name, phone number and email address of each staff member you add. Customer records are stored by Titan Zero Trades: Front Desk, and staff contacts are kept until you delete them there.', 'titan-zero-trades-front-desk' ),
+				__( 'The staff contact list stores the name, phone number and email address of each staff member you add. Customer records are stored by Scheduling & Enquiries Manager, and staff contacts are kept until you delete them there.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Client portal', 'titan-zero-trades-front-desk' ),

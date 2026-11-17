@@ -81,6 +81,9 @@ $wpdb = new TZFD_Test_WPDB( $mysqli );
 $GLOBALS['tzfd_options'] = array();
 function get_option( $k, $d = false ) { return $GLOBALS['tzfd_options'][ $k ] ?? $d; }
 function update_option( $k, $v, $a = null ) { $GLOBALS['tzfd_options'][ $k ] = $v; return true; }
+function wp_mail( $to, $subject, $body ) { $GLOBALS['tzfd_mail'][] = array( $to, $subject, $body ); return true; }
+function sanitize_email( $e ) { return trim( (string) $e ); }
+function is_email( $e ) { return false !== filter_var( $e, FILTER_VALIDATE_EMAIL ); }
 function dbDelta( $sql ) { global $wpdb; $wpdb->query( $sql ); return array(); }
 function wp_timezone() { return new DateTimeZone( 'UTC' ); }
 function wp_date( $f, $ts = null ) { return gmdate( $f, null === $ts ? time() : $ts ); }

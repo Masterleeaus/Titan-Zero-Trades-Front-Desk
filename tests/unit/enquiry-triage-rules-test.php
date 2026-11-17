@@ -198,6 +198,15 @@ $held = $R::evaluate( $spam_text, 'x@example.com', 'ip9', $NOW, array(), null, 2
 t_check( 'held spam primary is spam and routes to spam review', 'spam' === $held['primary_intent'] && 'spam_review' === $held['route'] && true === $held['spam']['hold'] );
 t_check( 'no quote draft without quote intent', null === $e1['quote_draft'] );
 
+// ---- Urgent alert decision (consent, urgency, throttle) -----------------------------------
+t_check( 'alerts off without opt-in', false === $R::alert_decision( false, 'urgent', null, $NOW )['send'] && 'alerts_off' === $R::alert_decision( false, 'urgent', null, $NOW )['reason'] );
+t_check( 'opt-in must be strictly true', false === $R::alert_decision( '1', 'urgent', null, $NOW )['send'] );
+t_check( 'normal enquiry never alerts', 'not_urgent' === $R::alert_decision( true, 'normal', null, $NOW )['reason'] );
+t_check( 'first urgent alert sends', true === $R::alert_decision( true, 'urgent', null, $NOW )['send'] );
+t_check( 'second urgent alert inside window is throttled', 'throttled' === $R::alert_decision( true, 'urgent', $NOW - 60, $NOW )['reason'] );
+t_check( 'alert sends again after window', true === $R::alert_decision( true, 'urgent', $NOW - TZFD_Enquiry_Triage_Rules::ALERT_WINDOW, $NOW )['send'] );
+t_check( 'alert decision is deterministic', $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) === $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) );
+
 // Offline and no hosted call: the rules file must not reach any network or remote API.
 $src = file_get_contents( dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-enquiry-triage-rules.php' );
 t_check( 'rules file has no network calls', 0 === preg_match( '/wp_remote_|curl_|file_get_contents\s*\(\s*[\'"]https?:|fsockopen|stream_socket/i', $src ) );

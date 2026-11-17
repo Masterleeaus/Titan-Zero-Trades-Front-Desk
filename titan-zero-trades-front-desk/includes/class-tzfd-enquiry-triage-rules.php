@@ -159,6 +159,28 @@ final class TZFD_Enquiry_Triage_Rules {
         return array( 'level' => $reasons ? 'urgent' : 'normal', 'reasons' => $reasons );
     }
 
+    /** Minimum gap between two urgent alert emails for the same company. */
+    const ALERT_WINDOW = 900;
+
+    /**
+     * Decides whether an urgent-enquiry alert is sent. Pure: the caller supplies the admin preference and the time of
+     * the last alert. Alerts are off unless the administrator opted in (consent), and at most one per window.
+     *
+     * @param bool     $enabled   Administrator opt-in. Off by default.
+     * @param string   $urgency   Rule result: 'urgent' or 'normal'.
+     * @param int|null $last_sent Unix time of the last alert for this company, or null when none was sent.
+     * @param int      $now       Unix time.
+     * @return array{send: bool, reason: string}
+     */
+    public static function alert_decision( $enabled, $urgency, $last_sent, $now ) {
+        if ( true !== $enabled ) { return array( 'send' => false, 'reason' => 'alerts_off' ); }
+        if ( 'urgent' !== $urgency ) { return array( 'send' => false, 'reason' => 'not_urgent' ); }
+        if ( null !== $last_sent && (int) $now - (int) $last_sent < self::ALERT_WINDOW ) {
+            return array( 'send' => false, 'reason' => 'throttled' );
+        }
+        return array( 'send' => true, 'reason' => 'send' );
+    }
+
     /** True when an expiry phrase is present and a date named in the text falls within 14 days after $now. */
     public static function expiring_date_found( $text, $now ) {
         if ( ! self::find_terms( self::tokens( $text ), self::EXPIRY_TERMS ) ) { return false; }

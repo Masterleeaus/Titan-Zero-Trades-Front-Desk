@@ -40,7 +40,7 @@ final class TZFD_AI_Widget {
 
 		wp_enqueue_style( self::STYLE, plugins_url( 'css/tzfd-ai-answer-box.css', dirname( __DIR__ ) . '/titan-zero-front-desk.php' ), array(), '1' );
 
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only public question; no state change.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Read-only public question; no state change. Sanitised with sanitize_text_field() below.
 		$raw      = isset( $_GET[ self::PARAM ] ) ? wp_unslash( $_GET[ self::PARAM ] ) : '';
 		$question = is_string( $raw ) ? sanitize_text_field( $raw ) : '';
 

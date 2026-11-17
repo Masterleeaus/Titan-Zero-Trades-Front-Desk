@@ -97,6 +97,11 @@ class FakeWpdb {
         throw new RuntimeException( 'Unhandled get_results: ' . $sql );
     }
     public function query( $sql ) {
+        if ( preg_match( "/DELETE FROM `" . preg_quote( $this->table, '/' ) . "` WHERE LOWER\(`user_email`\) = '([^']*)'/", $sql, $m ) ) {
+            $before = count( $this->rows );
+            $this->rows = array_values( array_filter( $this->rows, function ( $r ) use ( $m ) { return strtolower( $r['user_email'] ) !== $m[1]; } ) );
+            return $before - count( $this->rows );
+        }
         if ( false !== strpos( $sql, 'DELETE FROM `' . $this->table . '`' ) ) {
             $n = count( $this->rows ); $this->rows = array(); return $n;
         }
@@ -254,7 +259,8 @@ $p = TZFD_Legacy_AI_Data::privacy_export( 'A@example.test', 1 );
 check( 'privacy export: matches case-insensitively and returns both rows', 2 === count( $p['data'] ) && true === $p['done'] );
 check( 'privacy export: invalid email returns nothing', array() === TZFD_Legacy_AI_Data::privacy_export( 'not-an-email', 1 )['data'] );
 $e = TZFD_Legacy_AI_Data::privacy_erase( 'a@example.test', 1 );
-check( 'privacy erase: reports chats as kept and removes nothing', true === $e['items_retained'] && false === $e['items_removed'] && 3 === count( $wpdb->rows ) );
+check( 'privacy erase: deletes both chats for the address and keeps other people\'s chats', true === $e['items_removed'] && false === $e['items_retained'] && 1 === count( $wpdb->rows ) && 'b@example.test' === $wpdb->rows[0]['user_email'] );
+check( 'privacy erase: no chats left for the address', 0 === count( TZFD_Legacy_AI_Data::privacy_export( 'a@example.test', 1 )['data'] ) );
 
 // ---- 9. Static guarantees: nothing deletes on load, no network, no key fields -----------------------------------
 $files = array(

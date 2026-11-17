@@ -50,7 +50,7 @@ not counted as a pass).
 - Oversell through the public form (A18), and customer cancel and reschedule end to end (B13): the full submission
   pipeline and the mail capture are not driven. The primitives (capacity lock, hold validation, tokens, compare-and-swap)
   are tested.
-- Reminder dispatch and delivery (C11): sends through a transport; no live provider in this harness.
+- Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.
 - Uninstall with opt-in (F4): covered by `uninstall-wipe-check.php`, which runs as a separate process.
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.
 - PHP 8.1, 8.2, 8.4 and other WordPress versions: only PHP 8.3.6 and WordPress 7.1.4 are provisioned.

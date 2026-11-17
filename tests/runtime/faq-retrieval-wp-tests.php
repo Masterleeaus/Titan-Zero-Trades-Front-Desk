@@ -6,8 +6,10 @@
  * Uses real options, transients, scoped store and filters. Cleans up what it creates.
  */
 if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
-    require_once '/var/www/html/wp-content/plugins/titan-zero-trades-front-desk/includes/class-tzfd-scoped-store.php';
-    require_once '/var/www/html/wp-content/plugins/titan-zero-trades-front-desk/includes/class-tzfd-faq-retrieval.php';
+    // Load from the plugin copy that WordPress itself uses (WP_PLUGIN_DIR), not a fixed server path.
+    $tzfd_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR : '/var/www/html/wp-content/plugins' ) . '/titan-zero-trades-front-desk/includes/';
+    require_once $tzfd_inc . 'class-tzfd-scoped-store.php';
+    require_once $tzfd_inc . 'class-tzfd-faq-retrieval.php';
 }
 $R = 'TZFD_FAQ_Retrieval';
 $GLOBALS['wp_pass'] = 0; $GLOBALS['wp_fail'] = 0;

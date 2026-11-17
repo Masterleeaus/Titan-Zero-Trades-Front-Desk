@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_lg'] = array( 'PASS' => 0, 'FAIL' => 0 );
@@ -25,7 +25,7 @@ function tzfd_lg_ok( $name, $ok, $detail = '' ) {
 $tzfd_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 if ( ! is_readable( $tzfd_inc . 'class-tzfd-legacy-ai-data.php' ) ) {
 	tzfd_lg_ok( 'legacy-ai: class file readable', false, 'class-tzfd-legacy-ai-data.php not found in the active plugin' );
-	return;
+	exit( 1 );
 }
 require_once $tzfd_inc . 'class-tzfd-legacy-ai-data.php';
 
@@ -120,3 +120,4 @@ delete_option( TZFD_Legacy_AI_Data::RECEIPT );
 delete_option( TZFD_Legacy_AI_Data::RESTORE_LOG );
 
 echo 'Summary (legacy-ai-runtime): ' . (int) $GLOBALS['tzfd_lg']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_lg']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_lg']['FAIL'] > 0 ? 1 : 0 );

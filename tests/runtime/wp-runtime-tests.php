@@ -16,7 +16,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_rt'] = array( 'PASS' => 0, 'FAIL' => 0, 'SKIP' => 0, 'GAP' => 0 );
@@ -332,3 +332,4 @@ if ( is_multisite() ) {
 }
 
 echo "\nSummary (wp-runtime-tests): " . (int) $GLOBALS['tzfd_rt']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_rt']['FAIL'] . ' failed, ' . (int) $GLOBALS['tzfd_rt']['GAP'] . ' gap(s), ' . (int) $GLOBALS['tzfd_rt']['SKIP'] . " skipped\n";
+exit( (int) $GLOBALS['tzfd_rt']['FAIL'] > 0 ? 1 : 0 );

@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_sa'] = array( 'PASS' => 0, 'FAIL' => 0 );
@@ -25,7 +25,7 @@ function tzfd_sa_ok( $name, $ok, $detail = '' ) {
 $tzfd_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 if ( ! is_readable( $tzfd_inc . 'class-tzfd-staff-access.php' ) ) {
 	tzfd_sa_ok( 'staff-access: class file readable', false, 'class-tzfd-staff-access.php not found in the active plugin' );
-	return;
+	exit( 1 );
 }
 require_once $tzfd_inc . 'class-tzfd-staff-access.php';
 require_once $tzfd_inc . 'class-tzfd-staff-access-admin.php';
@@ -146,3 +146,4 @@ foreach ( array( $sa_staff, $sa_locad, $sa_coadm ) as $sa_u ) {
 }
 
 echo 'Summary (staff-access-runtime): ' . (int) $GLOBALS['tzfd_sa']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_sa']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_sa']['FAIL'] > 0 ? 1 : 0 );

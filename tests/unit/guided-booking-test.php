@@ -114,4 +114,4 @@ check( 'submit with unavailable snapshot refused', 'engine_unavailable' === TZFD
 check( 'tenant mismatch refused', 'tenant_mismatch' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria( 'acme', 'other' ), $none, $service, $slot, $values, $conf['token'] )['status'] );
 
 echo $GLOBALS['tzfd_gb_pass'] . " passed, " . $GLOBALS['tzfd_gb_fail'] . " failed\n";
-if ( $GLOBALS['tzfd_gb_pass'] !== 27 || $GLOBALS['tzfd_gb_fail'] ) { echo "Check count or failures differ from expected.\n"; if ( ! defined( 'WPINC' ) ) { exit( 1 ); } }
+if ( $GLOBALS['tzfd_gb_pass'] !== 27 || $GLOBALS['tzfd_gb_fail'] ) { echo "Check count or failures differ from expected.\n"; exit( 1 ); }

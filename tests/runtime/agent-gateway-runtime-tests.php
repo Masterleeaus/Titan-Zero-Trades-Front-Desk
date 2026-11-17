@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_ag'] = array( 'PASS' => 0, 'FAIL' => 0 );
@@ -25,7 +25,7 @@ function tzfd_ag_ok( $name, $ok, $detail = '' ) {
 $tzfd_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 if ( ! is_readable( $tzfd_inc . 'class-tzfd-agent-gateway.php' ) ) {
 	tzfd_ag_ok( 'agent-gateway: class file readable', false, 'class-tzfd-agent-gateway.php not found in the active plugin' );
-	return;
+	exit( 1 );
 }
 require_once $tzfd_inc . 'class-tzfd-agent-gateway.php';
 require_once $tzfd_inc . 'class-tzfd-agent-gateway-admin.php';
@@ -170,3 +170,4 @@ foreach ( array( 'rt-co-1', 'rt-co-2' ) as $ag_co ) {
 delete_option( 'tzfd_agent_nonces' );
 
 echo 'Summary (agent-gateway-runtime): ' . (int) $GLOBALS['tzfd_ag']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_ag']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_ag']['FAIL'] > 0 ? 1 : 0 );

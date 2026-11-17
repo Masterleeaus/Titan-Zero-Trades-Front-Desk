@@ -15,8 +15,12 @@ if ( ! function_exists( 'esc_html' ) ) { function esc_html( $text ) { return htm
 
 $db_name   = getenv( 'TZFD_TEST_DB_NAME' ) ?: 'tzfd_lane_test';
 $db_socket = getenv( 'TZFD_TEST_DB_SOCKET' ) ?: '/var/run/mysqld/mysqld.sock';
-$mysqli = @new mysqli( 'localhost', 'root', '', $db_name, 0, $db_socket );
-if ( $mysqli->connect_errno ) { throw new RuntimeException( esc_html( "DB connect failed: " . $mysqli->connect_error ) ); }
+// TZFD_TEST_DB_HOST (with TZFD_TEST_DB_PASS) connects over TCP, e.g. to a CI service container; unset, the local socket is used.
+$db_host = getenv( 'TZFD_TEST_DB_HOST' ) ?: '';
+$mysqli  = '' !== $db_host
+	? @new mysqli( $db_host, getenv( 'TZFD_TEST_DB_USER' ) ?: 'root', (string) getenv( 'TZFD_TEST_DB_PASS' ), $db_name, 3306 )
+	: @new mysqli( 'localhost', 'root', '', $db_name, 0, $db_socket );
+if ( $mysqli->connect_errno ) { fwrite( STDERR, 'DB connect failed: ' . $mysqli->connect_error . "\n" ); exit( 2 ); }
 
 final class TZ_WPDB {
     public $prefix = 'wp_';

@@ -47,6 +47,13 @@ jobs:
         run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
       - name: Reproducible package and no development files (issue #3)
         run: bash tests/release/reproducible-build-check.sh
+      - name: Other standalone suites that print PASS/FAIL (exit status gates the job)
+        run: |
+          set -e
+          for f in tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/unit/ai-widget/run-tests.php tests/sms-cancel-reschedule-checks.php tests/release/check-release-metadata.php; do
+            echo "== $f"
+            php -d error_reporting=-1 "$f"
+          done
 
   wordpress:
     name: WordPress runtime (latest WordPress, PHP 8.3, MariaDB 10.11)
@@ -72,6 +79,8 @@ jobs:
       PLUGIN_SRC: ${{ github.workspace }}/titan-zero-trades-front-desk
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # the upgrade check reads the v3.0.128 base commit from history
       - uses: shivammathur/setup-php@v2
         with:
           php-version: "8.3"
@@ -97,7 +106,7 @@ jobs:
           php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/clean-install-ai-check.php"
       - name: Start web server
         run: |
-          (nohup php -S localhost:$WP_PORT -t "$WP_DIR" > server.log 2>&1 &)
+          (PHP_CLI_SERVER_WORKERS=8 nohup php -S localhost:$WP_PORT -t "$WP_DIR" > server.log 2>&1 &)
           for i in $(seq 1 30); do code=$(curl -s -o /dev/null -w "%{http_code}" $WP_URL/ || true); [ "$code" = "200" ] && break; sleep 1; done
           test "$code" = "200"
       - name: Enable missed-call addon and store secret
@@ -124,6 +133,16 @@ jobs:
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"
           B="$WP_URL" SECRET="$(cat /tmp/fd-secret.txt)" bash http-auth-tests.sh
+      - name: Concurrent replay of a signed missed-call request
+        run: |
+          cd "$GITHUB_WORKSPACE/tests/runtime"
+          B="$WP_URL" SECRET="$(cat /tmp/fd-secret.txt)" N=8 bash replay-concurrency-test.sh
+      - name: Callback form HTTP checks (published page with the shortcode)
+        run: |
+          cd "$WP_DIR"
+          PAGE_ID=$(php "$WP_CLI" --allow-root --path="$WP_DIR" post create --post_type=page --post_status=publish --post_title="Callback request" --post_content='[tzfd_callback_form]' --porcelain)
+          cd "$GITHUB_WORKSPACE/tests/runtime"
+          B="$WP_URL" PAGE="$WP_URL/?page_id=$PAGE_ID" bash handoff-http-tests.sh
       - name: Extra WordPress test files (if any)
         run: |
           cd "$WP_DIR"
@@ -133,6 +152,23 @@ jobs:
             echo "== $f"
             php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
           done
+      - name: Database integration tests (scratch databases on the service container)
+        run: |
+          mysql -h127.0.0.1 -P3306 -uroot -proot -e "CREATE DATABASE IF NOT EXISTS tzfd_lane_test; CREATE DATABASE IF NOT EXISTS tzfd_triage_test;"
+          cd "$GITHUB_WORKSPACE"
+          TZFD_TEST_DB_HOST=127.0.0.1 TZFD_TEST_DB_USER=root TZFD_TEST_DB_PASS=root TZFD_TEST_DB_NAME=tzfd_lane_test php -d error_reporting=-1 tests/integration/contact-db-tests.php
+          TZFD_TEST_DB_HOST=127.0.0.1 TZFD_TEST_DB_USER=root TZFD_TEST_DB_PASS=root TZFD_TEST_DB_NAME=tzfd_triage_test php -d error_reporting=-1 tests/integration/enquiry-triage-db-test.php
+      - name: Opt-in uninstall check (destructive, own process, last on this site)
+        run: |
+          cd "$WP_DIR"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/uninstall-wipe-check.php" --user=1
+      - name: Upgrade and downgrade from 3.0.128 (own disposable site)
+        run: |
+          # The helper scripts connect as root over TCP to the service container (credentials as the service sets them).
+          printf '[client]\nuser=root\npassword=root\nhost=127.0.0.1\nport=3306\n' > "$HOME/.my.cnf"
+          chmod 600 "$HOME/.my.cnf"
+          cd "$GITHUB_WORKSPACE"
+          TZFD_RT_DB_HOST=127.0.0.1 TZFD_RT_DB_GRANT_HOST='%' WP_CLI="php $WP_CLI" bash tests/runtime/upgrade-from-3.0.128.sh
       - name: Server log on failure
         if: failure()
         run: tail -n 200 server.log || true

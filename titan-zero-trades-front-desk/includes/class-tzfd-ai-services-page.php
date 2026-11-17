@@ -70,47 +70,34 @@ final class TZFD_AI_Services_Page {
                     <tr><th scope="row"><?php esc_html_e( 'Local features', 'titan-zero-trades-front-desk' ); ?></th>
                         <td><?php esc_html_e( 'Always enabled', 'titan-zero-trades-front-desk' ); ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted data consent', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php esc_html_e( 'None recorded. Hosted processing stays off until you connect an account and agree to it.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                        <td><?php esc_html_e( 'None recorded. Hosted processing stays off until you agree to it.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
 
-            <h2><?php esc_html_e( 'Compare', 'titan-zero-trades-front-desk' ); ?></h2>
+            <h2><?php esc_html_e( 'Hosted levels', 'titan-zero-trades-front-desk' ); ?></h2>
             <table class="widefat striped" style="max-width:52em">
                 <thead><tr>
                     <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
                     <th scope="col"><?php esc_html_e( 'What it adds', 'titan-zero-trades-front-desk' ); ?></th>
-                    <th scope="col"><?php esc_html_e( 'Price and usage', 'titan-zero-trades-front-desk' ); ?></th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ( $levels as $key => $level ) : ?>
                     <tr>
                         <td><?php echo esc_html( (string) $level['label'] ); ?></td>
                         <td><?php echo esc_html( (string) $level['disclosure'] ); ?></td>
-                        <td><?php
-                            echo esc_html( null === ( $level['price'] ?? null )
-                                ? __( 'Shown by your Titan account before any charge.', 'titan-zero-trades-front-desk' )
-                                : (string) $level['price'] );
-                            if ( ! empty( $level['usage_model'] ) ) {
-                                echo ' ' . esc_html( (string) $level['usage_model'] );
-                            }
-                        ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
 
-            <h2><?php esc_html_e( 'Account and changes', 'titan-zero-trades-front-desk' ); ?></h2>
-            <p>
-                <button type="button" class="button" disabled="disabled"><?php esc_html_e( 'Connect Titan account', 'titan-zero-trades-front-desk' ); ?></button>
-                <span class="description"><?php esc_html_e( 'Not available yet. Hosted accounts open when the verified Titan connector is live.', 'titan-zero-trades-front-desk' ); ?></span>
-            </p>
+            <h2><?php esc_html_e( 'Hosted AI changes', 'titan-zero-trades-front-desk' ); ?></h2>
             <?php if ( TZFD_AI_Services::LEVEL_FREE !== $resolved['level'] || null !== $payload ) : ?>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION ); ?>" />
                     <?php wp_nonce_field( self::NONCE ); ?>
                     <p>
                         <button type="submit" class="button button-secondary"><?php esc_html_e( 'Switch this site to Free', 'titan-zero-trades-front-desk' ); ?></button>
-                        <span class="description"><?php esc_html_e( 'Stops hosted AI on this site. Cancel billing in your Titan account separately. Nothing local is deleted.', 'titan-zero-trades-front-desk' ); ?></span>
+                        <span class="description"><?php esc_html_e( 'Stops hosted AI on this site. Nothing local is deleted.', 'titan-zero-trades-front-desk' ); ?></span>
                     </p>
                 </form>
             <?php endif; ?>

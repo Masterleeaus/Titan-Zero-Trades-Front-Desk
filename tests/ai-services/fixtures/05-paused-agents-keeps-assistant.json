@@ -1,0 +1,1 @@
+{"name":"agents paused keeps assistant","now":1900000000,"site_company_id":1,"payload":{"schema_version":1,"company_id":1,"state":"paused_agents","entitlements":["agent_team","assistant"],"expires_at":1900003600},"expect":{"level":"assistant","reason":"paused_agents"}}

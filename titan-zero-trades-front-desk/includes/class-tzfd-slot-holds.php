@@ -22,7 +22,9 @@ final class TZFD_Slot_Holds {
         $table=TZFD_Tables::checked_name(self::TABLE);
         if (is_wp_error($table)) return $table;
         require_once ABSPATH.'wp-admin/includes/upgrade.php';
-        $sql="CREATE TABLE $table (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id varchar(80) NOT NULL, token_hash char(64) NOT NULL, state varchar(16) NOT NULL, start_utc datetime NOT NULL, end_utc datetime NOT NULL, expires_at datetime NOT NULL, payload longtext NOT NULL, booking_id varchar(80) NOT NULL DEFAULT '', created_at datetime NOT NULL, PRIMARY KEY (id), UNIQUE KEY company_token (company_id,token_hash), KEY company_state_time (company_id,state,start_utc,end_utc)) ".$wpdb->get_charset_collate().';';
+        // No DEFAULT '' on any column: dbDelta matches a DEFAULT '' in the statement and emits SET DEFAULT on the AUTO_INCREMENT id,
+        // which MariaDB rejects on every run after the first (#186).
+        $sql="CREATE TABLE $table (id bigint(20) unsigned NOT NULL AUTO_INCREMENT, company_id varchar(80) NOT NULL, token_hash char(64) NOT NULL, state varchar(16) NOT NULL, start_utc datetime NOT NULL, end_utc datetime NOT NULL, expires_at datetime NOT NULL, payload longtext NOT NULL, booking_id varchar(80) NOT NULL, created_at datetime NOT NULL, PRIMARY KEY (id), UNIQUE KEY company_token (company_id,token_hash), KEY company_state_time (company_id,state,start_utc,end_utc)) ".$wpdb->get_charset_collate().';';
         dbDelta($sql);
         if ($wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$table))!==$table) return false;
         $columns=$wpdb->get_results( $wpdb->prepare( 'SHOW COLUMNS FROM %i', $table ),ARRAY_A );

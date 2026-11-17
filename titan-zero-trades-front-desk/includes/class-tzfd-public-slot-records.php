@@ -74,7 +74,7 @@ final class TZFD_Public_Slot_Records {
             update_option( self::SKIPPED_OPTION, $all, false );
         }
         foreach ( $booking_ids as $booking_id ) {
-            error_log( sprintf( 'Titan Zero Front Desk: skipped stored booking %d of calendar %d in public availability (unreadable payload).', $booking_id, $calendar_id ) );
+            error_log( sprintf( 'Titan Zero Scheduling & Enquiries Manager: skipped stored booking %d of calendar %d in public availability (unreadable payload).', $booking_id, $calendar_id ) );
         }
     }
 
@@ -90,6 +90,6 @@ final class TZFD_Public_Slot_Records {
             }
         }
         if ( ! $items ) { return; }
-        echo '<div class="notice notice-error"><p>' . esc_html__( 'Titan Zero Front Desk skipped stored bookings when it built public availability. Public booking still works, but the slots those bookings hold may be offered as free. Repair or remove them under Bookings.', 'titan-zero-trades-front-desk' ) . '</p><p>' . esc_html( implode( '; ', $items ) ) . '</p></div>';
+        echo '<div class="notice notice-error"><p>' . esc_html__( 'Titan Zero Scheduling & Enquiries Manager skipped stored bookings when it built public availability. Public booking still works, but the slots those bookings hold may be offered as free. Repair or remove them under Bookings.', 'titan-zero-trades-front-desk' ) . '</p><p>' . esc_html( implode( '; ', $items ) ) . '</p></div>';
     }
 }

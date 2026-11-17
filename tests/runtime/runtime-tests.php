@@ -251,5 +251,7 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     rt_check( 'telephony adapter and missed-call tasks are loaded', false, 'classes missing' );
 }
 
+// Issue #21: FAQ retrieval checks run last. Their option and filter changes would otherwise break the signed call-events checks above.
+require __DIR__ . '/faq-retrieval-wp-tests.php';
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";
 exit( $GLOBALS['rt_fail'] > 0 ? 1 : 0 );

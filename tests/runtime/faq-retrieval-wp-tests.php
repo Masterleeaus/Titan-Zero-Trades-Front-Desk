@@ -14,14 +14,20 @@ if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
 }
 $R = 'TZFD_FAQ_Retrieval';
 $GLOBALS['wp_pass'] = 0; $GLOBALS['wp_fail'] = 0;
-function wp_check( $name, $ok, $detail = '' ) {
-    if ( $ok ) { $GLOBALS['wp_pass']++; } else { $GLOBALS['wp_fail']++; }
-    echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
+// runtime-tests.php includes this file twice, so declare the helper only once.
+if ( ! function_exists( 'wp_check' ) ) {
+    function wp_check( $name, $ok, $detail = '' ) {
+        if ( $ok ) { $GLOBALS['wp_pass']++; } else { $GLOBALS['wp_fail']++; }
+        echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
+    }
 }
 
 // A company id unique to this run. Cached answers survive between runs as transients, and the cleanup resets the
 // index version, so reusing a fixed id would let a previous run's cached answer answer this one.
-$company = 700000 + ( time() % 100000 );
+// The file is included twice in one process (runtime-tests.php), so add a per-include counter: two includes in the same
+// second must not share a tenant, or the second run is answered from the first run's cached answers.
+$GLOBALS['tzfd_faq_suite_runs'] = ( isset( $GLOBALS['tzfd_faq_suite_runs'] ) ? (int) $GLOBALS['tzfd_faq_suite_runs'] : 0 ) + 1;
+$company = 700000 + ( ( time() % 100000 ) * 10 ) + $GLOBALS['tzfd_faq_suite_runs'];
 $other   = 987654; // A company with no data on this site.
 $faq = array(
     array( 'id' => 'hours', 'question' => 'What are your opening hours?', 'answer' => 'Open 8am to 6pm weekdays.', 'keywords' => 'hours,open', 'approved' => true ),

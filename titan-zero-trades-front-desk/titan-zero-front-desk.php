@@ -81,6 +81,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 // Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
 TZFD_AI_Widget::boot();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
 
 /**
  * Translate persisted values without passing dynamic data to the
@@ -265,6 +266,7 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
         TZFD_Twilio_Status::boot();
         TZFD_Access::register();
     TZFD_Lead_Intake::register();
+    TZFD_Human_Handoff::register();
         add_action( 'admin_init', 'tz_fd_seed_form_for_member', 30 );
         require_once dirname( __FILE__ ) . '/includes/class-tzfd-connect-bridge.php';
         TZFD_Connect_Bridge::register();

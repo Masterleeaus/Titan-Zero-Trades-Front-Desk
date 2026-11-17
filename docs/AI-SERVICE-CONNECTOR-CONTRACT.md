@@ -1,0 +1,97 @@
+# AI service connector contract: tzfd-ai/1
+
+Status: implemented for the plugin side (`includes/class-tzfd-ai-connector.php`). The hosted service is not built or deployed; every test uses a fake transport (`tests/ai-connector/run-ai-connector-tests.php`).
+
+One connector serves all hosted AI levels in the single Scheduling & Enquiries Manager plugin: `free_ai`, `assistant`, `agent_team`. Local booking never depends on it. Every failure returns a structured result with `use_local => true`.
+
+## Plugin API for feature lanes
+
+```php
+$result = TZFD_AI_Connector::request( 'faq.answer', array( 'question' => '...' ) );
+if ( $result['ok'] ) { /* use $result['data'] */ } else { /* use local rules; $result['status'] says why */ }
+```
+
+Result keys: `ok`, `status`, `use_local` (always true unless ok), `contract`, `data`; plus `missing_scopes` (scope_not_granted) or `tier` (tier_not_entitled).
+
+Statuses: `ok`, `feature_not_allowed`, `invalid_request`, `consent_required`, `not_configured`, `tier_not_entitled`, `scope_not_granted`, `allowance_exhausted`, `busy`, `offline`, `service_error`, `invalid_response`, `contract_unsupported`.
+
+Other methods: `status()` (never returns the secret), `usage( $period )`, `configure( $endpoint, $site_id, $secret )`, `grant_consent( array $scopes )`, `revoke_consent()`, `set_entitlements( array $tiers )`, `disconnect()`, `features()`, `budget_limits()`.
+
+## Feature registry
+
+| Feature | Tier | Scopes required | Monthly budget (pilot) |
+|---|---|---|---|
+| `faq.answer` | free_ai | faq.read | model_fallback 50 |
+| `faq.embed_query` | free_ai | faq.read | embedding 200 |
+| `faq.suggest_batch` | free_ai | faq.read | faq_batch 4 |
+| `insight.monthly` | free_ai | reports.read | insight 1 |
+| `assistant.turn` | assistant | faq.read, customer.read | none (server meters) |
+| `agent.run` | agent_team | booking.read, booking.write, customer.read | none (server meters) |
+
+Budgets are provisional pilot values. The hosted service stays authoritative. The local check only prevents needless calls.
+
+## Consent and permissions
+
+- Consent is off by default. `grant_consent()` must be called by a site administrator, with the scopes they accept. Unknown scopes are dropped.
+- The model never grants itself a scope. Write scopes (`booking.write`) need an explicit admin grant.
+- `revoke_consent()` takes effect on the next call. No transport call is made after revocation.
+- Entitlements (`free_ai`, `assistant`, `agent_team`) are set from the hosted service's signed entitlement response. The connector does not infer one tier from another.
+
+## Wire format
+
+`POST <endpoint>` (https only), `Content-Type: application/json`.
+
+Request headers:
+
+| Header | Value |
+|---|---|
+| `X-TZFD-Contract` | `tzfd-ai/1` |
+| `X-TZFD-Site` | site id (`^[A-Za-z0-9_.-]{1,64}$`) |
+| `X-TZFD-Timestamp` | Unix seconds |
+| `X-TZFD-Nonce` | 32 random hex characters, new per request |
+| `X-TZFD-Signature` | `sha256=` + HMAC-SHA256 of `<timestamp>.<nonce>.<body>`, keyed with the site secret |
+
+Request body (max 16 KB):
+
+```json
+{"contract":"tzfd-ai/1","site":"<site id>","feature":"faq.answer",
+ "consent":{"version":"tzfd-ai-consent-1","scopes":["faq.read"]},
+ "payload":{ ... }}
+```
+
+Response body (max 64 KB), HTTP 200 required:
+
+```json
+{"contract":"tzfd-ai/1","site":"<site id>","status":"ok|allowance_exhausted|service_error|contract_unsupported",
+ "data":{ ... },
+ "usage":{"tokens_in":0,"tokens_out":0,"embedding_tokens":0,"cache_hit":false}}
+```
+
+Response headers `X-TZFD-Timestamp`, `X-TZFD-Nonce` (must echo the request nonce) and `X-TZFD-Signature` (over `<timestamp>.<nonce>.<body>`) are all required. The plugin rejects a response when:
+
+- the signature does not match, or the timestamp is more than 300 seconds from the site clock;
+- the nonce is not the one just sent (replayed or cross-request response);
+- the body names a different site (tenant mismatch);
+- the body is not JSON, is over 64 KB, or carries an unknown status.
+
+## Budget and concurrency
+
+- Reservation happens before any transport call. Each reservation is a read-modify-write under an atomic `add_option` lock (`tzfd_ai_budget_lock`, stale after 10 seconds). A request that cannot take the lock returns `busy` without a call.
+- A reservation is released only on `offline` or `invalid_response`, when nothing reached the model. Other outcomes keep it, which is conservative.
+- Usage counters are kept per month in `tzfd_ai_usage_YYYY-MM` (autoload off). Counters are best effort and skipped when the lock is busy. The month 13 back is removed on write.
+
+## Fail-safe rules
+
+- Unset endpoint, missing secret, or no consent: returns before any transport call.
+- Transport error or timeout: `offline`, with `use_local => true`.
+- Secret is sent only in the HMAC, never in a result, status, usage record, or log line.
+
+## Server obligations (not in this plugin)
+
+The hosted service must check the nonce for replay within the signature window, check tenant scope from `X-TZFD-Site`, enforce its own budgets before provider calls, and sign every response. Endpoints, secrets, pairing tokens and checkout are out of scope for this contract.
+
+## Known gaps
+
+- No admin screen yet. Connect, disconnect and consent controls belong to the AI Services view (#46).
+- No approved-answer cache or cost report yet (#43 acceptance). Usage records token counts only; no cost calculation.
+- Entitlement fetch and pairing handshake are not implemented.

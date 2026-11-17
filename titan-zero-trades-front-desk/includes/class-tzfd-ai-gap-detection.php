@@ -41,6 +41,11 @@ final class TZFD_Ai_Gap_Detection {
 		delete_option( self::OPTION );
 	}
 
+	/** Company ids that have recorded question counts. Used by the weekly FAQ job (#35). */
+	public static function company_ids() {
+		return array_values( array_filter( array_map( 'intval', array_keys( self::load() ) ), static function ( $id ) { return $id > 0; } ) );
+	}
+
 	/**
 	 * Listener for every public question the answer box handled (fired by the AI widget).
 	 * Only an approved-rule answer counts as answered. Refusals, limits, offline proxy fallbacks and

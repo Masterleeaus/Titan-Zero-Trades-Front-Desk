@@ -93,6 +93,30 @@ final class TZFD_AI_Followup_Rules {
     }
 
     /**
+     * Evaluates a batch of enquiries in one run. Each suggestion is added to the history before the next enquiry is
+     * checked, so the duplicate rule and the per-customer throttle also apply between enquiries in the same run.
+     * Nothing is sent here: the caller stores the returned history and shows the suggestions to the owner.
+     *
+     * @param array    $enquiries  Enquiry arrays as in evaluate(), each with customer_key (the keyed customer hash).
+     * @param array    $history    Existing history entries (see evaluate()). Not modified.
+     * @return array { decisions: array<int, array{enquiry_id: int, decision: array}>, history: array }
+     */
+    public static function sweep( array $enquiries, $now_ts, $timezone, array $history, $optout ) {
+        $decisions = array();
+        foreach ( $enquiries as $enquiry ) {
+            if ( ! is_array( $enquiry ) ) { continue; }
+            $id  = (int) ( $enquiry['id'] ?? 0 );
+            $key = (string) ( $enquiry['customer_key'] ?? '' );
+            $one = self::evaluate( $enquiry, $now_ts, $timezone, $history, $optout, $key );
+            $decisions[] = array( 'enquiry_id' => $id, 'decision' => $one );
+            if ( 'suggested' === $one['state'] ) {
+                $history[] = array( 'enquiry_id' => $id, 'customer_key' => $key, 'state' => 'suggested', 'at_ts' => (int) $now_ts );
+            }
+        }
+        return array( 'decisions' => $decisions, 'history' => $history );
+    }
+
+    /**
      * Earliest moment at or after now inside business hours (BUSINESS_START_HOUR to BUSINESS_END_HOUR, local time).
      * Returns array( 'ts' => int, 'local' => 'Y-m-d H:i' ) or null for an unknown timezone.
      */

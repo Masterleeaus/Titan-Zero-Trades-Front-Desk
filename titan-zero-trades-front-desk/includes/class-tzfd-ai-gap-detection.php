@@ -23,6 +23,8 @@ final class TZFD_Ai_Gap_Detection {
 	const MIN_REPORT_COUNT = 3;
 	const MIN_BASE         = 10;
 	const ANSWERED_CONFIDENCE = 0.6;
+	const HANDLED_ACTION      = 'tzfd_ai_question_handled';
+	const VOCAB_FILTER        = 'tzfd_ai_gap_vocabulary';
 
 	const STOPWORDS = array(
 		'a', 'an', 'the', 'is', 'are', 'do', 'does', 'you', 'i', 'we', 'my', 'our', 'of', 'to', 'for', 'and', 'or',
@@ -32,10 +34,42 @@ final class TZFD_Ai_Gap_Detection {
 
 	public static function register() {
 		add_action( TZFD_Ai_Free_Core::CONSENT_WITHDRAWN_ACTION, array( __CLASS__, 'purge' ) );
+		add_action( self::HANDLED_ACTION, array( __CLASS__, 'on_handled' ), 10, 2 );
 	}
 
 	public static function purge() {
 		delete_option( self::OPTION );
+	}
+
+	/**
+	 * Listener for every public question the answer box handled (fired by the AI widget).
+	 * Only an approved-rule answer counts as answered. Refusals, limits, offline proxy fallbacks and
+	 * model answers count as gaps. The question text is passed on and never stored.
+	 */
+	public static function on_handled( $question, $result ) {
+		if ( ! is_string( $question ) || ! is_array( $result ) || ! TZFD_Ai_Free_Core::consent_granted() ) {
+			return;
+		}
+		$cid = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+		if ( $cid < 1 ) {
+			return;
+		}
+		$answered = 'answered' === ( $result['status'] ?? '' ) && 'approved_rule' === ( $result['source'] ?? '' );
+		self::record( $cid, $question, $answered, $answered ? 1.0 : 0.0, self::vocabulary(), time() );
+	}
+
+	/** Topic labels: normalised keywords of approved FAQ entries, filterable by the site. */
+	public static function vocabulary() {
+		$vocab = array();
+		if ( class_exists( 'TZFD_AI_Answer_Box' ) ) {
+			foreach ( TZFD_AI_Answer_Box::approved_entries() as $entry ) {
+				foreach ( (array) ( $entry['keywords'] ?? array() ) as $keyword ) {
+					$vocab[] = (string) $keyword;
+				}
+			}
+		}
+		$filtered = apply_filters( self::VOCAB_FILTER, $vocab );
+		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : array();
 	}
 
 	/**
@@ -96,6 +130,14 @@ final class TZFD_Ai_Gap_Detection {
 		if ( ! isset( $all[ $cid ]['topics'][ $from_key ], $all[ $cid ]['topics'][ $into_key ] ) ) {
 			return TZFD_Ai_Free_Core::fail( 'not_found' );
 		}
+		// Follow the existing chain from the target. Reaching the source means the merge would loop.
+		$target = $into_key;
+		for ( $i = 0; $i < 10 && isset( $all[ $cid ]['merges'][ $target ] ); $i++ ) {
+			$target = $all[ $cid ]['merges'][ $target ];
+		}
+		if ( $target === $from_key ) {
+			return TZFD_Ai_Free_Core::fail( 'merge_cycle' );
+		}
 		$all[ $cid ]['merges'][ $from_key ] = $into_key;
 		update_option( self::OPTION, $all, false );
 		return array( 'ok' => true );
@@ -108,8 +150,11 @@ final class TZFD_Ai_Gap_Detection {
 	 */
 	public static function report( $company_id, $now, $window_days, array $filters, array $approved_texts ) {
 		$cid  = (int) $company_id;
-		$co   = self::prune( self::load()[ $cid ] ?? self::empty_company(), (int) $now );
-		$from = TZFD_Ai_Free_Core::day_key( (int) $now - ( max( 1, (int) $window_days ) - 1 ) * DAY_IN_SECONDS );
+		// Consent withdrawn means nothing is shown, even if old data were still present.
+		$co   = TZFD_Ai_Free_Core::consent_granted()
+			? self::prune( self::load()[ $cid ] ?? self::empty_company(), (int) $now )
+			: self::empty_company();
+		$from =TZFD_Ai_Free_Core::day_key( (int) $now - ( max( 1, (int) $window_days ) - 1 ) * DAY_IN_SECONDS );
 		$to   = TZFD_Ai_Free_Core::day_key( $now );
 		$total = 0; $unanswered = 0;
 		foreach ( $co['days'] as $day => $c ) {

@@ -98,8 +98,6 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }
 
-// Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
-require __DIR__ . '/faq-retrieval-wp-tests.php';
 // 8. Signed call-events path for missed-call callback tasks (issue #30): credential gate, tenant denial
 // before any write, duplicate and replay handling, anonymous caller, and no caller data in the response.
 if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecycle' ) && class_exists( 'TZFD_Missed_Call_Tasks' ) ) {
@@ -199,4 +197,6 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     rt_check( 'telephony adapter and missed-call tasks are loaded', false, 'classes missing' );
 }
 
+// Issue #21: FAQ retrieval checks run last. Their option and filter changes would otherwise break the signed call-events checks above.
+require __DIR__ . '/faq-retrieval-wp-tests.php';
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";

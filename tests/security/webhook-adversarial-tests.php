@@ -26,18 +26,25 @@ $GLOBALS['tz_options'] = array();
 function add_option( $k, $v, $deprecated = '', $autoload = 'yes' ) { if ( isset( $GLOBALS['tz_options'][ $k ] ) ) { return false; } $GLOBALS['tz_options'][ $k ] = (string) $v; return true; }
 function get_option( $k, $d = false ) { return $GLOBALS['tz_options'][ $k ] ?? $d; }
 function wp_cache_delete( $k, $g = '' ) { return true; }
-// Stand-in for $wpdb: the only query used is the option compare-and-set in claim_signature().
+// Stand-in for $wpdb: the INSERT IGNORE claim, the expired-claim UPDATE and the purge DELETE used by claim_signature().
 class TZ_Fake_WPDB {
     public $options = 'wp_options';
     public function prepare( $sql, ...$args ) { return array( $sql, $args ); }
+    public function esc_like( $s ) { return addcslashes( (string) $s, '_%\\' ); }
     public function query( $prepared ) {
-        list( $sql, $a ) = $prepared; // $a = array( new, name, expected_old )
-        $name = $a[1];
-        if ( isset( $GLOBALS['tz_options'][ $name ] ) && (string) $GLOBALS['tz_options'][ $name ] === (string) $a[2] ) {
-            $GLOBALS['tz_options'][ $name ] = (string) $a[0];
+        list( $sql, $a ) = $prepared;
+        if ( 0 === strpos( $sql, 'INSERT IGNORE' ) ) { // args: name, now
+            if ( isset( $GLOBALS['tz_options'][ $a[0] ] ) ) return 0;
+            $GLOBALS['tz_options'][ $a[0] ] = (string) $a[1];
             return 1;
         }
-        return 0;
+        if ( 0 === strpos( $sql, 'UPDATE' ) ) { // args: new value, name, cutoff; only numeric records are taken over
+            $cur = $GLOBALS['tz_options'][ $a[1] ] ?? null;
+            if ( null === $cur || ! ctype_digit( (string) $cur ) || (int) $cur > (int) $a[2] ) return 0;
+            $GLOBALS['tz_options'][ $a[1] ] = (string) $a[0];
+            return 1;
+        }
+        return 0; // DELETE (purge) finds nothing to remove in this stand-in
     }
 }
 $GLOBALS['wpdb'] = new TZ_Fake_WPDB();
@@ -129,7 +136,7 @@ tz_check( 'signed request: stale timestamp (301s) refused', ! TZFD_Signed_Reques
 tz_check( 'signed request: missing headers (null) refused', ! TZFD_Signed_Request::signature_valid( $secret, null, null, $mc_body, $now ) );
 tz_check( 'signed request: replay of identical signature refused', TZFD_Signed_Request::claim_signature( $mc_sig ) && ! TZFD_Signed_Request::claim_signature( $mc_sig ) );
 $exp_sig = 'sha256=' . str_repeat( '1', 64 );
-$exp_opt = 'tzfd_sig_' . hash( 'sha256', $exp_sig );
+$exp_opt = TZFD_Signed_Request::claim_key( $exp_sig );
 $GLOBALS['tz_options'][ $exp_opt ] = (string) ( time() - 700 ); // record older than REPLAY_TTL
 tz_check( 'signed request: expired replay record can be reclaimed once', TZFD_Signed_Request::claim_signature( $exp_sig ) );
 tz_check( 'signed request: reclaimed record blocks an immediate second claim', ! TZFD_Signed_Request::claim_signature( $exp_sig ) );

@@ -85,7 +85,7 @@ require_once ABSPATH . 'wp-includes/option.php';
 $sig_a = 'sha256=' . bin2hex( random_bytes( 32 ) );
 sr_check( 'claim: first use of a fresh signature wins', TZFD_Signed_Request::claim_signature( $sig_a ) );
 sr_check( 'claim: second use of the same signature is refused', false === TZFD_Signed_Request::claim_signature( $sig_a ) );
-$opt_a = 'tzfd_sig_' . hash( 'sha256', $sig_a );
+$opt_a = TZFD_Signed_Request::claim_key( $sig_a );
 update_option( $opt_a, (string) ( time() - 700 ), false );
 sr_check( 'claim: expired record is reclaimed once', TZFD_Signed_Request::claim_signature( $sig_a ) );
 sr_check( 'claim: reclaimed record refuses an immediate repeat', false === TZFD_Signed_Request::claim_signature( $sig_a ) );

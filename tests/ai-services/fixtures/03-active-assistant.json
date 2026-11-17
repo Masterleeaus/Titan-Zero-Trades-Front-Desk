@@ -1,0 +1,1 @@
+{"name":"active assistant","now":1900000000,"site_company_id":1,"payload":{"schema_version":1,"company_id":1,"state":"active","entitlements":["assistant"],"expires_at":1900003600},"expect":{"level":"assistant","reason":"active"}}

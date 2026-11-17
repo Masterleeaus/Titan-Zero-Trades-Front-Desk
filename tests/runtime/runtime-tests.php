@@ -250,6 +250,54 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
 } else {
     rt_check( 'telephony adapter and missed-call tasks are loaded', false, 'classes missing' );
 }
+// 9. Free AI foundation (#42): real scoped options, real transient cache, real manager check.
+$rt_fa_ok = class_exists( 'TZFD_FAQ_Search' ) && class_exists( 'TZFD_Answer_Cache' ) && class_exists( 'TZFD_Scoped_Storage' );
+rt_check( 'free AI foundation classes are loaded', $rt_fa_ok );
+if ( $rt_fa_ok ) {
+    $rt_fa_manager = static function () { return true; };
+    $rt_fa_visitor = static function () { return false; };
+    $rt_fa_other   = $company + 9000; // a second tenant that has no FAQ of its own
+    $rt_fa_st      = new TZFD_Scoped_Storage();
+    $rt_fa_search  = static function ( $c, $can ) use ( $rt_fa_st ) {
+        return new TZFD_FAQ_Search(
+            new TZFD_Knowledge_Store( $rt_fa_st, $c, $can ),
+            new TZFD_Business_Facts( $rt_fa_st, $c, $can ),
+            new TZFD_Answer_Cache(),
+            $rt_fa_st,
+            null,
+            array( 'can_manage' => $can, 'site' => TZFD_Answer_Cache::site_id() )
+        );
+    };
+    $rt_fa_store = new TZFD_Knowledge_Store( $rt_fa_st, $company, $rt_fa_manager );
+    $rt_fa_saved = $rt_fa_store->save_entry( array( 'question' => 'Do you charge a call out fee?', 'answer' => 'The call out fee is $80.', 'keywords' => array( 'call out', 'fee' ), 'status' => 'approved' ) );
+    rt_check( 'manager saves an approved FAQ entry', 'saved' === $rt_fa_saved['code'], 'code=' . $rt_fa_saved['code'] );
+
+    $rt_fa_visitor_store = new TZFD_Knowledge_Store( $rt_fa_st, $company, $rt_fa_visitor );
+    rt_check( 'visitor cannot save a FAQ entry', 'forbidden' === $rt_fa_visitor_store->save_entry( array( 'question' => 'x', 'answer' => 'y', 'status' => 'approved' ) )['code'] );
+
+    $rt_fa_q1 = $rt_fa_search( $company, $rt_fa_manager )->answer( 'how much is the call out fee' );
+    $rt_fa_q2 = $rt_fa_search( $company, $rt_fa_manager )->answer( 'how much is the call out fee' );
+    rt_check( 'first known request is answered by rules', 'answered' === $rt_fa_q1['status'] && 0 === $rt_fa_q1['model_calls'], 'status=' . $rt_fa_q1['status'] );
+    rt_check( 'repeat request is an exact cache hit with zero model calls', 'hit' === $rt_fa_q2['cache'] && 0 === $rt_fa_q2['model_calls'], 'cache=' . $rt_fa_q2['cache'] );
+
+    $rt_fa_other_answer = $rt_fa_search( $rt_fa_other, $rt_fa_manager )->answer( 'how much is the call out fee' );
+    rt_check( 'another tenant gets no answer and no cache hit from this tenant', 'answered' !== $rt_fa_other_answer['status'] && 'hit' !== $rt_fa_other_answer['cache'], 'status=' . $rt_fa_other_answer['status'] . ' cache=' . $rt_fa_other_answer['cache'] );
+
+    $rt_fa_fid = $rt_fa_saved['id'];
+    $rt_fa_store->save_entry( array( 'id' => $rt_fa_fid, 'question' => 'Do you charge a call out fee?', 'answer' => 'It is now $95.', 'keywords' => array( 'call out', 'fee' ), 'status' => 'approved' ), $rt_fa_store->version() );
+    $rt_fa_q3 = $rt_fa_search( $company, $rt_fa_manager )->answer( 'how much is the call out fee' );
+    rt_check( 'edited FAQ replaces the cached answer at once', 'miss' === $rt_fa_q3['cache'] && 'It is now $95.' === $rt_fa_q3['answer'], 'cache=' . $rt_fa_q3['cache'] );
+
+    $rt_fa_store->delete_entry( $rt_fa_fid );
+    $rt_fa_q4 = $rt_fa_search( $company, $rt_fa_manager )->answer( 'how much is the call out fee' );
+    rt_check( 'deleted FAQ is no longer answered', 'no_answer' === $rt_fa_q4['status'] && null === $rt_fa_q4['answer'], 'status=' . $rt_fa_q4['status'] );
+
+    // Clean up the test tenant data so the site is left as it was found.
+    TZFD_Scoped_Store::delete( TZFD_Knowledge_Store::KEY, $company );
+    TZFD_Scoped_Store::delete( TZFD_FAQ_Search::VECTOR_KEY, $company );
+    TZFD_Scoped_Store::delete( TZFD_FAQ_Search::BUDGET_KEY, $company );
+    TZFD_Scoped_Store::delete( TZFD_FAQ_Search::AUDIT_KEY, $company );
+}
 
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";
 exit( $GLOBALS['rt_fail'] > 0 ? 1 : 0 );

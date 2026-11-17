@@ -128,15 +128,25 @@ final class TZFD_FAQ_Search {
 
     /**
      * Builds the approved-entry vector index with the hosted provider. Manager only. Entries whose text has not
-     * changed since the last run are skipped. This is the only path that calls the provider for FAQ text.
+     * changed since the last run are skipped, and vectors for entries no longer approved are pruned. This is the
+     * only path that calls the provider for FAQ text.
      *
-     * @return array{ok:bool,code:string,embedded:int}
+     * @return array{ok:bool,code:string,embedded:int,pruned:int}
      */
     public function index_entries() {
-        if ( ! $this->allowed() ) { return array( 'ok' => false, 'code' => 'forbidden', 'embedded' => 0 ); }
+        if ( ! $this->allowed() ) { return array( 'ok' => false, 'code' => 'forbidden', 'embedded' => 0, 'pruned' => 0 ); }
         $index    = $this->read_index();
+        $approved = $this->faq->approved( 'en' );
         $embedded = 0;
-        foreach ( $this->faq->approved( 'en' ) as $id => $e ) {
+        $pruned   = 0;
+
+        // Vectors for deleted or withdrawn entries are removed, so the index never holds an answer that is no longer approved.
+        foreach ( array_diff( array_keys( $index ), array_keys( $approved ) ) as $stale ) {
+            unset( $index[ $stale ] );
+            $pruned++;
+        }
+
+        foreach ( $approved as $id => $e ) {
             $hash = self::entry_hash( $e );
             if ( isset( $index[ $id ]['hash'] ) && hash_equals( $index[ $id ]['hash'], $hash ) ) { continue; }
             try {
@@ -144,12 +154,16 @@ final class TZFD_FAQ_Search {
             } catch ( \Throwable $t ) {
                 $vec = null;
             }
-            if ( ! is_array( $vec ) || ! $vec ) { return array( 'ok' => false, 'code' => 'proxy_unavailable', 'embedded' => $embedded ); }
+            if ( ! is_array( $vec ) || ! $vec ) {
+                // Keep the vectors already built in this run so the next attempt only embeds what is still missing.
+                $this->storage->write( self::VECTOR_KEY, $this->faq->company(), $index );
+                return array( 'ok' => false, 'code' => 'proxy_unavailable', 'embedded' => $embedded, 'pruned' => $pruned );
+            }
             $index[ $id ] = array( 'hash' => $hash, 'vector' => array_map( 'floatval', $vec ) );
             $embedded++;
         }
         $this->storage->write( self::VECTOR_KEY, $this->faq->company(), $index );
-        return array( 'ok' => true, 'code' => 'indexed', 'embedded' => $embedded );
+        return array( 'ok' => true, 'code' => 'indexed', 'embedded' => $embedded, 'pruned' => $pruned );
     }
 
     /** Removes personal data from text before any hosted call: email addresses and phone-like numbers. */

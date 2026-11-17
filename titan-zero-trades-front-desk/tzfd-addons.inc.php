@@ -92,7 +92,7 @@ foreach ( TZFD_Addon_Loader::manifest() as $tz_file => $tz_entry ) {
 }
 $tz_front_desk_domains = TZFD_Addon_Loader::domain_ids();
 // Sort every add-on into one of the page's sections.
-// The free build lists only the add-ons it ships. Pro features are not shown here.
+// The plugin lists only the add-ons it ships.
 $tz_included = array();  // switches listed under "Included features"
 $tz_cards    = array();  // optional add-ons shown as cards
 foreach ( (array) $tz_addons_objs_list as $tz_id => $tz_obj )

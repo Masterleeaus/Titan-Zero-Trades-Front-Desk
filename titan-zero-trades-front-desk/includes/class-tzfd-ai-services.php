@@ -24,7 +24,7 @@ final class TZFD_AI_Services {
     const STATE_GRACE         = 'grace';
     const STATE_PAUSED_AGENTS = 'paused_agents';
 
-    /** Entitlement identifiers this build understands. Retired Pro identifiers are ignored. */
+    /** Entitlement identifiers this build understands. Any other identifier is ignored. */
     const KNOWN_ENTITLEMENTS = array( self::LEVEL_ASSISTANT, self::LEVEL_AGENT_TEAM );
 
     /** Remote services that a level may request. Used by remote_service_allowed(). */

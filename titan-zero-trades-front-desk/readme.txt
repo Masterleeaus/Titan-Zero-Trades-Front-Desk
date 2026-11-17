@@ -158,7 +158,7 @@ No. Uninstalling clears the plugin's scheduled tasks and keeps your bookings and
 
 
 
-No. Titan Zero Front Desk does not automatically import the bookings, customers or settings of those plugins. It uses its own tables and option names, so the old data stays where it is. There is no import tool in this version. Keep the old plugin until you have what you need from it, then deactivate and remove it. Enter any bookings you still need here by hand.
+No. Scheduling & Enquiries Manager does not automatically import the bookings, customers or settings of those plugins. It uses its own tables and option names, so the old data stays where it is. There is no import tool in this version. Keep the old plugin until you have what you need from it, then deactivate and remove it. Enter any bookings you still need here by hand.
 
 
 
@@ -210,7 +210,7 @@ Support: https://titanzero.io/support/
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
+Scheduling & Enquiries Manager connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 
@@ -274,7 +274,7 @@ Titan Zero Front Desk connects to the external services below only when the site
 
 
 
-Bookings, customer details and settings are stored in your WordPress database. Titan Zero Front Desk does not create an account, collect a licence key or report usage to the author.
+Bookings, customer details and settings are stored in your WordPress database. Scheduling & Enquiries Manager does not create an account, collect a licence key or report usage to the author.
 
 
 
@@ -293,7 +293,7 @@ The IP address of each booking request is stored by default. To stop this, turn 
 
 
 
-Titan Zero Front Desk incorporates GPLv2-derived code from Appointment Hour Booking 1.5.98 by CodePeople (https://wordpress.org/plugins/appointment-hour-booking/). It is not endorsed by CodePeople. Upstream authorship and release history are credited in the LICENSE.txt, UPSTREAM.txt and THIRD-PARTY-NOTICES.txt files included with the plugin.
+Scheduling & Enquiries Manager incorporates GPLv2-derived code from Appointment Hour Booking 1.5.98 by CodePeople (https://wordpress.org/plugins/appointment-hour-booking/). It is not endorsed by CodePeople. Upstream authorship and release history are credited in the LICENSE.txt, UPSTREAM.txt and THIRD-PARTY-NOTICES.txt files included with the plugin.
 
 
 

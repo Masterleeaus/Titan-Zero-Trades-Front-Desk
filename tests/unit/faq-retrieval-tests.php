@@ -165,17 +165,17 @@ check( 'no consent: embedding provider never called', 0 === $calls && 'clarify' 
 
 $R::set_embedding_consent( $A, true );
 $r = $R::answer( $A, 'when do you trade' );
-check( 'consent but no connector entitlement: provider never called', 0 === $calls && 'hosted_ai_not_entitled' === $r['reason'], "calls=$calls reason={$r['reason']}" );
+check( 'consent but no hosted connection: provider never called', 0 === $calls && 'hosted_ai_not_connected' === $r['reason'], "calls=$calls reason={$r['reason']}" );
 
 hosted_on();
 $r = $R::answer( $A, 'when do you trade' );
-check( 'consent + free_ai entitlement + low keyword score: embedding path answers', 'answer' === $r['status'] && 'embedding' === $r['path'] && 'hours' === $r['entry_id'], json_encode( $r ) );
+check( 'consent + hosted connection + low keyword score: embedding path answers', 'answer' === $r['status'] && 'embedding' === $r['path'] && 'hours' === $r['entry_id'], json_encode( $r ) );
 check( 'embedding call counted for this month', 1 === $R::embedding_calls_this_month( $A ) );
 
 /* Redaction: the email and phone are replaced before the provider call; the call still happens. */
 $calls = 0;
 $r = $R::answer( $A, 'Email me at jane@example.com about the hours' );
-check( 'email in query is redacted and the call still goes out (consent + entitlement pass)', 1 === $calls && 'embedding' === $r['path'], "calls=$calls " . json_encode( $r ) );
+check( 'email in query is redacted and the call still goes out (consent + connection pass)', 1 === $calls && 'embedding' === $r['path'], "calls=$calls " . json_encode( $r ) );
 $r = $R::answer( $A, 'call me on 0412 345 678 when you trade' );
 check( 'phone-like digits in query are redacted and the call still goes out', 2 === $calls && 'embedding' === $r['path'], "calls=$calls " . json_encode( $r ) );
 check( 'redaction result for a mixed query matches the placeholder format', 'Email [email] or call [number]' === $R::redact_private_detail( 'Email a.b+tag@mail.example.org or call +61 412 345 678' ), $R::redact_private_detail( 'Email a.b+tag@mail.example.org or call +61 412 345 678' ) );
@@ -222,16 +222,16 @@ check( 'approved question holding an email and digits is redacted before it is s
 check( 'redact_private_detail: email becomes [email], 8-digit run becomes [number], 7-digit run stays', '[email] [number]' === $R::redact_private_detail( 'x@y.com 12345678' ) && '1234567' === $R::redact_private_detail( '1234567' ) );
 check( 'contains_private_detail is true only when redaction changes the text', $R::contains_private_detail( 'a@b.co' ) && $R::contains_private_detail( '12345678' ) && ! $R::contains_private_detail( 'opening hours 9 to 5' ) );
 
-/* No entitlement: consent alone never sends, even with adversarial input. */
+/* No faq.read scope: consent alone never sends, even with adversarial input. */
 reset_all();
 $R::save_entries( $A, $faq );
 $R::set_embedding_consent( $A, true );
 TZFD_AI_Connector::configure( 'https://proxy.example.invalid/faq', 'site-a', str_repeat( 's', 48 ) );
-TZFD_AI_Connector::grant_consent( array( 'faq.read' ) ); // Connected, consented, but no free_ai tier.
+TZFD_AI_Connector::grant_consent( array() ); // Connected and consented, but faq.read was not granted.
 $GLOBALS['sent'] = array();
 spy_provider( function ( $q, $questions ) { return array( 'query' => array( 1, 0 ), 'entries' => array_map( function () { return array( 1, 0 ); }, $questions ) ); } );
 foreach ( array( 'when do you trade', 'mail a@b.co 12345678' ) as $text ) { $R::answer( $A, $text ); }
-check( 'no free_ai entitlement: nothing is sent to the provider', 0 === count( $GLOBALS['sent'] ), json_encode( $GLOBALS['sent'] ) );
+check( 'no faq.read scope: nothing is sent to the provider', 0 === count( $GLOBALS['sent'] ), json_encode( $GLOBALS['sent'] ) );
 
 /* Monthly cap */
 reset_all();

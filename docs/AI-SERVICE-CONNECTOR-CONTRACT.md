@@ -11,9 +11,9 @@ $result = TZFD_AI_Connector::request( 'faq.answer', array( 'question' => '...' )
 if ( $result['ok'] ) { /* use $result['data'] */ } else { /* use local rules; $result['status'] says why */ }
 ```
 
-Result keys: `ok`, `status`, `use_local` (always true unless ok), `contract`, `data`; plus `missing_scopes` (scope_not_granted) or `tier` (tier_not_entitled).
+Result keys: `ok`, `status`, `use_local` (always true unless ok), `contract`, `data`; plus `missing_scopes` (scope_not_granted). No paid tier gates a feature; only consent, scopes and budget do.
 
-Statuses: `ok`, `feature_not_allowed`, `invalid_request`, `consent_required`, `not_configured`, `tier_not_entitled`, `scope_not_granted`, `allowance_exhausted`, `busy`, `offline`, `service_error`, `invalid_response`, `contract_unsupported`.
+Statuses: `ok`, `feature_not_allowed`, `invalid_request`, `consent_required`, `not_configured`, `scope_not_granted`, `allowance_exhausted`, `busy`, `offline`, `service_error`, `invalid_response`, `contract_unsupported`.
 
 Other methods: `status()` (never returns the secret), `usage( $period )`, `configure( $endpoint, $site_id, $secret )`, `grant_consent( array $scopes )`, `revoke_consent()`, `set_entitlements( array $tiers )`, `disconnect()`, `features()`, `budget_limits()`, `disclosure()`, `events()`, `clear_events()`, `retention_days()`, `set_retention_days( int $days )`.
 
@@ -27,14 +27,14 @@ Other methods: `status()` (never returns the secret), `usage( $period )`, `confi
 
 ## Feature registry
 
-| Feature | Tier | Scopes required | Monthly budget (pilot) |
-|---|---|---|---|
-| `faq.answer` | free_ai | faq.read | model_fallback 200 |
-| `faq.embed_query` | free_ai | faq.read | embedding 800 |
-| `faq.suggest_batch` | free_ai | faq.read | faq_batch 16 |
-| `insight.monthly` | free_ai | reports.read | insight 4 |
-| `assistant.turn` | assistant | faq.read, customer.read | none (server meters) |
-| `agent.run` | agent_team | booking.read, booking.write, customer.read | none (server meters) |
+| Feature | Scopes required | Monthly budget (pilot) |
+|---|---|---|
+| `faq.answer` | faq.read | model_fallback 200 |
+| `faq.embed_query` | faq.read | embedding 800 |
+| `faq.suggest_batch` | faq.read | faq_batch 16 |
+| `insight.monthly` | reports.read | insight 4 |
+| `assistant.turn` | faq.read, customer.read | none (server meters) |
+| `agent.run` | booking.read, booking.write, customer.read | none (server meters) |
 
 Budgets are the standing per-site monthly contract figures (200 / 800 / 16 / 4). The hosted service stays authoritative. The local check only prevents needless calls.
 

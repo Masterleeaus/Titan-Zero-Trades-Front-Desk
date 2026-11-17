@@ -1078,7 +1078,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         ) );
         wp_add_inline_script( 'tz_fd_hour_classic_editor', 'document.addEventListener("click",function(e){var a=e.target.closest?e.target.closest("a.tzfdhbinsertb"):null;if(a){e.preventDefault();if(typeof tz_fd_appointments_fpanel!=="undefined"){tz_fd_appointments_fpanel.open();}}});' );
 
-        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Titan Zero Trades: Front Desk booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
+        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
     }
 
     function getThisUserForms() {
@@ -1123,7 +1123,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         }
         wp_die( esc_html( sprintf(
             /* translators: %s: file name inside the plugin folder. */
-            __( 'Titan Zero Front Desk is incomplete: the file %s is missing. Reinstall the plugin.', 'titan-zero-trades-front-desk' ),
+            __( 'Scheduling & Enquiries Manager is incomplete: the file %s is missing. Reinstall the plugin.', 'titan-zero-trades-front-desk' ),
             $relative_path
         ) ) );
     }
@@ -3989,7 +3989,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
             }
             if ( ! $private_dir_ok ) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                error_log( 'Titan Front Desk: scheduled CSV reports skipped; no private temporary directory.' );
+                error_log( 'Scheduling & Enquiries Manager: scheduled CSV reports skipped; no private temporary directory.' );
                 return;
             }
 
@@ -4013,7 +4013,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
                     ) ) : array();
                     if ( ! is_array( $forms ) || ! empty( $wpdb->last_error ) ) {
                         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                        error_log( 'Titan Front Desk: global scheduled report skipped after database read failure.' );
+                        error_log( 'Scheduling & Enquiries Manager: global scheduled report skipped after database read failure.' );
                         return;
                     }
                     // " WHERE rep_emails<>'' AND rep_enable='yes'"
@@ -4075,7 +4075,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
             ) );
             if ( ! is_array( $forms ) || ! empty( $wpdb->last_error ) ) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                error_log( 'Titan Front Desk: per-form scheduled reports skipped after database read failure.' );
+                error_log( 'Scheduling & Enquiries Manager: per-form scheduled reports skipped after database read failure.' );
                 return;
             }
             foreach ($forms as $tz_form)  // for each form with the reports enabled

@@ -19,11 +19,8 @@ if ( ! function_exists( 'current_time' ) ) { function current_time( $type ) { re
 if ( ! function_exists( 'wp_date' ) ) { function wp_date( $format, $ts ) { return gmdate( $format, $ts ); } }
 if ( ! function_exists( 'add_submenu_page' ) ) { function add_submenu_page( ...$args ) { return true; } }
 if ( ! function_exists( 'wp_die' ) ) { function wp_die( $msg = '', $title = '', $args = array() ) { throw new RuntimeException( 'wp_die' ); } }
-if ( ! class_exists( 'TZFD_Scoped_Store' ) ) {
-	class TZFD_Scoped_Store {
-		public static $company = 7;
-		public static function company_id() { return self::$company; }
-	}
+if ( ! class_exists( 'TZFD_Local_Business', false ) ) {
+	class TZFD_Local_Business { public static $id = 7; public static function id() { return self::$id; } public static function default_id() { return 7; } }
 }
 
 $GLOBALS['tzfd_fail'] = 0;
@@ -37,9 +34,13 @@ function mp_ok( $name, $cond ) {
 class MpFakeDb {
 	public $prefix = 'wp_';
 	public $rows   = array();
+	public $calls  = array();
 	public $args   = null;
 	public function prepare( $sql, ...$args ) { $this->args = $args; return $sql; }
-	public function get_results( $sql, $output = null ) { return $this->rows; }
+	public function get_results( $sql, $output = null ) {
+		// The first prepared argument is the table: call outcomes come from tz_calls, enquiries from tz_enquiries.
+		return ( isset( $this->args[0] ) && 'wp_tz_calls' === $this->args[0] ) ? $this->calls : $this->rows;
+	}
 }
 
 $M = 'TZFD_Ai_Monthly_Insights';
@@ -56,6 +57,11 @@ $db->rows = array(
 	array( 'status' => 'closed', 'source' => 'phone', 'n' => 12 ),
 	array( 'status' => '<script>x</script>', 'source' => 'web', 'n' => 8 ),
 );
+$db->calls = array(
+	array( 'state' => 'missed', 'n' => 12 ),
+	array( 'state' => 'answered', 'n' => 20 ),
+	array( 'state' => 'abandoned', 'n' => 3 ),
+);
 $GLOBALS['wpdb']        = $db;
 $GLOBALS['tzfd_test_caps'] = true;
 ob_start();
@@ -63,18 +69,24 @@ $M::render_page();
 $html = ob_get_clean();
 mp_ok( 'page shows the status section', false !== strpos( $html, 'Enquiries by status' ) );
 mp_ok( 'page shows the denominator in the text', false !== strpos( $html, 'of 50' ) );
+mp_ok( 'page shows call outcomes with the call total as denominator', false !== strpos( $html, 'Call outcomes' ) && false !== strpos( $html, 'missed: 12 of 35' ) );
+mp_ok( 'call outcome cells below the minimum are omitted', false === strpos( $html, 'abandoned' ) );
+$calls_only = $M::aggregate_calls( $db, 7, '2026-10' );
+mp_ok( 'call aggregate totals every state, including omitted ones', 35 === $calls_only['base'] && 3 === $calls_only['by_state']['abandoned'] );
+mp_ok( 'call aggregate is company and window scoped', 7 === $db->args[1] && '2026-10-01 00:00:00' === $db->args[2] );
+mp_ok( 'no call outcomes when there are no calls', array() === $M::call_outcome_section( null ) && array() === $M::call_outcome_section( array( 'base' => 0, 'by_state' => array() ) ) );
 mp_ok( 'stored labels are escaped, not run as markup', false === strpos( $html, '<script>' ) && false !== strpos( $html, '&lt;script&gt;' ) );
 mp_ok( 'page is scoped to the current company', 7 === $db->args[1] );
 mp_ok( 'page reads only the month window', '2026-10-01 00:00:00' === $db->args[2] && '2026-11-01 00:00:00' === $db->args[3] );
 mp_ok( 'page output has no contact fields', false === stripos( $html, '@' ) );
 
 // Company without a valid scope: the page says so and shows no counts.
-TZFD_Scoped_Store::$company = 0;
+TZFD_Local_Business::$id = 0;
 ob_start();
 $M::render_page();
 $none = ob_get_clean();
 mp_ok( 'no company shows an error and no table', false !== strpos( $none, 'could not be built' ) && false === strpos( $none, '<table' ) );
-TZFD_Scoped_Store::$company = 7;
+TZFD_Local_Business::$id = 7;
 
 // Capability gate: a user without tz_fd_access is refused before any query runs.
 $GLOBALS['tzfd_test_caps'] = false;

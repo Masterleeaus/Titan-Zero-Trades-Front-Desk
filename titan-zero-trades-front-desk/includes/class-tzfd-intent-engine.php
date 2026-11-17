@@ -106,7 +106,7 @@ final class TZFD_Intent_Engine {
         'me', 'we', 'our', 'us', 'to', 'for', 'of', 'in', 'on', 'at', 'it', 'its', 'be', 'can', 'could', 'would',
         'will', 'what', 'how', 'there', 'this', 'that', 'please', 'any', 'with', 'and', 'or', 'if', 'so', 'some',
         'have', 'has', 'get', 'want', 'like', 'know', 'tell', 'by', 'from', 'about', 'they', 'them', 'their',
-        'redacted',
+        'redacted', 'email', 'number',
     );
 
     /**

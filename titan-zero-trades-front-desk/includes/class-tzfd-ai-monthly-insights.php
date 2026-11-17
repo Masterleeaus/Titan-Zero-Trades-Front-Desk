@@ -6,8 +6,8 @@ require_once __DIR__ . '/class-tzfd-ai-free-core.php';
  * Monthly improvement report (issue #41).
  *
  * - Local deterministic report first. It needs no consent, connector or key.
- * - Aggregates only: counts grouped by status and source from tz_enquiries, plus counts the caller supplies.
- *   The SQL selects no name, email, phone or message column.
+ * - Aggregates only: counts grouped by status and source from tz_enquiries, and call outcomes from tz_calls.
+ *   The SQL selects no name, email, phone or message column. Labels are scrubbed of contact details.
  * - Every row carries its denominator. Rows below MIN_CELL are omitted. The whole report is suppressed below MIN_BASE.
  * - The optional hosted summary is one batch per company per month. It gets the report rows only, and it is
  *   rejected if it states a figure the report does not contain.
@@ -58,6 +58,46 @@ final class TZFD_Ai_Monthly_Insights {
 		return array( 'base' => $base, 'by_status' => $by_status, 'by_source' => $by_source );
 	}
 
+	/** Call states the report groups by. Anything else is grouped as 'other'. */
+	const CALL_STATES = array( 'ringing', 'answered', 'missed', 'abandoned', 'completed', 'failed' );
+
+	/**
+	 * Call outcome counts for one company and month from tz_calls. The table holds hashes and states only,
+	 * so the SQL selects no caller identifier. Returns array( 'base' => int, 'by_state' => array ) or null.
+	 */
+	public static function aggregate_calls( $db, $company_id, $month ) {
+		$win = self::month_window( $month );
+		$cid = (int) $company_id;
+		if ( null === $win || $cid < 1 ) { return null; }
+		$table = $db->prefix . 'tz_calls';
+		$rows = $db->get_results( $db->prepare(
+			'SELECT state, COUNT(*) AS n FROM %i WHERE company_id = %d AND created_at >= %s AND created_at < %s GROUP BY state',
+			$table, $cid, $win['start'], $win['end']
+		), ARRAY_A );
+		$base = 0; $by_state = array();
+		foreach ( (array) $rows as $r ) {
+			$n = (int) $r['n'];
+			$base += $n;
+			$st = in_array( (string) $r['state'], self::CALL_STATES, true ) ? (string) $r['state'] : 'other';
+			$by_state[ $st ] = ( $by_state[ $st ] ?? 0 ) + $n;
+		}
+		ksort( $by_state );
+		return array( 'base' => $base, 'by_state' => $by_state );
+	}
+
+	/**
+	 * Extra report section for call outcomes (missed calls are the callback pattern). Empty when there are no calls.
+	 * Rows are built from the call counts, so each carries the call total as its denominator.
+	 */
+	public static function call_outcome_section( $calls ) {
+		if ( null === $calls || (int) $calls['base'] < 1 ) { return array(); }
+		$rows = array();
+		foreach ( $calls['by_state'] as $state => $n ) {
+			$rows[] = array( 'label' => $state, 'count' => (int) $n, 'base' => (int) $calls['base'] );
+		}
+		return array( 'section' => 'Call outcomes', 'rows' => $rows );
+	}
+
 	/**
 	 * Local report. $agg from aggregate(). $extra is an array of sections, each
 	 * array( 'section' => label, 'rows' => array( array( 'label', 'count', 'base' ) ) ), for example
@@ -90,9 +130,9 @@ final class TZFD_Ai_Monthly_Insights {
 				$cnt = (int) ( $r['count'] ?? 0 );
 				$den = (int) ( $r['base'] ?? 0 );
 				if ( $cnt < self::MIN_CELL || $den < self::MIN_BASE ) { $report['omitted']++; continue; }
-				$rows[] = array( 'label' => TZFD_Ai_Free_Core::plain_text( $r['label'] ?? '', 120 ), 'count' => $cnt, 'base' => $den, 'share' => round( $cnt / $den, 4 ) );
+				$rows[] = array( 'label' => TZFD_Ai_Free_Core::scrub( TZFD_Ai_Free_Core::plain_text( $r['label'] ?? '', 120 ) ), 'count' => $cnt, 'base' => $den, 'share' => round( $cnt / $den, 4 ) );
 			}
-			$sections[] = array( 'section' => TZFD_Ai_Free_Core::plain_text( $sec['section'], 80 ), 'rows' => $rows );
+			$sections[] = array( 'section' => TZFD_Ai_Free_Core::scrub( TZFD_Ai_Free_Core::plain_text( $sec['section'], 80 ) ), 'rows' => $rows );
 		}
 		foreach ( $sections as $sec ) {
 			$lines = array();
@@ -211,6 +251,8 @@ final class TZFD_Ai_Monthly_Insights {
 		$month     = self::page_month( $requested );
 		$company   = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
 		$agg       = self::aggregate( $wpdb, $company, $month );
+		$calls     = null === $agg ? null : self::aggregate_calls( $wpdb, $company, $month );
+		$extra     = array_filter( array( self::call_outcome_section( $calls ) ) );
 
 		echo '<div class="wrap tzfd-monthly-insights">';
 		echo '<h1>' . esc_html__( 'Monthly insights', 'titan-zero-trades-front-desk' ) . '</h1>';
@@ -219,7 +261,7 @@ final class TZFD_Ai_Monthly_Insights {
 			echo '<div class="notice notice-error"><p>' . esc_html__( 'The report could not be built for this month.', 'titan-zero-trades-front-desk' ) . '</p></div></div>';
 			return;
 		}
-		$report = self::local_report( $month, $agg, array() );
+		$report = self::local_report( $month, $agg, $extra );
 		foreach ( $report['text'] as $line ) {
 			echo '<p>' . esc_html( $line ) . '</p>';
 		}

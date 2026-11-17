@@ -82,6 +82,7 @@ final class TZFD_AI_Connector {
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
 
         $cfg = self::config();
+        if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
         if ( ! $cfg['consent'] ) { return self::result( 'consent_required' ); }
         if ( ! in_array( $def['tier'], $cfg['entitlements'], true ) ) {
             return self::result( 'tier_not_entitled', array(), array( 'tier' => $def['tier'] ) );
@@ -151,6 +152,7 @@ final class TZFD_AI_Connector {
         $has = '' !== self::secret();
         return array(
             'contract'     => self::CONTRACT,
+            'enabled'      => $cfg['enabled'],
             'connected'    => self::configured( $cfg, self::secret() ) && $cfg['consent'],
             'consent'      => $cfg['consent'],
             'scopes'       => $cfg['scopes'],
@@ -235,6 +237,32 @@ final class TZFD_AI_Connector {
     }
 
     /**
+     * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
+     * OWNER REVIEW REQUIRED: the wording and the terms link are placeholders until the owner approves them.
+     * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
+     */
+    public static function setup_notice() {
+        $d    = self::disclosure();
+        $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
+            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
+            . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
+        $url  = 'https://example.invalid/OWNER-REVIEW-AI-TERMS';
+        if ( function_exists( 'apply_filters' ) ) {
+            $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
+            $url  = apply_filters( 'tzfd_ai_terms_url', $url );
+        }
+        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => true );
+    }
+
+    /** Turns AI on or off for the free plugin. AI is on until an administrator turns it off. */
+    public static function set_enabled( $on ) {
+        $opt = self::raw_option();
+        $opt['enabled'] = (bool) $on;
+        update_option( self::OPTION, $opt, false );
+        return true;
+    }
+
+    /**
      * Pairs the site with the hosted service. Endpoint must be https. Returns false on invalid input.
      */
     public static function configure( $endpoint, $site_id, $secret ) {
@@ -312,6 +340,7 @@ final class TZFD_AI_Connector {
     private static function config() {
         $opt = self::raw_option();
         return array(
+            'enabled'      => ! isset( $opt['enabled'] ) || false !== $opt['enabled'],
             'consent'      => isset( $opt['consent'] ) && true === $opt['consent'],
             'scopes'       => self::clean_scopes( isset( $opt['scopes'] ) && is_array( $opt['scopes'] ) ? $opt['scopes'] : array() ),
             'endpoint'     => isset( $opt['endpoint'] ) && is_string( $opt['endpoint'] ) ? $opt['endpoint'] : '',

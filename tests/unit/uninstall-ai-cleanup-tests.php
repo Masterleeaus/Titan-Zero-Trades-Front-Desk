@@ -21,7 +21,7 @@ $GLOBALS['tz_opts'] = array(
     'tzfd_ai_services_entitlement' => array( 'tier' => 'free_ai' ),
     'tz_fd_business_profile'       => 'profile',
     'blogname'                     => 'Site',
-    'tzfd_unrelated_option'        => 'keep',
+    'acme_unrelated_option'        => 'keep',
     '_transient_tzfd_ai_ans_abc'   => 'cached answer',
     '_transient_timeout_tzfd_ai_ans_abc' => 999,
     '_transient_other_plugin_x'    => 1,
@@ -59,6 +59,7 @@ function tz_like_to_regex( $p ) {
 class TZFD_Uninstall_Test_WPDB {
     public $prefix  = 'wp_';
     public $options = 'wp_options';
+    public $usermeta = 'wp_usermeta';
     public function esc_like( $s ) { return addcslashes( $s, '_%\\' ); }
     public function prepare( $sql, ...$args ) {
         $i = 0;
@@ -102,7 +103,7 @@ if ( 'erase' === $tz_mode ) {
     tz_check( 'opt-in: AI services entitlement is erased', ! isset( $opts['tzfd_ai_services_entitlement'] ) );
     tz_check( 'opt-in: plugin settings are erased', ! isset( $opts['tz_fd_business_profile'] ) );
 } else {
-    tz_check( 'without opt-in: AI connector settings are kept', isset( $opts['tzfd_ai_connector'] ) );
+    tz_check( 'without opt-in: AI connector settings are removed (link state, always)', ! isset( $opts['tzfd_ai_connector'] ) );
     tz_check( 'without opt-in: AI usage counts are kept', isset( $opts['tzfd_ai_usage_2026-11'] ) );
     tz_check( 'without opt-in: AI event log is kept', isset( $opts['tzfd_ai_events'] ) );
     tz_check( 'without opt-in: plugin settings are kept', isset( $opts['tz_fd_business_profile'] ) );
@@ -111,7 +112,7 @@ if ( 'erase' === $tz_mode ) {
 tz_check( 'always: hosted AI secret is removed', ! isset( $opts['tzfd_ai_connector_secret'] ) );
 tz_check( 'always: AI answer-box transient is removed', ! isset( $opts['_transient_tzfd_ai_ans_abc'] ) && ! isset( $opts['_transient_timeout_tzfd_ai_ans_abc'] ) );
 tz_check( 'always: other plugins transients are kept', isset( $opts['_transient_other_plugin_x'] ) );
-tz_check( 'always: WordPress core and unrelated options are kept', 'Site' === ( $opts['blogname'] ?? null ) && 'keep' === ( $opts['tzfd_unrelated_option'] ?? null ) );
+tz_check( 'always: WordPress core and unrelated options are kept', 'Site' === ( $opts['blogname'] ?? null ) && 'keep' === ( $opts['acme_unrelated_option'] ?? null ) );
 
 if ( 'erase' === $tz_mode ) {
     echo "\nChild summary: $tz_pass passed, $tz_fail failed\n";

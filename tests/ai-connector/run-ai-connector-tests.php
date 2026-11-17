@@ -266,6 +266,19 @@ check( 'disclosure names provider, data classes and quota', isset( $d['provider'
 check( 'disclosure leaves retention to the owner (null)', array_key_exists( 'retention', $d ) && null === $d['retention'] && in_array( 'retention', $d['owner_decisions'], true ) );
 check( 'disclosure never includes the secret', false === strpos( json_encode( $d ), SECRET ) );
 
+// 16b. AI is on by default; a setup notice names the data and the terms link (placeholder, owner review).
+reset_state();
+check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
+$n = TZFD_AI_Connector::setup_notice();
+check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
+$GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
+check( 'terms link comes from the tzfd_ai_terms_url filter', 'https://owner.example.test/terms' === TZFD_AI_Connector::setup_notice()['terms_url'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_terms_url'] );
+TZFD_AI_Connector::set_enabled( false );
+check( 'turning AI off makes requests return ai_disabled without transport', 'ai_disabled' === $C::request( 'faq.answer' )['status'] && 0 === count( $GLOBALS['tz_calls'] ) );
+TZFD_AI_Connector::set_enabled( true );
+
 // 17. Cost report: counters are summed, cache ratio is hits over successes, money only with a full price table.
 reset_state();
 $GLOBALS['tz_opts'][ TZFD_AI_Connector::USAGE_PREFIX . gmdate( 'Y-m' ) ] = array(

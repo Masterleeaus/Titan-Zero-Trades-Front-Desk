@@ -152,6 +152,34 @@ final class TZFD_Ai_Setup_Check {
 		return array( 'ok' => true, 'missing' => array() );
 	}
 
+	/**
+	 * Read-only review for the setup screen: what is missing, the gate result and the suggestions.
+	 * Nothing here is written. Each suggestion still needs administrator confirmation through confirm().
+	 */
+	public static function review( array $state ) {
+		return array(
+			'missing'     => self::missing( $state ),
+			'gate'        => self::ai_gate( $state ),
+			'suggestions' => self::suggestions( $state ),
+		);
+	}
+
+	/** Plain-text line for one suggestion, for the review list. Shows only text that the suggestion already holds. */
+	public static function describe( array $suggestion ) {
+		$type  = $suggestion['type'] ?? '';
+		$value = $suggestion['value'] ?? '';
+		if ( 'faq' === $type && is_array( $value ) ) {
+			return 'FAQ: ' . (string) ( $value['question'] ?? '' );
+		}
+		if ( 'tags' === $type && is_array( $value ) ) {
+			return 'Tags: ' . implode( ', ', array_map( 'strval', $value ) );
+		}
+		if ( 'greeting' === $type ) {
+			return 'Greeting: ' . (string) $value;
+		}
+		return '';
+	}
+
 	private static function item( $key, $label, $required, $hint ) {
 		return array( 'key' => $key, 'label' => $label, 'required' => (bool) $required, 'hint' => $hint );
 	}

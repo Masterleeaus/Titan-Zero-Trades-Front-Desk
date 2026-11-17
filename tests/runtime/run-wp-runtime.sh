@@ -86,6 +86,18 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --
 
 echo "--- authorisation and tenant checks (security-runtime-tests.php, issue #8)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/security-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- agent gateway (agent-gateway-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/agent-gateway-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+echo "--- legacy AI data (legacy-ai-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/legacy-ai-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+
+echo "--- booking report (booking-report-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-report-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+echo "--- staff access (staff-access-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/staff-access-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+
+echo "--- get started (setup-page-runtime-tests.php)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
 # Destructive: last, in its own process.
 echo "--- opt-in uninstall (uninstall-wipe-check.php)"

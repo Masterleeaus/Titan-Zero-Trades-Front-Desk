@@ -126,7 +126,7 @@ final class TZFD_Booking_Reports {
 	/** Builds CSV from an allowlisted set of columns. Cells that a spreadsheet would run as formulas are neutralised. */
 	public static function csv( $columns, $rows ) {
 		if ( ! is_array( $columns ) || empty( $columns ) || ! is_array( $rows ) ) { throw new InvalidArgumentException( 'invalid_csv_inputs' ); }
-		$allowed = array( 'source', 'enquiries', 'booked', 'revenue_minor', 'location_id', 'booked_minutes', 'capacity_minutes', 'rate' );
+		$allowed = array( 'source', 'enquiries', 'booked', 'revenue_minor', 'location_id', 'booked_minutes', 'capacity_minutes', 'rate', 'date', 'appointments', 'cancelled', 'active' );
 		foreach ( $columns as $column ) {
 			if ( ! in_array( $column, $allowed, true ) ) { throw new InvalidArgumentException( 'unknown_export_column' ); }
 		}

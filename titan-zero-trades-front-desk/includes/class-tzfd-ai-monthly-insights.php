@@ -172,6 +172,69 @@ final class TZFD_Ai_Monthly_Insights {
 		return array( 'summary' => $text, 'status' => 'ok' );
 	}
 
+	/**
+	 * Month shown on the page: the requested YYYY-MM when it is valid, otherwise the last complete month in site time.
+	 */
+	public static function page_month( $requested ) {
+		if ( is_string( $requested ) && null !== self::month_window( $requested ) ) {
+			return $requested;
+		}
+		return wp_date( 'Y-m', strtotime( 'first day of last month', current_time( 'timestamp' ) ) );
+	}
+
+	/** Registers the read-only local report page. The page never calls the hosted service. */
+	public static function register() {
+		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 13 );
+	}
+
+	public static function add_page() {
+		add_submenu_page(
+			'tzfd',
+			__( 'Monthly insights', 'titan-zero-trades-front-desk' ),
+			__( 'Monthly insights', 'titan-zero-trades-front-desk' ),
+			'tz_fd_access',
+			'tzfd-monthly-insights',
+			array( __CLASS__, 'render_page' )
+		);
+	}
+
+	/**
+	 * Local monthly report for the current company. Counts only, with denominators; small cells are hidden.
+	 * Reads ?month=YYYY-MM when valid. Makes no hosted call, so a page view never uses the generation budget.
+	 */
+	public static function render_page() {
+		if ( ! current_user_can( 'tz_fd_access' ) ) {
+			wp_die( esc_html__( 'You are not allowed to view this page.', 'titan-zero-trades-front-desk' ), 403 );
+		}
+		global $wpdb;
+		$requested = isset( $_GET['month'] ) ? sanitize_text_field( wp_unslash( $_GET['month'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only month filter.
+		$month     = self::page_month( $requested );
+		$company   = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+		$agg       = self::aggregate( $wpdb, $company, $month );
+
+		echo '<div class="wrap tzfd-monthly-insights">';
+		echo '<h1>' . esc_html__( 'Monthly insights', 'titan-zero-trades-front-desk' ) . '</h1>';
+		echo '<p class="description">' . esc_html__( 'Counts from your own enquiries, worked out on this site. This page sends nothing to a hosted service.', 'titan-zero-trades-front-desk' ) . '</p>';
+		if ( null === $agg ) {
+			echo '<div class="notice notice-error"><p>' . esc_html__( 'The report could not be built for this month.', 'titan-zero-trades-front-desk' ) . '</p></div></div>';
+			return;
+		}
+		$report = self::local_report( $month, $agg, array() );
+		foreach ( $report['text'] as $line ) {
+			echo '<p>' . esc_html( $line ) . '</p>';
+		}
+		foreach ( $report['sections'] as $sec ) {
+			if ( empty( $sec['rows'] ) ) { continue; }
+			echo '<h2>' . esc_html( $sec['section'] ) . '</h2>';
+			echo '<table class="widefat striped" style="max-width:52em"><thead><tr><th scope="col">' . esc_html__( 'Group', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Count', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Of', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Share', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+			foreach ( $sec['rows'] as $row ) {
+				echo '<tr><td>' . esc_html( (string) $row['label'] ) . '</td><td>' . esc_html( (string) $row['count'] ) . '</td><td>' . esc_html( (string) $row['base'] ) . '</td><td>' . esc_html( number_format( (float) $row['share'] * 100, 1, '.', '' ) ) . '%</td></tr>';
+			}
+			echo '</tbody></table>';
+		}
+		echo '</div>';
+	}
+
 	/** Rows with count, base and share for a count map. Small cells are dropped. */
 	private static function rows( array $counts, $base ) {
 		$out = array();

@@ -37,12 +37,16 @@ jobs:
         run: |
           set -e
           shopt -s nullglob
-          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php)
+          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/hosted-ai-legacy/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php)
           if [ ${#files[@]} -eq 0 ]; then echo "No standalone harnesses found"; exit 0; fi
           for f in "${files[@]}"; do
             echo "== $f"
             php -d error_reporting=-1 "$f"
           done
+      - name: AI connector offline and consent tests
+        run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
+      - name: Reproducible package and no development files (issue #3)
+        run: bash tests/release/reproducible-build-check.sh
 
   wordpress:
     name: WordPress runtime (latest WordPress, PHP 8.3, MariaDB 10.11)
@@ -87,6 +91,10 @@ jobs:
         run: |
           cp -r "$PLUGIN_SRC" "$WP_DIR/wp-content/plugins/titan-zero-trades-front-desk"
           php "$WP_CLI" --allow-root --path="$WP_DIR" plugin activate titan-zero-trades-front-desk
+      - name: Clean-install AI check (no AI call, no credential prompt)
+        run: |
+          cd "$WP_DIR"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/clean-install-ai-check.php"
       - name: Start web server
         run: |
           (nohup php -S localhost:$WP_PORT -t "$WP_DIR" > server.log 2>&1 &)

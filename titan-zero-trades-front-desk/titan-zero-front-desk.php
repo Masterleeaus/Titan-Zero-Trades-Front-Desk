@@ -78,6 +78,16 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-hosted-ai-connector.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-ai-data.php';
 TZFD_Legacy_AI_Data::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway-admin.php';
+TZFD_Agent_Gateway_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-report-admin.php';
+TZFD_Booking_Report_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access-admin.php';
+TZFD_Staff_Access_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-setup-page.php';
+TZFD_Setup_Page::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 // Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';

@@ -751,6 +751,60 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             echo '</fieldset>';
         }
 
+        /**
+         * Read-only AI setup check (issue #40). Lists what is missing before AI can be turned on, and the suggestions
+         * that a later confirmation step could apply. Setup never applies them here, and booking never needs AI.
+         */
+        private static function render_ai_setup_review( array $draft )
+        {
+            if ( ! class_exists( 'TZFD_Ai_Setup_Check' ) ) return;
+            $review = TZFD_Ai_Setup_Check::review( self::ai_setup_state( $draft ) );
+
+            echo '<h3>' . esc_html__( 'AI setup check', 'titan-zero-trades-front-desk' ) . '</h3>';
+            echo '<p class="description">' . esc_html__( 'AI stays off. Setup does not change anything listed below, and booking works without AI.', 'titan-zero-trades-front-desk' ) . '</p>';
+
+            if ( empty( $review['missing'] ) ) {
+                echo '<p>' . esc_html__( 'Nothing is missing for AI.', 'titan-zero-trades-front-desk' ) . '</p>';
+            } else {
+                echo '<p><strong>' . esc_html__( 'Missing configuration:', 'titan-zero-trades-front-desk' ) . '</strong></p><ul>';
+                foreach ( $review['missing'] as $item ) {
+                    $note = $item['required'] ? __( '(needed before AI can be turned on)', 'titan-zero-trades-front-desk' ) : __( '(optional)', 'titan-zero-trades-front-desk' );
+                    echo '<li>' . esc_html( $item['label'] . ' ' . $note . ': ' . $item['hint'] ) . '</li>';
+                }
+                echo '</ul>';
+            }
+
+            if ( ! empty( $review['suggestions'] ) ) {
+                echo '<p><strong>' . esc_html__( 'Suggestions for you to review:', 'titan-zero-trades-front-desk' ) . '</strong></p><ul>';
+                foreach ( $review['suggestions'] as $suggestion ) {
+                    echo '<li>' . esc_html( TZFD_Ai_Setup_Check::describe( $suggestion ) ) . '</li>';
+                }
+                echo '</ul>';
+            }
+        }
+
+        /** Setup values for the AI check, read from the draft and the saved business profile. */
+        private static function ai_setup_state( array $draft )
+        {
+            $profile = TZFD_Scoped_Store::get( 'tz_fd_business_profile', array() );
+            if ( ! is_array( $profile ) ) $profile = array();
+            $name = (string) ( $draft['details']['business_name'] ?? ( $profile['name'] ?? '' ) );
+            $services = array();
+            foreach ( (array) ( $draft['services'] ?? array() ) as $service ) {
+                if ( is_array( $service ) && isset( $service['name'] ) ) $services[] = (string) $service['name'];
+            }
+            $greeting = TZFD_Scoped_Store::get( 'tz_fd_ai_greeting', '' );
+            return array(
+                'business_name'       => $name,
+                'services'            => $services,
+                'greeting'            => is_string( $greeting ) ? $greeting : '',
+                'hours_configured'    => false, // This wizard does not collect opening hours, so hours stay a named gap.
+                'faq_questions'       => array(), // Saved FAQ questions are not read here yet, so an existing FAQ could be offered again.
+                'tags'                => array(),
+                'connector_available' => function_exists( 'has_filter' ) && has_filter( TZFD_Ai_Free_Core::HOSTED_FILTER ),
+            );
+        }
+
         /** Short text for the review page. */
         private static function booking_summary( array $d )
         {
@@ -975,6 +1029,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<p>' . esc_html__( 'Booking confirmation:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( TZFD_Intake_Mode::MODE_REQUEST === $tz_review_mode ? esc_html__( 'after you approve it', 'titan-zero-trades-front-desk' ) : esc_html__( 'straight away', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Booking page:', 'titan-zero-trades-front-desk' ) . ' <strong>' . esc_html( self::booking_summary( $draft['details'] ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Text back missed calls:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( ! empty( $draft['details']['missed_call_on'] ) ? esc_html__( 'on', 'titan-zero-trades-front-desk' ) : esc_html__( 'off', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
+                self::render_ai_setup_review( $draft );
                 echo wp_kses( $form_open . '<input type="hidden" name="tz_fd_setup_action" value="finish" />', self::form_allowed_html() );
                 echo '<p><button class="button button-primary">' . esc_html__( 'Finish setup', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             } else {

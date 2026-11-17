@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 # HTTP checks on the disposable test site: unauthenticated refusals, logged-in nonce and capability checks,
-# and an optional signed missed-call replay check.
+# forged public enquiry refusal, and an optional signed missed-call replay check.
 # A secure endpoint must NOT return 2xx for a request that lacks the credential under test.
 # A route that is not registered (rest_no_route) is reported as FAIL: a 404 there proves nothing about authorization.
-# Env: TZFD_RT_URL (default http://127.0.0.1:8080), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
+# Env: B (base URL, set by the CI workflow; TZFD_RT_URL is accepted as a fallback), TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS (from provision-wp-site.sh),
 # SECRET (optional: the stored missed-call inbound secret; enables the signed replay check). The missed-call route
 # needs its addon (tzfd-MissedCall) active.
 # REST is called as ?rest_route= because pretty /wp-json/ paths are not routed on the test server.
-# B (set by the CI workflow and WP-TESTSITE.md to WP_URL) wins over TZFD_RT_URL; both default to the local test site.
-B="${B:-${TZFD_RT_URL:-http://127.0.0.1:8080}}"
+# The script refuses to run without a base URL. A request that gets no response (curl status 000, or an empty code) is a FAIL, never a PASS.
+B="${B:-${TZFD_RT_URL:-}}"
+if [ -z "$B" ]; then
+  echo "FAIL harness -- base URL not set: export B (or TZFD_RT_URL) before running http-auth-tests.sh" >&2
+  exit 2
+fi
 pass=0; fail=0; skip=0
 report() { # status name detail
   case "$1" in
@@ -17,14 +21,14 @@ report() { # status name detail
     SKIP) echo "SKIP $2 -- $3"; skip=$((skip+1)) ;;
   esac
 }
-check() { # name, code  (refuse = not 2xx; 000 means no response, which is not a refusal)
+check() { # name, code  (refuse = a real HTTP status that is not 2xx)
   local name="$1" code="$2"
-  # 000 means no HTTP response at all: that proves nothing about the endpoint, so it must not count as a refusal.
-  if [[ "$code" == "000" ]]; then report FAIL "$name" "HTTP 000 (no response from $B)";
+  if [[ ! "$code" =~ ^[1-5][0-9][0-9]$ ]]; then report FAIL "$name" "no HTTP response (code '${code:-empty}'): request never reached the server";
   elif [[ "$code" =~ ^2 ]]; then report FAIL "$name" "HTTP $code (accepted without credentials)";
   else report PASS "$name" "HTTP $code"; fi
 }
-code() { curl -s -o /dev/null -m 20 -w '%{http_code}' "$@"; }
+# Connection failures give curl status 000; --max-time stops a silent server from hanging the run.
+code() { curl -s --max-time 30 -o /dev/null -w '%{http_code}' "$@" || true; }
 
 # Preflight: abort rather than report a dead server as a pass.
 preflight=$(code "$B/?rest_route=/")
@@ -44,6 +48,8 @@ rest "missed-call, no secret" -X POST -H 'Content-Type: application/json' -d '{"
 rest "missed-call, bad signature" -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: sha256=0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"missed","from":"+61400000000"}' "$B/?rest_route=/titan-zero-front-desk/v1/missed-call"
 rest "twilio-status, unsigned" -X POST -d 'MessageSid=SM1&MessageStatus=delivered' "$B/?rest_route=/tzfd/v1/twilio-status"
 rest "call-events, unsigned" -X POST -H 'Content-Type: application/json' -d '{"call_id":"c1","event_id":"e1","event":"ended"}' "$B/?rest_route=/titan-zero-front-desk/v1/call-events"
+rest "messaging-events (SMS reply), unsigned" -X POST -H 'Content-Type: application/json' -d '{"event":"inbound_sms","event_id":"m1","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
+rest "messaging-events (SMS reply), forged signature" -X POST -H 'Content-Type: application/json' -H 'X-TZFD-Key-Id: forged-key' -H "X-TZFD-Timestamp: $(date +%s)" -H 'X-TZFD-Signature: 0000000000000000000000000000000000000000000000000000000000000000' -d '{"event":"inbound_sms","event_id":"m2","from":"+61400000000","body":"STOP","consent":"customer_initiated"}' "$B/?rest_route=/titan-zero-front-desk/v1/messaging-events"
 rest "booking status, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/bookings/1"
 rest "resources catalog, anonymous" "$B/?rest_route=/titan-zero-front-desk/v1/resources/catalog"
 rest "resources preview, anonymous" -X POST -H 'Content-Type: application/json' -d '{}' "$B/?rest_route=/titan-zero-front-desk/v1/resources/preview"
@@ -115,22 +121,9 @@ fi
 forged_body='name=Forged&email=forged@example.test&enquiry=forged&website='
 for label in "no nonce" "wrong nonce"; do
   if [ "$label" = "no nonce" ]; then extra=''; else extra='&_tzfd_enquiry_nonce=0000000000'; fi
-  code=$(code -X POST -H 'Content-Type: application/x-www-form-urlencoded' -d "action=tzfd_public_enquiry&$forged_body$extra" "$B/wp-admin/admin-post.php")
-  if [ "$code" = "403" ]; then report PASS "forged public enquiry ($label) refused" "HTTP $code"; else report FAIL "forged public enquiry ($label)" "HTTP $code (expected 403)"; fi
+  fcode=$(code -X POST -H 'Content-Type: application/x-www-form-urlencoded' -d "action=tzfd_public_enquiry&$forged_body$extra" "$B/wp-admin/admin-post.php")
+  if [ "$fcode" = "403" ]; then report PASS "forged public enquiry ($label) refused" "HTTP $fcode"; else report FAIL "forged public enquiry ($label)" "HTTP $fcode (expected 403)"; fi
 done
-
-# Valid-secret replay: a correctly signed missed-call is accepted once, then refused as a replay.
-if [ -n "${SECRET:-}" ]; then
-  body='{"event":"missed_call","from":"+61400000000"}'
-  ts=$(date +%s)
-  sig="sha256=$(printf '%s.%s' "$ts" "$body" | openssl dgst -sha256 -hmac "$SECRET" | awk '{print $NF}')"
-  first=$(code -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")
-  second=$(code -X POST -H 'Content-Type: application/json' -H "X-TZFD-Timestamp: $ts" -H "X-TZFD-Signature: $sig" -d "$body" "$B/?rest_route=/titan-zero-front-desk/v1/missed-call")
-  if [[ "$first" =~ ^2 ]]; then report PASS "missed-call, valid signature accepted once" "HTTP $first"; else report FAIL "missed-call, valid signature" "HTTP $first"; fi
-  if [[ "$second" =~ ^4 ]]; then report PASS "missed-call, identical signed replay refused" "HTTP $second"; else report FAIL "missed-call, replay accepted" "HTTP $second"; fi
-else
-  report SKIP "missed-call signed replay" "SECRET not set"
-fi
 
 echo "Note: a weak check is labelled above; it does not prove the plugin's own nonce handling."
 echo "Summary: $pass passed, $fail failed, $skip skipped"

@@ -197,10 +197,10 @@ final class TZFD_Human_Handoff {
         if ( 'no_contact_details' === $gate ) { wp_die( esc_html__( 'Please give an email address or phone number so we can call you back', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
         if ( 'consent_required' === $gate ) { wp_die( esc_html__( 'Please tick the consent box so we can contact you', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
 
-        $key   = 'tzfd_hoff_' . md5( $company . '|' . sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ) );
-        $count = (int) get_transient( $key );
-        if ( ! self::within_rate_limit( $count ) ) { wp_die( esc_html__( 'Please wait before sending another callback request', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
-        set_transient( $key, $count + 1, self::RATE_WINDOW );
+        // Atomic claim: a read followed by a separate write lets parallel posts from one address all pass.
+        require_once __DIR__ . '/class-tzfd-rate-limit.php';
+        $key = 'handoff|' . $company . '|' . sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
+        if ( ! TZFD_Rate_Limit::allow( $key, self::RATE_LIMIT, self::RATE_WINDOW ) ) { wp_die( esc_html__( 'Please wait before sending another callback request', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
 
         $decision = self::decide( array( 'text' => $message ) );
         $built    = self::build_enquiry( array(

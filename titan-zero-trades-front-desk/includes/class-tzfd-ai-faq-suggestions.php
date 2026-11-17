@@ -2,6 +2,8 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/class-tzfd-ai-free-core.php';
 require_once __DIR__ . '/class-tzfd-ai-knowledge-builder.php';
+require_once __DIR__ . '/class-tzfd-ai-gap-detection.php';
+require_once __DIR__ . '/class-tzfd-scoped-store.php';
 
 /**
  * Weekly AI FAQ suggestions (issue #35).
@@ -20,6 +22,135 @@ final class TZFD_Ai_Faq_Suggestions {
 	const MAX_BATCH    = 5;
 	const MAX_ATTEMPTS = 3;
 	const MAX_STORED   = 200;
+	const WEEKLY_HOOK  = 'tzfd_ai_faq_weekly';
+	const FACTS_FILTER = 'tzfd_ai_approved_faq_facts';
+	const WINDOW_DAYS  = 7;
+	const PAGE_SLUG    = 'tzfd-ai-faq-review';
+	const ACTION       = 'tzfd_ai_faq_decide';
+	const NONCE        = 'tzfd_ai_faq_decide';
+
+	/** Owner switch for the weekly job. Off by default, so a fresh install schedules no AI cron event. */
+	const ENABLE_OPTION = 'tzfd_ai_faq_weekly_enabled';
+
+	/** Hooks the weekly job and the admin review screen. Scheduling is created once, only when enabled. */
+	public static function register() {
+		add_action( self::WEEKLY_HOOK, array( __CLASS__, 'run_scheduled' ) );
+		if ( get_option( self::ENABLE_OPTION, false ) && ! wp_next_scheduled( self::WEEKLY_HOOK ) ) {
+			wp_schedule_event( time() + 3600, 'weekly', self::WEEKLY_HOOK );
+		}
+		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 13 );
+		add_action( 'admin_post_' . self::ACTION, array( __CLASS__, 'handle_decide' ) );
+	}
+
+	/**
+	 * Weekly job. Runs one batch for each company that has recorded question counts. Nothing is sent
+	 * while consent is off. Facts come from the owner's approved list (FACTS_FILTER). With none, the batch is skipped.
+	 */
+	public static function run_scheduled( $now = null ) {
+		$now = null === $now ? time() : (int) $now;
+		$out = array();
+		if ( ! TZFD_Ai_Free_Core::consent_granted() ) {
+			return $out;
+		}
+		foreach ( TZFD_Ai_Gap_Detection::company_ids() as $cid ) {
+			$facts  = self::approved_for( $cid );
+			$report = TZFD_Ai_Gap_Detection::report( $cid, $now, self::WINDOW_DAYS, array(), array_column( self::approved_facts( $facts ), 'text' ) );
+			$themes = array();
+			foreach ( $report['topics'] as $t ) {
+				$themes[] = array( 'label' => $t['label'], 'count' => $t['count'] );
+			}
+			$out[ $cid ] = self::run_weekly( $cid, $now, $themes, $facts );
+		}
+		return $out;
+	}
+
+	/**
+	 * Owner-approved facts for one company, from FACTS_FILTER. Keeps only entries marked approved, with an id
+	 * and text, in the shape the batch and the knowledge builder expect (approved, id, text).
+	 */
+	public static function approved_for( $company_id ) {
+		$raw = apply_filters( self::FACTS_FILTER, array(), (int) $company_id );
+		$out = array();
+		foreach ( is_array( $raw ) ? $raw : array() as $f ) {
+			if ( is_array( $f ) && ! empty( $f['approved'] ) && isset( $f['id'], $f['text'] ) ) {
+				$out[] = $f;
+			}
+		}
+		return $out;
+	}
+
+	public static function add_page() {
+		add_submenu_page(
+			'tzfd',
+			__( 'FAQ Suggestions', 'titan-zero-trades-front-desk' ),
+			__( 'FAQ Suggestions', 'titan-zero-trades-front-desk' ),
+			TZFD_Ai_Knowledge_Builder::EDIT_CAP,
+			self::PAGE_SLUG,
+			array( __CLASS__, 'render_page' )
+		);
+	}
+
+	/** Review screen: each pending proposal can be edited, approved (published through the builder) or rejected. */
+	public static function render_page() {
+		if ( ! current_user_can( TZFD_Ai_Knowledge_Builder::EDIT_CAP ) ) {
+			wp_die( esc_html__( 'You are not allowed to review FAQ suggestions.', 'titan-zero-trades-front-desk' ), 403 );
+		}
+		$cid    = TZFD_Scoped_Store::company_id();
+		$notice = isset( $_GET['tzfd_faq'] ) ? sanitize_key( wp_unslash( $_GET['tzfd_faq'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		echo '<div class="wrap"><h1>' . esc_html__( 'FAQ Suggestions', 'titan-zero-trades-front-desk' ) . '</h1>';
+		echo '<p>' . esc_html__( 'Proposed answers come from question themes and your approved services and policies. Nothing is published until you approve it.', 'titan-zero-trades-front-desk' ) . '</p>';
+		if ( '' !== $notice ) {
+			echo '<div class="notice notice-info"><p>' . esc_html( 'Result: ' . $notice ) . '</p></div>';
+		}
+		if ( $cid < 1 ) {
+			echo '<p>' . esc_html__( 'No company is selected for this screen.', 'titan-zero-trades-front-desk' ) . '</p></div>';
+			return;
+		}
+		$pending = self::pending( $cid );
+		if ( empty( $pending ) ) {
+			echo '<p>' . esc_html__( 'No suggestions are waiting for review.', 'titan-zero-trades-front-desk' ) . '</p></div>';
+			return;
+		}
+		foreach ( $pending as $p ) {
+			echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="max-width:52em;margin:1em 0;padding:1em;border:1px solid #ccd0d4;background:#fff">';
+			echo '<input type="hidden" name="action" value="' . esc_attr( self::ACTION ) . '" />';
+			echo '<input type="hidden" name="proposal_id" value="' . esc_attr( $p['id'] ) . '" />';
+			wp_nonce_field( self::NONCE );
+			echo '<p><label><strong>' . esc_html__( 'Question', 'titan-zero-trades-front-desk' ) . '</strong><br />';
+			echo '<input type="text" name="question" maxlength="200" class="large-text" value="' . esc_attr( $p['question'] ) . '" /></label></p>';
+			echo '<p><label><strong>' . esc_html__( 'Answer', 'titan-zero-trades-front-desk' ) . '</strong><br />';
+			echo '<textarea name="answer" maxlength="600" rows="4" class="large-text">' . esc_textarea( $p['answer'] ) . '</textarea></label></p>';
+			echo '<p class="description">' . esc_html__( 'Grounded in approved facts:', 'titan-zero-trades-front-desk' ) . ' ' . esc_html( implode( ', ', $p['fact_ids'] ) ) . '</p>';
+			echo '<p><button type="submit" name="decision" value="approve" class="button button-primary">' . esc_html__( 'Approve and publish', 'titan-zero-trades-front-desk' ) . '</button> ';
+			echo '<button type="submit" name="decision" value="reject" class="button">' . esc_html__( 'Reject', 'titan-zero-trades-front-desk' ) . '</button></p>';
+			echo '</form>';
+		}
+		echo '</div>';
+	}
+
+	/** Handles approve and reject. Capability and nonce are checked before anything is read or changed. */
+	public static function handle_decide() {
+		if ( ! current_user_can( TZFD_Ai_Knowledge_Builder::EDIT_CAP ) ) {
+			wp_die( esc_html__( 'You are not allowed to review FAQ suggestions.', 'titan-zero-trades-front-desk' ), 403 );
+		}
+		check_admin_referer( self::NONCE );
+		$cid      = TZFD_Scoped_Store::company_id();
+		$pid      = isset( $_POST['proposal_id'] ) ? sanitize_text_field( wp_unslash( $_POST['proposal_id'] ) ) : '';
+		$decision = isset( $_POST['decision'] ) ? sanitize_key( wp_unslash( $_POST['decision'] ) ) : '';
+		$edits    = array();
+		if ( isset( $_POST['question'] ) ) {
+			$edits['question'] = sanitize_text_field( wp_unslash( $_POST['question'] ) );
+		}
+		if ( isset( $_POST['answer'] ) ) {
+			$edits['answer'] = sanitize_textarea_field( wp_unslash( $_POST['answer'] ) );
+		}
+		$r = $cid > 0
+			? self::decide( $cid, $pid, $decision, self::approved_for( $cid ), $edits, time(), get_current_user_id() )
+			: TZFD_Ai_Free_Core::fail( 'company_required' );
+		$code = ! empty( $r['ok'] ) ? 'ok' : (string) ( $r['error'] ?? 'failed' );
+		wp_safe_redirect( add_query_arg( array( 'page' => self::PAGE_SLUG, 'tzfd_faq' => sanitize_key( $code ) ), admin_url( 'admin.php' ) ) );
+		exit;
+	}
 
 	/**
 	 * Runs the week's batch for one company. Returns array( 'ok', 'status', 'added', 'error' ).

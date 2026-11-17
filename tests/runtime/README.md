@@ -28,7 +28,7 @@ not counted as a pass).
 | `provision-wp-site.sh` | Fresh database, WordPress core, plugin symlinked from the checkout, activated as user 1, one subscriber. |
 | `wp-runtime-tests.php` | Real checks: booking create, slot holds, capacity lock, reschedule and cancel tokens, reminder outbox, capability, uninstall keep path, multisite detection. |
 | `runtime-tests.php` | Privacy export and erase, and signed missed-call requests (21 checks). |
-| `http-auth-tests.sh` | Unauthenticated refusals, plus logged-in admin and subscriber checks for REST nonce and capability. |
+| `http-auth-tests.sh` | Unauthenticated refusals, plus logged-in admin and subscriber checks for REST nonce and capability. A route that is not registered is reported as FAIL, since a 404 there exercises no authorization. Set `SECRET` to the stored missed-call inbound secret to also check that a valid signature is accepted once and its replay refused. |
 | `uninstall-wipe-check.php` | Destructive: opt-in uninstall (`TZ_DELETE_DATA_ON_UNINSTALL`), run in its own process. |
 | `upgrade-from-3.0.128.sh` | Installs v3.0.128 from git (`git archive`), seeds bookings and settings, swaps in this checkout, reactivates, verifies, then downgrades and verifies again. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |

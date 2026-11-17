@@ -63,7 +63,8 @@ echo "PASS provision -- WordPress $(grep -m1 -o "wp_version = '[^']*'" "$WP_ROOT
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not enable the missed-call add-on"
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not store the missed-call secret"
 
-php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
+# Several workers so the concurrent replay check can race (PHP's default single worker serialises requests).
+PHP_CLI_SERVER_WORKERS=8 php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
 SERVER_PID=$!
 sleep 2
 
@@ -71,10 +72,25 @@ sleep 2
 # suite runs, so its route and refusal checks are exercised rather than skipped.
 echo "--- missed-call addon enabled with inbound secret (as CI)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
-$WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
+# Store the inbound secret through the plugin's own save path (as the CI workflow does, which encrypts secret
+# fields). Provision-wp-site.sh writes its secret raw with update_option, and signed checks then get HTTP 401.
+# Do not store a second secret after this, or the one the checks send no longer matches the stored one.
+SECRET_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "\nTZFD_RT_INBOUND_SECRET=" . $s . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_INBOUND_SECRET=')"
+[ -n "$SECRET_LINE" ] && eval "$SECRET_LINE" || echo "FAIL addon setup -- could not store the missed-call secret"
 
 echo "--- http-auth-tests"
-TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" | tee -a "$LOG"
+SECRET="${TZFD_RT_INBOUND_SECRET:-}" TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" 2>&1 | tee -a "$LOG"
+HTTP_RC=${PIPESTATUS[0]}
+[ "$HTTP_RC" -eq 0 ] || echo "FAIL http-auth-tests -- exit status $HTTP_RC (aborted or failed; see above)" | tee -a "$LOG"
+
+echo "--- concurrent replay of a signed missed-call (replay-concurrency-test.sh, issue #52)"
+if [ -n "${TZFD_RT_INBOUND_SECRET:-}" ]; then
+  B="$URL" SECRET="$TZFD_RT_INBOUND_SECRET" N=8 "$HERE/replay-concurrency-test.sh" 2>&1 | tee -a "$LOG"
+  CONC_RC=${PIPESTATUS[0]}
+  [ "$CONC_RC" -eq 0 ] || echo "FAIL replay-concurrency -- exit status $CONC_RC" | tee -a "$LOG"
+else
+  echo "SKIP replay-concurrency -- no inbound secret was provisioned" | tee -a "$LOG"
+fi
 
 echo "--- privacy and signed-request checks (runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
@@ -82,6 +98,8 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --use
 echo "--- real WordPress runtime tests (wp-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
+echo "--- authorisation and tenant checks (security-runtime-tests.php, issue #8)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/security-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- agent gateway (agent-gateway-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/agent-gateway-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- legacy AI data (legacy-ai-runtime-tests.php)"

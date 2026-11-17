@@ -14,7 +14,6 @@ $GLOBALS['t_options'] = array();
 $GLOBALS['t_transients'] = array();
 
 function add_filter( $hook, $cb ) { $GLOBALS['t_filters'][ $hook ] = $cb; }
-function do_action( $hook, ...$args ) { return null; }
 function apply_filters( $hook, $value, ...$args ) {
 	if ( isset( $GLOBALS['t_filters'][ $hook ] ) ) {
 		return call_user_func_array( $GLOBALS['t_filters'][ $hook ], array_merge( array( $value ), $args ) );

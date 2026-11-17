@@ -52,7 +52,7 @@ final class TZFD_Scheduling_Preview {
         echo ' required></td></tr>';
     }
     public static function page(){
-        if(!current_user_can('tz_fd_access')){wp_die(esc_html__('You cannot access this preview.','titan-zero-trades-front-desk'));return;}
+        if(!current_user_can('tz_fd_access')){wp_die(esc_html__('You cannot access this preview.','titan-zero-trades-front-desk'),'',array('response'=>403));return;}
         TZFD_Admin_Menu::render_settings_tabs('preview');
         global $tz_plugin;
         if(!($tz_plugin instanceof TZFD_Scheduling_Plugin)){wp_die(esc_html__('Scheduling engine is unavailable.','titan-zero-trades-front-desk'));return;}

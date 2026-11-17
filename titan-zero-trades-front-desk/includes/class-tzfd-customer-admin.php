@@ -63,7 +63,7 @@ final class TZFD_Customer_Admin {
         exit;
     }
     public static function page() {
-        if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'Not permitted.', 'titan-zero-trades-front-desk' ) ); }
+        if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'Not permitted.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
         // This read-only selector must not coerce floats, signed numbers or arrays to another customer ID.
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.
         $customer_selector = isset( $_GET['customer'] ) && is_string( $_GET['customer'] ) ? sanitize_text_field( wp_unslash( $_GET['customer'] ) ) : '';

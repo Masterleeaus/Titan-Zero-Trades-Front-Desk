@@ -93,5 +93,33 @@ if ( 'verify' === $tz_phase ) {
 	exit( preg_match( '/^FAIL /m', $tz_out ) ? 1 : 0 );
 }
 
-echo "FAIL harness -- set TZFD_RT_PHASE to seed or verify\n";
+if ( 'schema' === $tz_phase ) {
+	// Version-neutral check for a base release whose booking schema differs (no shared seed data): the active
+	// folder, the version in the plugin header, and (TZFD_RT_CHECK_TABLES=1) the tables the current release creates.
+	global $wpdb;
+	ob_start();
+	$tz_expect = getenv( 'TZFD_RT_EXPECT_DIR' ) ?: '';
+	$tz_active = realpath( WP_PLUGIN_DIR . '/titan-zero-trades-front-desk' );
+	echo ( '' !== $tz_expect && realpath( $tz_expect ) === $tz_active ? 'PASS' : 'FAIL' ) . ' active plugin folder is the expected source (' . esc_html( (string) $tz_active ) . ")\n";
+	$tz_want = getenv( 'TZFD_RT_EXPECT_VERSION' ) ?: '';
+	$tz_read = '';
+	foreach ( array( 'titan-zero-front-desk.php', 'titan-zero-trades-front-desk.php' ) as $tz_main ) {
+		if ( is_file( (string) $tz_active . '/' . $tz_main ) ) {
+			$tz_read = (string) ( get_file_data( (string) $tz_active . '/' . $tz_main, array( 'Version' => 'Version' ) )['Version'] ?? '' );
+			break;
+		}
+	}
+	echo ( '' !== $tz_want && $tz_want === $tz_read ? 'PASS' : 'FAIL' ) . ' plugin header version is ' . esc_html( $tz_want ) . ' (read ' . esc_html( $tz_read ) . ")\n";
+	if ( '1' === getenv( 'TZFD_RT_CHECK_TABLES' ) ) {
+		foreach ( array( 'tz_bookings', 'tz_slot_holds', 'tz_calls', 'tz_call_events', 'tz_booking_actions' ) as $tz_bare ) {
+			$tz_has = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->prefix . $tz_bare ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- schema check, must not be cached
+			echo ( $tz_has ? 'PASS' : 'FAIL' ) . ' table ' . esc_html( $tz_bare ) . " present after activation\n";
+		}
+	}
+	$tz_out = (string) ob_get_clean();
+	echo $tz_out; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped line by line above
+	exit( preg_match( '/^FAIL /m', $tz_out ) ? 1 : 0 );
+}
+
+echo "FAIL harness -- set TZFD_RT_PHASE to seed, verify or schema\n";
 exit( 1 );

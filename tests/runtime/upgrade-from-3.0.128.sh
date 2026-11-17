@@ -7,14 +7,18 @@
 # WordPress does not run the activation hook on a file-replacement update; deactivate and reactivate is the
 # closest reproducible equivalent, and it is what the plugin's install routines run on.
 #
-# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: BASE_SHA (default 22dc106), WP_CLI, TZFD_RT_DB_ADMIN
+# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: BASE_SHA (default 4e0c3b3), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN
 # Exit:  0 all upgrade checks passed; 1 a check failed; 3 prerequisites missing.
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 NEW_PLUGIN="$(cd "$HERE/../../titan-zero-trades-front-desk" && pwd)"
 REPO_DIR="$(git -C "$HERE" rev-parse --show-toplevel 2>/dev/null)"
-BASE_SHA="${BASE_SHA:-22dc106}"
+# The base is a real earlier release, read from git history. The default is the Front Desk 2.0.1 release ZIP committed
+# at 4e0c3b3 (version 2.0.1, a different version from this checkout). The 3.0.128 extraction commit (22dc106) cannot be
+# the base any more: this checkout is also 3.0.128, so the upgrade would not change the version (issue #194).
+BASE_SHA="${BASE_SHA:-4e0c3b3}"
+BASE_ZIP="${BASE_ZIP:-Titan-Zero-Trades-Front-Desk-2.0.1-FULL-2026-10-14-r5.zip}"
 WP_CLI="${WP_CLI:-wp}"
 PORT="${PORT:-8080}"
 WORK="$(mktemp -d /tmp/tzfd-upg.XXXXXX)"
@@ -36,12 +40,22 @@ $WP_CLI --allow-root --version >/dev/null 2>&1 || { say "SKIP upgrade -- WP-CLI 
 command -v mysql >/dev/null 2>&1 && mysql -u"${TZFD_RT_DB_ADMIN:-root}" -e 'SELECT 1' >/dev/null 2>&1 || { say "SKIP upgrade -- no reachable MySQL"; exit 3; }
 [ -n "$REPO_DIR" ] || { say "SKIP upgrade -- not inside a git checkout"; exit 3; }
 
-# 1. v3.0.128 source, extracted from git history into a new empty folder.
-git -C "$REPO_DIR" archive "$BASE_SHA" titan-zero-trades-front-desk | tar -x -C "$OLD_DIR" || { say "FAIL upgrade -- cannot read $BASE_SHA"; exit 1; }
+# 1. Earlier release from git history, extracted into a new empty folder. BASE_ZIP is a release archive committed at
+#    BASE_SHA; without it the folder is read from the commit with git archive.
+if [ -n "$BASE_ZIP" ]; then
+  git -C "$REPO_DIR" show "$BASE_SHA:$BASE_ZIP" > "$WORK/base.zip" 2>/dev/null || { say "FAIL upgrade -- cannot read $BASE_ZIP at $BASE_SHA"; exit 1; }
+  unzip -q "$WORK/base.zip" -d "$OLD_DIR" || { say "FAIL upgrade -- cannot unzip $BASE_ZIP"; exit 1; }
+else
+  git -C "$REPO_DIR" archive "$BASE_SHA" titan-zero-trades-front-desk | tar -x -C "$OLD_DIR" || { say "FAIL upgrade -- cannot read $BASE_SHA"; exit 1; }
+fi
 OLD_PLUGIN="$OLD_DIR/titan-zero-trades-front-desk"
-OLD_VER="$(sed -n 's/^.*Version: *//p' "$OLD_PLUGIN/titan-zero-front-desk.php" | head -1)"
+[ -d "$OLD_PLUGIN" ] || { say "FAIL upgrade -- base archive has no titan-zero-trades-front-desk folder"; exit 1; }
+OLD_MAIN="$(grep -l 'Plugin Name:' "$OLD_PLUGIN"/*.php 2>/dev/null | head -1)"
+OLD_VER="$(sed -n 's/^.*Version: *//p' "$OLD_MAIN" | head -1)"
 NEW_VER="$(sed -n 's/^.*Version: *//p' "$NEW_PLUGIN/titan-zero-front-desk.php" | head -1)"
-say "Baseline $BASE_SHA reports version $OLD_VER; this checkout reports $NEW_VER"
+say "Baseline $BASE_SHA${BASE_ZIP:+ ($BASE_ZIP)} reports version $OLD_VER; this checkout reports $NEW_VER"
+# Safety: the base must be a different version, otherwise the check does not exercise an upgrade.
+[ -n "$OLD_VER" ] && [ "$OLD_VER" != "$NEW_VER" ] || { say "FAIL upgrade -- base version '$OLD_VER' must differ from this checkout '$NEW_VER'"; exit 1; }
 
 # 2. Site on the old plugin.
 PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }
@@ -52,10 +66,22 @@ say "PASS provision on $OLD_VER"
 
 FP="$WORK/fingerprint.json"
 run_php() { TZFD_RT_PHASE="$1" TZFD_RT_FINGERPRINT="$FP" TZFD_RT_EXPECT_DIR="$CURRENT_SRC" $WP_CLI --allow-root --path="$WORK/wp" eval-file "$HERE/upgrade-seed-verify.php" --user=1 2>/dev/null | tee -a "$LOG"; }
+# Schema check on the active folder: expected version from the plugin header, and the current release's tables when asked.
+run_schema() { # expected version, check tables (1 or 0)
+  TZFD_RT_PHASE=schema TZFD_RT_EXPECT_DIR="$CURRENT_SRC" TZFD_RT_EXPECT_VERSION="$1" TZFD_RT_CHECK_TABLES="$2" $WP_CLI --allow-root --path="$WORK/wp" eval-file "$HERE/upgrade-seed-verify.php" --user=1 2>/dev/null | tee -a "$LOG"
+}
 CURRENT_SRC="$OLD_PLUGIN"
-say "--- seed on $OLD_VER"
-run_php seed
-grep -q '^PASS seed' "$LOG" || { say "FAIL seed -- see $LOG"; exit 1; }
+# The booking data seed and verify use the 3.x booking schema (includes/class-tzfd-tables.php). A base that does not have it
+# (the 2.0.1 release keeps bookings in its own tables) gets the version and table checks only, and the log says so.
+SEEDED=0
+if [ -f "$OLD_PLUGIN/includes/class-tzfd-tables.php" ]; then
+  say "--- seed on $OLD_VER"
+  run_php seed
+  grep -q '^PASS seed' "$LOG" || { say "FAIL seed -- see $LOG"; exit 1; }
+  SEEDED=1
+else
+  say "SKIP data seed and verify -- base $OLD_VER has no includes/class-tzfd-tables.php (its own booking schema); carry-over needs an owner decision (issue #194)"
+fi
 
 # 3. Upgrade: replace the plugin folder, deactivate, reactivate.
 swap_to() { # folder
@@ -66,12 +92,14 @@ swap_to() { # folder
 }
 say "--- upgrade to this checkout ($NEW_VER)"
 swap_to "$NEW_PLUGIN" || { say "FAIL upgrade -- activation on $NEW_VER failed; see $LOG"; exit 1; }
-run_php verify
+run_schema "$NEW_VER" 1
+if [ "$SEEDED" = 1 ]; then run_php verify; fi
 
 # 4. Downgrade back to the old folder: the same data must still read.
 say "--- downgrade back to $OLD_VER"
 swap_to "$OLD_PLUGIN" || { say "FAIL downgrade -- activation on $OLD_VER failed; see $LOG"; exit 1; }
-run_php verify
+run_schema "$OLD_VER" 0
+if [ "$SEEDED" = 1 ]; then run_php verify; fi
 
 FAILS=$(grep -c '^FAIL ' "$LOG")
 PASSES=$(grep -c '^PASS ' "$LOG")

@@ -139,6 +139,12 @@ jobs:
           echo "TZFD_RT_SUB_PASS=$SUB_PASS" >> "$GITHUB_ENV"
           php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtadmin rt-admin@example.test --role=administrator --user_pass="$ADMIN_PASS" --quiet
           php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtsub rt-sub@example.test --role=subscriber --user_pass="$SUB_PASS" --quiet
+      - name: Site URL and version (diagnostics for the HTTP auth checks, issue #190)
+        run: |
+          cd "$WP_DIR"
+          echo "WordPress version: $(php "$WP_CLI" --allow-root --path="$WP_DIR" core version)"
+          echo "siteurl: $(php "$WP_CLI" --allow-root --path="$WP_DIR" option get siteurl)"
+          echo "home: $(php "$WP_CLI" --allow-root --path="$WP_DIR" option get home)"
       - name: HTTP auth tests
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"

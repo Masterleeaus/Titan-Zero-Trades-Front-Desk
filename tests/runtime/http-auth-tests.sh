@@ -44,7 +44,8 @@ diag() { # label, curl args...
 # Preflight: abort rather than report a dead server as a pass.
 preflight=$(code "$B/?rest_route=/")
 if [[ "$preflight" != "200" ]]; then echo "ABORT: test site not answering at $B (HTTP $preflight)"; exit 2; fi
-echo "DIAG WordPress version: $(curl -s --max-time 30 "$B/feed/" | grep -o '?v=[0-9][0-9.]*' | head -1)"
+echo "DIAG WordPress version: $(curl -s --max-time 30 "$B/?feed=rss2" | grep -o '?v=[0-9][0-9.]*' | head -1)"
+echo "DIAG login form action: $(curl -s --max-time 30 "$B/wp-login.php" | grep -o 'action="[^"]*"' | grep -i 'login' | head -1)"
 # REST route check: a missing route (rest_no_route) is a FAIL, because it exercises no authorization.
 rest() { # name, curl args...
   local name="$1"; shift
@@ -102,6 +103,11 @@ else
   }
   JAR_ADMIN=$(mktemp); JAR_SUB=$(mktemp)
   if login rtadmin "$TZFD_RT_ADMIN_PASS" "$JAR_ADMIN"; then
+    # DIAG: the login response's redirect and cookie names and paths (cookie values are redacted).
+    dh=$(mktemp)
+    curl -s -o /dev/null -D "$dh" -H 'Cookie: wordpress_test_cookie=WP%20Cookie%20check' --data-urlencode "log=rtadmin" --data-urlencode "pwd=$TZFD_RT_ADMIN_PASS" -d 'wp-submit=Log+In&testcookie=1' "$B/wp-login.php" || true
+    tr -d '\r' < "$dh" | grep -i '^location:\|^set-cookie:' | sed -E 's/^(Set-Cookie: [^=]*)=[^;]*/\1=<redacted>/I' | sed 's/^/DIAG login response /'
+    rm -f "$dh"
     diag "admin dashboard /wp-admin/index.php (admin cookie)" -b "$JAR_ADMIN" "$B/wp-admin/index.php"
     echo "DIAG nonce-like markers on admin dashboard: $(curl -s -b "$JAR_ADMIN" "$B/wp-admin/index.php" | grep -c '"nonce"' || true)"
     ADMIN_NONCE=$(nonce_of "$JAR_ADMIN")

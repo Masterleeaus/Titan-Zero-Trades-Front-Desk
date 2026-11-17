@@ -105,6 +105,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 		<h2><?php esc_html_e('Time zone','titan-zero-trades-front-desk'); ?></h2>
 		<p><?php esc_html_e('Times use the WordPress site time zone:','titan-zero-trades-front-desk'); ?> <strong><?php echo esc_html( wp_timezone_string() ); ?></strong>. <a href="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>"><?php esc_html_e('Change it in WordPress settings','titan-zero-trades-front-desk'); ?></a>.</p>
 	</div>
+<?php TZFD_Settings_Extras::render_profile_card(); ?>
 <?php TZFD_Client_Portal::render_settings_card(); ?>
 </div>
 
@@ -285,6 +286,9 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 
 </div>
 <div class="tzfd-subpane">
+<?php TZFD_Settings_Extras::render_notify_card(); ?>
+</div>
+<div class="tzfd-subpane">
 	<h2><?php esc_html_e('Status update emails','titan-zero-trades-front-desk'); ?></h2>
 	<p class="tzfd-set-intro"><?php esc_html_e('Sent to the customer when an administrator changes a booking\'s status. Each status has its own subject and message.','titan-zero-trades-front-desk'); ?></p>
 	<p><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=' . TZFD_Admin_Menu::EMAILS ) ); ?>"><?php esc_html_e('Edit status update emails','titan-zero-trades-front-desk'); ?></a></p>
@@ -321,10 +325,6 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<?php endif; ?>
 	<p><a class="button" href="<?php echo esc_url( admin_url( 'admin.php?page=' . TZFD_Admin_Menu::ADDONS ) ); ?>"><?php esc_html_e('Open Add-ons','titan-zero-trades-front-desk'); ?></a></p>
 </div>
-<div class="tzfd-subpane">
-	<?php TZFD_Upgrades::render_cards(); ?>
-</div>
-
 </div>
 
 <!-- Advanced -->

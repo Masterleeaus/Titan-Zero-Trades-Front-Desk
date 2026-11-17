@@ -53,7 +53,7 @@ if ( 'a' === $tz_list_action['operation'] )
 {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', "anonce" ), 'tz_fd_actions_list' ) ) { $this->nonce_failed(); }
     define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
-    define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_BOOK_DEFAULT_fp_from_email);
+    define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_Settings_Extras::default_notify_email( TZFD_BOOK_DEFAULT_fp_from_email ));
 
     $tz_list_inserted = $wpdb->insert( $wpdb->prefix.TZFD_Tables::FORMS, array(
                                       'company_id' => $tz_list_company,
@@ -62,14 +62,14 @@ if ( 'a' === $tz_list_action['operation'] )
                                       'form_structure' => TZFD_BOOK_DEFAULT_form_structure,
 
                                       'fp_from_email' => $this->get_option('fp_from_email', TZFD_BOOK_DEFAULT_fp_from_email),
-                                      'fp_destination_emails' => $this->get_option('fp_destination_emails', TZFD_BOOK_DEFAULT_fp_destination_emails),
+                                      'fp_destination_emails' => TZFD_BOOK_DEFAULT_fp_destination_emails, // New calendars take the default alert recipients, not the current calendar's.
                                       'fp_subject' => $this->get_option('fp_subject', TZFD_BOOK_DEFAULT_fp_subject),
                                       'fp_inc_additional_info' => $this->get_option('fp_inc_additional_info', TZFD_BOOK_DEFAULT_fp_inc_additional_info),
-                                      'fp_return_page' => $this->get_option('fp_return_page', TZFD_BOOK_DEFAULT_fp_return_page),
+                                      'fp_return_page' => TZFD_Settings_Extras::default_return_page( TZFD_BOOK_DEFAULT_fp_return_page ),
                                       'fp_message' => $this->get_option('fp_message', TZFD_BOOK_DEFAULT_fp_message),
                                       'fp_emailformat' => $this->get_option('fp_emailformat', TZFD_BOOK_DEFAULT_email_format),
 
-                                      'cu_enable_copy_to_user' => $this->get_option('cu_enable_copy_to_user', TZFD_BOOK_DEFAULT_cu_enable_copy_to_user),
+                                      'cu_enable_copy_to_user' => TZFD_Settings_Extras::default_customer_confirm( TZFD_BOOK_DEFAULT_cu_enable_copy_to_user ),
                                       'cu_user_email_field' => $this->get_option('cu_user_email_field', TZFD_BOOK_DEFAULT_cu_user_email_field),
                                       'cu_subject' => $this->get_option('cu_subject', TZFD_BOOK_DEFAULT_cu_subject),
                                       'cu_message' => $this->get_option('cu_message', TZFD_BOOK_DEFAULT_cu_message),

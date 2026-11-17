@@ -10,9 +10,18 @@ final class TZFD_Booking_Action_Outbox {
         global $wpdb; $table=self::table();
         return $table === $wpdb->get_var($wpdb->prepare('SHOW TABLES LIKE %s',$wpdb->esc_like($table)));
     }
+    /** Explicit, administrator-requested install. */
     public static function install() {
-        global $wpdb;
         if (!current_user_can('manage_options')) return false;
+        return self::create_schema();
+    }
+
+    /**
+     * Creates or upgrades the outbox table with dbDelta. Idempotent. No capability check: plugin activation
+     * calls this with or without a logged-in user, so a site activated by WP-CLI still gets the table.
+     */
+    public static function create_schema() {
+        global $wpdb;
         if (!function_exists('dbDelta')) require_once ABSPATH . 'wp-admin/includes/upgrade.php';
         $table=self::table(); $collate=$wpdb->get_charset_collate();
         dbDelta("CREATE TABLE $table (

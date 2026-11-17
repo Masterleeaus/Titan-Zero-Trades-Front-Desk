@@ -95,7 +95,7 @@ final class TZFD_Legacy_AI_Data {
     public static function chat_columns() {
         global $wpdb;
         if ( ! self::chat_exists() ) { return array(); }
-        $cols = $wpdb->get_col( 'SHOW COLUMNS FROM `' . self::chat_table() . '`' );
+        $cols = $wpdb->get_col( $wpdb->prepare( 'SHOW COLUMNS FROM %i', self::chat_table() ) );
         $cols = is_array( $cols ) ? array_map( 'strval', $cols ) : array();
         return array_values( array_filter( $cols, function ( $c ) { return 1 === preg_match( '/^[A-Za-z0-9_]{1,64}$/', $c ); } ) );
     }
@@ -104,11 +104,11 @@ final class TZFD_Legacy_AI_Data {
         global $wpdb;
         $stats = array( 'exists' => false, 'rows' => 0, 'max_id' => 0 );
         if ( ! self::chat_exists() ) { return $stats; }
-        $table = '`' . self::chat_table() . '`';
+        $table = self::chat_table();
         $stats['exists'] = true;
-        $stats['rows']   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+        $stats['rows']   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $table ) );
         if ( in_array( 'id', self::chat_columns(), true ) ) {
-            $stats['max_id'] = (int) $wpdb->get_var( "SELECT COALESCE(MAX(`id`),0) FROM {$table}" );
+            $stats['max_id'] = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COALESCE(MAX(%i),0) FROM %i', 'id', $table ) );
         }
         return $stats;
     }
@@ -185,8 +185,9 @@ final class TZFD_Legacy_AI_Data {
         }
         $chats = array();
         if ( self::chat_exists() ) {
-            $order = in_array( 'id', self::chat_columns(), true ) ? ' ORDER BY `id`' : '';
-            $rows  = $wpdb->get_results( 'SELECT * FROM `' . self::chat_table() . '`' . $order, ARRAY_A );
+            $rows  = in_array( 'id', self::chat_columns(), true )
+                ? $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i ORDER BY %i', self::chat_table(), 'id' ), ARRAY_A )
+                : $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i', self::chat_table() ), ARRAY_A );
             $chats = is_array( $rows ) ? $rows : array();
         }
         return array(
@@ -232,7 +233,7 @@ final class TZFD_Legacy_AI_Data {
                 if ( self::option_state( $name )['present'] && delete_option( $name ) ) { ++$removed; }
             }
         } elseif ( self::chat_exists() ) {
-            $deleted = $wpdb->query( 'DELETE FROM `' . self::chat_table() . '`' );
+            $deleted = $wpdb->query( $wpdb->prepare( 'DELETE FROM %i', self::chat_table() ) );
             $removed = false === $deleted ? 0 : (int) $deleted;
         }
         return self::result( true, 'deleted', $removed );
@@ -276,7 +277,7 @@ final class TZFD_Legacy_AI_Data {
             $table   = self::chat_table();
             foreach ( $chats as $row ) {
                 if ( ! is_array( $row ) || ! isset( $row['id'] ) || ! is_int( $row['id'] ) || $row['id'] < 1 ) { ++$summary['chats_skipped']; continue; }
-                $exists = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM `' . $table . '` WHERE `id` = %d', $row['id'] ) );
+                $exists = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE %i = %d', $table, 'id', $row['id'] ) );
                 if ( $exists > 0 ) { ++$summary['chats_skipped']; continue; }
                 $clean = array();
                 foreach ( $row as $column => $value ) {
@@ -316,11 +317,16 @@ final class TZFD_Legacy_AI_Data {
 
     private static function chats_for_email( $email, $offset, $limit ) {
         global $wpdb;
-        $order = in_array( 'id', self::chat_columns(), true ) ? ' ORDER BY `id`' : '';
-        $rows  = $wpdb->get_results( $wpdb->prepare(
-            'SELECT * FROM `' . self::chat_table() . '` WHERE LOWER(`user_email`) = %s' . $order . ' LIMIT %d OFFSET %d',
-            $email, $limit, $offset
-        ), ARRAY_A );
+        $table = self::chat_table();
+        $rows  = in_array( 'id', self::chat_columns(), true )
+            ? $wpdb->get_results( $wpdb->prepare(
+                'SELECT * FROM %i WHERE LOWER(%i) = %s ORDER BY %i LIMIT %d OFFSET %d',
+                $table, 'user_email', $email, 'id', $limit, $offset
+            ), ARRAY_A )
+            : $wpdb->get_results( $wpdb->prepare(
+                'SELECT * FROM %i WHERE LOWER(%i) = %s LIMIT %d OFFSET %d',
+                $table, 'user_email', $email, $limit, $offset
+            ), ARRAY_A );
         return is_array( $rows ) ? $rows : array();
     }
 
@@ -405,6 +411,7 @@ final class TZFD_Legacy_AI_Data {
         exit;
     }
 
+    // phpcs:disable WordPress.Security.NonceVerification.Missing -- self::guard() checks the capability and check_admin_referer() first.
     public static function handle_delete() {
         self::guard( 'tzfd_legacy_ai_delete' );
         $scope  = isset( $_POST['scope'] ) ? sanitize_key( wp_unslash( $_POST['scope'] ) ) : '';
@@ -412,7 +419,9 @@ final class TZFD_Legacy_AI_Data {
         $result = self::delete_scope( $scope, $phrase );
         self::back( $result['ok'] ? 'deleted_' . $scope : $result['code'] );
     }
+    // phpcs:enable WordPress.Security.NonceVerification.Missing
 
+    // phpcs:disable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- self::guard() checks the capability and check_admin_referer() before any upload is read.
     public static function handle_restore() {
         self::guard( 'tzfd_legacy_ai_restore' );
         $file = isset( $_FILES['tzfd_legacy_ai_file'] ) && is_array( $_FILES['tzfd_legacy_ai_file'] ) ? $_FILES['tzfd_legacy_ai_file'] : array();
@@ -423,6 +432,7 @@ final class TZFD_Legacy_AI_Data {
         $result = self::restore_from_json( false === $json ? '' : $json );
         self::back( $result['ok'] ? 'restored' : $result['code'] );
     }
+    // phpcs:enable WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 
     private static function notice_text( $code ) {
         $texts = array(

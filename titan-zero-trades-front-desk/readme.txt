@@ -29,7 +29,7 @@ Bookings, calendar, booking pages and phone answering that operates standalone w
 
 
 
-Front Desk has its own WordPress admin menu and can run standalone, without Titan Zero Trades: Front Desk.
+Front Desk has its own WordPress admin menu and can run standalone, without any other Titan Zero plugin.
 
 
 
@@ -104,7 +104,7 @@ Optional external industry presets are examples; native service setup does not r
 
 
 
-= Does Front Desk require Titan Zero Trades: Front Desk? =
+= Does this plugin require another Titan Zero plugin? =
 
 No. Front Desk has native business, customer and service storage. Workspace is an optional integration, not an installation dependency.
 
@@ -178,21 +178,20 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 
 
-== Optional upgrades ==
+== Hosted AI ==
 
-Front Desk shows an optional information card for its paid hosted services on the Integrations tab of Settings. It adds no upgrade link to the Plugins list. Following a link opens that product page in a new tab. The link itself sends no site data.
+Hosted AI is optional and stays off until the site owner turns it on. The AI Services page shows its status and can switch it off again. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
 
-* AI Assistant and AI Agent are paid, hosted services that run outside WordPress and need a subscription. Their product pages are at titanzero.io/frontdeskai and titanzero.io/frontdeskagent. Each service's data handling will be listed under External services before any site data is sent to it.
+Booking, customers, calendars, rules, FAQ and reports work without it.
 
-There is one plugin. Front Desk does not install, load or require a separate Pro package.
-Front Desk works fully without any of these upgrades.
+Scheduling & Enquiries Manager is one plugin. It does not install, load or require a separate package or licence key.
 
 
 == External services ==
 
 
 
-Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. This version does not use an AI service. The plugin does not load scripts, fonts or images from outside services on public pages.
+Titan Zero Front Desk connects to the external services below only when the site administrator configures a connector or turns on the relevant integration. Nothing is sent to the plugin author by default. Hosted AI is covered in the Hosted AI section above. The plugin does not load scripts, fonts or images from outside services on public pages.
 
 
 
@@ -330,7 +329,6 @@ The complete source code is in this plugin folder and is licensed under GPLv2. N
 == Support ==
 
 Support: support@titanzero.io
-Licences and upgrades: sales@titanzero.io
 
 == Changelog ==
 

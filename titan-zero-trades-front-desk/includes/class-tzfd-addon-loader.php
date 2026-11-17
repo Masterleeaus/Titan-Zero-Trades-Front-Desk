@@ -70,14 +70,12 @@ final class TZFD_Addon_Loader {
             'tzfd-Reminder' => 'bookings',
             'tzfd-MissedCall' => 'calls',
             'tzfd-Cache' => 'infrastructure',
-            'tzfd-AISetup' => 'bookings',
             'tzfd-ActivityLogsWidget' => 'bookings',
             'tzfd-Onboarding' => 'bookings',
             'tzfd-VerticalPacks' => 'bookings',
             'tzfd-SMSButton' => 'calls',
             'tzfd-WebHook' => 'bookings',
             'tzfd-WhatsappButton' => 'calls',
-            'tzfd-AIAssistant' => 'calls',
         );
     }
 

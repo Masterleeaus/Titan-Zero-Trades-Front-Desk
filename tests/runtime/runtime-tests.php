@@ -4,7 +4,7 @@
  * Run: wp --allow-root eval-file runtime-tests.php   (not shipped in the plugin)
  */
 // Resolves against the active WordPress install (WP_PLUGIN_DIR), not a fixed server path.
-if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; return; }
+if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; exit( 1 ); }
 $tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php' ) as $tz_file ) {
     require_once $tz_inc . $tz_file;
@@ -139,16 +139,29 @@ if ( class_exists( 'TZFD_Signed_Request' ) ) {
     rt_check( 'signed-request class is loaded', false, 'TZFD_Signed_Request not found' );
 }
 
+// FAQ knowledge gap detection (issue #36).
+require __DIR__ . '/ai-gap-runtime-checks.php';
+// Issue #21: FAQ retrieval checks against the real options, transients and filters. Runs before the summary.
+$rt_company_before_faq = $company; // the FAQ suite assigns its own $company (a per-run id); keep this suite's tenant
+$GLOBALS['tzfd_nested_suite'] = 'runtime-tests';
+require __DIR__ . '/faq-retrieval-wp-tests.php';
+unset( $GLOBALS['tzfd_nested_suite'] );
+$company = $rt_company_before_faq;
+// The FAQ suite counts its own checks; fold them in so this suite's exit status covers them.
+$GLOBALS['rt_pass'] += (int) $GLOBALS['wp_pass'];
+$GLOBALS['rt_fail'] += (int) $GLOBALS['wp_fail'];
 // 8. Signed call-events path for missed-call callback tasks (issue #30): credential gate, tenant denial
 // before any write, duplicate and replay handling, anonymous caller, and no caller data in the response.
 if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecycle' ) && class_exists( 'TZFD_Missed_Call_Tasks' ) ) {
     if ( ! TZFD_Contact_Actions::installed() ) { TZFD_Contact_Actions::install(); }
     if ( TZFD_Call_Lifecycle::SCHEMA_VERSION !== get_option( TZFD_Call_Lifecycle::VERSION_OPTION, '' ) ) { TZFD_Call_Lifecycle::run_install(); }
     $tc_tag     = 'rt' . substr( md5( uniqid( '', true ) ), 0, 8 );
+    // faq-retrieval-wp-tests.php reassigns the global \$company, so take this section's tenant from the active site.
+    $tc_company = (int) TZFD_Scoped_Store::company_id();
     $tc_secret  = str_repeat( 'q', 40 );
     $tc_map     = array(
-        'rt-tel-ok'    => array( 'enabled' => true, 'company_id' => $company, 'provider' => 'rt_phone', 'secret' => $tc_secret ),
-        'rt-tel-other' => array( 'enabled' => true, 'company_id' => $company + 1000, 'provider' => 'rt_phone', 'secret' => $tc_secret ),
+        'rt-tel-ok'    => array( 'enabled' => true, 'company_id' => $tc_company, 'provider' => 'rt_phone', 'secret' => $tc_secret ),
+        'rt-tel-other' => array( 'enabled' => true, 'company_id' => $tc_company + 1000, 'provider' => 'rt_phone', 'secret' => $tc_secret ),
     );
     $tc_filter  = function ( $creds, $key_id ) use ( $tc_map ) { return isset( $tc_map[ $key_id ] ) ? $tc_map[ $key_id ] : $creds; };
     add_filter( 'tzfd_telephony_provider_credentials_v1', $tc_filter, 10, 2 );
@@ -164,9 +177,9 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
         return TZFD_Telephony_Adapter::receive( $req );
     };
     $tc_status = function ( $r ) { return is_wp_error( $r ) ? (int) ( $r->get_error_data()['status'] ?? 0 ) : $r->get_status(); };
-    $tc_tasks  = function ( $call_id ) use ( $wpdb, $company ) {
-        $key = TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_id );
-        return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $company, $key ) );
+    $tc_tasks  = function ( $call_id ) use ( $wpdb, $tc_company ) {
+        $key = TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_id );
+        return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $tc_company, $key ) );
     };
     $tc_calls  = function ( $company_id, $call_id ) use ( $wpdb ) {
         return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . TZFD_Call_Lifecycle::tables()['calls'] . ' WHERE company_id = %d AND external_call_hash = %s', $company_id, hash( 'sha256', $call_id ) ) );
@@ -178,7 +191,7 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     $r1 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_1, 'event_id' => $ev_1, 'event' => 'missed', 'from' => '+61 400 111 222' ), $ts_1 );
     rt_check( 'signed missed call is accepted', 200 === $tc_status( $r1 ), 'status=' . $tc_status( $r1 ) );
     rt_check( 'missed call creates one callback task', 1 === $tc_tasks( $call_1 ) );
-    $task_row = $wpdb->get_row( $wpdb->prepare( 'SELECT phone, state, match_status FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $company, TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_1 ) ), ARRAY_A );
+    $task_row = $wpdb->get_row( $wpdb->prepare( 'SELECT phone, state, match_status FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $tc_company, TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_1 ) ), ARRAY_A );
     rt_check( 'task stores the E.164 number and an open state', is_array( $task_row ) && '+61400111222' === $task_row['phone'] && 'open' === $task_row['state'] && 'unmatched' === $task_row['match_status'], json_encode( $task_row ) );
     $body_1 = is_wp_error( $r1 ) ? '' : wp_json_encode( $r1->get_data() );
     rt_check( 'response does not expose the caller number', '' !== $body_1 && false === strpos( $body_1, '400111222' ) && false === strpos( $body_1, '+61' ) );
@@ -186,7 +199,7 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     $r2 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_1, 'event_id' => $ev_1, 'event' => 'missed', 'from' => '+61 400 111 222' ) );
     rt_check( 'redelivery with a new signature is accepted', 200 === $tc_status( $r2 ) );
     rt_check( 'redelivered event does not create a second task', 1 === $tc_tasks( $call_1 ) );
-    $logged = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . TZFD_Call_Lifecycle::tables()['events'] . ' WHERE company_id = %d AND external_event_hash = %s', $company, hash( 'sha256', $ev_1 ) ) );
+    $logged = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM ' . TZFD_Call_Lifecycle::tables()['events'] . ' WHERE company_id = %d AND external_event_hash = %s', $tc_company, hash( 'sha256', $ev_1 ) ) );
     rt_check( 'incoming provider event id is logged exactly once', 1 === $logged, 'rows=' . $logged );
 
     $r3 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_1, 'event_id' => $ev_1, 'event' => 'missed', 'from' => '+61 400 111 222' ), $ts_1 );
@@ -195,13 +208,13 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     $call_2 = 'CA-' . $tc_tag . '-2';
     $r4 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_2, 'event_id' => 'EV-' . $tc_tag . '-2', 'event' => 'missed', 'from' => 'anonymous' ) );
     rt_check( 'anonymous caller still gets a task, with no number stored', 200 === $tc_status( $r4 ) && 1 === $tc_tasks( $call_2 ) );
-    $state_2 = $wpdb->get_row( $wpdb->prepare( 'SELECT phone, state FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $company, TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_2 ) ), ARRAY_A );
+    $state_2 = $wpdb->get_row( $wpdb->prepare( 'SELECT phone, state FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $tc_company, TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_2 ) ), ARRAY_A );
     rt_check( 'anonymous caller task is marked no_callback_number', is_array( $state_2 ) && '' === $state_2['phone'] && 'no_callback_number' === $state_2['state'], json_encode( $state_2 ) );
 
     $call_3 = 'CA-' . $tc_tag . '-3';
     $r5 = $tc_send( 'rt-tel-other', $tc_secret, array( 'call_id' => $call_3, 'event_id' => 'EV-' . $tc_tag . '-3', 'event' => 'missed', 'from' => '+61400999888' ) );
     rt_check( 'credential for another business is denied with 403', 403 === $tc_status( $r5 ), 'status=' . $tc_status( $r5 ) );
-    rt_check( 'wrong-tenant denial writes no call row for that business', 0 === $tc_calls( $company + 1000, $call_3 ), 'rows=' . $tc_calls( $company + 1000, $call_3 ) );
+    rt_check( 'wrong-tenant denial writes no call row for that business', 0 === $tc_calls( $tc_company + 1000, $call_3 ), 'rows=' . $tc_calls( $tc_company + 1000, $call_3 ) );
     rt_check( 'wrong-tenant denial creates no task on this site', 0 === $tc_tasks( $call_3 ) );
 
     rt_check( 'unknown provider key id is refused with 401', 401 === $tc_status( $tc_send( 'rt-tel-none', $tc_secret, array( 'call_id' => 'CA-x', 'event_id' => 'EV-x', 'event' => 'missed' ) ) ) );
@@ -213,27 +226,27 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
     $tc_cand_filter = function ( $candidates, $company_id, $e164 ) use ( &$tc_candidates ) { return $tc_candidates; };
     add_filter( 'tzfd_missed_call_contact_candidates_v1', $tc_cand_filter, 10, 3 );
     $tc_candidates = array(
-        array( 'company_id' => $company, 'customer_id' => 11, 'phone' => '+61400555666' ),
-        array( 'company_id' => $company, 'customer_id' => 12, 'phone' => '0400 555 666' ),
+        array( 'company_id' => $tc_company, 'customer_id' => 11, 'phone' => '+61400555666' ),
+        array( 'company_id' => $tc_company, 'customer_id' => 12, 'phone' => '0400 555 666' ),
     );
     $call_4 = 'CA-' . $tc_tag . '-4';
     $r6 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_4, 'event_id' => 'EV-' . $tc_tag . '-4', 'event' => 'missed', 'from' => '+61400555666' ) );
     rt_check( 'ambiguous caller match still creates a task', 200 === $tc_status( $r6 ) && 1 === $tc_tasks( $call_4 ) );
-    $amb_row = $wpdb->get_row( $wpdb->prepare( 'SELECT match_status, customer_id FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $company, TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_4 ) ), ARRAY_A );
+    $amb_row = $wpdb->get_row( $wpdb->prepare( 'SELECT match_status, customer_id FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $tc_company, TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_4 ) ), ARRAY_A );
     rt_check( 'two matching contacts are ambiguous and link no customer', is_array( $amb_row ) && 'ambiguous' === $amb_row['match_status'] && 0 === (int) $amb_row['customer_id'], json_encode( $amb_row ) );
 
-    $tc_candidates = array( array( 'company_id' => $company, 'customer_id' => 11, 'phone' => '+61400555666' ) );
+    $tc_candidates = array( array( 'company_id' => $tc_company, 'customer_id' => 11, 'phone' => '+61400555666' ) );
     $call_5 = 'CA-' . $tc_tag . '-5';
     $r7 = $tc_send( 'rt-tel-ok', $tc_secret, array( 'call_id' => $call_5, 'event_id' => 'EV-' . $tc_tag . '-5', 'event' => 'missed', 'from' => '+61400555666' ) );
-    $cand_row = $wpdb->get_row( $wpdb->prepare( 'SELECT match_status, customer_id FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $company, TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_5 ) ), ARRAY_A );
+    $cand_row = $wpdb->get_row( $wpdb->prepare( 'SELECT match_status, customer_id FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key = %s', $tc_company, TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_5 ) ), ARRAY_A );
     rt_check( 'one matching contact is a candidate only', 200 === $tc_status( $r7 ) && is_array( $cand_row ) && 'candidate' === $cand_row['match_status'] && 11 === (int) $cand_row['customer_id'], json_encode( $cand_row ) );
     remove_filter( 'tzfd_missed_call_contact_candidates_v1', $tc_cand_filter, 10 );
 
     remove_filter( 'tzfd_telephony_provider_credentials_v1', $tc_filter, 10 );
-    $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key IN (%s, %s, %s, %s, %s)', $company,
-        TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_1 ), TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_2 ),
-        TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_4 ), TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_5 ),
-        TZFD_Contact_Rules::dedupe_key( $company, 'missed_call', 'rt_phone|' . $call_3 ) ) );
+    $wpdb->query( $wpdb->prepare( 'DELETE FROM ' . TZFD_Contact_Actions::actions_table() . ' WHERE company_id = %d AND dedupe_key IN (%s, %s, %s, %s, %s)', $tc_company,
+        TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_1 ), TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_2 ),
+        TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_4 ), TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_5 ),
+        TZFD_Contact_Rules::dedupe_key( $tc_company, 'missed_call', 'rt_phone|' . $call_3 ) ) );
 } else {
     rt_check( 'telephony adapter and missed-call tasks are loaded', false, 'classes missing' );
 }
@@ -241,3 +254,4 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
 // Issue #21: FAQ retrieval checks run last. Their option and filter changes would otherwise break the signed call-events checks above.
 require __DIR__ . '/faq-retrieval-wp-tests.php';
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";
+exit( $GLOBALS['rt_fail'] > 0 ? 1 : 0 );

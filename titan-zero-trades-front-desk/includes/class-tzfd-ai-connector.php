@@ -59,9 +59,9 @@ final class TZFD_AI_Connector {
         );
     }
 
-    /** Pilot monthly budgets per site. Provisional; the hosted service stays authoritative. */
+    /** Standing monthly budgets per site (contract figures). The hosted service stays authoritative. */
     public static function budget_limits() {
-        $limits = array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 );
+        $limits = array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 );
         if ( function_exists( 'apply_filters' ) ) {
             $limits = apply_filters( 'tzfd_ai_connector_budget_limits', $limits );
         }

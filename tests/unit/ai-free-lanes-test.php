@@ -297,6 +297,66 @@ $f2 = TZFD_Ai_Monthly_Insights::report( $CO, '2026-11', $db2, $extra, $NOW );
 $f3 = TZFD_Ai_Monthly_Insights::report( $CO, '2026-11', $db2, $extra, $NOW );
 ok( 'insights: provider down falls back to local report with bounded retries', $f1['summary_status'] === 'provider_down' && $f2['summary_status'] === 'provider_down' && $f3['summary_status'] === 'retry_exhausted' && $f3['local']['base'] === 45 && hosted_calls() === 2 );
 
+/* ---------- #36 answer-flow wiring, consent, retention, merges, page helpers ---------- */
+if ( ! class_exists( 'TZFD_Scoped_Store' ) ) {
+	class TZFD_Scoped_Store { public static $company = 0; public static function company_id() { return self::$company; } }
+}
+reset_state();
+$G = 7; $T = time(); $DAY = DAY_IN_SECONDS;
+$VOCAB = array( 'boiler repair', 'drain unblocking' );
+TZFD_Scoped_Store::$company = 0;
+do_action( 'tzfd_ai_question_handled', 'boiler repair please', array( 'status' => 'refused', 'source' => 'none' ) );
+ok( 'wiring: no company selected means nothing is recorded', ! isset( $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'] ) );
+grant();
+TZFD_Scoped_Store::$company = $G;
+do_action( 'tzfd_ai_question_handled', 'Do you do boiler repair?', array( 'status' => 'answered', 'source' => 'approved_rule' ) );
+$rep = TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() );
+ok( 'wiring: approved-rule answer counts as handled, not as a gap', $rep['total'] === 1 && $rep['unanswered'] === 0 );
+do_action( 'tzfd_ai_question_handled', 'Where are you based?', array( 'status' => 'refused', 'source' => 'none' ) );
+do_action( 'tzfd_ai_question_handled', 'Tell me a joke', array( 'status' => 'limited', 'source' => 'none' ) );
+do_action( 'tzfd_ai_question_handled', 'Any offers this week', array( 'status' => 'answered', 'source' => 'model' ) );
+$rep = TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() );
+ok( 'wiring: refusals, limits and model answers count as unanswered', $rep['total'] === 4 && $rep['unanswered'] === 3 );
+ok( 'wiring: offline proxy fallback (refusal) makes no hosted call', hosted_calls() === 0 );
+do_action( 'tzfd_ai_question_handled', 'Where are you based?', array( 'status' => 'refused', 'source' => 'none' ) );
+$rep = TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() );
+ok( 'dedupe: the same unanswered question inside the window adds to total only', $rep['total'] === 5 && $rep['unanswered'] === 3 );
+TZFD_Scoped_Store::$company = 0;
+TZFD_Ai_Gap_Detection::on_handled( 'x', array( 'status' => 'answered', 'source' => 'approved_rule' ) );
+TZFD_Scoped_Store::$company = $G;
+$GLOBALS['tzfd_test_options']['tz_fd_ai_consent'] = array( 'granted' => false, 'at' => $T );
+$before = json_encode( $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'] ?? null );
+do_action( 'tzfd_ai_question_handled', 'boiler repair now', array( 'status' => 'refused', 'source' => 'none' ) );
+ok( 'consent withdrawn: no question is recorded after withdrawal', json_encode( $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'] ?? null ) === $before );
+ok( 'consent withdrawn: report shows nothing even if old data is still stored', TZFD_Ai_Gap_Detection::report( $G, $T, 30, array(), array() )['total'] === 0 );
+grant();
+
+/* Topic grouping, count accuracy and retention */
+reset_state(); grant();
+for ( $i = 0; $i < 4; $i++ ) { TZFD_Ai_Gap_Detection::record( $G, "boiler repair price $i", false, 0, $VOCAB, $T + $i * 700 ); }
+for ( $i = 0; $i < 3; $i++ ) { TZFD_Ai_Gap_Detection::record( $G, "drain unblocking hours $i", false, 0, $VOCAB, $T + 5000 + $i * 700 ); }
+$rep = TZFD_Ai_Gap_Detection::report( $G, $T + 9000, 30, array(), array() );
+ok( 'count: topic counts are exact (4 boiler, 3 drain)', $rep['topics'][0]['count'] === 4 && $rep['topics'][1]['count'] === 3 && $rep['unanswered'] === 7 );
+$k_boiler = TZFD_Ai_Gap_Detection::key_for( 'boiler repair' );
+$k_drain  = TZFD_Ai_Gap_Detection::key_for( 'drain unblocking' );
+ok( 'grouping: merging drain into boiler is allowed', TZFD_Ai_Gap_Detection::merge_topics( $G, $k_drain, $k_boiler )['ok'] === true );
+ok( 'grouping: merging back creates a loop and is refused', TZFD_Ai_Gap_Detection::merge_topics( $G, $k_boiler, $k_drain ) === array( 'ok' => false, 'error' => 'merge_cycle' ) );
+ok( 'grouping: merging a topic into itself is refused', TZFD_Ai_Gap_Detection::merge_topics( $G, $k_boiler, $k_boiler )['ok'] === false );
+ok( 'grouping: merging an unknown topic is refused', TZFD_Ai_Gap_Detection::merge_topics( $G, 'ffffffffffffffff', $k_boiler )['ok'] === false );
+ok( 'grouping: merged topic shows the combined count', TZFD_Ai_Gap_Detection::report( $G, $T + 9000, 30, array(), array() )['topics'][0]['count'] === 7 );
+TZFD_Ai_Gap_Detection::record( $G, 'boiler repair much later', false, 0, $VOCAB, $T + 40 * $DAY );
+$stored = $GLOBALS['tzfd_test_options']['tz_fd_ai_gaps'][ $G ];
+ok( 'retention: day counts older than the retention window are dropped on write', array_keys( $stored['days'] ) === array( gmdate( 'Y-m-d', $T + 40 * $DAY ) ) );
+ok( 'retention: topics with no days left are dropped on write', ! isset( $stored['topics'][ $k_drain ] ) );
+ok( 'retention: report after the window shows no old counts', TZFD_Ai_Gap_Detection::report( $G, $T + 80 * $DAY, 30, array(), array() )['total'] === 0 );
+
+/* Filters and key validation (admin page helpers) */
+$f = TZFD_Ai_Gap_Page::parse_filters( array( 'min_count' => '5000', 'search' => str_repeat( 'a', 100 ), 'coverage' => 'bogus' ) );
+ok( 'page: min_count is clamped to 1000, search to 60 characters, unknown coverage ignored', $f['min_count'] === 1000 && strlen( $f['search'] ) === 60 && $f['coverage'] === '' );
+$f = TZFD_Ai_Gap_Page::parse_filters( array( 'min_count' => '-3', 'coverage' => 'missing' ) );
+ok( 'page: negative min_count becomes 0 and allowed coverage is kept', $f['min_count'] === 0 && $f['coverage'] === 'missing' );
+ok( 'page: only 16 lowercase hex characters are valid topic keys', TZFD_Ai_Gap_Page::valid_key( $k_boiler ) && ! TZFD_Ai_Gap_Page::valid_key( '../etc/passwd' ) && ! TZFD_Ai_Gap_Page::valid_key( strtoupper( $k_boiler ) ) && ! TZFD_Ai_Gap_Page::valid_key( array( 'x' ) ) );
+
 /* ---------- result ---------- */
 echo "Passed: {$GLOBALS['tzfd_pass']}  Failed: {$GLOBALS['tzfd_fail']}\n";
 exit( $GLOBALS['tzfd_fail'] > 0 ? 1 : 0 );

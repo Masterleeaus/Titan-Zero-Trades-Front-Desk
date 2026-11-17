@@ -198,6 +198,15 @@ $held = $R::evaluate( $spam_text, 'x@example.com', 'ip9', $NOW, array(), null, 2
 t_check( 'held spam primary is spam and routes to spam review', 'spam' === $held['primary_intent'] && 'spam_review' === $held['route'] && true === $held['spam']['hold'] );
 t_check( 'no quote draft without quote intent', null === $e1['quote_draft'] );
 
+// ---- Urgent alert decision (consent, urgency, throttle) -----------------------------------
+t_check( 'alerts off without opt-in', false === $R::alert_decision( false, 'urgent', null, $NOW )['send'] && 'alerts_off' === $R::alert_decision( false, 'urgent', null, $NOW )['reason'] );
+t_check( 'opt-in must be strictly true', false === $R::alert_decision( '1', 'urgent', null, $NOW )['send'] );
+t_check( 'normal enquiry never alerts', 'not_urgent' === $R::alert_decision( true, 'normal', null, $NOW )['reason'] );
+t_check( 'first urgent alert sends', true === $R::alert_decision( true, 'urgent', null, $NOW )['send'] );
+t_check( 'second urgent alert inside window is throttled', 'throttled' === $R::alert_decision( true, 'urgent', $NOW - 60, $NOW )['reason'] );
+t_check( 'alert sends again after window', true === $R::alert_decision( true, 'urgent', $NOW - TZFD_Enquiry_Triage_Rules::ALERT_WINDOW, $NOW )['send'] );
+t_check( 'alert decision is deterministic', $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) === $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) );
+
 // ---- Allowlisted business routing rules ----------------------------------------------------
 $rules = array( 'cancel' => 'quote_review', 'booking' => 'not_a_queue', 'general' => 'spam_review', 'spam' => 'enquiry_queue' );
 t_check( 'rule routes intent to allowlisted queue', 'quote_review' === $R::route_for_intent( 'cancel', $rules ) );

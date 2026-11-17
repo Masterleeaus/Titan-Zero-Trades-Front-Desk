@@ -21,14 +21,14 @@ Other methods: `status()` (never returns the secret), `usage( $period )`, `confi
 
 | Feature | Tier | Scopes required | Monthly budget (pilot) |
 |---|---|---|---|
-| `faq.answer` | free_ai | faq.read | model_fallback 50 |
-| `faq.embed_query` | free_ai | faq.read | embedding 200 |
-| `faq.suggest_batch` | free_ai | faq.read | faq_batch 4 |
-| `insight.monthly` | free_ai | reports.read | insight 1 |
+| `faq.answer` | free_ai | faq.read | model_fallback 200 |
+| `faq.embed_query` | free_ai | faq.read | embedding 800 |
+| `faq.suggest_batch` | free_ai | faq.read | faq_batch 16 |
+| `insight.monthly` | free_ai | reports.read | insight 4 |
 | `assistant.turn` | assistant | faq.read, customer.read | none (server meters) |
 | `agent.run` | agent_team | booking.read, booking.write, customer.read | none (server meters) |
 
-Budgets are provisional pilot values. The hosted service stays authoritative. The local check only prevents needless calls.
+Budgets are the standing per-site monthly contract figures (200 / 800 / 16 / 4). The hosted service stays authoritative. The local check only prevents needless calls.
 
 ## Consent and permissions
 

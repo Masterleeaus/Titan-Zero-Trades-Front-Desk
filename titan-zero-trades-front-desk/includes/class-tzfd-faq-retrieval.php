@@ -11,7 +11,8 @@
  *   5. Otherwise ask the visitor to clarify. No model generates the answer text: answers are the owner's approved text.
  *
  * Tenant rules: every read and write takes an explicit company id through TZFD_Scoped_Store. A company id below 1
- * returns no answer. Private customer text is never sent to the embedding provider.
+ * returns no answer. Before any hosted call, emails and 8+ digit runs are redacted to placeholders. The hosted call
+ * is made only with recorded consent, the free_ai entitlement and the monthly cap; otherwise nothing is sent.
  *
  * Index version: a per-company integer bumped on every save or delete. It is part of the cache key, so an update or
  * delete makes older cached results unreachable at once. The cache TTL bounds any remaining staleness.
@@ -28,14 +29,18 @@ final class TZFD_FAQ_Retrieval {
 
     /** Sizing goal for the pilot. A goal for the pilot, not a code limit. */
     const PILOT_ENTRY_GOAL = 100;
-    /** Pilot cap on new hosted query embeddings per site per month. Cost guard, not a licence check. */
-    const EMBED_MONTHLY_LIMIT = 200;
+    /** Standing cap on new hosted query embeddings per site per month (contract figure). Cost guard, not a licence check. */
+    const EMBED_MONTHLY_LIMIT = 800;
 
     const MAX_QUERY_CHARS    = 300;
     const MAX_ANSWER_CHARS   = 2000;
     const MAX_QUESTION_CHARS = 300;
     const MAX_TERMS_PER_ENTRY = 30;
     const CACHE_TTL          = 3600;
+
+    /** Placeholders that replace private detail before any text is sent to the hosted provider. */
+    const REDACT_EMAIL  = '[email]';
+    const REDACT_NUMBER = '[number]';
 
     /** Confidence thresholds, as a share of normalised query tokens covered by an entry. */
     const CONFIDENCE_ANSWER  = 0.6;
@@ -117,13 +122,21 @@ final class TZFD_FAQ_Retrieval {
     }
 
     /**
-     * True when the text contains an email address or a run of at least 7 digits (phone-like). Such text is never
-     * sent to the hosted embedding provider.
+     * Replaces every email address with [email] and every run of 8 or more digits (phone-like, separators allowed
+     * between digits) with [number]. Returns null when the pattern engine fails, so callers fail closed.
+     * Redacted text is what the hosted embedding provider receives. Raw text never leaves the site.
      */
+    public static function redact_private_detail( $text ) {
+        if ( ! is_string( $text ) ) { return ''; }
+        $text = preg_replace( '/[^\s@]+@[^\s@]+\.[^\s@]+/', self::REDACT_EMAIL, $text );
+        if ( null === $text ) { return null; }
+        return preg_replace( '/\+?\d(?:[\s\-().]?\d){7,}/', self::REDACT_NUMBER, $text );
+    }
+
+    /** True when redaction would change the text: it holds an email address or an 8+ digit run. */
     public static function contains_private_detail( $text ) {
-        if ( ! is_string( $text ) ) { return false; }
-        if ( preg_match( '/[^\s@]+@[^\s@]+\.[^\s@]+/', $text ) ) { return true; }
-        return (bool) preg_match( '/(?:\d[\s\-().]?){7,}/', $text );
+        $redacted = self::redact_private_detail( $text );
+        return null === $redacted || $redacted !== (string) $text;
     }
 
     /* ------------------------------------------------------------------ *
@@ -288,8 +301,9 @@ final class TZFD_FAQ_Retrieval {
     }
 
     /**
-     * Second stage. Runs only when keywords are not confident. Requires owner consent, a configured provider, the
-     * monthly cap not reached, and no private customer detail in the query. Any failure ends in clarification.
+     * Second stage. Runs only when keywords are not confident. Requires owner consent, the free_ai entitlement and the
+     * monthly cap not reached. Query and questions are redacted before the provider sees them. Any failure ends in
+     * clarification.
      */
     private static function embedding_or_clarify( $company, $raw, $norm, array $entries, array $ranked, $version ) {
         $suggestions = self::suggestions( $ranked );
@@ -299,18 +313,32 @@ final class TZFD_FAQ_Retrieval {
         if ( ! self::has_embedding_consent( $company ) ) {
             return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'low_confidence', $company, $version, $suggestions );
         }
-        // Checked on the raw text: normalisation strips the @ and . that identify an email address.
-        if ( self::contains_private_detail( $raw ) ) {
-            return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'private_detail_not_sent', $company, $version, $suggestions );
+        if ( ! self::hosted_entitlement_allowed() ) {
+            return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'hosted_ai_not_entitled', $company, $version, $suggestions );
         }
         if ( self::embedding_calls_this_month( $company ) >= self::EMBED_MONTHLY_LIMIT ) {
             return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'monthly_embedding_cap', $company, $version, $suggestions );
         }
 
+        // Redact before anything is sent: emails and 8+ digit runs become placeholders. The provider gets only
+        // redacted text, for the query and for every approved question. Redaction failure ends in clarification.
+        $safe_raw = self::redact_private_detail( $raw );
+        if ( null === $safe_raw ) {
+            return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'redaction_failed', $company, $version, $suggestions );
+        }
+        $send_norm = self::normalize( $safe_raw );
+        $questions = array();
+        foreach ( $entries as $e ) {
+            $safe_question = self::redact_private_detail( (string) $e['question'] );
+            if ( null === $safe_question ) {
+                return self::result( self::STATUS_CLARIFY, self::PATH_NONE, 'redaction_failed', $company, $version, $suggestions );
+            }
+            $questions[] = $safe_question;
+        }
+
         self::count_embedding_call( $company );
-        $questions = array_map( static function ( $e ) { return (string) $e['question']; }, $entries );
         try {
-            $vectors = apply_filters( 'tzfd_faq_embedding_provider', null, $norm, $questions );
+            $vectors = apply_filters( 'tzfd_faq_embedding_provider', null, $send_norm, $questions );
         } catch ( \Throwable $e ) {
             $vectors = null;
         }
@@ -348,6 +376,20 @@ final class TZFD_FAQ_Retrieval {
     /* ------------------------------------------------------------------ *
      * Helpers
      * ------------------------------------------------------------------ */
+
+    /**
+     * Entitlement gate for hosted calls, read from the single AI connector without sending anything. Requires a
+     * configured connection, recorded connector consent, the free_ai tier and the faq.read scope. Fails closed when
+     * the connector is not loaded.
+     */
+    private static function hosted_entitlement_allowed() {
+        if ( ! class_exists( 'TZFD_AI_Connector' ) ) { return false; }
+        $status = TZFD_AI_Connector::status();
+        return ! empty( $status['connected'] )
+            && ! empty( $status['consent'] )
+            && in_array( 'free_ai', (array) ( $status['entitlements'] ?? array() ), true )
+            && in_array( 'faq.read', (array) ( $status['scopes'] ?? array() ), true );
+    }
 
     private static function answer_result( array $best, $version, $path, $company ) {
         $entry = $best['entry'];

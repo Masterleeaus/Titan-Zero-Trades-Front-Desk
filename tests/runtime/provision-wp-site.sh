@@ -17,6 +17,8 @@ WP_CLI="${WP_CLI:-wp}"
 DB_ADMIN="${TZFD_RT_DB_ADMIN:-root}"
 DB_NAME="${TZFD_RT_DB_NAME:-tzfd_rt_$$}"
 DB_USER="${TZFD_RT_DB_USER:-tzfd_rt}"
+DB_HOST="${TZFD_RT_DB_HOST:-localhost}"              # config host; set to 127.0.0.1 for a TCP server (CI)
+DB_GRANT_HOST="${TZFD_RT_DB_GRANT_HOST:-localhost}" # account host the disposable user is created for
 DB_PASS="${TZFD_RT_DB_PASS:-tzfd_rt_$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')}"
 URL="${TZFD_RT_URL:-http://127.0.0.1:8080}"
 ADMIN_PASS="${TZFD_RT_ADMIN_PASS:-rt_admin_$(head -c9 /dev/urandom | od -An -tx1 | tr -d ' \n')}"
@@ -31,12 +33,12 @@ mkdir -p "$WP_ROOT" || fail "cannot create $WP_ROOT"
 
 # Database: fresh, dedicated to this run.
 mysql -u"$DB_ADMIN" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`$DB_NAME\` CHARACTER SET utf8mb4;
-  CREATE USER IF NOT EXISTS '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
-  ALTER USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';
-  GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'localhost'; FLUSH PRIVILEGES;" || fail "cannot create database (is MySQL/MariaDB running and $DB_ADMIN allowed?)"
+  CREATE USER IF NOT EXISTS '$DB_USER'@'$DB_GRANT_HOST' IDENTIFIED BY '$DB_PASS';
+  ALTER USER '$DB_USER'@'$DB_GRANT_HOST' IDENTIFIED BY '$DB_PASS';
+  GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'$DB_GRANT_HOST'; FLUSH PRIVILEGES;" || fail "cannot create database (is MySQL/MariaDB running and $DB_ADMIN allowed?)"
 
 $WP_CLI --allow-root --path="$WP_ROOT" core download --quiet || fail "wp core download failed"
-$WP_CLI --allow-root --path="$WP_ROOT" config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=localhost --skip-check --quiet || fail "config create failed"
+$WP_CLI --allow-root --path="$WP_ROOT" config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=$DB_HOST --skip-check --quiet || fail "config create failed"
 $WP_CLI --allow-root --path="$WP_ROOT" core install --url="$URL" --title="Runtime test site" --admin_user=rtadmin \
   --admin_password="$ADMIN_PASS" --admin_email=rt-admin@example.test --skip-email --quiet || fail "core install failed"
 

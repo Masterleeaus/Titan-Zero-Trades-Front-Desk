@@ -7,7 +7,7 @@
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- run through WP-CLI\n";
-	return;
+	exit( 1 );
 }
 global $wpdb;
 $tz_phase = getenv( 'TZFD_RT_PHASE' ) ?: '';
@@ -31,7 +31,7 @@ if ( 'seed' === $tz_phase ) {
 		$tz_res = TZFD_Booking_Create_Transaction::create( $wpdb, 1, $tz_row, $tz_params, TZFD_Intake_Mode::MODE_INSTANT );
 		if ( 'success' !== ( $tz_res['status'] ?? '' ) ) {
 			echo esc_html( 'FAIL seed -- booking ' . (int) $i . ' not created on 3.0.128 (' . ( $tz_res['status'] ?? 'none' ) . ')' ) . "\n";
-			return;
+			exit( 1 );
 		}
 		$tz_ids[] = (int) $tz_res['id'];
 	}
@@ -57,10 +57,11 @@ if ( 'seed' === $tz_phase ) {
 }
 
 if ( 'verify' === $tz_phase ) {
+	ob_start(); // Output is buffered so the exit status can reflect any FAIL line before it is printed.
 	$tz_saved = json_decode( (string) file_get_contents( $tz_file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- scratch fingerprint file outside the plugin, read on the disposable site
 	if ( ! is_array( $tz_saved ) ) {
 		echo "FAIL verify -- no fingerprint file\n";
-		return;
+		exit( 1 );
 	}
 	$tz_ok = 0; $tz_bad = array();
 	foreach ( $tz_saved['ids'] as $tz_id ) {
@@ -87,7 +88,10 @@ if ( 'verify' === $tz_phase ) {
 	$tz_active = realpath( WP_PLUGIN_DIR . '/titan-zero-trades-front-desk' );
 	echo ( '' !== $tz_expect && realpath( $tz_expect ) === $tz_active ? 'PASS' : 'FAIL' ) . ' active plugin folder is the expected source (' . esc_html( (string) $tz_active ) . ")\n";
 	echo 'Version reported: ' . esc_html( defined( 'TZFD_VERSION' ) ? TZFD_VERSION : 'unknown' ) . "\n";
-	return;
+	$tz_out = (string) ob_get_clean();
+	echo $tz_out; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped line by line above
+	exit( preg_match( '/^FAIL /m', $tz_out ) ? 1 : 0 );
 }
 
 echo "FAIL harness -- set TZFD_RT_PHASE to seed or verify\n";
+exit( 1 );

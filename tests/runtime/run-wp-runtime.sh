@@ -111,6 +111,8 @@ echo "--- staff access (staff-access-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/staff-access-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- unreadable booking row (bad-booking-row-runtime-tests.php, issue #183)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/bad-booking-row-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- calendar add (calendar-add-runtime-tests.php, issue #182)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/calendar-add-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- booking confirmation (booking-confirmation-runtime-tests.php, issue #184)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-confirmation-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 

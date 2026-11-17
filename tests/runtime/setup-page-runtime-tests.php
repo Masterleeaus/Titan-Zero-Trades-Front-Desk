@@ -11,7 +11,7 @@ tzfd_sp_ok( 'setup-page: no admin notice is added by this screen', false === has
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_sp'] = array( 'PASS' => 0, 'FAIL' => 0 );
@@ -26,7 +26,7 @@ function tzfd_sp_ok( $name, $ok, $detail = '' ) {
 $tzfd_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 if ( ! is_readable( $tzfd_inc . 'class-tzfd-setup-page.php' ) ) {
 	tzfd_sp_ok( 'setup-page: class file readable', false, 'class-tzfd-setup-page.php not found in the active plugin' );
-	return;
+	exit( 1 );
 }
 require_once $tzfd_inc . 'class-tzfd-setup-checklist.php';
 require_once $tzfd_inc . 'class-tzfd-setup-page.php';
@@ -85,3 +85,4 @@ delete_option( TZFD_Setup_Checklist::PROGRESS_OPTION );
 delete_option( TZFD_Setup_Checklist::MANUAL_OPTION );
 
 echo 'Summary (setup-page-runtime): ' . (int) $GLOBALS['tzfd_sp']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_sp']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_sp']['FAIL'] > 0 ? 1 : 0 );

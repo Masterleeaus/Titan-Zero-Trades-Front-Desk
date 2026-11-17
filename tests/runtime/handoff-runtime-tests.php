@@ -74,3 +74,4 @@ hr_check( 'existing lead intake still stores enquiries', $legacy > 0 );
 $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->prefix}" . TZFD_Tables::ENQUIRIES . " WHERE email IN (%s, %s)", $email, 'legacy-' . $tag . '@example.test' ) );
 
 echo "\nSummary: " . $GLOBALS['hr_pass'] . " passed, " . $GLOBALS['hr_fail'] . " failed\n";
+exit( $GLOBALS['hr_fail'] > 0 ? 1 : 0 );

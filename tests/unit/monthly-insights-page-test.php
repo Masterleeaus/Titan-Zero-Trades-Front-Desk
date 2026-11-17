@@ -37,9 +37,13 @@ function mp_ok( $name, $cond ) {
 class MpFakeDb {
 	public $prefix = 'wp_';
 	public $rows   = array();
+	public $calls  = array();
 	public $args   = null;
 	public function prepare( $sql, ...$args ) { $this->args = $args; return $sql; }
-	public function get_results( $sql, $output = null ) { return $this->rows; }
+	public function get_results( $sql, $output = null ) {
+		// The first prepared argument is the table: call outcomes come from tz_calls, enquiries from tz_enquiries.
+		return ( isset( $this->args[0] ) && 'wp_tz_calls' === $this->args[0] ) ? $this->calls : $this->rows;
+	}
 }
 
 $M = 'TZFD_Ai_Monthly_Insights';
@@ -56,6 +60,11 @@ $db->rows = array(
 	array( 'status' => 'closed', 'source' => 'phone', 'n' => 12 ),
 	array( 'status' => '<script>x</script>', 'source' => 'web', 'n' => 8 ),
 );
+$db->calls = array(
+	array( 'state' => 'missed', 'n' => 12 ),
+	array( 'state' => 'answered', 'n' => 20 ),
+	array( 'state' => 'abandoned', 'n' => 3 ),
+);
 $GLOBALS['wpdb']        = $db;
 $GLOBALS['tzfd_test_caps'] = true;
 ob_start();
@@ -63,6 +72,12 @@ $M::render_page();
 $html = ob_get_clean();
 mp_ok( 'page shows the status section', false !== strpos( $html, 'Enquiries by status' ) );
 mp_ok( 'page shows the denominator in the text', false !== strpos( $html, 'of 50' ) );
+mp_ok( 'page shows call outcomes with the call total as denominator', false !== strpos( $html, 'Call outcomes' ) && false !== strpos( $html, 'missed: 12 of 35' ) );
+mp_ok( 'call outcome cells below the minimum are omitted', false === strpos( $html, 'abandoned' ) );
+$calls_only = $M::aggregate_calls( $db, 7, '2026-10' );
+mp_ok( 'call aggregate totals every state, including omitted ones', 35 === $calls_only['base'] && 3 === $calls_only['by_state']['abandoned'] );
+mp_ok( 'call aggregate is company and window scoped', 7 === $db->args[1] && '2026-10-01 00:00:00' === $db->args[2] );
+mp_ok( 'no call outcomes when there are no calls', array() === $M::call_outcome_section( null ) && array() === $M::call_outcome_section( array( 'base' => 0, 'by_state' => array() ) ) );
 mp_ok( 'stored labels are escaped, not run as markup', false === strpos( $html, '<script>' ) && false !== strpos( $html, '&lt;script&gt;' ) );
 mp_ok( 'page is scoped to the current company', 7 === $db->args[1] );
 mp_ok( 'page reads only the month window', '2026-10-01 00:00:00' === $db->args[2] && '2026-11-01 00:00:00' === $db->args[3] );

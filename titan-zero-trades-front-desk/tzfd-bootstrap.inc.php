@@ -79,6 +79,8 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-scheduling-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-intake-mode.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-menu.php';
 TZFD_Admin_Menu::register();
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-services-page.php';
+TZFD_AI_Services_Page::register();
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-notices.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-view.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-admin-layout.php';
@@ -103,6 +105,8 @@ TZFD_Resource_Admin::register();
 TZFD_Service_Details::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-review.php';
 TZFD_Enquiry_Review::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-triage.php';
+TZFD_Enquiry_Triage::register();
 // Booking pipeline: managers, approval and supervisor for assistant and channel bookings.
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline.php';

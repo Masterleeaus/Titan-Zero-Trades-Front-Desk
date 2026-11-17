@@ -355,17 +355,27 @@ final class TZFD_Legacy_AI_Data {
         return $response;
     }
 
-    /** Chats are kept until an administrator deletes them on the Legacy AI data screen. Erasure reports them as kept. */
+    /**
+     * Erase the chats for an exact email address. Erasure deletes the matching rows directly and keeps no backup copy,
+     * because a backup would keep the same person's chats. The Legacy AI data screen's own delete still makes a backup.
+     */
     public static function privacy_erase( $email_address, $page = 1 ) {
         global $wpdb;
         $response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => true );
         $email = is_string( $email_address ) ? strtolower( trim( $email_address ) ) : '';
         if ( ! self::email_ready( $email ) ) { return $response; }
-        $count = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE LOWER(%i) = %s', self::chat_table(), 'user_email', $email ) );
-        if ( $count > 0 ) {
+        $wpdb->last_error = '';
+        $deleted = $wpdb->query( $wpdb->prepare( 'DELETE FROM `' . self::chat_table() . '` WHERE LOWER(`user_email`) = %s', $email ) );
+        if ( false === $deleted || ! empty( $wpdb->last_error ) ) {
             $response['items_retained'] = true;
-            /* translators: %d: number of kept chat records. */
-            $response['messages'][] = sprintf( _n( '%d booking assistant chat from an earlier version is kept until an administrator deletes it on the Legacy AI data screen.', '%d booking assistant chats from an earlier version are kept until an administrator deletes them on the Legacy AI data screen.', $count, 'titan-zero-trades-front-desk' ), $count );
+            $response['messages'][]     = __( 'Booking assistant chats from an earlier version could not be erased. Please retry.', 'titan-zero-trades-front-desk' );
+            return $response;
+        }
+        $deleted = (int) $deleted;
+        if ( $deleted > 0 ) {
+            $response['items_removed'] = true;
+            /* translators: %d: number of deleted chat records. */
+            $response['messages'][] = sprintf( _n( '%d booking assistant chat from an earlier version deleted.', '%d booking assistant chats from an earlier version deleted.', $deleted, 'titan-zero-trades-front-desk' ), $deleted );
         }
         return $response;
     }

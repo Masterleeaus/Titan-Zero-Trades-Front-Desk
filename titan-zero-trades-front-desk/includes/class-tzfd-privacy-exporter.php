@@ -1,7 +1,13 @@
 <?php
 // phpcs:disable WordPress.DB.DirectDatabaseQuery,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Plugin-owned custom tables. Direct queries are intentional: caching these results would serve stale bookings. Values are bound with prepare() or %i placeholders; queries built from fragments are reviewed where marked.
 /**
- * WordPress personal-data export and erase support for the plugin's booking, chat and staff records, and client-portal sign-in records. Customer, quote and payment records belong to Titan Zero Trades: Front Desk, Quotes and Invoicing (19 Oct split).
+ * WordPress personal-data export and erase support for the plugin's own tables that hold personal data: bookings,
+ * website enquiries and their triage notes, local customers, missed-call and text-reply records, queued reminders and
+ * customer emails, booking-assistant chats from earlier versions, and client-portal sign-in records. Customer, quote and
+ * payment records belong to Titan Zero Trades: Front Desk, Quotes and Invoicing (19 Oct split).
+ *
+ * Coverage is listed in email_tables(). Every table that holds personal data is either listed there or is documented
+ * in no_personal_data_tables() with the reason it holds none.
  *
  * @package TZFDFrontDesk
  */
@@ -10,12 +16,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 require_once __DIR__ . '/class-tzfd-stored-data.php';
+require_once __DIR__ . '/class-tzfd-tables.php';
+require_once __DIR__ . '/class-tzfd-contact-rules.php';
 
 
-/** Export customer-submitted fields from bookings matched by their exact email. */
+/** Export and erase the personal data this plugin stores, matched by an exact email address (and by phone numbers recorded against it). */
 class TZFD_Privacy_Exporter {
-	const PAGE_SIZE = 50;
+	const PAGE_SIZE   = 50;
 	const ERASE_BATCH = 100;
+	/** Plugin-owned tables outside the TZFD_Tables list, named as their owning classes name them. */
+	const LOCAL_CUSTOMERS = 'tzfd_local_customers';
+	const LOCAL_SERVICES  = 'tzfd_local_services';
+	const EVENT_OUTBOX    = 'tzfd_customer_event_outbox';
 
 	/** Register the exporter, the eraser and the suggested privacy policy text. */
 	public static function register() {
@@ -35,7 +47,6 @@ class TZFD_Privacy_Exporter {
 		);
 	}
 
-	/** Suggested privacy policy text. Describes what the plugin stores; services receive data only when turned on. */
 	/** Suggested privacy policy text. Describes what the plugin stores and each outside service it can contact. */
 	private static function policy_text() {
 		$sections = array(
@@ -44,16 +55,16 @@ class TZFD_Privacy_Exporter {
 				__( 'Each booking or form submission stores what the customer entered, such as name, email address, phone number, address, booking date and time, and the answers to the form fields. While the setting "Store user\'s IP address?" is on (it is on by default), the IP address of the request is stored with the booking too. The activity log records booking changes with the booking number, the time and the logged-in user who made the change. Booking records are kept until you delete them in Titan Zero Trades: Front Desk. Calendar invitation files that contain booking details are saved in your uploads folder and are normally deleted once the email is sent.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
-				__( 'Customers and staff contacts', 'titan-zero-trades-front-desk' ),
-				__( 'The staff contact list stores the name, phone number and email address of each staff member you add. Customer records are stored by Scheduling & Enquiries Manager, and staff contacts are kept until you delete them there.', 'titan-zero-trades-front-desk' ),
+				__( 'Enquiries, customers and staff contacts', 'titan-zero-trades-front-desk' ),
+				__( 'Website enquiries store the name, email address, phone number, preferred contact method and enquiry text. Enquiry triage stores the intent, urgency and spam assessment for each enquiry, a draft quote, and a hashed IP address. Local customer records store the name, email address, phone number, address and notes you enter. The staff contact list stores the name, phone number and email address of each staff member you add. These records are kept until you delete them in Titan Zero Trades: Front Desk.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Client portal', 'titan-zero-trades-front-desk' ),
 				__( 'When a client asks for a sign-in link, their email address is stored with the one-time link for 20 minutes and with their session for 2 hours. A cookie named tz_fd_portal_session holds the session token. After these times the records stop working, and WordPress removes them during its routine cleanup.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
-				__( 'Missed-call texts and webhooks', 'titan-zero-trades-front-desk' ),
-				__( 'If missed-call texts are turned on, the caller\'s phone number is sent to the SMS gateway you set up. The site counts texts per number for 24 hours, under a hashed key, to limit how many are sent. The missed-call log keeps only the last four digits. When a caller replies STOP, UNSUBSCRIBE, END, CANCEL or QUIT, the full number is added to an opt-out list kept in your WordPress options, and no more texts are sent until the caller replies START. The WordPress erase tool cannot find this list, because it is keyed by phone number. If a webhook is turned on, each booking event sends the booking details to the address you enter.', 'titan-zero-trades-front-desk' ),
+				__( 'Missed-call texts, text replies and reminders', 'titan-zero-trades-front-desk' ),
+				__( 'If missed-call texts are turned on, the caller\'s phone number is sent to the SMS gateway you set up. The site counts texts per number for 24 hours, under a hashed key, to limit how many are sent. The missed-call log keeps only the last four digits. The callback and reply records keep the caller\'s full phone number, and the text-conversation records keep only a hashed key, turn count and opt-out flag. When a caller replies STOP, UNSUBSCRIBE, END, CANCEL or QUIT, the full number is added to an opt-out list kept in your WordPress options, and no more texts are sent until the caller replies START. The reminder and customer-email queues refer to bookings by number and hold the customer email address for messages that have not yet been sent. If a webhook is turned on, each booking event sends the booking details to the address you enter.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Captcha', 'titan-zero-trades-front-desk' ),
@@ -61,7 +72,7 @@ class TZFD_Privacy_Exporter {
 			),
 			array(
 				__( 'Exporting and erasing', 'titan-zero-trades-front-desk' ),
-				__( 'The WordPress export tool includes the booking records (with IP addresses) and staff contacts that match the email address requested. The phone-number opt-out list is not matched by email address, so it is not exported. The WordPress erase tool removes the client-portal sign-in links and sessions for that address. It also deletes the booking records that match that address, and this cannot be undone. Staff contacts are not deleted by the erase tool. Customers, quotes and payments are handled by their own plugins.', 'titan-zero-trades-front-desk' ),
+				__( 'The WordPress export tool includes the bookings, enquiries, enquiry triage notes, local customer records, callback and reply records, queued reminders and customer emails, and booking-assistant chats from earlier versions that match the email address requested. Records that are matched by phone number are found through the phone numbers saved against that address. The WordPress erase tool deletes these matching records, the client-portal sign-in links and sessions for that address, and the booking records that match it. Deleted records cannot be recovered. The phone-number opt-out list is kept as a WordPress option and is not matched by email address, so it is neither exported nor erased. Staff contacts are not deleted by the erase tool.', 'titan-zero-trades-front-desk' ),
 			),
 			array(
 				__( 'Deleting the plugin', 'titan-zero-trades-front-desk' ),
@@ -123,114 +134,154 @@ class TZFD_Privacy_Exporter {
 		return $erasers;
 	}
 
-	/** Delete booking records and client-portal sign-in records for an exact email address.
+	/**
+	 * Plugin-owned tables that hold personal data for the requested address. Each entry:
+	 * - label:  name shown in exports and erase messages.
+	 * - table:  table name without the WordPress prefix.
+	 * - where:  function( $email, $identity ) returning array( SQL with %i/%s placeholders, values ). Used for both export and erase.
+	 * - fields: column => export label. Empty values are skipped.
+	 * - extra:  optional function( $row ) returning more export items.
 	 *
-	 * Booking records are deleted in batches; WordPress calls again while done is false.
+	 * Order matters for erase: enquiry triage is listed before the enquiries it refers to.
 	 *
-	 * @param string $email_address Email address supplied by WordPress privacy tools.
-	 * @param int    $page          One-based page number.
 	 * @return array
 	 */
-	public static function erase( $email_address, $page = 1 ) {
-		global $wpdb;
-		$response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => true );
-
-		// Same identity rule as export: invalid input matches nothing.
-		if ( ! is_string( $email_address ) || ! is_int( $page ) || $page < 1 ) {
-			return $response;
-		}
-		$email_address = strtolower( trim( $email_address ) );
-		if ( '' === $email_address || ! is_email( $email_address ) || sanitize_email( $email_address ) !== $email_address ) {
-			return $response;
-		}
-		if ( ! is_object( $wpdb ) || ! isset( $wpdb->prefix, $wpdb->options ) || ! is_string( $wpdb->prefix ) || '' === $wpdb->prefix ) {
-			return self::erase_unavailable();
-		}
-
-		// Booking records for this address are deleted automatically, in batches.
-		$bookings_removed = 0;
-		$table    = $wpdb->prefix . TZFD_Tables::BOOKINGS;
-		$existing = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
-		if ( ! empty( $wpdb->last_error ) ) {
-			return self::erase_unavailable();
-		}
-		if ( $table === $existing ) {
-			$ids = $wpdb->get_col( $wpdb->prepare(
-				'SELECT id FROM %i WHERE LOWER(notifyto) = %s ORDER BY id ASC LIMIT %d',
-				$table,
-				$email_address,
-				self::ERASE_BATCH + 1
-			) );
-			if ( ! is_array( $ids ) || ! empty( $wpdb->last_error ) ) {
-				return self::erase_unavailable();
-			}
-			$has_more = count( $ids ) > self::ERASE_BATCH;
-			foreach ( array_slice( $ids, 0, self::ERASE_BATCH ) as $booking_id ) {
-				$booking_id = absint( $booking_id );
-				$wpdb->last_error = '';
-				$deleted = $wpdb->delete( $table, array( 'id' => $booking_id ), array( '%d' ) );
-				if ( 1 !== $deleted || ! empty( $wpdb->last_error ) ) {
-					// Report what was removed and ask WordPress to retry; the rest of the batch is left in place.
-					$partial = self::erase_unavailable();
-					if ( $bookings_removed > 0 ) {
-						$partial['items_removed'] = true;
-						$partial['messages'][]    = self::bookings_removed_message( $bookings_removed );
-					}
-					return $partial;
-				}
-				++$bookings_removed;
-				do_action( 'tz_fd_item_deleted', $booking_id );
-			}
-			$response['done'] = ! $has_more;
-		}
-		if ( $bookings_removed > 0 ) {
-			$response['items_removed'] = true;
-			$response['messages'][]    = self::bookings_removed_message( $bookings_removed );
-		}
-
-		// Client-portal sign-in links and sessions store a serialized array whose 'email' entry is the address. Their keys are hashed,
-		// so candidates are found by the quoted address inside the serialized text, then each one is decoded and compared exactly.
-		$removed = 0;
-		foreach ( array( 'tz_fd_portal_link_', 'tz_fd_portal_session_' ) as $prefix ) {
-			$rows = $wpdb->get_results( $wpdb->prepare(
-				"SELECT option_name, option_value FROM %i WHERE option_name LIKE %s AND option_value LIKE %s",
-				$wpdb->options,
-				$wpdb->esc_like( '_transient_' . $prefix ) . '%',
-				'%' . $wpdb->esc_like( '"' . $email_address . '"' ) . '%'
-			) );
-			if ( ! is_array( $rows ) || ! empty( $wpdb->last_error ) ) {
-				return self::erase_unavailable();
-			}
-			foreach ( $rows as $row ) {
-				$identity = TZFD_Stored_Data::decode( isset( $row->option_value ) ? $row->option_value : null );
-				if ( null === $identity || ! isset( $identity['email'] ) || ! is_string( $identity['email'] ) ||
-					strtolower( trim( $identity['email'] ) ) !== $email_address ) {
-					continue;
-				}
-				if ( delete_transient( substr( (string) $row->option_name, strlen( '_transient_' ) ) ) ) {
-					++$removed;
-				}
-			}
-		}
-		if ( $removed > 0 ) {
-			$response['items_removed'] = true;
-			/* translators: %d: number of client-portal sign-in records removed. */
-			$response['messages'][] = sprintf( _n( '%d client-portal sign-in record removed.', '%d client-portal sign-in records removed.', $removed, 'titan-zero-trades-front-desk' ), $removed );
-		}
-		return $response;
-	}
-
-	private static function bookings_removed_message( $count ) {
-		/* translators: %d: number of booking records deleted. */
-		return sprintf( _n( '%d booking record deleted.', '%d booking records deleted.', $count, 'titan-zero-trades-front-desk' ), $count );
-	}
-
-	private static function erase_unavailable() {
+	private static function email_tables() {
 		return array(
-			'items_removed'  => false,
-			'items_retained' => true,
-			'messages'       => array( __( 'Titan Zero Front Desk records could not be checked. Please retry.', 'titan-zero-trades-front-desk' ) ),
-			'done'           => true,
+			'enquiry_triage'        => array(
+				'label'  => __( 'Enquiry triage notes', 'titan-zero-trades-front-desk' ),
+				'table'  => TZFD_Tables::ENQUIRY_TRIAGE,
+				'where'  => function ( $email ) {
+					global $wpdb;
+					return array( 'enquiry_id IN (SELECT id FROM %i WHERE LOWER(email) = %s)', array( $wpdb->prefix . TZFD_Tables::ENQUIRIES, $email ) );
+				},
+				'fields' => array(
+					'primary_intent' => __( 'Main intent', 'titan-zero-trades-front-desk' ),
+					'intents'        => __( 'Intents', 'titan-zero-trades-front-desk' ),
+					'urgency'        => __( 'Urgency', 'titan-zero-trades-front-desk' ),
+					'spam_state'     => __( 'Spam check', 'titan-zero-trades-front-desk' ),
+					'route'          => __( 'Route', 'titan-zero-trades-front-desk' ),
+					'quote_draft'    => __( 'Draft quote', 'titan-zero-trades-front-desk' ),
+					'created'        => __( 'Created', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'enquiries'             => array(
+				'label'  => __( 'Website enquiries', 'titan-zero-trades-front-desk' ),
+				'table'  => TZFD_Tables::ENQUIRIES,
+				'where'  => function ( $email ) {
+					return array( 'LOWER(email) = %s', array( $email ) );
+				},
+				'fields' => array(
+					'name'              => __( 'Name', 'titan-zero-trades-front-desk' ),
+					'email'             => __( 'Email address', 'titan-zero-trades-front-desk' ),
+					'phone'             => __( 'Phone number', 'titan-zero-trades-front-desk' ),
+					'preferred_contact' => __( 'Preferred contact', 'titan-zero-trades-front-desk' ),
+					'enquiry'           => __( 'Enquiry', 'titan-zero-trades-front-desk' ),
+					'source'            => __( 'Source', 'titan-zero-trades-front-desk' ),
+					'status'            => __( 'Status', 'titan-zero-trades-front-desk' ),
+					'received_utc'      => __( 'Received (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'local_customers'       => array(
+				'label'  => __( 'Local customer records', 'titan-zero-trades-front-desk' ),
+				'table'  => self::LOCAL_CUSTOMERS,
+				'where'  => function ( $email ) {
+					return array( 'LOWER(email) = %s', array( $email ) );
+				},
+				'fields' => array(
+					'name'       => __( 'Name', 'titan-zero-trades-front-desk' ),
+					'email'      => __( 'Email address', 'titan-zero-trades-front-desk' ),
+					'phone'      => __( 'Phone number', 'titan-zero-trades-front-desk' ),
+					'address'    => __( 'Address', 'titan-zero-trades-front-desk' ),
+					'notes'      => __( 'Notes', 'titan-zero-trades-front-desk' ),
+					'created_at' => __( 'Created (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'missed_call_actions'   => array(
+				'label'  => __( 'Missed-call callbacks and text replies', 'titan-zero-trades-front-desk' ),
+				'table'  => TZFD_Tables::CONTACT_ACTIONS,
+				'where'  => function ( $email, $identity ) {
+					return self::in_clause( 'phone', $identity['phones'] );
+				},
+				'fields' => array(
+					'kind'         => __( 'Type', 'titan-zero-trades-front-desk' ),
+					'source'       => __( 'Source', 'titan-zero-trades-front-desk' ),
+					'phone'        => __( 'Phone number', 'titan-zero-trades-front-desk' ),
+					'match_status' => __( 'Customer match', 'titan-zero-trades-front-desk' ),
+					'reason'       => __( 'Reason', 'titan-zero-trades-front-desk' ),
+					'state'        => __( 'State', 'titan-zero-trades-front-desk' ),
+					'created_at'   => __( 'Created (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'sms_conversations'     => array(
+				'label'  => __( 'Text-message conversations', 'titan-zero-trades-front-desk' ),
+				'table'  => TZFD_Tables::SMS_CONVERSATIONS,
+				'where'  => function ( $email, $identity ) {
+					return self::in_clause( 'conversation_key', $identity['keys'] );
+				},
+				'fields' => array(
+					'turns'         => __( 'Automated replies sent', 'titan-zero-trades-front-desk' ),
+					'opted_out'     => __( 'Opted out of texts', 'titan-zero-trades-front-desk' ),
+					'window_started' => __( 'Conversation started (UTC)', 'titan-zero-trades-front-desk' ),
+					'updated_at'    => __( 'Updated (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'reminder_outbox'       => array(
+				'label'  => __( 'Queued booking reminders', 'titan-zero-trades-front-desk' ),
+				'table'  => TZFD_Tables::BOOKING_ACTIONS,
+				'where'  => function ( $email ) {
+					global $wpdb;
+					return array( 'booking_id IN (SELECT id FROM %i WHERE LOWER(notifyto) = %s)', array( $wpdb->prefix . TZFD_Tables::BOOKINGS, $email ) );
+				},
+				'fields' => array(
+					'booking_id'   => __( 'Booking record', 'titan-zero-trades-front-desk' ),
+					'action_type'  => __( 'Action', 'titan-zero-trades-front-desk' ),
+					'state'        => __( 'State', 'titan-zero-trades-front-desk' ),
+					'available_at' => __( 'Due (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+			),
+			'customer_event_outbox' => array(
+				'label'  => __( 'Queued customer emails', 'titan-zero-trades-front-desk' ),
+				'table'  => self::EVENT_OUTBOX,
+				'where'  => function ( $email ) {
+					global $wpdb;
+					return array(
+						'(booking_id IN (SELECT id FROM %i WHERE LOWER(notifyto) = %s) OR LOWER(payload) LIKE %s)',
+						array( $wpdb->prefix . TZFD_Tables::BOOKINGS, $email, '%"to":"' . $wpdb->esc_like( $email ) . '"%' ),
+					);
+				},
+				'fields' => array(
+					'booking_id'   => __( 'Booking record', 'titan-zero-trades-front-desk' ),
+					'event_type'   => __( 'Email type', 'titan-zero-trades-front-desk' ),
+					'state'        => __( 'State', 'titan-zero-trades-front-desk' ),
+					'available_at' => __( 'Due (UTC)', 'titan-zero-trades-front-desk' ),
+				),
+				'extra'  => function ( $row ) {
+					$payload = json_decode( (string) $row->payload, true );
+					if ( ! is_array( $payload ) ) {
+						return array();
+					}
+					$items = array();
+					foreach ( array( 'to' => __( 'Sent to', 'titan-zero-trades-front-desk' ), 'subject' => __( 'Subject', 'titan-zero-trades-front-desk' ), 'body' => __( 'Message', 'titan-zero-trades-front-desk' ) ) as $name => $label ) {
+						if ( isset( $payload[ $name ] ) && is_string( $payload[ $name ] ) && '' !== $payload[ $name ] ) {
+							$items[] = array( 'name' => $label, 'value' => self::plain_text( $payload[ $name ] ) );
+						}
+					}
+					return $items;
+				},
+			),
+		);
+	}
+
+	/**
+	 * Plugin tables that were checked and hold no personal data, with the reason. A table listed here is not exported
+	 * or erased. Tests fail if a table in this list gains a contact column.
+	 *
+	 * @return array table name => reason
+	 */
+	public static function no_personal_data_tables() {
+		return array(
+			self::LOCAL_SERVICES => 'Service catalogue only: name, description, price, duration, GST flag and archived flag. No column identifies a person.',
 		);
 	}
 
@@ -255,16 +306,7 @@ class TZFD_Privacy_Exporter {
 		return $exporters;
 	}
 
-	/** Tables that hold a customer's or staff member's contact details: the column with the email address, and the fields to export.
-	 *
-	 * @return array
-	 */
-	private static function email_tables() {
-		return array(
-		);
-	}
-
-	/** Export one bounded page of an email-keyed table for an exact email address.
+	/** Export one bounded page of an email-keyed or phone-keyed table for an exact email address.
 	 *
 	 * @param string $key           Key from email_tables().
 	 * @param string $email_address Email address supplied by WordPress privacy tools.
@@ -292,17 +334,25 @@ class TZFD_Privacy_Exporter {
 			return self::storage_error();
 		}
 
-		// A table that is not installed holds no records for this address.
 		$table = $wpdb->prefix . $config['table'];
-		$existing = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
-		if ( ! empty( $wpdb->last_error ) ) {
+		$ready = self::table_state( $table );
+		if ( null === $ready ) {
 			return self::storage_error();
 		}
-		if ( $table !== $existing ) {
+		// A table that is not installed holds no records for this address.
+		if ( ! $ready ) {
 			return array( 'data' => array(), 'done' => true );
 		}
+		$identity = self::identity( $email_address );
+		if ( false === $identity ) {
+			return self::storage_error();
+		}
+		list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
 		$rows = $wpdb->get_results(
-			$wpdb->prepare( 'SELECT * FROM %i WHERE LOWER(%i) = %s ORDER BY id ASC LIMIT %d OFFSET %d', $table, $config['column'], $email_address, self::PAGE_SIZE + 1, ( $page - 1 ) * self::PAGE_SIZE )
+			$wpdb->prepare(
+				'SELECT * FROM %i WHERE ' . $sql . ' ORDER BY id ASC LIMIT %d OFFSET %d',
+				...array_merge( array( $table ), $values, array( self::PAGE_SIZE + 1, ( $page - 1 ) * self::PAGE_SIZE ) )
+			)
 		);
 		if ( ! is_array( $rows ) || ! empty( $wpdb->last_error ) ) {
 			return self::storage_error();
@@ -318,6 +368,9 @@ class TZFD_Privacy_Exporter {
 				}
 				$items[] = array( 'name' => $label, 'value' => self::plain_text( $row->$column ) );
 			}
+			if ( isset( $config['extra'] ) ) {
+				$items = array_merge( $items, call_user_func( $config['extra'], $row ) );
+			}
 			if ( array() === $items ) {
 				continue;
 			}
@@ -329,6 +382,275 @@ class TZFD_Privacy_Exporter {
 			);
 		}
 		return array( 'data' => $data, 'done' => ! $has_more );
+	}
+
+	/**
+	 * Erase the plugin's personal data for an exact email address.
+	 *
+	 * Booking records are deleted in batches, with their queued reminders and customer emails in the same batch.
+	 * WordPress calls again while done is false. Once every booking is gone, the other tables listed in
+	 * email_tables() are cleared for the address, then the client-portal sign-in records.
+	 *
+	 * @param string $email_address Email address supplied by WordPress privacy tools.
+	 * @param int    $page          One-based page number.
+	 * @return array
+	 */
+	public static function erase( $email_address, $page = 1 ) {
+		global $wpdb;
+		$response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => true );
+
+		// Same identity rule as export: invalid input matches nothing.
+		if ( ! is_string( $email_address ) || ! is_int( $page ) || $page < 1 ) {
+			return $response;
+		}
+		$email_address = strtolower( trim( $email_address ) );
+		if ( '' === $email_address || ! is_email( $email_address ) || sanitize_email( $email_address ) !== $email_address ) {
+			return $response;
+		}
+		if ( ! is_object( $wpdb ) || ! isset( $wpdb->prefix, $wpdb->options ) || ! is_string( $wpdb->prefix ) || '' === $wpdb->prefix ) {
+			return self::erase_unavailable();
+		}
+
+		// Phone numbers are read before any row is removed, because some tables are matched through them.
+		$identity = self::identity( $email_address );
+		if ( false === $identity ) {
+			return self::erase_unavailable();
+		}
+
+		$removed = array();
+		$table   = $wpdb->prefix . TZFD_Tables::BOOKINGS;
+		$state   = self::table_state( $table );
+		if ( null === $state ) {
+			return self::erase_unavailable();
+		}
+		if ( $state ) {
+			$ids = $wpdb->get_col( $wpdb->prepare(
+				'SELECT id FROM %i WHERE LOWER(notifyto) = %s ORDER BY id ASC LIMIT %d',
+				$table,
+				$email_address,
+				self::ERASE_BATCH + 1
+			) );
+			if ( ! is_array( $ids ) || ! empty( $wpdb->last_error ) ) {
+				return self::erase_unavailable();
+			}
+			$has_more = count( $ids ) > self::ERASE_BATCH;
+			$batch    = array_map( 'absint', array_slice( $ids, 0, self::ERASE_BATCH ) );
+			if ( array() !== $batch ) {
+				$dependents = self::delete_booking_dependents( $batch );
+				if ( false === $dependents ) {
+					return self::erase_unavailable( $removed );
+				}
+				$removed = self::add_counts( $removed, $dependents );
+			}
+			foreach ( $batch as $booking_id ) {
+				$wpdb->last_error = '';
+				$deleted = $wpdb->delete( $table, array( 'id' => $booking_id ), array( '%d' ) );
+				if ( 1 !== $deleted || ! empty( $wpdb->last_error ) ) {
+					// Report what was removed and ask WordPress to retry; the rest of the batch is left in place.
+					return self::erase_unavailable( $removed );
+				}
+				$removed['bookings'] = isset( $removed['bookings'] ) ? $removed['bookings'] + 1 : 1;
+				do_action( 'tz_fd_item_deleted', $booking_id );
+			}
+			$response['done'] = ! $has_more;
+		}
+		if ( ! $response['done'] ) {
+			return self::erase_response( $removed, false );
+		}
+
+		// Every booking for this address is gone. Clear the other tables, in the order listed in email_tables().
+		foreach ( self::email_tables() as $key => $config ) {
+			$table_name = $wpdb->prefix . $config['table'];
+			$state      = self::table_state( $table_name );
+			if ( null === $state ) {
+				return self::erase_unavailable( $removed );
+			}
+			if ( ! $state ) {
+				continue;
+			}
+			list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
+			$wpdb->last_error     = '';
+			$count                = $wpdb->query( $wpdb->prepare(
+				'DELETE FROM %i WHERE ' . $sql,
+				...array_merge( array( $table_name ), $values )
+			) );
+			if ( false === $count || ! empty( $wpdb->last_error ) ) {
+				return self::erase_unavailable( $removed );
+			}
+			$removed[ $key ] = (int) $count;
+		}
+
+		// Client-portal sign-in links and sessions store a serialized array whose 'email' entry is the address. Their keys are hashed,
+		// so candidates are found by the quoted address inside the serialized text, then each one is decoded and compared exactly.
+		$portal = 0;
+		foreach ( array( 'tz_fd_portal_link_', 'tz_fd_portal_session_' ) as $prefix ) {
+			$rows = $wpdb->get_results( $wpdb->prepare(
+				"SELECT option_name, option_value FROM %i WHERE option_name LIKE %s AND option_value LIKE %s",
+				$wpdb->options,
+				$wpdb->esc_like( '_transient_' . $prefix ) . '%',
+				'%' . $wpdb->esc_like( '"' . $email_address . '"' ) . '%'
+			) );
+			if ( ! is_array( $rows ) || ! empty( $wpdb->last_error ) ) {
+				return self::erase_unavailable( $removed );
+			}
+			foreach ( $rows as $row ) {
+				$identity_row = TZFD_Stored_Data::decode( isset( $row->option_value ) ? $row->option_value : null );
+				if ( null === $identity_row || ! isset( $identity_row['email'] ) || ! is_string( $identity_row['email'] ) ||
+					strtolower( trim( $identity_row['email'] ) ) !== $email_address ) {
+					continue;
+				}
+				if ( delete_transient( substr( (string) $row->option_name, strlen( '_transient_' ) ) ) ) {
+					++$portal;
+				}
+			}
+		}
+		if ( $portal > 0 ) {
+			$removed['portal'] = $portal;
+		}
+		return self::erase_response( $removed, true );
+	}
+
+	/**
+	 * Delete the queued reminders and customer emails for one batch of bookings, before the bookings themselves go.
+	 *
+	 * @param int[] $booking_ids Booking ids in this batch.
+	 * @return array|false Counts by table key, or false when a delete fails.
+	 */
+	private static function delete_booking_dependents( array $booking_ids ) {
+		global $wpdb;
+		$counts       = array();
+		$placeholders = implode( ', ', array_fill( 0, count( $booking_ids ), '%d' ) );
+		foreach ( array( 'reminder_outbox' => TZFD_Tables::BOOKING_ACTIONS, 'customer_event_outbox' => self::EVENT_OUTBOX ) as $key => $bare ) {
+			$table = $wpdb->prefix . $bare;
+			$state = self::table_state( $table );
+			if ( null === $state ) {
+				return false;
+			}
+			if ( ! $state ) {
+				continue;
+			}
+			$wpdb->last_error = '';
+			$count            = $wpdb->query( $wpdb->prepare(
+				'DELETE FROM %i WHERE booking_id IN (' . $placeholders . ')',
+				...array_merge( array( $table ), $booking_ids )
+			) );
+			if ( false === $count || ! empty( $wpdb->last_error ) ) {
+				return false;
+			}
+			$counts[ $key ] = (int) $count;
+		}
+		return $counts;
+	}
+
+	/** Build the erase response from counts keyed by table, in the same order as the export. */
+	private static function erase_response( array $removed, $done ) {
+		$response = array( 'items_removed' => false, 'items_retained' => false, 'messages' => array(), 'done' => (bool) $done );
+		$labels   = self::erase_labels();
+		foreach ( $removed as $key => $count ) {
+			if ( $count < 1 || ! isset( $labels[ $key ] ) ) {
+				continue;
+			}
+			$response['items_removed'] = true;
+			/* translators: 1: record group name, 2: number of records deleted. */
+			$response['messages'][] = sprintf( _n( '%1$s: %2$d record deleted.', '%1$s: %2$d records deleted.', $count, 'titan-zero-trades-front-desk' ), $labels[ $key ], $count );
+		}
+		return $response;
+	}
+
+	/** Group names used in erase messages, by count key. */
+	private static function erase_labels() {
+		$labels = array(
+			'bookings' => __( 'Booking records', 'titan-zero-trades-front-desk' ),
+			'portal'   => __( 'Client-portal sign-in records', 'titan-zero-trades-front-desk' ),
+		);
+		foreach ( self::email_tables() as $key => $config ) {
+			$labels[ $key ] = $config['label'];
+		}
+		return $labels;
+	}
+
+	/** Add two sets of counts by key. */
+	private static function add_counts( array $total, array $more ) {
+		foreach ( $more as $key => $count ) {
+			$total[ $key ] = ( isset( $total[ $key ] ) ? $total[ $key ] : 0 ) + (int) $count;
+		}
+		return $total;
+	}
+
+	/**
+	 * Phone numbers and conversation keys recorded against an address. Read from the enquiry and local customer
+	 * records; keys are the hashes the text-message tables store for each of those numbers.
+	 *
+	 * @param string $email Lower-cased, validated email address.
+	 * @return array{phones: string[], keys: string[]}|false
+	 */
+	private static function identity( $email ) {
+		global $wpdb;
+		$phones = array();
+		foreach ( array( $wpdb->prefix . TZFD_Tables::ENQUIRIES, $wpdb->prefix . self::LOCAL_CUSTOMERS ) as $table ) {
+			$state = self::table_state( $table );
+			if ( null === $state ) {
+				return false;
+			}
+			if ( ! $state ) {
+				continue;
+			}
+			$raw = $wpdb->get_col( $wpdb->prepare( 'SELECT phone FROM %i WHERE LOWER(email) = %s', $table, $email ) );
+			if ( ! is_array( $raw ) || ! empty( $wpdb->last_error ) ) {
+				return false;
+			}
+			foreach ( $raw as $value ) {
+				$e164 = TZFD_Contact_Rules::normalise_e164( (string) $value );
+				if ( '' !== $e164 ) {
+					$phones[ $e164 ] = true;
+				}
+			}
+		}
+		$phones = array_keys( $phones );
+
+		$keys      = array();
+		$sms_table = $wpdb->prefix . TZFD_Tables::SMS_CONVERSATIONS;
+		if ( array() !== $phones ) {
+			$state = self::table_state( $sms_table );
+			if ( null === $state ) {
+				return false;
+			}
+			if ( $state ) {
+				$companies = $wpdb->get_col( $wpdb->prepare( 'SELECT DISTINCT company_id FROM %i', $sms_table ) );
+				if ( ! is_array( $companies ) || ! empty( $wpdb->last_error ) ) {
+					return false;
+				}
+				foreach ( $companies as $company_id ) {
+					foreach ( $phones as $e164 ) {
+						$keys[] = TZFD_Contact_Rules::conversation_key( (int) $company_id, $e164 );
+					}
+				}
+			}
+		}
+		return array( 'phones' => $phones, 'keys' => $keys );
+	}
+
+	/** Build an IN clause for a list of values. An empty list matches nothing. */
+	private static function in_clause( $column, array $values ) {
+		if ( array() === $values ) {
+			return array( '1 = 0', array() );
+		}
+		return array( $column . ' IN (' . implode( ', ', array_fill( 0, count( $values ), '%s' ) ) . ')', array_values( $values ) );
+	}
+
+	/**
+	 * Whether a table exists.
+	 *
+	 * @return bool|null true or false, or null when the check itself failed.
+	 */
+	private static function table_state( $table ) {
+		global $wpdb;
+		$wpdb->last_error = '';
+		$found            = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $wpdb->esc_like( $table ) ) );
+		if ( ! empty( $wpdb->last_error ) ) {
+			return null;
+		}
+		return $table === $found;
 	}
 
 	/** Export one bounded page of booking records for an exact email address.
@@ -522,6 +844,14 @@ class TZFD_Privacy_Exporter {
 
 	private static function storage_error() {
 		return new WP_Error( 'titan_zero_front_desk_export_unavailable', __( 'Booking export data is temporarily unavailable. Please retry.', 'titan-zero-trades-front-desk' ) );
+	}
+
+	/** Erase failed part-way: report what was removed, keep the rest, and ask for a retry. */
+	private static function erase_unavailable( array $removed = array() ) {
+		$response = self::erase_response( $removed, true );
+		$response['items_retained'] = true;
+		$response['messages'][]     = __( 'Titan Zero Front Desk records could not be checked. Please retry.', 'titan-zero-trades-front-desk' );
+		return $response;
 	}
 
 	private static function plain_text( $tz_value ) {

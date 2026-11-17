@@ -4,7 +4,7 @@
  * hosted translation and payload minimisation. Uses the real plugin classes with small WordPress stand-ins, no database.
  * Run: php tests/ai-assist/run-multilingual-wp-tests.php   (from the repository root)
  */
-define( 'ABSPATH', __DIR__ );
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ ); }
 
 $GLOBALS['mt_pass'] = 0;
 $GLOBALS['mt_fail'] = 0;
@@ -12,42 +12,55 @@ function mt( $name, $ok ) {
     if ( $ok ) { $GLOBALS['mt_pass']++; } else { $GLOBALS['mt_fail']++; echo 'FAIL ' . $name . "\n"; }
 }
 
-// ---- WordPress stand-ins -------------------------------------------------------------------------------------------
-function __( $text, $domain = '' ) { return $text; }
-function is_wp_error( $thing ) { return $thing instanceof WP_Error; }
-
-class WP_Error {
-    private $code;
-    public function __construct( $code = '', $message = '' ) { $this->code = $code; }
-    public function get_error_code() { return $this->code; }
+// ---- WordPress stand-ins (each declared only when WordPress has not already loaded it) ----------------------------
+if ( ! function_exists( '__' ) ) { function __( $text, $domain = '' ) { return $text; } }
+if ( ! function_exists( 'is_wp_error' ) ) { function is_wp_error( $thing ) { return $thing instanceof WP_Error; } }
+if ( ! class_exists( 'WP_Error' ) ) {
+    class WP_Error {
+        private $code;
+        public function __construct( $code = '', $message = '' ) { $this->code = $code; }
+        public function get_error_code() { return $this->code; }
+    }
 }
 
 $GLOBALS['mt_options'] = array();
 $GLOBALS['mt_caps']    = array();
 $GLOBALS['mt_filters'] = array();
 
-function get_option( $name, $default = false ) {
-    return array_key_exists( $name, $GLOBALS['mt_options'] ) ? $GLOBALS['mt_options'][ $name ] : $default;
+if ( ! function_exists( 'get_option' ) ) {
+    function get_option( $name, $default = false ) {
+        return array_key_exists( $name, $GLOBALS['mt_options'] ) ? $GLOBALS['mt_options'][ $name ] : $default;
+    }
 }
-function update_option( $name, $value, $autoload = null ) {
-    $GLOBALS['mt_options'][ $name ] = $value;
-    return true;
+if ( ! function_exists( 'update_option' ) ) {
+    function update_option( $name, $value, $autoload = null ) {
+        $GLOBALS['mt_options'][ $name ] = $value;
+        return true;
+    }
 }
-function current_user_can( $capability ) {
-    return ! empty( $GLOBALS['mt_caps'][ $capability ] );
+if ( ! function_exists( 'current_user_can' ) ) {
+    function current_user_can( $capability ) {
+        return ! empty( $GLOBALS['mt_caps'][ $capability ] );
+    }
 }
-function add_filter( $tag, $callback ) {
-    $GLOBALS['mt_filters'][ $tag ] = $callback;
+if ( ! function_exists( 'add_filter' ) ) {
+    function add_filter( $tag, $callback ) {
+        $GLOBALS['mt_filters'][ $tag ] = $callback;
+    }
 }
-function apply_filters( $tag, $value, ...$args ) {
-    if ( ! isset( $GLOBALS['mt_filters'][ $tag ] ) ) { return $value; }
-    return call_user_func( $GLOBALS['mt_filters'][ $tag ], $value, ...$args );
+if ( ! function_exists( 'apply_filters' ) ) {
+    function apply_filters( $tag, $value, ...$args ) {
+        if ( ! isset( $GLOBALS['mt_filters'][ $tag ] ) ) { return $value; }
+        return call_user_func( $GLOBALS['mt_filters'][ $tag ], $value, ...$args );
+    }
 }
-function do_action( $tag, ...$args ) { return null; }
+if ( ! function_exists( 'do_action' ) ) {
+    function do_action( $tag, ...$args ) { return null; }
+}
 
 $dir = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/';
-require_once $dir . 'class-tzfd-hosted-ai-connector.php';
-require_once $dir . 'ai-assist/class-tzfd-ai-multilingual.php';
+if ( ! class_exists( 'TZFD_Hosted_AI_Connector' ) ) { require_once $dir . 'class-tzfd-hosted-ai-connector.php'; }
+if ( ! class_exists( 'TZFD_AI_Multilingual' ) ) { require_once $dir . 'ai-assist/class-tzfd-ai-multilingual.php'; }
 
 /** Records every payload it receives. Returns a translation chosen by the test. */
 function mt_connector( $response ) {

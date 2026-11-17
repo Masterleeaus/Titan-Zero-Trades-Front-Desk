@@ -22,8 +22,38 @@ final class TZFD_Enquiry_Triage {
     const SCHEMA_VERSION = '1';
     const OPS         = array( 'restore_spam', 'confirm_spam', 'override_urgent', 'override_normal', 'clear_override' );
 
+    const SETTING_ACTION      = 'tz_fd_urgent_alert_setting';
+    const SETTING_NONCE       = 'tz_fd_urgent_alert_setting';
+    const SETTING_NONCE_FIELD = 'tz_fd_urgent_alert_setting_nonce';
+
     public static function register() {
         add_action( 'admin_post_' . self::ACTION, array( __CLASS__, 'handle_action' ) );
+        add_action( 'admin_post_' . self::SETTING_ACTION, array( __CLASS__, 'handle_alert_setting' ) );
+    }
+
+    /** Admin-post: saves the urgent-alert opt-in. Capability, nonce and POST are all checked. Off unless ticked. */
+    public static function handle_alert_setting() {
+        if ( ! isset( $_SERVER['REQUEST_METHOD'] ) || 'POST' !== sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ) ) ) {
+            wp_die( esc_html__( 'POST request required.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 405 ) );
+        }
+        if ( ! current_user_can( 'tz_fd_access' ) ) { wp_die( esc_html__( 'You do not have permission to do this.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
+        check_admin_referer( self::SETTING_NONCE, self::SETTING_NONCE_FIELD );
+        $value = TZFD_Enquiry_Triage_Rules::alert_setting_from_request( wp_unslash( $_POST['urgent_alert'] ?? '0' ) );
+        update_option( self::ALERT_OPTION, $value, false );
+        wp_safe_redirect( add_query_arg( array( 'alert_setting_saved' => 1 ), admin_url( 'admin.php?page=' . TZFD_Admin_Menu::ENQUIRIES ) ) );
+        exit;
+    }
+
+    /** Checkbox form for the urgent-alert opt-in. Escapes all output. */
+    public static function alert_setting_html() {
+        $on = '1' === (string) get_option( self::ALERT_OPTION, '0' );
+        return '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" class="tzfd-urgent-alert-setting">'
+            . '<input type="hidden" name="action" value="' . esc_attr( self::SETTING_ACTION ) . '" />'
+            . wp_nonce_field( self::SETTING_NONCE, self::SETTING_NONCE_FIELD, true, false )
+            . '<input type="hidden" name="urgent_alert" value="0" />'
+            . '<label><input type="checkbox" name="urgent_alert" value="1"' . checked( $on, true, false ) . ' /> '
+            . esc_html__( 'Email the site admin when an enquiry is marked urgent by rule (at most one email every 15 minutes). The email gives the enquiry id and reasons only.', 'titan-zero-trades-front-desk' )
+            . '</label> <button class="button" type="submit">' . esc_html__( 'Save alert setting', 'titan-zero-trades-front-desk' ) . '</button></form>';
     }
 
     private static function table() {

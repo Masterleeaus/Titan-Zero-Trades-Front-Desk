@@ -181,6 +181,8 @@ final class TZFD_Enquiry_Review {
             echo '<div class="notice notice-warning inline"><p>' . esc_html__( 'No company is selected, so no enquiries can be shown.', 'titan-zero-trades-front-desk' ) . '</p></div></div>';
             return;
         }
+        if ( isset( $_GET['alert_setting_saved'] ) ) { echo '<div class="notice notice-success inline"><p>' . esc_html__( 'Urgent alert setting saved.', 'titan-zero-trades-front-desk' ) . '</p></div>'; } // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only notice.
+        if ( class_exists( 'TZFD_Enquiry_Triage' ) ) { echo '<div class="tzfd-urgent-alerts"><h2>' . esc_html__( 'Urgent enquiry alerts', 'titan-zero-trades-front-desk' ) . '</h2>' . TZFD_Enquiry_Triage::alert_setting_html() . '</div>'; } // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- alert_setting_html() escapes every value it returns.
         echo '<form method="get" action="' . esc_url( admin_url( 'admin.php' ) ) . '"><input type="hidden" name="page" value="' . esc_attr( TZFD_Admin_Menu::ENQUIRIES ) . '" />';
         echo '<label for="tz_fd_enquiry_filter">' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</label> <select id="tz_fd_enquiry_filter" name="status"><option value="">' . esc_html__( 'All', 'titan-zero-trades-front-desk' ) . '</option>';
         foreach ( self::STATUSES as $s ) { echo '<option value="' . esc_attr( $s ) . '"' . selected( $filter, $s, false ) . '>' . esc_html( ucfirst( $s ) ) . '</option>'; }

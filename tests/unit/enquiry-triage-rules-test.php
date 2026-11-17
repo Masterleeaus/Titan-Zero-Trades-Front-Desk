@@ -206,6 +206,13 @@ t_check( 'first urgent alert sends', true === $R::alert_decision( true, 'urgent'
 t_check( 'second urgent alert inside window is throttled', 'throttled' === $R::alert_decision( true, 'urgent', $NOW - 60, $NOW )['reason'] );
 t_check( 'alert sends again after window', true === $R::alert_decision( true, 'urgent', $NOW - TZFD_Enquiry_Triage_Rules::ALERT_WINDOW, $NOW )['send'] );
 t_check( 'alert decision is deterministic', $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) === $R::alert_decision( true, 'urgent', $NOW - 5, $NOW ) );
+// Admin checkbox value: only the exact string '1' turns alerts on.
+t_check( 'alert setting: posted 1 turns on', '1' === $R::alert_setting_from_request( '1' ) );
+t_check( 'alert setting: posted 0 stays off', '0' === $R::alert_setting_from_request( '0' ) );
+t_check( 'alert setting: missing value stays off', '0' === $R::alert_setting_from_request( null ) );
+t_check( 'alert setting: array value stays off', '0' === $R::alert_setting_from_request( array( '1' ) ) );
+t_check( 'alert setting: true boolean stays off', '0' === $R::alert_setting_from_request( true ) );
+t_check( 'alert setting: other text stays off', '0' === $R::alert_setting_from_request( 'yes' ) && '0' === $R::alert_setting_from_request( '1 ' ) );
 
 // ---- Allowlisted business routing rules ----------------------------------------------------
 $rules = array( 'cancel' => 'quote_review', 'booking' => 'not_a_queue', 'general' => 'spam_review', 'spam' => 'enquiry_queue' );

@@ -135,3 +135,57 @@ $fc['facts']->publish( 'service_area' );
 $fa4 = $fc['search']->answer( 'which suburbs do you cover' );
 t_eq( 'miss', $fa4['cache'], 'republishing the edited fact invalidates the earlier cached answer' );
 t_ok( false !== strpos( (string) $fa4['answer'], 'Carlton' ), 'the answer after republishing carries the new value' );
+
+/* ---- FAQ writes run under the tenant lock: a busy lock refuses the write, and every path releases ---- */
+/** Storage with the optional lock seam. $held simulates another request holding the FAQ lock. */
+final class TZFD_Test_Lockable_Storage implements TZFD_Tenant_Storage, TZFD_Tenant_Lock {
+    public $data        = array();
+    public $held        = false;
+    public $fail_writes = false;
+    public $acquires    = 0;
+    public $releases    = 0;
+    public function read( $key, $company, $default ) {
+        return array_key_exists( $company . '|' . $key, $this->data ) ? $this->data[ $company . '|' . $key ] : $default;
+    }
+    public function write( $key, $company, $value ) {
+        if ( $this->fail_writes ) { return false; }
+        $this->data[ $company . '|' . $key ] = $value;
+        return true;
+    }
+    public function acquire( $key, $company ) {
+        if ( $this->held ) { return false; }
+        $this->held = true;
+        $this->acquires++;
+        return true;
+    }
+    public function release( $key, $company ) { $this->held = false; $this->releases++; }
+}
+$lk       = new TZFD_Test_Lockable_Storage();
+$lk_store = new TZFD_Knowledge_Store( $lk, 7, $manager );
+$lk_id    = fs_entry( $lk_store, 'Do you charge a call out fee?', 'It is $80.', array( 'call out', 'fee' ) );
+t_ok( ! $lk->held && $lk->acquires >= 1 && $lk->acquires === $lk->releases, 'every lock taken for a successful FAQ write is released' );
+
+$lk_v0 = $lk_store->version();
+$lk->held = true; // another request holds the FAQ lock
+$lk_busy = $lk_store->save_entry( array( 'id' => $lk_id, 'question' => 'Do you charge a call out fee?', 'answer' => 'Changed to $95.', 'keywords' => array( 'call out', 'fee' ), 'status' => 'approved' ), $lk_v0 );
+t_eq( 'busy', $lk_busy['code'], 'an edit while another request holds the FAQ lock is refused' );
+t_eq( $lk_v0, $lk_store->version(), 'a busy edit bumps no version' );
+t_eq( 'It is $80.', $lk_store->approved()[ $lk_id ]['answer'], 'a busy edit leaves the stored answer untouched' );
+t_ok( $lk->held, 'a refused writer does not release the lock held by the other request' );
+$lk_busy_del = $lk_store->delete_entry( $lk_id, $lk_v0 );
+t_eq( 'busy', $lk_busy_del['code'], 'a delete while another request holds the FAQ lock is refused' );
+$lk->held = false;
+
+$lk->fail_writes = true;
+$lk_failed = $lk_store->delete_entry( $lk_id, $lk_store->version() );
+t_eq( 'storage', $lk_failed['code'], 'a failed write under the lock reports storage' );
+t_ok( ! $lk->held, 'the lock is released after a failed write' );
+$lk->fail_writes = false;
+
+$lk_stale = $lk_store->save_entry( array( 'id' => $lk_id, 'question' => 'Do you charge a call out fee?', 'answer' => 'Late edit.', 'keywords' => array( 'call out', 'fee' ), 'status' => 'approved' ), $lk_v0 - 1 );
+t_eq( 'conflict', $lk_stale['code'], 'a stale version is still refused under the lock' );
+t_ok( ! $lk->held, 'the lock is released after a conflict' );
+
+$lk_del = $lk_store->delete_entry( $lk_id, $lk_store->version() );
+t_eq( 'deleted', $lk_del['code'], 'a delete under a free lock succeeds' );
+t_ok( ! $lk->held && $lk->acquires === $lk->releases, 'every lock taken during these writes is released' );

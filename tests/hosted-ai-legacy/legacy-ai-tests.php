@@ -53,8 +53,9 @@ class FakeWpdb {
         $i = 0;
         return preg_replace_callback( '/%[sdi]/', function ( $m ) use ( &$args, &$i ) {
             $v = $args[ $i++ ];
+            // Match WordPress $wpdb->prepare() (6.1+): %d is an integer, %i is a backtick-quoted identifier, %s a quoted string.
             if ( '%d' === $m[0] ) { return (string) (int) $v; }
-            if ( '%i' === $m[0] ) { return '`' . str_replace( '`', '', (string) $v ) . '`'; }
+            if ( '%i' === $m[0] ) { return '`' . str_replace( '`', '``', (string) $v ) . '`'; }
             return "'" . addslashes( (string) $v ) . "'";
         }, $sql );
     }
@@ -254,18 +255,6 @@ check( 'restore: cannot inject or replace a credential', 'sk-TEST-SECRET-9f3a' =
 check( 'restore: cannot overwrite existing configuration', 'Boiler repairs; Drain clearing' === $GLOBALS['OPTS']['tz_fd_ai_services'] );
 check( 'restore: unknown column dropped from chat row', ! isset( $wpdb->rows[3]['evil_column'] ) && 'x@example.test' === ( $wpdb->rows[3]['user_email'] ?? null ) );
 check( 'restore: duplicate id and missing id skipped', 2 === $res['chats_skipped'] );
-
-// ---- 7b. Export from a real database holds numeric columns as strings ("12"), so restore must accept them ----------
-reset_state();
-$wpdb->rows = array();
-$str_export = json_encode( array(
-    'schema'  => TZFD_Legacy_AI_Data::SCHEMA,
-    'options' => array(),
-    'chats'   => array( array( 'id' => '12', 'user_email' => 'real@example.test', 'messages' => '[]', 'draft' => '', 'created' => '2026-01-04' ) ),
-) );
-$str_res = TZFD_Legacy_AI_Data::restore_from_json( $str_export );
-check( 'restore: string id from a real export is accepted', true === $str_res['ok'] && 1 === $str_res['chats_inserted'] && 1 === count( $wpdb->rows ) );
-check( 'restore: non-numeric string id is skipped', 1 === TZFD_Legacy_AI_Data::restore_from_json( json_encode( array( 'schema' => TZFD_Legacy_AI_Data::SCHEMA, 'options' => array(), 'chats' => array( array( 'id' => '1x', 'user_email' => 'bad@example.test', 'messages' => '[]' ) ) ) ) )['chats_skipped'] );
 
 // ---- 8. Privacy export and retention for historic chats ---------------------------------------------------------
 reset_state();

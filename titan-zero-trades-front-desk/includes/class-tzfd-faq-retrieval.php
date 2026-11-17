@@ -442,6 +442,7 @@ final class TZFD_FAQ_Retrieval {
  */
 if ( ! function_exists( 'wp_strip_tags_compat' ) ) {
     function wp_strip_tags_compat( $text ) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- fallback only when WordPress is not loaded (unit tests).
         return function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $text ) : strip_tags( $text );
     }
 }

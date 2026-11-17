@@ -144,7 +144,7 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
             // Apply capability restriction
             $required_cap = TZFD_Access::CAP; // Front Desk access only: Administrators and Titan Zero Worker/Manager. Editors are excluded.
             if ( current_user_can( $required_cap ) && TZFD_Scoped_Store::company_id() > 0 ) {
-        	    wp_add_dashboard_widget('dashboard_widget', __('Titan Zero Front Desk', 'titan-zero-trades-front-desk'), array(&$this, 'pp_DashboardWidget'));
+        	    wp_add_dashboard_widget('dashboard_widget', __('Scheduling & Enquiries Manager', 'titan-zero-trades-front-desk'), array(&$this, 'pp_DashboardWidget'));
             }
         }
 

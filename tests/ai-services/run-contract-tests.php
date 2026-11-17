@@ -44,10 +44,10 @@ $free  = S::resolve( null );
 $asst  = S::resolve( array( 'schema_version' => 1, 'company_id' => 1, 'state' => 'active', 'entitlements' => array( 'assistant' ), 'expires_at' => 1900003600 ), null, 1900000000 );
 $agent = S::resolve( array( 'schema_version' => 1, 'company_id' => 1, 'state' => 'active', 'entitlements' => array( 'agent_team' ), 'expires_at' => 1900003600 ), null, 1900000000 );
 tzfd_ai_check( 'free: basic AI allowed only as opt-in service', S::remote_service_allowed( S::SERVICE_BASIC_AI, $free ) === true );
-tzfd_ai_check( 'free: assistant refused', S::remote_service_allowed( S::SERVICE_ASSISTANT, $free ) === false );
-tzfd_ai_check( 'free: agent team refused', S::remote_service_allowed( S::SERVICE_AGENT_TEAM, $free ) === false );
+tzfd_ai_check( 'free: assistant allowed (no paid level gate)', S::remote_service_allowed( S::SERVICE_ASSISTANT, $free ) === true );
+tzfd_ai_check( 'free: agent team allowed (no paid level gate)', S::remote_service_allowed( S::SERVICE_AGENT_TEAM, $free ) === true );
 tzfd_ai_check( 'assistant: assistant allowed', S::remote_service_allowed( S::SERVICE_ASSISTANT, $asst ) === true );
-tzfd_ai_check( 'assistant: agent team refused', S::remote_service_allowed( S::SERVICE_AGENT_TEAM, $asst ) === false );
+tzfd_ai_check( 'assistant: agent team allowed (no paid level gate)', S::remote_service_allowed( S::SERVICE_AGENT_TEAM, $asst ) === true );
 tzfd_ai_check( 'agent team includes assistant service', S::remote_service_allowed( S::SERVICE_ASSISTANT, $agent ) === true );
 tzfd_ai_check( 'agent team: agent team allowed', S::remote_service_allowed( S::SERVICE_AGENT_TEAM, $agent ) === true );
 

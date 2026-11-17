@@ -72,7 +72,10 @@ jobs:
           --health-interval=5s --health-timeout=5s --health-retries=20
     env:
       WP_DIR: ${{ github.workspace }}/wp-site
-      WP_CLI: ${{ github.workspace }}/wp-cli.phar
+      # WP-CLI lives outside the folder that holds WordPress. When it sits in the parent folder, `core install` stores
+      # siteurl and home as http://localhost:8080/wp-site (WordPress guesses the path from the phar's folder), so the
+      # login cookie is scoped to /wp-site/ and the logged-in checks are redirected to login (issue #190).
+      WP_CLI: /tmp/tzfd-ci/wp-cli.phar
       WP_PORT: "8080"
       WP_URL: http://localhost:8080
       DB_NAME: wp_fd_ci
@@ -89,6 +92,7 @@ jobs:
           extensions: mysqli, xml, mbstring, curl, zip, gd, intl
       - name: Get WP-CLI and WordPress
         run: |
+          mkdir -p "$(dirname "$WP_CLI")"
           curl -sS -o "$WP_CLI" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
           curl -sS -o wordpress.zip https://wordpress.org/latest.zip
           unzip -q wordpress.zip && mv wordpress "$WP_DIR"
@@ -98,6 +102,9 @@ jobs:
           cd "$WP_DIR"
           php "$WP_CLI" --allow-root config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --dbhost=127.0.0.1:3306 --skip-check
           php "$WP_CLI" --allow-root core install --url=$WP_URL --title="FD CI" --admin_user=fdadmin --admin_password=fdadmin-test-pass --admin_email=admin@example.test --skip-email
+          # Fail fast if the site was installed under a different URL path: every cookie and link would then be wrong.
+          test "$(php "$WP_CLI" --allow-root option get siteurl)" = "$WP_URL" || { echo "siteurl is not $WP_URL"; exit 1; }
+          test "$(php "$WP_CLI" --allow-root option get home)" = "$WP_URL" || { echo "home is not $WP_URL"; exit 1; }
       - name: Install plugin
         run: |
           cp -r "$PLUGIN_SRC" "$WP_DIR/wp-content/plugins/titan-zero-trades-front-desk"
@@ -131,6 +138,22 @@ jobs:
           for check in 'signed missed call is accepted' 'anonymous caller task is marked no_callback_number' 'identical signed request is answered as replayed' 'ambiguous caller match still creates a task'; do
             grep -q "^PASS .*$check" "$LOG" || { echo "Missed-call check did not pass or did not run: $check"; exit 1; }
           done
+      - name: Logged-in test users for the HTTP auth checks (as provision-wp-site.sh does)
+        run: |
+          cd "$WP_DIR"
+          # Random per-run passwords: passed to later steps through GITHUB_ENV and never printed.
+          ADMIN_PASS="rt_admin_$(openssl rand -hex 9)"
+          SUB_PASS="rt_sub_$(openssl rand -hex 9)"
+          echo "TZFD_RT_ADMIN_PASS=$ADMIN_PASS" >> "$GITHUB_ENV"
+          echo "TZFD_RT_SUB_PASS=$SUB_PASS" >> "$GITHUB_ENV"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtadmin rt-admin@example.test --role=administrator --user_pass="$ADMIN_PASS" --quiet
+          php "$WP_CLI" --allow-root --path="$WP_DIR" user create rtsub rt-sub@example.test --role=subscriber --user_pass="$SUB_PASS" --quiet
+      - name: Site URL and version (diagnostics for the HTTP auth checks, issue #190)
+        run: |
+          cd "$WP_DIR"
+          echo "WordPress version: $(php "$WP_CLI" --allow-root --path="$WP_DIR" core version)"
+          echo "siteurl: $(php "$WP_CLI" --allow-root --path="$WP_DIR" option get siteurl)"
+          echo "home: $(php "$WP_CLI" --allow-root --path="$WP_DIR" option get home)"
       - name: HTTP auth tests
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"
@@ -156,10 +179,16 @@ jobs:
           cd "$WP_DIR"
           files=$(find "$GITHUB_WORKSPACE/tests" \( -name '*-wp-tests.php' -o -name '*-runtime-tests.php' -o -name 'wp-integration.php' \) ! -name 'runtime-tests.php' | sort)
           if [ -z "$files" ]; then echo "No extra WordPress test files"; exit 0; fi
+          set -o pipefail
+          LOG="$RUNNER_TEMP/extra-wp-tests.log"
+          : > "$LOG"
           for f in $files; do
             echo "== $f"
-            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f"
+            php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$f" 2>&1 | tee -a "$LOG"
           done
+          # Some of these files print FAIL lines and still exit 0 (quote-request-runtime-tests.php and
+          # security-runtime-tests.php have no exit status), so the step gates on the log like the runtime step.
+          if grep -q '^FAIL ' "$LOG"; then echo "Extra WordPress checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
       - name: Cancel/reschedule assistant and service finder runtime checks (issue #191)
         run: |
           cd "$WP_DIR"

@@ -47,3 +47,9 @@ function tzfd_test_delegated_roles() {
 	$admin_removed = $R::revoke( $grants, 'co-1', 10, 'loc-a' );
 	tzfd_assert( ! $R::can( $admin_removed, 'co-1', 10, 'loc-a', $R::CAP_VIEW_SCHEDULE ), 'revoking company admin removes it entirely' );
 }
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

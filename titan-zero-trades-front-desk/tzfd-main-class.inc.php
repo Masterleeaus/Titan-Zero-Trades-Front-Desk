@@ -1078,7 +1078,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         ) );
         wp_add_inline_script( 'tz_fd_hour_classic_editor', 'document.addEventListener("click",function(e){var a=e.target.closest?e.target.closest("a.tzfdhbinsertb"):null;if(a){e.preventDefault();if(typeof tz_fd_appointments_fpanel!=="undefined"){tz_fd_appointments_fpanel.open();}}});' );
 
-        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Titan Zero Trades: Front Desk booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
+        print '<a href="#" class="tzfdhbinsertb" title="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '"><img hspace="5" src="' . esc_url( plugins_url( '/images/tz_fd_form.gif', __FILE__ ) ) . '" alt="' . esc_attr__( 'Insert Scheduling & Enquiries Manager booking form', 'titan-zero-trades-front-desk' ) . '" /></a>';
     }
 
     function getThisUserForms() {
@@ -1123,7 +1123,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
         }
         wp_die( esc_html( sprintf(
             /* translators: %s: file name inside the plugin folder. */
-            __( 'Titan Zero Front Desk is incomplete: the file %s is missing. Reinstall the plugin.', 'titan-zero-trades-front-desk' ),
+            __( 'Scheduling & Enquiries Manager is incomplete: the file %s is missing. Reinstall the plugin.', 'titan-zero-trades-front-desk' ),
             $relative_path
         ) ) );
     }
@@ -2307,6 +2307,7 @@ public function render_form_admin( $atts ) {
         if ( TZFD_Intake_Mode::MODE_REQUEST === $titan_zero_front_desk_intake_mode ) {
             add_filter( 'titan_zero_front_desk_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
         }
+        require_once __DIR__ . '/includes/class-tzfd-post-commit-dispatch.php';
         // Notifications and optional integrations are secondary to a committed
         // booking. Do not throw a post-commit callback error back to the visitor:
         // the appointment already exists, and a retry could create a duplicate.
@@ -2345,6 +2346,13 @@ public function render_form_admin( $atts ) {
 
         if( $redirect )
         {
+            // With no return page of its own (or one that is the home page), the visitor used to land on the home page with
+            // no confirmation (#184). Show the confirmation here instead; a custom return page keeps its redirect.
+            $tzfd_return_setting = trim( (string) $this->get_option( 'fp_return_page', TZFD_BOOK_DEFAULT_fp_return_page ) );
+            if ( '' === $tzfd_return_setting || untrailingslashit( $tzfd_return_setting ) === untrailingslashit( home_url( '/' ) ) ) {
+                $this->render_booking_confirmation( $item_number );
+                return;
+            }
             // Never emit a raw Location header from an administrator-configurable URL.
             // wp_safe_redirect validates the destination against allowed hosts.
             $tzfd_destination = $this->replace_tags(
@@ -2352,9 +2360,32 @@ public function render_form_admin( $atts ) {
                 $tz_params,
                 true
             );
-            wp_safe_redirect( $tzfd_destination, 303, 'Titan Zero Front Desk' );
+            wp_safe_redirect( $tzfd_destination, 303, 'Scheduling & Enquiries Manager' );
             exit();
         }
+    }
+
+
+    /**
+     * Confirmation shown after a public booking is saved (#184): the booking reference and the booked date and slot, read
+     * back from the stored row. Used when the calendar has no return page of its own. A row that cannot be read shows the
+     * reference and confirmation text without the slot line.
+     */
+    private function render_booking_confirmation( $booking_id ) {
+        global $wpdb;
+        $booking_id = absint( $booking_id );
+        $row        = $wpdb->get_row( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $wpdb->prefix . TZFD_Tables::BOOKINGS, $booking_id ), ARRAY_A );
+        $posted     = is_array( $row ) ? @unserialize( (string) $row['posted_data'], array( 'allowed_classes' => false ) ) : false; // phpcs:ignore WordPress.PHP.NoSilencedErrors.Discouraged -- Stored value may be damaged; a failed read is handled below.
+        $slot       = is_array( $posted ) && ! empty( $posted['apps'][0] ) && is_array( $posted['apps'][0] ) ? $posted['apps'][0] : array();
+        $date       = isset( $slot['date'] ) && is_string( $slot['date'] ) && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $slot['date'] ) ? $slot['date'] : '';
+        $start      = isset( $slot['slot'] ) && is_string( $slot['slot'] ) && preg_match( '/^(\d{2}:\d{2})/', $slot['slot'], $m ) ? $m[1] : '';
+        $when       = '' !== $date ? date_i18n( get_option( 'date_format' ), strtotime( $date ) ) . ( '' !== $start ? ' ' . $start : '' ) : '';
+        $message    = '<p>' . esc_html__( 'Your booking is confirmed.', 'titan-zero-trades-front-desk' ) . '</p>';
+        $message   .= '<p>' . sprintf( /* translators: %d: booking reference number */ esc_html__( 'Booking reference: %d', 'titan-zero-trades-front-desk' ), $booking_id ) . '</p>';
+        if ( '' !== $when ) {
+            $message .= '<p>' . sprintf( /* translators: %s: booked date and start time */ esc_html__( 'Date and time: %s', 'titan-zero-trades-front-desk' ), esc_html( $when ) ) . '</p>';
+        }
+        wp_die( wp_kses_post( $message ), esc_html__( 'Booking confirmed', 'titan-zero-trades-front-desk' ), array( 'response' => 200 ) );
     }
 
 
@@ -3989,7 +4020,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
             }
             if ( ! $private_dir_ok ) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                error_log( 'Titan Front Desk: scheduled CSV reports skipped; no private temporary directory.' );
+                error_log( 'Scheduling & Enquiries Manager: scheduled CSV reports skipped; no private temporary directory.' );
                 return;
             }
 
@@ -4013,7 +4044,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
                     ) ) : array();
                     if ( ! is_array( $forms ) || ! empty( $wpdb->last_error ) ) {
                         // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                        error_log( 'Titan Front Desk: global scheduled report skipped after database read failure.' );
+                        error_log( 'Scheduling & Enquiries Manager: global scheduled report skipped after database read failure.' );
                         return;
                     }
                     // " WHERE rep_emails<>'' AND rep_enable='yes'"
@@ -4075,7 +4106,7 @@ public function replace_tags ( $tz_message, $tz_params, $urlencode = false, $slo
             ) );
             if ( ! is_array( $forms ) || ! empty( $wpdb->last_error ) ) {
                 // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional diagnostic log for a failed background job.
-                error_log( 'Titan Front Desk: per-form scheduled reports skipped after database read failure.' );
+                error_log( 'Scheduling & Enquiries Manager: per-form scheduled reports skipped after database read failure.' );
                 return;
             }
             foreach ($forms as $tz_form)  // for each form with the reports enabled

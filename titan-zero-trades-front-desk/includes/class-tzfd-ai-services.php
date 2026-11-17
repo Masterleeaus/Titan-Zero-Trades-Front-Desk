@@ -128,22 +128,15 @@ final class TZFD_AI_Services {
     }
 
     /**
-     * Whether a remote service may be requested at the resolved level.
+     * Whether a remote service may be requested. No paid level gates a service: every known service is allowed,
+     * and each hosted request still needs its own consent, scopes and budget in TZFD_AI_Connector.
      *
      * @param string $service  One of the SERVICE_* constants.
-     * @param array  $resolved Output of resolve().
+     * @param array  $resolved Output of resolve() (unused; kept for the call signature).
      */
     public static function remote_service_allowed( $service, $resolved ) {
-        $level = isset( $resolved['level'] ) ? (string) $resolved['level'] : self::LEVEL_FREE;
-        switch ( (string) $service ) {
-            case self::SERVICE_BASIC_AI:
-                return true; // Opt-in basic AI is available on Free and needs its own consent.
-            case self::SERVICE_ASSISTANT:
-                return in_array( $level, array( self::LEVEL_ASSISTANT, self::LEVEL_AGENT_TEAM ), true );
-            case self::SERVICE_AGENT_TEAM:
-                return self::LEVEL_AGENT_TEAM === $level;
-        }
-        return false;
+        unset( $resolved );
+        return in_array( (string) $service, array( self::SERVICE_BASIC_AI, self::SERVICE_ASSISTANT, self::SERVICE_AGENT_TEAM ), true );
     }
 
     /**

@@ -109,6 +109,8 @@ echo "--- booking report (booking-report-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-report-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- staff access (staff-access-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/staff-access-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+echo "--- slot-holds schema (slot-holds-schema-runtime-tests.php, issue #186)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/slot-holds-schema-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 
 echo "--- get started (setup-page-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"

@@ -239,5 +239,7 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
 } else {
     rt_check( 'telephony adapter and missed-call tasks are loaded', false, 'classes missing' );
 }
+// FAQ knowledge gap detection (issue #36).
+require __DIR__ . '/ai-gap-runtime-checks.php';
 
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";

@@ -9,6 +9,7 @@ if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
     // Load from the plugin copy that WordPress itself uses (WP_PLUGIN_DIR), not a fixed server path.
     $tzfd_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR : '/var/www/html/wp-content/plugins' ) . '/titan-zero-trades-front-desk/includes/';
     require_once $tzfd_inc . 'class-tzfd-scoped-store.php';
+    require_once $tzfd_inc . 'class-tzfd-ai-connector.php';
     require_once $tzfd_inc . 'class-tzfd-faq-retrieval.php';
 }
 $R = 'TZFD_FAQ_Retrieval';
@@ -65,14 +66,22 @@ $r = $R::answer( $company, 'when do you trade' );
 wp_check( 'no consent: provider not called on the real site', 0 === $calls && 'clarify' === $r['status'] );
 $R::set_embedding_consent( $company, true );
 $r = $R::answer( $company, 'when do you trade' );
-wp_check( 'consent: embedding answer and monthly counter stored', 'embedding' === $r['path'] && 1 === $R::embedding_calls_this_month( $company ), json_encode( $r ) );
-$r = $R::answer( $company, 'email me at jane@example.com' );
-wp_check( 'email in query is never sent to the provider', 'private_detail_not_sent' === $r['reason'] && 1 === $calls, "calls=$calls" );
+wp_check( 'consent without free_ai entitlement: provider not called', 'hosted_ai_not_entitled' === $r['reason'] && 0 === $calls, json_encode( $r ) );
+// Entitlement: a placeholder endpoint only. The provider is a filter here, so nothing leaves the test site.
+TZFD_AI_Connector::configure( 'https://proxy.example.invalid/faq', 'site-a', str_repeat( 's', 48 ) );
+TZFD_AI_Connector::grant_consent( array( 'faq.read' ) );
+TZFD_AI_Connector::set_entitlements( array( 'free_ai' ) );
+$r = $R::answer( $company, 'when do you trade' );
+wp_check( 'consent + free_ai: embedding answer and monthly counter stored', 'embedding' === $r['path'] && 1 === $R::embedding_calls_this_month( $company ), json_encode( $r ) );
+$calls_before = $calls;
+$r = $R::answer( $company, 'email me at jane@example.com or call 0412 345 678 about hours' );
+wp_check( 'email and phone digits are redacted; the call still goes out', 'embedding' === $r['path'] && $calls === $calls_before + 1, "calls=$calls" );
 $R::set_embedding_consent( $company, false );
 wp_check( 'consent withdrawn: no new provider call', false === $R::has_embedding_consent( $company ) );
 
 // Cleanup everything this test created.
 remove_all_filters( 'tzfd_faq_embedding_provider' );
+TZFD_AI_Connector::disconnect();
 $R::save_entries( $company, array() );
 TZFD_Scoped_Store::update( $R::OPTION_CONSENT, false, $company );
 delete_option( TZFD_Scoped_Store::option_name( $R::OPTION_ENTRIES, $company ) );

@@ -108,10 +108,18 @@ jobs:
         run: |
           cd "$WP_DIR"
           php "$WP_CLI" --allow-root --path="$WP_DIR" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); file_put_contents("/tmp/fd-secret.txt", $s); echo "ok\n";'
-      - name: Runtime tests
+      - name: Runtime tests (gates on every FAIL line and on the missed-call section)
         run: |
+          set -o pipefail
           cd "$WP_DIR"
-          php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/runtime-tests.php"
+          LOG="$RUNNER_TEMP/runtime-tests.log"
+          # runtime-tests.php reports each check as PASS or FAIL and exits 0 either way, so the step gates on the log.
+          php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/runtime-tests.php" | tee "$LOG"
+          if grep -q '^FAIL ' "$LOG"; then echo "Runtime checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
+          # The missed-call section (issue #30 call events and the refusal checks) must have run and passed.
+          for check in 'signed missed call is accepted' 'anonymous caller task is marked no_callback_number' 'identical signed request is answered as replayed' 'ambiguous caller match still creates a task'; do
+            grep -q "^PASS .*$check" "$LOG" || { echo "Missed-call check did not pass or did not run: $check"; exit 1; }
+          done
       - name: HTTP auth tests
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"

@@ -88,13 +88,13 @@ final class TZFD_Telephony_Adapter {
         // Replay window: the signature is claimed atomically before the write, so two identical requests that
         // arrive together cannot both write. A failed write releases the claim so the provider can retry.
         require_once __DIR__ . '/class-tzfd-signed-request.php';
-        if ( ! TZFD_Signed_Request::claim_signature( $signature, 'tz_fd_tel_', self::REPLAY_TTL ) ) {
+        if ( ! TZFD_Signed_Request::claim_signature( $signature ) ) {
             return new WP_REST_Response( array( 'ok' => true, 'replayed' => true ), 200 );
         }
         $result = TZFD_Call_Lifecycle::record_event( $event['company_id'], $event['provider'],
             $event['call_id'], $event['event_id'], $event['event'], true );
         if ( is_wp_error( $result ) ) {
-            TZFD_Signed_Request::release_signature( $signature, 'tz_fd_tel_' );
+            TZFD_Signed_Request::release_signature( $signature );
             return $result;
         }
         // A missed call gets one callback task. It is idempotent per call, so a redelivery never adds a second task.
@@ -102,7 +102,7 @@ final class TZFD_Telephony_Adapter {
         if ( 'missed' === $event['event'] ) {
             $task = TZFD_Missed_Call_Tasks::record( $event['company_id'], $event['provider'], $event['call_id'], $event['from'] );
             if ( is_wp_error( $task ) ) {
-                TZFD_Signed_Request::release_signature( $signature, 'tz_fd_tel_' );
+                TZFD_Signed_Request::release_signature( $signature );
                 return $task;
             }
         }

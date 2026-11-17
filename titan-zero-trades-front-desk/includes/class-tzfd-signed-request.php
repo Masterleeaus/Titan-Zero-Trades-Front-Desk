@@ -83,6 +83,19 @@ final class TZFD_Signed_Request {
     }
 
     /**
+     * Drops a claim so the sender may retry. Used when the write behind a verified request failed, so the
+     * provider's retry is processed rather than answered as a replay.
+     */
+    public static function release_signature( $signature ) {
+        global $wpdb;
+        if ( ! isset( $wpdb ) || ! is_object( $wpdb ) ) return false;
+        $name = self::claim_key( $signature );
+        $deleted = $wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name = %s", $name ) );
+        wp_cache_delete( $name, 'options' );
+        return 1 === (int) $deleted;
+    }
+
+    /**
      * Removes claims older than REPLAY_TTL so the store stays bounded. Runs on about one claim in
      * twenty, which keeps the webhook path cheap.
      */

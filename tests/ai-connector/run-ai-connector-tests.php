@@ -242,7 +242,7 @@ reset_state();
 connect_all();
 $GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
 $prev = gmdate( 'Y-m', strtotime( gmdate( 'Y-m-01' ) . ' -1 month' ) );
-$GLOBALS['tz_opts'][ TZFD_AI_Connector::USAGE_PREFIX . $prev ] = array( 'budget' => array( 'model_fallback' => 50 ) );
+$GLOBALS['tz_opts'][ TZFD_AI_Connector::USAGE_PREFIX . $prev ] = array( 'budget' => array( 'model_fallback' => 200 ) );
 check( 'last month\'s exhausted allowance does not block this month', 'ok' === $C::request( 'faq.answer' )['status'] );
 
 // 14. Stale lock is taken over; a live lock makes the request wait (busy) without a call.
@@ -256,8 +256,15 @@ $GLOBALS['tz_opts'][ TZFD_AI_Connector::LOCK_OPTION ] = time() - 60;
 check( 'stale budget lock is cleared and the call proceeds', 'ok' === $C::request( 'faq.answer' )['status'] );
 check( 'lock is released after use', ! array_key_exists( TZFD_AI_Connector::LOCK_OPTION, $GLOBALS['tz_opts'] ) );
 
-// 15. Entitlements and budgets are per feature.
-check( 'budget table covers pilot limits', array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ) === ( function () use ( $C ) { $GLOBALS['tz_filters']['tzfd_ai_connector_budget_limits'] = array(); return $C::budget_limits(); } )() );
+// 15. Entitlements and budgets are per feature. Defaults are the standing per-site monthly contract figures.
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_limits'] = array();
+$defaults = $C::budget_limits();
+check( 'budget table matches contract figures', array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 ) === $defaults );
+check( 'default model_fallback budget is 200 per site per month', 200 === $defaults['model_fallback'] );
+check( 'default embedding budget is 800 per site per month', 800 === $defaults['embedding'] );
+check( 'default faq_batch budget is 16 per site per month', 16 === $defaults['faq_batch'] );
+check( 'default insight budget is 4 per site per month', 4 === $defaults['insight'] );
+check( 'budget table has no pilot values left', ! in_array( $defaults['model_fallback'], array( 50 ), true ) && ! in_array( $defaults['faq_batch'], array( 4 ), true ) && ! in_array( $defaults['insight'], array( 1 ), true ) );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

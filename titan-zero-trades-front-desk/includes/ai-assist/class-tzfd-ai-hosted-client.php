@@ -16,6 +16,36 @@ interface TZFD_AI_Hosted_Client {
     public function draft( $purpose, array $approved_facts, $quoted_customer_text );
 }
 
+/**
+ * Client that routes through the single consent-gated gate, TZFD_Hosted_AI_Connector::request(). Without recorded
+ * consent, a registered connector, or the gate class itself, it reports service_unavailable and makes no network call.
+ */
+final class TZFD_AI_Hosted_Gateway implements TZFD_AI_Hosted_Client {
+    public function translate( $text, $from_locale, $to_locale ) {
+        return self::call( 'translate', array( 'text' => (string) $text, 'from' => (string) $from_locale, 'to' => (string) $to_locale ) );
+    }
+
+    public function draft( $purpose, array $approved_facts, $quoted_customer_text ) {
+        return self::call( 'draft', array( 'purpose' => (string) $purpose, 'facts' => $approved_facts, 'quoted' => (string) $quoted_customer_text ) );
+    }
+
+    private static function call( $purpose, array $payload ) {
+        if ( ! class_exists( 'TZFD_Hosted_AI_Connector' ) ) {
+            return array( 'ok' => false, 'reason' => 'service_unavailable' );
+        }
+        $response = TZFD_Hosted_AI_Connector::request( 'free_ai', array_merge( array( 'task' => $purpose ), $payload ) );
+        if ( is_wp_error( $response ) ) {
+            $code = preg_replace( '/^tzfd_hosted_ai_/', '', (string) $response->get_error_code() );
+            return array( 'ok' => false, 'reason' => ( '' !== $code ) ? $code : 'service_unavailable' );
+        }
+        if ( is_array( $response ) && ! empty( $response['ok'] ) && isset( $response['text'] ) && is_string( $response['text'] ) ) {
+            return array( 'ok' => true, 'text' => $response['text'] );
+        }
+        $reason = ( is_array( $response ) && isset( $response['reason'] ) && is_string( $response['reason'] ) ) ? $response['reason'] : 'service_unavailable';
+        return array( 'ok' => false, 'reason' => $reason );
+    }
+}
+
 /** Default client: the hosted service is not connected. Every call reports why nothing was produced. */
 final class TZFD_AI_Hosted_Unavailable implements TZFD_AI_Hosted_Client {
     public function translate( $text, $from_locale, $to_locale ) {

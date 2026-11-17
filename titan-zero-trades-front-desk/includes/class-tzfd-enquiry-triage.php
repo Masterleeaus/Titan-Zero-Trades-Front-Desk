@@ -139,7 +139,34 @@ final class TZFD_Enquiry_Triage {
         // Audit trace for rule outcomes that change what an admin sees. The system is the actor; no text is written.
         if ( $spam['hold'] ) { self::audit( $company_id, $enquiry_id, 0, 'system', 'enquiry.spam_held', 'Held for spam review: ' . implode( ', ', $spam['signals'] ) ); }
         if ( 'urgent' === $result['urgency'] ) { self::audit( $company_id, $enquiry_id, 0, 'system', 'enquiry.urgent', 'Urgent by rule: ' . implode( ', ', $result['urgency_reasons'] ) ); }
+        self::maybe_alert( $company_id, $enquiry_id, $result['urgency'], $result['urgency_reasons'], $now );
         return $result;
+    }
+
+    /** Option holding the administrator opt-in for urgent alert email. Off unless set to '1'. */
+    const ALERT_OPTION = 'tz_fd_urgent_alert_enabled';
+
+    /**
+     * Sends one admin email for an urgent enquiry when the administrator has opted in and the window allows it.
+     * The email names the enquiry id and reasons only. It never repeats the enquiry text or contact details.
+     */
+    private static function maybe_alert( $company_id, $enquiry_id, $urgency, array $reasons, $now ) {
+        $option_key = 'tz_fd_urgent_alert_last_' . (int) $company_id;
+        $last       = get_option( $option_key, null );
+        $decision   = TZFD_Enquiry_Triage_Rules::alert_decision( '1' === (string) get_option( self::ALERT_OPTION, '0' ), $urgency, null === $last ? null : (int) $last, $now );
+        if ( ! $decision['send'] ) { return false; }
+        $to = sanitize_email( (string) get_option( 'admin_email', '' ) );
+        if ( '' === $to || ! is_email( $to ) ) { return false; }
+        $subject = __( 'Urgent enquiry received', 'titan-zero-trades-front-desk' );
+        $body    = sprintf(
+            /* translators: 1: enquiry id, 2: comma separated reasons. */
+            __( "An enquiry (id %1\$d) was marked urgent by rule: %2\$s.\nOpen the Enquiries screen to review it.", 'titan-zero-trades-front-desk' ),
+            (int) $enquiry_id,
+            implode( ', ', $reasons )
+        );
+        $sent = wp_mail( $to, $subject, $body );
+        if ( $sent ) { update_option( $option_key, (int) $now, false ); }
+        return (bool) $sent;
     }
 
     /** Writes one audit row. Returns false when the audit could not be written. */

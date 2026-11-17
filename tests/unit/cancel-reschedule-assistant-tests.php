@@ -76,6 +76,23 @@ tzfd_assert( 'company zero refused', $A::decide( 'cancel', array_merge( $base, a
 tzfd_assert( 'uncertain hands off', $A::decide( 'uncertain', $base ) === 'handoff_to_staff' );
 tzfd_assert( 'none hands off', $A::decide( 'none', $base ) === 'handoff_to_staff' );
 tzfd_assert( 'decisions never return a change action', ! in_array( $A::decide( 'cancel', $base ), array( 'cancelled', 'rescheduled' ), true ) );
+// A model-proposed intent this code does not know must never reach a link, even with verified ownership.
+tzfd_assert( 'unknown model intent hands off', $A::decide( 'refund', $base ) === 'handoff_to_staff' );
+tzfd_assert( 'guessed booking action hands off', $A::decide( 'book', array_merge( $base, array( 'ownership_verified' => true ) ) ) === 'handoff_to_staff' );
+tzfd_assert( 'empty intent hands off', $A::decide( '', $base ) === 'handoff_to_staff' );
+
+// Audit receipts: invalid events are refused before any database write.
+require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-local-audit.php';
+$L    = 'TZFD_Local_Audit';
+$good = array( 'action' => 'booking.cancel_link_sent', 'entity' => 'booking', 'entity_id' => 42, 'summary' => 'Cancel link sent' );
+tzfd_assert( 'audit refuses company 0', false === $L::insert( 0, 1, 'user', $good ) );
+tzfd_assert( 'audit refuses unknown actor type', false === $L::insert( 1, 1, 'customer', $good ) );
+tzfd_assert( 'audit refuses bad action name', false === $L::insert( 1, 1, 'system', array_merge( $good, array( 'action' => 'Cancel Booking!' ) ) ) );
+tzfd_assert( 'audit refuses zero entity id', false === $L::insert( 1, 1, 'system', array_merge( $good, array( 'entity_id' => 0 ) ) ) );
+tzfd_assert( 'audit refuses numeric-string entity id', false === $L::insert( 1, 1, 'system', array_merge( $good, array( 'entity_id' => '42' ) ) ) );
+tzfd_assert( 'audit refuses control characters in summary', false === $L::insert( 1, 1, 'system', array_merge( $good, array( 'summary' => "ok\ninjected" ) ) ) );
+tzfd_assert( 'audit refuses summary over 250 bytes', false === $L::insert( 1, 1, 'system', array_merge( $good, array( 'summary' => str_repeat( 'a', 251 ) ) ) ) );
+tzfd_assert( 'audit refuses missing key', false === $L::insert( 1, 1, 'system', array( 'action' => 'booking.cancel_link_sent' ) ) );
 
 // Phone number never authorises: ownership_verified ignores caller_phone and needs a valid token.
 tzfd_assert( 'phone alone does not verify', ! $A::ownership_verified( array( 'booking_id' => 42, 'caller_phone' => '+61400000000', 'secret' => $secret, 'version' => $ver1, 'expires' => $exp, 'now' => $now ) ) );

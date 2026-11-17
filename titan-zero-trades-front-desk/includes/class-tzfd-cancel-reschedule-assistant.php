@@ -89,8 +89,8 @@ if ( ! class_exists( 'TZFD_Cancel_Reschedule_Assistant' ) ) {
                  $booking_company !== $request_company ) {
                 return self::ACTION_REFUSE; // Cross-tenant access.
             }
-            if ( self::INTENT_UNCERTAIN === $intent || self::INTENT_NONE === $intent ) {
-                return self::ACTION_HANDOFF;
+            if ( self::INTENT_CANCEL !== $intent && self::INTENT_RESCHEDULE !== $intent ) {
+                return self::ACTION_HANDOFF; // Uncertain, none, or any unknown intent (e.g. a model's guess).
             }
             if ( empty( $facts['ownership_verified'] ) ) {
                 return self::ACTION_VERIFY;

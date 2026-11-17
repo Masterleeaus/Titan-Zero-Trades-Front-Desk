@@ -293,8 +293,8 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
 
             add_submenu_page(
                 '',
-                __( 'Titan Zero Front Desk Status Emails', 'titan-zero-trades-front-desk' ),
-                __( 'Titan Zero Front Desk Status Emails', 'titan-zero-trades-front-desk' ),
+                __( 'Scheduling & Enquiries Manager Status Emails', 'titan-zero-trades-front-desk' ),
+                __( 'Scheduling & Enquiries Manager Status Emails', 'titan-zero-trades-front-desk' ),
                 'manage_options',
                 self::PAGE,
                 array( $this, 'render_settings_page' )
@@ -309,7 +309,7 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
 
             $settings = $this->get_settings();
             echo '<div class="wrap"><h1>' . wp_kses( TZFD_UI_Graphics::brand_html( 'notifications' ), TZFD_UI_Graphics::allowed_html() ) .
-                esc_html__( 'Titan Zero Front Desk Status Emails', 'titan-zero-trades-front-desk' ) .
+                esc_html__( 'Scheduling & Enquiries Manager Status Emails', 'titan-zero-trades-front-desk' ) .
                 '</h1><form method="post" action="' . esc_url( admin_url( 'options.php' ) ) . '">';
             settings_fields( self::OPTION_GROUP );
             echo '<table class="form-table" role="presentation"><tbody>';

@@ -25,7 +25,7 @@ if ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' )
     wp_die( esc_html__( 'Invalid settings nonce.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 
-$tz_tzfdid = 'TZFD_Titan Zero Front Desk';
+$tz_tzfdid = 'TZFD_Scheduling & Enquiries Manager';
 
 $tz_gotab = '';
 if ( !empty($_POST["nonce"]) && current_user_can('tz_fd_access') && wp_verify_nonce( tzfd_request_text( 'post', "nonce" ), 'tz_fd_actions_admin') )

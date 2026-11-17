@@ -4,11 +4,8 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class TZFD_Twilio_Status {
     const ROUTE = 'tzfd/v1/twilio-status';
-    /**
-     * Replay window in seconds. Twilio's X-Twilio-Signature carries no timestamp, so the window is kept as
-     * a record of each verified signature. A replay inside it is answered without touching the row.
-     */
-    const REPLAY_WINDOW = 900;
+    // Replays are detected by TZFD_Signed_Request::claim_signature (the primitive the signed missed-call and call-event
+    // endpoints use). Twilio's X-Twilio-Signature carries no timestamp, so the claim is held for REPLAY_TTL (600 s).
     public static function boot() { add_action( 'rest_api_init', array( __CLASS__, 'register' ) ); }
     public static function register() {
         register_rest_route( 'tzfd/v1', '/twilio-status', array(
@@ -74,8 +71,18 @@ final class TZFD_Twilio_Status {
         if ( ! $url || ! self::valid_payload( $params ) || ! self::verified_signature( $url, $params, $signature ) ) {
             return new WP_Error( 'tzfd_twilio_not_authorized', __( 'Invalid status callback', 'titan-zero-trades-front-desk' ), array( 'status' => 403 ) );
         }
-        $replay_key = 'tzfd_twilio_sig_' . hash( 'sha256', $signature );
-        if ( get_transient( $replay_key ) ) { return array( 'ok' => true, 'state' => 'replayed' ); }
+        // Replay check, atomic: the signature is claimed before any read or write, so of several identical requests that
+        // arrive together only one proceeds and the rest are answered as replays. A request that fails after the claim
+        // releases it, so the provider's retry is processed. Same primitive as the missed-call endpoint.
+        require_once __DIR__ . '/class-tzfd-signed-request.php';
+        if ( ! TZFD_Signed_Request::claim_signature( $signature ) ) { return array( 'ok' => true, 'state' => 'replayed' ); }
+        $result = self::apply_status( $params );
+        if ( is_wp_error( $result ) ) { TZFD_Signed_Request::release_signature( $signature ); }
+        return $result;
+    }
+
+    /** Applies one verified, claimed status to its delivery row. Returns a WP_Error for any refusal. */
+    private static function apply_status( $params ) {
         if ( ! class_exists( 'TZFD_Telephone_Delivery' ) || ! TZFD_Telephone_Delivery::installed() ) {
             return new WP_Error( 'tzfd_telephone_queue_missing', __( 'Delivery queue unavailable', 'titan-zero-trades-front-desk' ), array( 'status' => 503 ) );
         }
@@ -95,7 +102,6 @@ final class TZFD_Twilio_Status {
         $status = $params['MessageStatus'];
         $target = 'delivered' === $status ? 'delivered' : 'failed';
         if ( $row['state'] === $target ) {
-            set_transient( $replay_key, 1, self::REPLAY_WINDOW );
             return array( 'ok' => true, 'state' => $target );
         }
         // Do not regress delivered messages or override an unrelated state. A terminal
@@ -110,7 +116,6 @@ final class TZFD_Twilio_Status {
         if ( 1 !== (int) $updated ) {
             return new WP_Error( 'tzfd_telephone_status_conflict', __( 'Unable to update delivery status', 'titan-zero-trades-front-desk' ), array( 'status' => 409 ) );
         }
-        set_transient( $replay_key, 1, self::REPLAY_WINDOW );
         return array( 'ok' => true, 'state' => $target );
     }
 }

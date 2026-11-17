@@ -65,3 +65,9 @@ function tzfd_test_rate_limit() {
 	tzfd_assert( false === $R::allow( 'no-store', 5, 60, $t ), 'missing database refuses the request' );
 	$GLOBALS['wpdb'] = $saved;
 }
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

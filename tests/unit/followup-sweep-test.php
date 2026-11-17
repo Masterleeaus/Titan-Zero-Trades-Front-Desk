@@ -92,6 +92,35 @@ fs_check( 'no consent is suppressed in a run', 'no_consent' === $run['decisions'
 $run = $R::sweep( array( 'junk', fs_enquiry( 14, 'cust-i' ) ), $NOW, $TZ, array(), $OK );
 fs_check( 'non-array rows are skipped', 1 === count( $run['decisions'] ) && 14 === $run['decisions'][0]['enquiry_id'] );
 
+// ---- Unknown opt-out state fails closed inside a batch run ----------------------------------
+$UNK = static function ( $email ) { return null; };
+$run = $R::sweep( array( fs_enquiry( 15, 'cust-j' ) ), $NOW, $TZ, array(), $UNK );
+fs_check( 'unknown opt-out state suppresses every enquiry in a run', 'consent_unknown' === $run['decisions'][0]['decision']['suppressed_by'] && array() === $run['history'], fs_dump( $run['decisions'] ) );
+
+// ---- Category boundaries: 6h abandoned, 24h unanswered, nothing earlier ----------------------
+$ab = fs_enquiry( 16, 'cust-k', array( 'abandoned' => true, 'received_utc' => gmdate( 'Y-m-d H:i:s', $NOW - 5 * 3600 ) ) );
+fs_check( 'abandoned enquiry under 6h is not flagged', null === $R::category( $ab, $NOW ) );
+$ab['received_utc'] = gmdate( 'Y-m-d H:i:s', $NOW - 6 * 3600 );
+fs_check( 'abandoned enquiry at 6h is flagged as abandoned', 'abandoned' === $R::category( $ab, $NOW ) );
+$un = fs_enquiry( 17, 'cust-k', array( 'received_utc' => gmdate( 'Y-m-d H:i:s', $NOW - 23 * 3600 ) ) );
+fs_check( 'unanswered enquiry under 24h is not flagged', null === $R::category( $un, $NOW ) );
+$un['received_utc'] = gmdate( 'Y-m-d H:i:s', $NOW - 24 * 3600 );
+fs_check( 'unanswered enquiry at 24h is flagged', 'unanswered' === $R::category( $un, $NOW ) );
+
+// ---- Business-hour timing: 08:59 and 16:59 stay on the day, 17:00 moves to next morning -----
+$tz = 'Australia/Melbourne';
+$t  = $R::next_business_time( strtotime( '2026-11-16 21:59:00 UTC' ), $tz ); // 08:59 Tue 17 Nov AEDT
+fs_check( '08:59 local waits until 09:00 the same day', '2026-11-17 09:00' === $t['local'], fs_dump( $t ) );
+$t  = $R::next_business_time( strtotime( '2026-11-17 05:59:00 UTC' ), $tz ); // 16:59 local
+fs_check( '16:59 local is still inside business hours', '2026-11-17 16:59' === $t['local'], fs_dump( $t ) );
+$t  = $R::next_business_time( strtotime( '2026-11-17 06:00:00 UTC' ), $tz ); // 17:00 local
+fs_check( '17:00 local moves to 09:00 the next day', '2026-11-18 09:00' === $t['local'], fs_dump( $t ) );
+
+// ---- DST: Melbourne moves to AEDT at 02:00 on Sun 4 Oct 2026; 09:00 local maps to the right instant
+$t = $R::next_business_time( strtotime( '2026-10-03 20:00:00 UTC' ), $tz ); // 07:00 AEDT Sun 4 Oct
+fs_check( 'DST day: 09:00 local label is kept', '2026-10-04 09:00' === $t['local'], fs_dump( $t ) );
+fs_check( 'DST day: 09:00 AEDT is 22:00 UTC the previous day', strtotime( '2026-10-03 22:00:00 UTC' ) === $t['ts'], fs_dump( $t ) );
+
 echo 'Passed: ' . $pass . PHP_EOL;
 echo 'Failed: ' . count( $fail ) . PHP_EOL;
 foreach ( $fail as $f ) { echo 'FAIL: ' . $f . PHP_EOL; }

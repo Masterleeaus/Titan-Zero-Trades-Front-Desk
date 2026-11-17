@@ -183,6 +183,16 @@ final class TZFD_Enquiry_Triage_Rules {
         return array( 'send' => true, 'reason' => 'send' );
     }
 
+    /**
+     * Normalises the admin's urgent-alert checkbox value. Only the exact value '1' turns alerts on; anything else is off.
+     *
+     * @param mixed $value Raw posted value.
+     * @return string '1' or '0'.
+     */
+    public static function alert_setting_from_request( $value ) {
+        return is_string( $value ) && '1' === $value ? '1' : '0';
+    }
+
     /** True when an expiry phrase is present and a date named in the text falls within 14 days after $now. */
     public static function expiring_date_found( $text, $now ) {
         if ( ! self::find_terms( self::tokens( $text ), self::EXPIRY_TERMS ) ) { return false; }

@@ -273,6 +273,11 @@ $extra = array( array( 'section' => 'Unanswered FAQ topics', 'rows' => array(
 $loc = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, $extra );
 $topics = array_values( array_filter( $loc['sections'], static function ( $s ) { return 'Unanswered FAQ topics' === $s['section']; } ) )[0]['rows'];
 ok( 'insights: rows below minimum cell or base are omitted, not shown', count( $topics ) === 1 && $loc['omitted'] === 2 && $topics[0]['share'] === round( 9 / 45, 4 ) );
+$leaky = TZFD_Ai_Monthly_Insights::local_report( '2026-11', $agg, array( array( 'section' => 'Callers jo@example.com', 'rows' => array(
+	array( 'label' => 'call 0412 345 678 about boiler jo@example.com', 'count' => 9, 'base' => 45 ),
+) ) ) );
+$leak_text = json_encode( $leaky );
+ok( 'insights: labels and section names drop email and phone (scrub on top of plain text)', false === strpos( $leak_text, '@' ) && false === strpos( $leak_text, '0412 345 678' ) && false !== strpos( $leak_text, '[contact removed]' ) );
 ok( 'insights: local report always produced with denominators', $loc['base'] === 45 && $loc['sections'][0]['rows'][0]['base'] === 45 );
 
 reset_state();
@@ -356,6 +361,55 @@ ok( 'page: min_count is clamped to 1000, search to 60 characters, unknown covera
 $f = TZFD_Ai_Gap_Page::parse_filters( array( 'min_count' => '-3', 'coverage' => 'missing' ) );
 ok( 'page: negative min_count becomes 0 and allowed coverage is kept', $f['min_count'] === 0 && $f['coverage'] === 'missing' );
 ok( 'page: only 16 lowercase hex characters are valid topic keys', TZFD_Ai_Gap_Page::valid_key( $k_boiler ) && ! TZFD_Ai_Gap_Page::valid_key( '../etc/passwd' ) && ! TZFD_Ai_Gap_Page::valid_key( strtoupper( $k_boiler ) ) && ! TZFD_Ai_Gap_Page::valid_key( array( 'x' ) ) );
+/* ---------- #39 builder entries served by FAQ search; cache invalidation; tenant boundary ---------- */
+$kb_inc = __DIR__ . '/../../titan-zero-trades-front-desk/includes/';
+foreach ( array( 'class-tzfd-intent-engine.php', 'class-tzfd-tenant-storage.php', 'class-tzfd-knowledge-store.php', 'class-tzfd-answer-cache.php', 'class-tzfd-business-facts.php', 'class-tzfd-embedding-provider.php', 'class-tzfd-faq-search.php' ) as $kb_file ) {
+	require_once $kb_inc . $kb_file;
+}
+final class TZFD_Kb_Test_Storage implements TZFD_Tenant_Storage {
+	public $data = array();
+	public function read( $key, $company, $default ) { return array_key_exists( $company . '|' . $key, $this->data ) ? $this->data[ $company . '|' . $key ] : $default; }
+	public function write( $key, $company, $value ) { $this->data[ $company . '|' . $key ] = $value; return true; }
+}
+final class TZFD_Kb_Test_Cache implements TZFD_Cache_Backend {
+	public $items = array();
+	public function get( $key ) { return $this->items[ $key ] ?? false; }
+	public function set( $key, $value, $ttl ) { $this->items[ $key ] = $value; return true; }
+	public function delete( $key ) { unset( $this->items[ $key ] ); }
+}
+reset_state(); $GLOBALS['tzfd_test_caps'] = true;
+$KB_NOW  = 1767225600;
+$kb_now  = static function () use ( $KB_NOW ) { return $KB_NOW; };
+$kb_mgr  = static function () { return true; };
+$kb_search = static function ( $company ) use ( $kb_now, $kb_mgr ) {
+	$mem = new TZFD_Kb_Test_Storage();
+	return new TZFD_FAQ_Search( new TZFD_Knowledge_Store( $mem, $company, $kb_mgr ), new TZFD_Business_Facts( $mem, $company, $kb_mgr, $kb_now ), new TZFD_Answer_Cache( new TZFD_Kb_Test_Cache(), 600, $kb_now ), $mem, null, array( 'now' => $kb_now, 'can_manage' => $kb_mgr, 'site' => 1 ) );
+};
+$KB_CO = 9;
+$kb_faq = $kb_search( $KB_CO );
+$KB_Q   = 'Do you repair boilers?';
+$KB_FACT = array( array( 'id' => 'svc-9', 'text' => 'Boiler repair.', 'approved' => true ) );
+$kb_draft = TZFD_Ai_Knowledge_Builder::save_draft( $KB_CO, null, $KB_Q, 'Yes, boiler repair is offered.', array( 'svc-9' ), $KB_NOW, 1 );
+$kb_v0 = $kb_faq->knowledge_version();
+ok( 'kb serve: draft is not answered to visitors', $kb_faq->answer( $KB_Q, 'en' )['status'] !== 'answered' );
+$kb_pub = TZFD_Ai_Knowledge_Builder::publish( $KB_CO, $kb_draft['id'], $KB_FACT, $KB_NOW, 1 );
+ok( 'kb serve: publish succeeds with approved source', $kb_pub['ok'] === true );
+ok( 'kb cache: publish changes the knowledge version used for cache keys and index', $kb_faq->knowledge_version() !== $kb_v0 );
+$kb_hit = $kb_faq->answer( $KB_Q, 'en' );
+ok( 'kb serve: published entry answered with builder source and escaped-safe text', $kb_hit['status'] === 'answered' && $kb_hit['answer'] === 'Yes, boiler repair is offered.' && $kb_hit['source']['type'] === 'faq' && 0 === strpos( (string) $kb_hit['source']['id'], 'kb-' ) );
+ok( 'kb cache: identical follow-up question is a cache hit', $kb_faq->answer( $KB_Q, 'en' )['cache'] === 'hit' );
+ok( 'kb serve: builder entries are not served for a non-default language', $kb_faq->answer( $KB_Q, 'fr' )['status'] !== 'answered' );
+TZFD_Ai_Knowledge_Builder::save_draft( $KB_CO, $kb_draft['id'], $KB_Q, 'Yes, boiler repair is offered for homes.', array( 'svc-9' ), $KB_NOW + 10, 1 );
+$kb_edited = $kb_faq->answer( $KB_Q, 'en' );
+ok( 'kb cache: edited published text is not served from the old cached answer', $kb_edited['status'] !== 'answered' && $kb_edited['cache'] !== 'hit' );
+$kb_rb = TZFD_Ai_Knowledge_Builder::rollback( $KB_CO, $kb_draft['id'], 2, $KB_NOW + 20, 1 );
+ok( 'kb rollback: restored text is a draft and not served until republished', $kb_rb['ok'] && $kb_rb['status'] === 'draft' && $kb_faq->answer( $KB_Q, 'en' )['status'] !== 'answered' );
+$kb_rep = TZFD_Ai_Knowledge_Builder::publish( $KB_CO, $kb_draft['id'], $KB_FACT, $KB_NOW + 30, 1 );
+ok( 'kb rollback: republish serves the restored text', $kb_rep['ok'] && $kb_faq->answer( $KB_Q, 'en' )['answer'] === 'Yes, boiler repair is offered.' );
+ok( 'kb tenant: another company does not receive company 9 builder entries', $kb_search( 8 )->answer( $KB_Q, 'en' )['status'] !== 'answered' );
+$GLOBALS['tzfd_test_caps'] = false;
+ok( 'kb permissions: rollback refused without edit capability', TZFD_Ai_Knowledge_Builder::rollback( $KB_CO, $kb_draft['id'], 1, $KB_NOW, 1 )['error'] === 'forbidden' );
+$GLOBALS['tzfd_test_caps'] = true;
 
 /* ---------- result ---------- */
 echo "Passed: {$GLOBALS['tzfd_pass']}  Failed: {$GLOBALS['tzfd_fail']}\n";

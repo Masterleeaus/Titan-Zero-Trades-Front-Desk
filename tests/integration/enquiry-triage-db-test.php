@@ -263,6 +263,29 @@ $html = TZFD_Enquiry_Triage::row_html( $e8, triage_row( 1, $e8 ) );
 t_check( 'held row offers restore and confirm', false !== strpos( $html, 'Restore (not spam)' ) && false !== strpos( $html, 'Confirm spam' ) && false !== strpos( $html, 'Held for spam review' ) );
 t_check( 'no raw script in list html', false === strpos( $html, '<script' ) );
 
+// 14. Recovery: when the triage table is missing, the enquiry is still saved and triage returns without throwing.
+// Once the schema is marked as current again, triage recreates the table and stores the next enquiry normally.
+$rec_text = 'Can you come Tuesday for a quote on the gutters';
+$e_rec    = enquiry( 1, 'recover@example.com', $rec_text );
+$mysqli->query( "DROP TABLE IF EXISTS `{$p}tz_enquiry_triage`" );
+$rec_threw = false;
+try {
+    $rec_result = TZFD_Enquiry_Triage::record_safely( 1, $e_rec, $rec_text, 'recover@example.com', '' );
+} catch ( Throwable $ex ) {
+    $rec_threw = true;
+    $rec_result = null;
+}
+$rec_row = $wpdb->get_row( $wpdb->prepare( 'SELECT id, status FROM %i WHERE id = %d', $wpdb->prefix . 'tz_enquiries', $e_rec ) );
+t_check( 'triage failure does not throw', false === $rec_threw );
+t_check( 'triage failure leaves the enquiry saved and new', $rec_row && 'new' === $rec_row->status );
+t_check( 'triage failure stores no triage row', false === $rec_result );
+
+unset( $GLOBALS['tzfd_options'][ TZFD_Enquiry_Triage::SCHEMA_OPTION ] );
+$e_after = enquiry( 1, 'after@example.com', $rec_text );
+$after_result = TZFD_Enquiry_Triage::record_safely( 1, $e_after, $rec_text, 'after@example.com', '' );
+$after_row    = triage_row( 1, $e_after );
+t_check( 'triage resumes after the table is restored', false !== $after_result && $after_row && 'none' === $after_row->spam_state );
+
 echo "Passed: {$pass}\n";
 echo 'Failed: ' . count( $fail ) . "\n";
 foreach ( $fail as $f ) { echo "  FAIL: {$f}\n"; }

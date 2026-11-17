@@ -23,7 +23,6 @@ final class TZFD_Upgrades {
 	/** Return a safe HTTPS product URL, or an empty string when none is set. */
 	public static function url( $product ) {
 		$map = array(
-			'pro'   => self::PRO_URL,
 			'ai'    => self::AI_URL,
 			'agent' => self::AGENT_URL,
 		);
@@ -35,17 +34,8 @@ final class TZFD_Upgrades {
 	/** Cards for every product that has a URL. */
 	public static function cards() {
 		$cards = array();
-		$pro   = self::url( 'pro' );
 		$ai    = self::url( 'ai' );
 		$agent = self::url( 'agent' );
-		if ( '' !== $pro ) {
-			$cards[] = array(
-				'name'   => __( 'Front Desk Pro', 'titan-zero-trades-front-desk' ),
-				'text'   => __( 'Advanced booking operations, reporting and configuration. Pro is a separate download and is not installed by this plugin.', 'titan-zero-trades-front-desk' ),
-				'button' => __( 'Explore Pro Features', 'titan-zero-trades-front-desk' ),
-				'url'    => $pro,
-			);
-		}
 		if ( '' !== $ai ) {
 			$cards[] = array(
 				'name'   => __( 'AI Assistant', 'titan-zero-trades-front-desk' ),
@@ -78,17 +68,5 @@ final class TZFD_Upgrades {
 			echo '<p><a class="button" target="_blank" rel="noopener noreferrer" href="' . esc_url( $card['url'] ) . '">' . esc_html( $card['button'] ) . '</a></p></div>';
 		}
 		echo '</div>';
-	}
-
-	/** Plugins-list entry: one Upgrade link to the first product that has a URL (Pro, then AI Assistant, then AI Agent). */
-	public static function plugin_row_link( $links ) {
-		$url = '';
-		foreach ( array( 'pro', 'ai', 'agent' ) as $product ) {
-			$url = self::url( $product );
-			if ( '' !== $url ) { break; }
-		}
-		if ( '' === $url ) { return $links; }
-		$links[] = '<a href="' . esc_url( $url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html__( 'Upgrade', 'titan-zero-trades-front-desk' ) . '</a>';
-		return $links;
 	}
 }

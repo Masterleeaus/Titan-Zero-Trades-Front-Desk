@@ -89,7 +89,7 @@ Optional external industry presets are examples; native service setup does not r
 
    This is a new plugin, not an upgrade. Do not install it over Appointment Hour Booking or Titan Front Desk; see the FAQ below.
 
-2. Activate Scheduling & Enquiries Manager on a supported WordPress installation. No other Titan Zero plugin is needed. Optional SMS providers are only needed for the optional missed-call text-back feature. This version does not use AI.
+2. Activate Scheduling & Enquiries Manager on a supported WordPress installation. No other Titan Zero plugin is needed. Optional external SMS services are needed only for configured SMS features. Local bookings, customer data and deterministic rules must work without AI or a hosted subscription; hosted AI integrations are optional and require separate consent, configuration and release verification.
 
 3. Open Front Desk in the WordPress admin menu and enter your business details and services. You can configure its local customers, calendars, service durations and capacity without Workspace.
 
@@ -144,7 +144,7 @@ No. They are examples. You can edit each price, and each answer, before the pres
 
 = Does this version use AI? =
 
-No. This version contains no AI feature and does not contact any AI provider. Bookings, customers, reminders and reports work without AI.
+The core booking and enquiry functions work without AI or an external AI account. The project includes optional AI/knowledge functionality and developing hosted Assistant/Agent Team integrations, but the presence of their settings or source does not certify a usable hosted subscription. Any remote AI transfer must require the site owner's informed opt-in and working service configuration.
 
 = Will my bookings be removed if I delete the plugin? =
 
@@ -180,7 +180,7 @@ Email support@titanzero.io. Please do not post exploit details publicly until a 
 
 == Hosted AI ==
 
-Hosted AI is on by default. A notice at setup explains what data is sent to the hosted AI service and links to its terms. The AI Services page shows its status and lets the site owner switch it off at any time. Hosted AI runs outside WordPress. Its data handling is listed under External services before any site data is sent to it.
+Hosted AI is **optional**, not required to install, book appointments or use bundled local WordPress features. Before any external AI service receives site or visitor data, the site owner must explicitly enable the connection, review its disclosed data categories/terms and configure a verified service entitlement. Hosted conversational Assistant and Agent Team subscriptions remain subject to end-to-end implementation and release testing; this readme is not a declaration that hosted processing is active or production-ready. External service details and choices must be shown to the administrator before the corresponding transfer.
 
 Booking, customers, calendars, rules, FAQ and reports work without it.
 

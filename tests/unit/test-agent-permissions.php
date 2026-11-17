@@ -98,3 +98,9 @@ function tzfd_test_agent_tool_permissions() {
 	tzfd_assert_same( 'invalid_grant', $P::decide( 'nonsense', $req() )['reason'], 'non-array grant is reported as an invalid grant' );
 	tzfd_assert_same( 'unknown_tool', $P::decide( $grant, array( 'tool' => 7 ) )['reason'], 'non-string tool is denied as unknown' );
 }
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

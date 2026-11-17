@@ -72,7 +72,11 @@ sleep 2
 # suite runs, so its route and refusal checks are exercised rather than skipped.
 echo "--- missed-call addon enabled with inbound secret (as CI)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
-$WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' --user=1 2>&1 | tee -a "$LOG"
+# Store the inbound secret through the plugin's own save path (as the CI workflow does, which encrypts secret
+# fields). Provision-wp-site.sh writes its secret raw with update_option, and signed checks then get HTTP 401.
+# Do not store a second secret after this, or the one the checks send no longer matches the stored one.
+SECRET_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "\nTZFD_RT_INBOUND_SECRET=" . $s . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_INBOUND_SECRET=')"
+[ -n "$SECRET_LINE" ] && eval "$SECRET_LINE" || echo "FAIL addon setup -- could not store the missed-call secret"
 
 echo "--- http-auth-tests"
 SECRET="${TZFD_RT_INBOUND_SECRET:-}" TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" 2>&1 | tee -a "$LOG"

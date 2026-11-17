@@ -4,7 +4,7 @@
  * Run: wp --allow-root eval-file runtime-tests.php   (not shipped in the plugin)
  */
 // Resolves against the active WordPress install (WP_PLUGIN_DIR), not a fixed server path.
-if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; return; }
+if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; exit( 1 ); }
 $tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
 foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php' ) as $tz_file ) {
     require_once $tz_inc . $tz_file;
@@ -241,3 +241,4 @@ if ( class_exists( 'TZFD_Telephony_Adapter' ) && class_exists( 'TZFD_Call_Lifecy
 }
 
 echo "\nSummary: " . $GLOBALS["rt_pass"] . " passed, " . $GLOBALS["rt_fail"] . " failed\n";
+exit( $GLOBALS['rt_fail'] > 0 ? 1 : 0 );

@@ -10,7 +10,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress (use wp eval-file)\n";
-	return;
+	exit( 1 );
 }
 
 $GLOBALS['tzfd_br'] = array( 'PASS' => 0, 'FAIL' => 0 );
@@ -27,7 +27,7 @@ $tzfd_need = array( 'class-tzfd-booking-view.php', 'class-tzfd-booking-reports.p
 foreach ( $tzfd_need as $tzfd_file ) {
 	if ( ! is_readable( $tzfd_inc . $tzfd_file ) ) {
 		tzfd_br_ok( 'booking-report: ' . $tzfd_file . ' readable', false, 'not found in the active plugin' );
-		return;
+		exit( 1 );
 	}
 }
 require_once $tzfd_inc . 'class-tzfd-booking-report-admin.php';
@@ -111,3 +111,4 @@ foreach ( $br_ids as $br_id ) {
 $wpdb->delete( $br_forms, array( 'id' => $br_form ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 echo 'Summary (booking-report-runtime): ' . (int) $GLOBALS['tzfd_br']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_br']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_br']['FAIL'] > 0 ? 1 : 0 );

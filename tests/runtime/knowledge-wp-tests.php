@@ -90,3 +90,4 @@ TZFD_Scoped_Store::delete( $K::OPTION, $company );
 TZFD_Local_Services::archive( $svc );
 
 echo "\nSummary: " . $GLOBALS['kw_pass'] . ' passed, ' . $GLOBALS['kw_fail'] . " failed\n";
+exit( $GLOBALS['kw_fail'] > 0 ? 1 : 0 );

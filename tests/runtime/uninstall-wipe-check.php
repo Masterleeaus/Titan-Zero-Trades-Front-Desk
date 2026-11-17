@@ -7,11 +7,11 @@
  */
 if ( ! defined( 'ABSPATH' ) ) {
 	echo "FAIL harness -- not running inside WordPress\n";
-	return;
+	exit( 1 );
 }
 if ( defined( 'TZ_DELETE_DATA_ON_UNINSTALL' ) ) {
 	echo "FAIL uninstall-wipe -- opt-in already defined in this process; run it alone\n";
-	return;
+	exit( 1 );
 }
 
 global $wpdb;
@@ -53,12 +53,15 @@ $tz_results[] = array( ! $tz_exists( $wpdb->prefix . 'tzfd_local_customers' ), '
 $tz_results[] = array( ! $tz_exists( $wpdb->prefix . 'tzfd_local_services' ), 'PASS', 'opt-in uninstall drops tzfd_local_services' );
 $tz_results[] = array( 0 === (int) $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(*) FROM {$wpdb->options} WHERE option_name=%s", 'tzfd_ai_connector_secret' ) ), 'PASS', 'opt-in uninstall deletes the AI connector secret option' ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw options row count, bypasses the object cache
 
+$tz_failed = 0;
 foreach ( $tz_results as $tz_r ) {
 	list( $tz_ok, $tz_label, $tz_text ) = $tz_r;
 	if ( 'GAP' === $tz_label ) {
 		echo ( $tz_ok ? 'GAP' : 'PASS' ) . ' uninstall-wipe -- ' . esc_html( $tz_text ) . "\n";
 	} else {
+		if ( ! $tz_ok ) { $tz_failed++; }
 		echo ( $tz_ok ? 'PASS' : 'FAIL' ) . ' uninstall-wipe -- ' . esc_html( $tz_text ) . "\n";
 	}
 }
 echo "Summary (uninstall-wipe-check): owned tables present before wipe=" . (int) $tz_before_owned . "\n";
+exit( $tz_failed > 0 ? 1 : 0 );

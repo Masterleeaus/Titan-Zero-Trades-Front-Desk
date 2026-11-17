@@ -14,9 +14,12 @@ if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
 }
 $R = 'TZFD_FAQ_Retrieval';
 $GLOBALS['wp_pass'] = 0; $GLOBALS['wp_fail'] = 0;
-function wp_check( $name, $ok, $detail = '' ) {
-    if ( $ok ) { $GLOBALS['wp_pass']++; } else { $GLOBALS['wp_fail']++; }
-    echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
+// runtime-tests.php includes this file twice, so declare the helper only once.
+if ( ! function_exists( 'wp_check' ) ) {
+    function wp_check( $name, $ok, $detail = '' ) {
+        if ( $ok ) { $GLOBALS['wp_pass']++; } else { $GLOBALS['wp_fail']++; }
+        echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
+    }
 }
 
 // A company id unique to this run. Cached answers survive between runs as transients, and the cleanup resets the

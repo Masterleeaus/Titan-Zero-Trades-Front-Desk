@@ -84,6 +84,7 @@ final class TZFD_Business_Schema {
             campaign_title varchar(190) NOT NULL DEFAULT '',
             source varchar(60) NOT NULL DEFAULT '',
             received_utc datetime NOT NULL,
+            privacy_consent_utc datetime NULL DEFAULT NULL,
             status varchar(20) NOT NULL DEFAULT 'new',
             created datetime NOT NULL,
             PRIMARY KEY  (id),

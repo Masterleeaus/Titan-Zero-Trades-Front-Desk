@@ -33,12 +33,20 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
-## Last recorded results (2026-11-16, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11, WP-CLI 2.12.0)
+## Last recorded results (2026-11-18, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11.14, WP-CLI 2.12.0)
 
-- Single site: 85 passed, 0 failed, 2 gaps, 10 skipped.
-- Multisite: 86 passed, 0 failed, 2 gaps, 8 skipped.
-- Upgrade 3.0.128 (`22dc106`) to this checkout and back: 16 passed, 0 failed, 2 gaps. Both sides report version
-  3.0.128, so the upgrade check asserts which source folder is loaded rather than the version string.
+- Single site: 346 passed, 0 failed, 0 gaps, 9 skipped (re-run after the fixes below).
+- Multisite: 347 passed, 0 failed, 0 gaps, 7 skipped (run with `PORT=8093` under `runtime.lock`).
+- Upgrade 2.0.1 to this checkout (3.0.128) and back: 10 passed, 0 failed, 0 gaps. The seed and carry-over step is
+  SKIP, because the default base has no 3.x booking schema. The upgrade from v3.0.128 with existing bookings is
+  NOT yet proven (issue #149).
+
+Fixed on 2026-11-18 (harness only, no plugin code changed):
+
+- `run-wp-runtime.sh` now passes its URL (`PORT`) into provisioning. Before, a multisite network was built with the
+  default port 8080, so every HTTP check on a different port was redirected (302).
+- `ai-answer-box-form-runtime-tests.php` sets plain permalinks before its check. Multisite provisioning leaves pretty
+  permalinks on, and the check is about `?page_id=N`. It also refreshes the in-memory rewrite object.
 
 ## Gaps observed (reported, not fixed here)
 

@@ -258,5 +258,21 @@ $ph = TZFD_AI_Conversation_Summary::summarise( array( array( 'id' => 'p1', 'from
 t( 'compact phone number redacted from output', strpos( json_encode( $ph ), '61412345678' ) === false && $ph['redacted'] === true );
 t( 'customer-level role without tz_fd_access cannot read summaries', TZFD_AI_Conversation_Summary::can_read( array( 'read' => true ) ) === false );
 
+// ---- #143 administrator-configured languages: capability gate, invalid tags, cap ----
+if ( ! function_exists( 'current_user_can' ) ) { function current_user_can( $cap ) { return ! empty( $GLOBALS['t_caps'][ $cap ] ); } }
+if ( ! function_exists( 'update_option' ) ) { function update_option( $k, $v, $autoload = null ) { $GLOBALS['t_opts'][ $k ] = $v; return true; } }
+$GLOBALS['t_opts'] = array();
+$GLOBALS['t_caps'] = array( 'manage_options' => false );
+t( 'language list refused for non-administrator', TZFD_AI_Multilingual::save_configured_locales( array( 'es' ) ) === false && TZFD_AI_Multilingual::configured_locales() === array() );
+$GLOBALS['t_caps'] = array( 'manage_options' => true );
+$saved = TZFD_AI_Multilingual::save_configured_locales( array( 'en-AU', '<script>', 'es', 'es', 'fr', 'ar', 'de', 'it' ) );
+t( 'administrator list drops invalid tags and duplicates', $saved === array( 'en-AU', 'es', 'fr', 'ar', 'de' ) );
+t( 'administrator list capped at five with default first', TZFD_AI_Multilingual::configured_locales() === array( 'en-AU', 'es', 'fr', 'ar', 'de' ) && count( $saved ) === TZFD_AI_Multilingual::MAX_LOCALES );
+t( 'list of only invalid tags saves nothing', TZFD_AI_Multilingual::save_configured_locales( array( '<b>', '' ) ) === array() );
+
+// ---- #145 summary access: non-owner and empty input ----
+$empty_sum = TZFD_AI_Conversation_Summary::summarise( array(), true, array(), $owner_caps );
+t( 'empty conversation gives no fabricated request', $empty_sum['status'] === 'summary' && ! isset( $empty_sum['stated_request'] ) && $empty_sum['outstanding'] === array() );
+
 printf( "\n%d passed, %d failed\n", $GLOBALS['t_pass'], $GLOBALS['t_fail'] );
 exit( $GLOBALS['t_fail'] > 0 ? 1 : 0 );

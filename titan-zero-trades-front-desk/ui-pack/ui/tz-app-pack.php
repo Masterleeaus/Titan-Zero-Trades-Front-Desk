@@ -10,5 +10,5 @@ require_once __DIR__ . '/tz-app-front-desk-reads.php';
 require_once __DIR__ . '/tz-app-front-desk.php';
 
 if ( is_admin() ) {
-	TZ_UI_Front_Desk::boot();
+	TZFD_UI_Front_Desk::boot();
 }

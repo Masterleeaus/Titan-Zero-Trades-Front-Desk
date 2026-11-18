@@ -25,10 +25,10 @@ function tzfd_bc_ok( $name, $ok, $detail = '' ) {
 	return (bool) $ok;
 }
 
-global $wpdb, $tz_plugin;
+global $wpdb, $tzfd_plugin;
 
-if ( ! is_object( $tz_plugin ) || ! method_exists( $tz_plugin, 'render_booking_confirmation' ) ) {
-	tzfd_bc_ok( 'booking-confirmation: plugin object loaded', false, 'render_booking_confirmation not available on $tz_plugin' );
+if ( ! is_object( $tzfd_plugin ) || ! method_exists( $tzfd_plugin, 'render_booking_confirmation' ) ) {
+	tzfd_bc_ok( 'booking-confirmation: plugin object loaded', false, 'render_booking_confirmation not available on $tzfd_plugin' );
 	exit( 1 );
 }
 
@@ -62,9 +62,9 @@ $bc_handler  = function () use ( &$bc_captured ) {
 };
 add_filter( 'wp_die_handler', $bc_handler );
 try {
-	$bc_method = new ReflectionMethod( $tz_plugin, 'render_booking_confirmation' );
+	$bc_method = new ReflectionMethod( $tzfd_plugin, 'render_booking_confirmation' );
 	$bc_method->setAccessible( true );
-	$bc_method->invoke( $tz_plugin, $bc_id );
+	$bc_method->invoke( $tzfd_plugin, $bc_id );
 } catch ( RuntimeException $e ) {
 	// Expected: the captured wp_die() call.
 } catch ( Throwable $e ) {
@@ -82,7 +82,7 @@ tzfd_bc_ok( 'booking-confirmation: shows the slot, not the submission time', fal
 $bc_captured = null;
 add_filter( 'wp_die_handler', $bc_handler );
 try {
-	$bc_method->invoke( $tz_plugin, 0 );
+	$bc_method->invoke( $tzfd_plugin, 0 );
 } catch ( RuntimeException $e ) {
 	// Expected.
 }
@@ -94,7 +94,7 @@ $wpdb->update( $bc_table, array( 'posted_data' => 'a:1:{s:4:"apps";' ), array( '
 $bc_captured = null;
 add_filter( 'wp_die_handler', $bc_handler );
 try {
-	$bc_method->invoke( $tz_plugin, $bc_id );
+	$bc_method->invoke( $tzfd_plugin, $bc_id );
 } catch ( RuntimeException $e ) {
 	// Expected.
 }

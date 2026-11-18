@@ -83,7 +83,7 @@ final class TZFD_Resource_Admin {
 
     public static function revision($catalog) { return hash('sha256',wp_json_encode($catalog)); }
 
-    private static function error($code,$tz_message,$status=400) { return new WP_Error('titan_zero_front_desk_'.$code,$tz_message,array('status'=>$status)); }
+    private static function error($code,$tzfd_message,$status=400) { return new WP_Error('titan_zero_front_desk_'.$code,$tzfd_message,array('status'=>$status)); }
 
     /** Admin form handler. Validate everything before changing the single per-site option. */
     public static function apply($post) {
@@ -108,7 +108,7 @@ final class TZFD_Resource_Admin {
             $catalog=self::catalog(); if (is_wp_error($catalog)) return $catalog;
             try {
                 if (!isset($post['reservations_json'])) throw new InvalidArgumentException(esc_html__( 'Supply a reservation snapshot; use [] explicitly when no reservations exist.', 'titan-zero-trades-front-desk' ));
-                $tz_rows=self::json_input($post['reservations_json']);
+                $tzfd_local_rows=self::json_input($post['reservations_json']);
                 $request=array('service_id'=>isset($post['service_id'])?$post['service_id']:null,
                     'location_id'=>isset($post['location_id'])?$post['location_id']:'',
                     'postcode'=>isset($post['postcode'])?$post['postcode']:'',
@@ -116,7 +116,7 @@ final class TZFD_Resource_Admin {
                     'quantity'=>self::form_integer(isset($post['quantity'])?$post['quantity']:null),
                     'required_resource_ids'=>self::tokens(isset($post['required_resource_ids'])?$post['required_resource_ids']:''));
                 return array('notice'=>__( 'Availability preview; no reservation was created.', 'titan-zero-trades-front-desk' ),
-                    'preview'=>TZFD_Resource_Availability::evaluate($catalog,$request,$tz_rows));
+                    'preview'=>TZFD_Resource_Availability::evaluate($catalog,$request,$tzfd_local_rows));
             } catch (InvalidArgumentException $e) { return self::error('invalid',$e->getMessage()); }
         }
 
@@ -145,9 +145,9 @@ final class TZFD_Resource_Admin {
                     'address'=>isset($post['address'])?$post['address']:'','phone'=>isset($post['phone'])?$post['phone']:'');
                 $next['locations']=self::upsert($catalog['locations'],$row);
             } elseif ('resource_save'===$op) {
-                $tz_weekly=array();
+                $tzfd_weekly=array();
                 $days=TZFD_Resource_Catalog::list_value(isset($post['days'])?$post['days']:array(),7,'days');
-                foreach($days as $day) $tz_weekly[]=array('day'=>self::form_integer($day),'start'=>isset($post['start'])?$post['start']:null,'end'=>isset($post['end'])?$post['end']:null);
+                foreach($days as $day) $tzfd_weekly[]=array('day'=>self::form_integer($day),'start'=>isset($post['start'])?$post['start']:null,'end'=>isset($post['end'])?$post['end']:null);
                 $row=array('id'=>self::row_id($post,$catalog['resources']),'name'=>isset($post['name'])?$post['name']:null,
                     'kind'=>isset($post['kind'])?$post['kind']:null,'location_id'=>isset($post['location_id'])?$post['location_id']:'',
                     'role'=>isset($post['role'])?$post['role']:'','phone'=>isset($post['phone'])?$post['phone']:'',
@@ -157,12 +157,12 @@ final class TZFD_Resource_Admin {
                     'buffer_before'=>self::form_integer(isset($post['buffer_before'])?$post['buffer_before']:'0'),
                     'buffer_after'=>self::form_integer(isset($post['buffer_after'])?$post['buffer_after']:'0'),
                     'service_ids'=>self::tokens(isset($post['service_ids'])?$post['service_ids']:''),
-                    'weekly'=>$tz_weekly,'blackouts'=>self::tokens(isset($post['blackouts'])?$post['blackouts']:''));
+                    'weekly'=>$tzfd_weekly,'blackouts'=>self::tokens(isset($post['blackouts'])?$post['blackouts']:''));
                 $next['resources']=self::upsert($catalog['resources'],$row);
             } elseif ('location_delete'===$op || 'resource_delete'===$op) {
                 $id=TZFD_Resource_Catalog::identifier(isset($post['id'])?$post['id']:null);
-                $tz_key='location_delete'===$op?'locations':'resources';
-                $next[$tz_key]=array_values(array_filter($catalog[$tz_key],function($row)use($id){return $row['id']!==$id;}));
+                $tzfd_key='location_delete'===$op?'locations':'resources';
+                $next[$tzfd_key]=array_values(array_filter($catalog[$tzfd_key],function($row)use($id){return $row['id']!==$id;}));
             } else { throw new InvalidArgumentException(esc_html__( 'Unknown resource operation.', 'titan-zero-trades-front-desk' )); }
             $next=TZFD_Resource_Catalog::validate($next);
             if ($next!==$catalog && !TZFD_Scoped_Store::update(self::OPTION,$next,$company)) return self::error('save',__( 'Catalogue was not saved. Reload and retry.', 'titan-zero-trades-front-desk' ),500);
@@ -178,9 +178,9 @@ final class TZFD_Resource_Admin {
      * The ID of the row being saved. An edit (edit=1, posted by the edit form) must name an existing row, so only
      * that row is replaced. An add must not reuse an existing ID; with no ID posted, one is made from the name.
      */
-    private static function row_id($post,$tz_rows) {
+    private static function row_id($post,$tzfd_local_rows) {
         $posted=isset($post['id']) && is_string($post['id']) ? trim($post['id']) : '';
-        $taken=array_map(function($row){return $row['id'];},$tz_rows);
+        $taken=array_map(function($row){return $row['id'];},$tzfd_local_rows);
         if (isset($post['edit']) && '1'===$post['edit']) {
             if ($posted!=='' && in_array($posted,$taken,true)) return $posted;
             throw new InvalidArgumentException(esc_html__( 'That item no longer exists. Reload the screen and try again.', 'titan-zero-trades-front-desk' ));
@@ -197,26 +197,26 @@ final class TZFD_Resource_Admin {
         return $id;
     }
 
-    private static function upsert($tz_rows,$row) {
+    private static function upsert($tzfd_local_rows,$row) {
         $id=TZFD_Resource_Catalog::identifier($row['id']);
-        foreach($tz_rows as $index=>$old) if ($old['id']===$id) { $tz_rows[$index]=$row;return $tz_rows; }
-        $tz_rows[]=$row;return $tz_rows;
+        foreach($tzfd_local_rows as $index=>$old) if ($old['id']===$id) { $tzfd_local_rows[$index]=$row;return $tzfd_local_rows; }
+        $tzfd_local_rows[]=$row;return $tzfd_local_rows;
     }
 
-    private static function tokens($tz_value) {
-        if (!is_string($tz_value) || strlen($tz_value)>16384) throw new InvalidArgumentException(esc_html__( 'Invalid list field.', 'titan-zero-trades-front-desk' ));
-        $tz_value=trim($tz_value);return ''===$tz_value?array():array_values(array_filter(array_map('trim',preg_split('/[,\r\n]+/',$tz_value)),function($s){return ''!==$s;}));
+    private static function tokens($tzfd_value) {
+        if (!is_string($tzfd_value) || strlen($tzfd_value)>16384) throw new InvalidArgumentException(esc_html__( 'Invalid list field.', 'titan-zero-trades-front-desk' ));
+        $tzfd_value=trim($tzfd_value);return ''===$tzfd_value?array():array_values(array_filter(array_map('trim',preg_split('/[,\r\n]+/',$tzfd_value)),function($s){return ''!==$s;}));
     }
 
-    private static function form_integer($tz_value) {
-        if (is_int($tz_value)) return $tz_value;
-        if (!is_string($tz_value) || !preg_match('/^[0-9]{1,5}$/D',$tz_value)) throw new InvalidArgumentException(esc_html__( 'Use a whole number for numeric fields.', 'titan-zero-trades-front-desk' ));
-        return (int)$tz_value;
+    private static function form_integer($tzfd_value) {
+        if (is_int($tzfd_value)) return $tzfd_value;
+        if (!is_string($tzfd_value) || !preg_match('/^[0-9]{1,5}$/D',$tzfd_value)) throw new InvalidArgumentException(esc_html__( 'Use a whole number for numeric fields.', 'titan-zero-trades-front-desk' ));
+        return (int)$tzfd_value;
     }
 
-    private static function json_input($tz_value) {
-        if (!is_string($tz_value) || strlen($tz_value)>TZFD_Resource_Catalog::MAX_BYTES) throw new InvalidArgumentException(esc_html__( 'JSON input exceeds 256 KiB.', 'titan-zero-trades-front-desk' ));
-        $decoded=json_decode($tz_value,true,16);
+    private static function json_input($tzfd_value) {
+        if (!is_string($tzfd_value) || strlen($tzfd_value)>TZFD_Resource_Catalog::MAX_BYTES) throw new InvalidArgumentException(esc_html__( 'JSON input exceeds 256 KiB.', 'titan-zero-trades-front-desk' ));
+        $decoded=json_decode($tzfd_value,true,16);
         if (JSON_ERROR_NONE!==json_last_error()) throw new InvalidArgumentException(esc_html__( 'Invalid JSON input.', 'titan-zero-trades-front-desk' ));
         return $decoded;
     }
@@ -228,8 +228,8 @@ final class TZFD_Resource_Admin {
             'callback'=>array(__CLASS__,'rest_preview'),'permission_callback'=>array(__CLASS__,'allowed')));
     }
 
-    private static function response($tz_value) {
-        $response = new WP_REST_Response( $tz_value, 200 );
+    private static function response($tzfd_value) {
+        $response = new WP_REST_Response( $tzfd_value, 200 );
         $response->header( 'Cache-Control', 'private, no-store' );
         $response->header( 'X-Content-Type-Options', 'nosniff' );
         return $response;

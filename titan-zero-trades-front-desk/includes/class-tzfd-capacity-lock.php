@@ -35,8 +35,8 @@ final class TZFD_Capacity_Lock {
         try { $connection_id = $wpdb->get_var('SELECT CONNECTION_ID()'); }
         catch (Throwable $error) { return false; }
         if (!is_scalar($connection_id) || (int)$connection_id < 1 || !empty($wpdb->last_error)) { return false; }
-        $tz_key = (string)$connection_id.'|'.$name;
-        if (isset(self::$held[$tz_key])) { return false; }
+        $tzfd_key = (string)$connection_id.'|'.$name;
+        if (isset(self::$held[$tzfd_key])) { return false; }
 
         try { $token = bin2hex(random_bytes(16)); } catch (Throwable $error) { return false; }
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- GET_LOCK is the cross-request per-calendar mutex; the values are bound by prepare().
@@ -53,7 +53,7 @@ final class TZFD_Capacity_Lock {
             return false;
         }
 
-        self::$held[$tz_key] = $token;
+        self::$held[$tzfd_key] = $token;
         return array('name'=>$name, 'connection_id'=>(string)$connection_id, 'token'=>$token);
     }
 
@@ -62,9 +62,9 @@ final class TZFD_Capacity_Lock {
         if (!is_array($handle) || !isset($handle['name'], $handle['connection_id'], $handle['token']) ||
             !is_string($handle['name']) || !is_string($handle['connection_id']) || !is_string($handle['token']) ||
             !is_object($wpdb) || !method_exists($wpdb, 'prepare') || !method_exists($wpdb, 'get_var')) { return false; }
-        $tz_key = $handle['connection_id'].'|'.$handle['name'];
+        $tzfd_key = $handle['connection_id'].'|'.$handle['name'];
         // A reused handle must not unlock a later reservation on the same form.
-        if (!isset(self::$held[$tz_key]) || !hash_equals(self::$held[$tz_key], $handle['token'])) { return false; }
+        if (!isset(self::$held[$tzfd_key]) || !hash_equals(self::$held[$tzfd_key], $handle['token'])) { return false; }
         try { $connection_id = $wpdb->get_var('SELECT CONNECTION_ID()'); }
         catch (Throwable $error) { return false; }
         if (!is_scalar($connection_id) || (string)$connection_id !== $handle['connection_id'] ||
@@ -73,7 +73,7 @@ final class TZFD_Capacity_Lock {
         catch (Throwable $error) { return false; }
         if ((string)$result !== '1' || !empty($wpdb->last_error)) { return false; }
         // Failed/foreign releases must not erase the same-connection reentry guard.
-        unset(self::$held[$tz_key]);
+        unset(self::$held[$tzfd_key]);
         return true;
     }
 }

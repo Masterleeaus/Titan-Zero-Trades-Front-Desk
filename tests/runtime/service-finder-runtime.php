@@ -4,8 +4,8 @@
  * Run by the WordPress runtime job in CI: wp eval-file tests/runtime/service-finder-runtime.php (not shipped in the plugin).
  */
 // Path from WordPress itself, so it matches the file the plugin loads (issue #191: was a hard-coded /var/www/html path).
-$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-require_once $tz_inc . 'class-tzfd-service-finder-core.php';
+$tzfd_local_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
+require_once $tzfd_local_inc . 'class-tzfd-service-finder-core.php';
 
 $GLOBALS['sfr_pass'] = 0; $GLOBALS['sfr_fail'] = 0;
 function sfr_check( $name, $ok, $detail = '' ) {

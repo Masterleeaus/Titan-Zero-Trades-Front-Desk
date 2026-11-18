@@ -88,9 +88,9 @@ if( !class_exists( 'TZFD_SMSButton' ) )
     } // End Class
 
     // Main add-on code
-    $tz_SMSButton_obj = new TZFD_SMSButton();
+    $tzfd_SMSButton_obj = new TZFD_SMSButton();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_SMSButton_obj->get_addon_id() ] = $tz_SMSButton_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_SMSButton_obj->get_addon_id() ] = $tzfd_SMSButton_obj;
 }

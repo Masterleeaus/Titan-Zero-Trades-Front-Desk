@@ -117,29 +117,29 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             return '' !== $expected && hash_equals( $expected, $token );
         }
 
-        public static function is_cancelable_data( $tz_posted_data ) {
-            if ( ! is_array( $tz_posted_data ) || isset( $tz_posted_data['lock'] ) ||
-                 ! isset( $tz_posted_data['apps'] ) || ! is_array( $tz_posted_data['apps'] ) ||
-                 empty( $tz_posted_data['apps'] ) ) {
+        public static function is_cancelable_data( $tzfd_posted_data ) {
+            if ( ! is_array( $tzfd_posted_data ) || isset( $tzfd_posted_data['lock'] ) ||
+                 ! isset( $tzfd_posted_data['apps'] ) || ! is_array( $tzfd_posted_data['apps'] ) ||
+                 empty( $tzfd_posted_data['apps'] ) ) {
                 return false;
             }
 
-            $tz_count = count( $tz_posted_data['apps'] );
-            for ( $index = 0; $index < $tz_count; $index++ ) {
-                if ( ! isset( $tz_posted_data['apps'][ $index ] ) ||
-                     ! is_array( $tz_posted_data['apps'][ $index ] ) ) {
+            $tzfd_local_count = count( $tzfd_posted_data['apps'] );
+            for ( $index = 0; $index < $tzfd_local_count; $index++ ) {
+                if ( ! isset( $tzfd_posted_data['apps'][ $index ] ) ||
+                     ! is_array( $tzfd_posted_data['apps'][ $index ] ) ) {
                     return false;
                 }
 
-                $tz_app = $tz_posted_data['apps'][ $index ];
-                $app_status = array_key_exists( 'cancelled', $tz_app ) ? $tz_app['cancelled'] : '';
+                $tzfd_app = $tzfd_posted_data['apps'][ $index ];
+                $app_status = array_key_exists( 'cancelled', $tzfd_app ) ? $tzfd_app['cancelled'] : '';
                 if ( ! is_string( $app_status ) || ! in_array( $app_status, array( '', 'Pending' ), true ) ) {
                     return false;
                 }
 
                 $flat_key = 'app_status_' . ( $index + 1 );
-                if ( array_key_exists( $flat_key, $tz_posted_data ) ) {
-                    $flat_status = $tz_posted_data[ $flat_key ];
+                if ( array_key_exists( $flat_key, $tzfd_posted_data ) ) {
+                    $flat_status = $tzfd_posted_data[ $flat_key ];
                     if ( ! is_string( $flat_status ) ||
                          $flat_status !== $app_status ||
                          ! in_array( $flat_status, array( '', 'Pending' ), true ) ) {
@@ -150,17 +150,17 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             return true;
         }
 
-        public static function with_cancelled_status( $tz_posted_data ) {
-            if ( ! self::is_cancelable_data( $tz_posted_data ) ) {
+        public static function with_cancelled_status( $tzfd_posted_data ) {
+            if ( ! self::is_cancelable_data( $tzfd_posted_data ) ) {
                 return false;
             }
 
-            $tz_count = count( $tz_posted_data['apps'] );
-            for ( $index = 0; $index < $tz_count; $index++ ) {
-                $tz_posted_data['apps'][ $index ]['cancelled'] = self::STATUS;
-                $tz_posted_data[ 'app_status_' . ( $index + 1 ) ] = self::STATUS;
+            $tzfd_local_count = count( $tzfd_posted_data['apps'] );
+            for ( $index = 0; $index < $tzfd_local_count; $index++ ) {
+                $tzfd_posted_data['apps'][ $index ]['cancelled'] = self::STATUS;
+                $tzfd_posted_data[ 'app_status_' . ( $index + 1 ) ] = self::STATUS;
             }
-            return $tz_posted_data;
+            return $tzfd_posted_data;
         }
 
         public static function compare_and_swap( $wpdb, $booking_id, $original_serialized, $expected_row = null ) {
@@ -171,8 +171,8 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                 return null;
             }
 
-            $tz_posted_data = TZFD_Stored_Data::decode($original_serialized);
-            $updated_data = self::with_cancelled_status( $tz_posted_data );
+            $tzfd_posted_data = TZFD_Stored_Data::decode($original_serialized);
+            $updated_data = self::with_cancelled_status( $tzfd_posted_data );
             if ( ! is_array( $updated_data ) ) {
                 return null;
             }
@@ -216,15 +216,15 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             }
 
             if ( 'html' === $format ) {
-                $tz_label = function_exists( '__' )
+                $tzfd_label = function_exists( '__' )
                     ? __( 'Cancel this booking', 'titan-zero-trades-front-desk' )
                     : __( 'Cancel this booking', 'titan-zero-trades-front-desk' );
-                $mail['message'] .= '<p><a href="' . esc_url( $url ) . '">' . esc_html( $tz_label ) . '</a></p>';
+                $mail['message'] .= '<p><a href="' . esc_url( $url ) . '">' . esc_html( $tzfd_label ) . '</a></p>';
             } else {
-                $tz_label = function_exists( '__' )
+                $tzfd_label = function_exists( '__' )
                     ? __( 'To cancel this booking, open the link and confirm:', 'titan-zero-trades-front-desk' )
                     : __( 'To cancel this booking, open the link and confirm:', 'titan-zero-trades-front-desk' );
-                $mail['message'] .= "\n\n" . $tz_label . "\n" . $url;
+                $mail['message'] .= "\n\n" . $tzfd_label . "\n" . $url;
             }
             return $mail;
         }
@@ -233,8 +233,8 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
         private static function customer_only_headers( $headers ) {
             if ( is_string( $headers ) ) { $headers = array( $headers ); }
             if ( ! is_array( $headers ) ) { return false; }
-            foreach ( $headers as $tz_key => $line ) {
-                if ( ! is_int( $tz_key ) || ! is_string( $line ) ||
+            foreach ( $headers as $tzfd_key => $line ) {
+                if ( ! is_int( $tzfd_key ) || ! is_string( $line ) ||
                     preg_match( '/(^|[\r\n])\s*(?:cc|bcc|to)\s*:/i', $line ) ) { return false; }
             }
             return true;
@@ -254,13 +254,13 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                    self::normalize_email( $recipient ) === self::normalize_email( $customer_email );
         }
 
-        public function capture_booking( $tz_params ) {
+        public function capture_booking( $tzfd_local_params ) {
             $this->clear_booking_context();
-            if ( ! is_array( $tz_params ) || ! isset( $tz_params['itemnumber'] ) ) {
+            if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['itemnumber'] ) ) {
                 return;
             }
 
-            $booking_id = self::normalize_booking_id( $tz_params['itemnumber'] );
+            $booking_id = self::normalize_booking_id( $tzfd_local_params['itemnumber'] );
             if ( ! $booking_id ) {
                 return;
             }
@@ -280,18 +280,18 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                     return;
                 }
                 $forms_table = $wpdb->prefix . TZFD_Tables::FORMS;
-                $tz_form = $wpdb->get_row( $wpdb->prepare(
+                $tzfd_local_form = $wpdb->get_row( $wpdb->prepare(
                     'SELECT id, cu_enable_copy_to_user, cu_emailformat FROM %i WHERE id = %d',
                     $forms_table, (int) $row->formid
                 ) );
-                if ( ! empty( $wpdb->last_error ) || ! is_object( $tz_form ) ||
-                     'true' !== (string) $tz_form->cu_enable_copy_to_user ) {
+                if ( ! empty( $wpdb->last_error ) || ! is_object( $tzfd_local_form ) ||
+                     'true' !== (string) $tzfd_local_form->cu_enable_copy_to_user ) {
                     return;
                 }
                 $this->booking_id     = $booking_id;
                 $this->customer_email = $customer_email;
-                $this->email_format   = 'html' === (string) $tz_form->cu_emailformat ? 'html' : 'text';
-            } catch ( Throwable $tz_error ) {
+                $this->email_format   = 'html' === (string) $tzfd_local_form->cu_emailformat ? 'html' : 'text';
+            } catch ( Throwable $tzfd_error ) {
                 $this->clear_booking_context();
             }
         }
@@ -331,7 +331,7 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                     admin_url( 'admin-post.php' )
                 );
                 return self::append_customer_link( $mail, $this->customer_email, $url, $this->email_format );
-            } catch ( Throwable $tz_error ) {
+            } catch ( Throwable $tzfd_error ) {
                 return $mail;
             } finally {
                 $this->clear_booking_context();
@@ -378,11 +378,11 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
                 $this->respond( 404, __( 'This cancellation link is invalid or no longer available.', 'titan-zero-trades-front-desk' ) );
             }
 
-            $tz_lookup = self::public_booking_lookup( $GLOBALS['wpdb'], $booking_id );
-            if ( 'unavailable' === $tz_lookup['status'] ) {
+            $tzfd_lookup = self::public_booking_lookup( $GLOBALS['wpdb'], $booking_id );
+            if ( 'unavailable' === $tzfd_lookup['status'] ) {
                 $this->respond( 503, __( 'Cancellation is temporarily unavailable. Please try again.', 'titan-zero-trades-front-desk' ) );
             }
-            $row = $tz_lookup['row'];
+            $row = $tzfd_lookup['row'];
             if ( ! is_object( $row ) ) {
                 $this->respond( 404, __( 'This cancellation link is invalid or no longer available.', 'titan-zero-trades-front-desk' ) );
             }
@@ -396,16 +396,16 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             }
 
             // A valid historical email link must not cross a changed company boundary.
-            $tz_owner = self::public_form_ownership( $row );
-            if ( 'unavailable' === $tz_owner['status'] ) {
+            $tzfd_owner = self::public_form_ownership( $row );
+            if ( 'unavailable' === $tzfd_owner['status'] ) {
                 $this->respond( 503, __( 'Cancellation is temporarily unavailable. Please try again.', 'titan-zero-trades-front-desk' ) );
             }
-            $company = $tz_owner['company'];
-            if ( 'matched' !== $tz_owner['status'] ) {
+            $company = $tzfd_owner['company'];
+            if ( 'matched' !== $tzfd_owner['status'] ) {
                 $this->respond( 404, __( 'This cancellation link is invalid or no longer available.', 'titan-zero-trades-front-desk' ) );
             }
-            $tz_posted_data = $this->decode_posted_data( $row->posted_data );
-            if ( ! self::is_cancelable_data( $tz_posted_data ) ) {
+            $tzfd_posted_data = $this->decode_posted_data( $row->posted_data );
+            if ( ! self::is_cancelable_data( $tzfd_posted_data ) ) {
                 $this->respond( 409, __( 'This booking is no longer eligible for cancellation.', 'titan-zero-trades-front-desk' ) );
             }
 
@@ -449,35 +449,35 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             // Share the same per-form capacity mutex used by rescheduling,
             // intake, and approval. Never mutate calendar state if the lock
             // cannot be acquired, including on storage/connection failure.
-            $tz_capacity_lock = TZFD_Capacity_Lock::acquire( $wpdb, (int) $row->formid );
-            if ( false === $tz_capacity_lock ) {
+            $tzfd_capacity_lock = TZFD_Capacity_Lock::acquire( $wpdb, (int) $row->formid );
+            if ( false === $tzfd_capacity_lock ) {
                 return 'lock';
             }
-            $tz_committed = false;
-            $tz_result = 'failure';
+            $tzfd_committed = false;
+            $tzfd_result = 'failure';
             try {
                 if ( ! TZFD_Customer_Transaction::begin( $wpdb ) ) {
-                    $tz_result = 'storage';
+                    $tzfd_result = 'storage';
                 } else {
                     try {
                         // Compare-and-swap and notification staging must commit together.
-                        $tz_updated = self::compare_and_swap( $wpdb, $booking_id, $row->posted_data, $row );
-                        if ( 1 === $tz_updated ) {
+                        $tzfd_local_updated = self::compare_and_swap( $wpdb, $booking_id, $row->posted_data, $row );
+                        if ( 1 === $tzfd_local_updated ) {
                             if ( TZFD_Customer_Event_Outbox::stage( $company, $booking_id, (int) $row->formid,
                                 'cancelled', self::row_version( $row ) ) ) {
-                                $tz_result = TZFD_Customer_Transaction::commit( $wpdb );
-                                $tz_committed = 'committed' === $tz_result;
-                                if ( ! $tz_committed ) { $tz_result = 'commit_unknown'; }
-                            } else { $tz_result = 'stage'; }
-                        } else { $tz_result = false === $tz_updated ? 'write' : 'conflict'; }
-                    } catch ( Throwable $tz_error ) { $tz_result = 'write'; }
-                    if ( ! $tz_committed && 'commit_unknown' !== $tz_result ) { TZFD_Customer_Transaction::rollback( $wpdb ); }
+                                $tzfd_result = TZFD_Customer_Transaction::commit( $wpdb );
+                                $tzfd_committed = 'committed' === $tzfd_result;
+                                if ( ! $tzfd_committed ) { $tzfd_result = 'commit_unknown'; }
+                            } else { $tzfd_result = 'stage'; }
+                        } else { $tzfd_result = false === $tzfd_local_updated ? 'write' : 'conflict'; }
+                    } catch ( Throwable $tzfd_error ) { $tzfd_result = 'write'; }
+                    if ( ! $tzfd_committed && 'commit_unknown' !== $tzfd_result ) { TZFD_Customer_Transaction::rollback( $wpdb ); }
                 }
             } finally {
-                TZFD_Capacity_Lock::release( $wpdb, $tz_capacity_lock );
+                TZFD_Capacity_Lock::release( $wpdb, $tzfd_capacity_lock );
             }
-            if ( ! $tz_committed ) {
-                return 'conflict' === $tz_result ? 'conflict' : 'failed';
+            if ( ! $tzfd_committed ) {
+                return 'conflict' === $tzfd_result ? 'conflict' : 'failed';
             }
             TZFD_Customer_Event_Outbox::schedule();
             return 'ok';
@@ -537,7 +537,7 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             return TZFD_Stored_Data::decode($serialized);
         }
 
-        private function respond( $status, $tz_message, $booking_id = 0, $token = '', $show_form = false, $expires = 0 ) {
+        private function respond( $status, $tzfd_message, $booking_id = 0, $token = '', $show_form = false, $expires = 0 ) {
             if ( function_exists( 'status_header' ) ) {
                 status_header( $status );
             }
@@ -552,7 +552,7 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
             echo '<meta name="viewport" content="width=device-width, initial-scale=1">';
             echo '<meta name="referrer" content="no-referrer">';
             echo '<title>' . esc_html( $title ) . '</title></head><body><main>';
-            echo '<h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $tz_message ) . '</p>';
+            echo '<h1>' . esc_html( $title ) . '</h1><p>' . esc_html( $tzfd_message ) . '</p>';
 
             if ( $show_form ) {
                 $button = function_exists( '__' )

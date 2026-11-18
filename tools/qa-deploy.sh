@@ -8,14 +8,17 @@
 #
 # The deploy takes the lock itself. Do not wrap it in flock: the inner lock would wait on the outer one.
 # The clone must have no uncommitted changes in the plugin folder, so the record names the exact build.
+# One named deploy owner (issue #195). The record names the owner, and a deploy with no owner is refused.
 # Env overrides: QA_SITE (default /tmp/wpsite/wordpress), QA_LOCK (default /tmp/wpsite/deploy.lock),
-#                QA_WP_CLI (default /tmp/wpsite/wp-cli.phar).
+#                QA_WP_CLI (default /tmp/wpsite/wp-cli.phar), QA_DEPLOY_OWNER (default Jason; set it empty to refuse).
 set -euo pipefail
 
 PLUGIN=titan-zero-trades-front-desk
 SITE="${QA_SITE:-/tmp/wpsite/wordpress}"
 LOCK="${QA_LOCK:-/tmp/wpsite/deploy.lock}"
 WP_CLI="${QA_WP_CLI:-/tmp/wpsite/wp-cli.phar}"
+# ${VAR-default} (no colon): only an unset variable takes the default, so an explicit empty value is refused.
+DEPLOY_OWNER="${QA_DEPLOY_OWNER-Jason}"
 DEST="$SITE/wp-content/plugins/$PLUGIN"
 RECORD="$SITE/wp-content/qa-deployed.txt"   # outside the plugin folder, so a deploy never removes it
 here="$(cd "$(dirname "$0")" && pwd)"
@@ -30,6 +33,7 @@ take_lock() {
 
 deploy() {
   local src sha branch tree now
+  [[ -n "$DEPLOY_OWNER" ]] || { echo "qa-deploy: refusing, no deploy owner (set QA_DEPLOY_OWNER)" >&2; exit 1; }
   src="$(realpath "${1:?usage: qa-deploy.sh deploy <clone-dir>}")"
   [[ -d "$src/$PLUGIN" ]] || { echo "qa-deploy: no $PLUGIN folder in $src" >&2; exit 1; }
   if [[ -n "$(git -C "$src" status --porcelain -- "$PLUGIN")" ]]; then
@@ -46,8 +50,8 @@ deploy() {
   wpcli plugin activate "$PLUGIN" >/dev/null
 
   now="$(now_utc)"
-  printf 'plugin=%s\ncommit=%s\nbranch=%s\ndeployed_at=%s\nsource=%s\ntree_sha256=%s\n' \
-    "$PLUGIN" "$sha" "$branch" "$now" "$src" "$tree" > "$RECORD.tmp"
+  printf 'plugin=%s\nowner=%s\ncommit=%s\nbranch=%s\ndeployed_at=%s\nsource=%s\ntree_sha256=%s\n' \
+    "$PLUGIN" "$DEPLOY_OWNER" "$sha" "$branch" "$now" "$src" "$tree" > "$RECORD.tmp"
   mv "$RECORD.tmp" "$RECORD"
   show_record
 }

@@ -10,7 +10,7 @@
  * and no hosted AI call is made. Confidence is an input supplied by whichever engine produced the reply; when no
  * engine supplied one, the enquiry is treated as low confidence.
  */
-if ( ! defined( 'ABSPATH' ) && PHP_SAPI !== 'cli' ) { exit; }
+defined( 'ABSPATH' ) || exit;
 
 final class TZFD_Human_Handoff {
 
@@ -24,6 +24,20 @@ final class TZFD_Human_Handoff {
         'refund', 'chargeback', 'complaint', 'compensation', 'lawyer', 'solicitor', 'legal', 'sue', 'lawsuit',
         'injury', 'injured', 'insurance claim', 'gas leak', 'electrical fault', 'fire', 'asbestos',
     );
+
+    /**
+     * Phrases in which the customer asks for a person or a callback. Matched as whole-word sequences.
+     * A phrase preceded by a negator inside NEGATION_WINDOW words is not a request ("no need to speak to someone").
+     */
+    const HUMAN_REQUEST_TERMS = array(
+        'speak to a person', 'speak to someone', 'speak to a human', 'speak to an agent', 'talk to a person',
+        'talk to someone', 'talk to a human', 'real person', 'real human', 'human agent', 'call me back',
+        'ring me back', 'callback please',
+    );
+
+    const NEGATION_WINDOW = 3;
+
+    const NEGATORS = array( 'not', 'no', 'dont', "don't", 'never', 'without', 'cannot', "can't", 'wont', "won't" );
 
     /** Intents a structured enquiry may carry. Anything else is stored as 'other'. */
     const INTENTS = array( 'booking', 'quote', 'complaint', 'policy', 'callback', 'other' );
@@ -49,6 +63,10 @@ final class TZFD_Human_Handoff {
             $reasons[] = 'policy_sensitive';
         }
 
+        if ( self::asks_for_person( $text ) ) {
+            $reasons[] = 'customer_requested';
+        }
+
         if ( ! empty( $turn['needs_ai'] ) ) {
             if ( empty( $turn['ai_available'] ) ) {
                 $reasons[] = 'ai_unavailable';
@@ -69,6 +87,24 @@ final class TZFD_Human_Handoff {
         foreach ( self::POLICY_TERMS as $term ) {
             if ( false !== strpos( $haystack, ' ' . $term . ' ' ) ) { return true; }
             if ( false !== strpos( $haystack, ' ' . $term . 's ' ) ) { return true; }
+        }
+        return false;
+    }
+
+    /** True when the text asks for a person or a callback and the request is not negated. */
+    public static function asks_for_person( $text ) {
+        if ( ! is_string( $text ) || '' === trim( $text ) ) { return false; }
+        $tokens = preg_split( '/[^a-z\']+/', strtolower( str_replace( "\xE2\x80\x99", "'", $text ) ), -1, PREG_SPLIT_NO_EMPTY );
+        $count  = count( $tokens );
+        foreach ( self::HUMAN_REQUEST_TERMS as $term ) {
+            $words = explode( ' ', $term );
+            $n     = count( $words );
+            for ( $i = 0; $i + $n <= $count; $i++ ) {
+                if ( array_slice( $tokens, $i, $n ) !== $words ) { continue; }
+                $before = array_slice( $tokens, max( 0, $i - self::NEGATION_WINDOW ), min( $i, self::NEGATION_WINDOW ) );
+                if ( array_intersect( $before, self::NEGATORS ) ) { continue; }
+                return true;
+            }
         }
         return false;
     }
@@ -116,7 +152,7 @@ final class TZFD_Human_Handoff {
         }
 
         $reasons = array_values( array_intersect(
-            array( 'policy_sensitive', 'low_confidence', 'ai_unavailable', 'allowance_exhausted', 'customer_requested' ),
+            array( 'policy_sensitive', 'customer_requested', 'low_confidence', 'ai_unavailable', 'allowance_exhausted' ),
             (array) ( $in['reasons'] ?? array() )
         ) );
 

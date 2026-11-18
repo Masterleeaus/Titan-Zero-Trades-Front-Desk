@@ -55,6 +55,11 @@ foreach ( array( 'rt-legacy-a@example.test', 'RT-LEGACY-A@example.test', 'rt-leg
 }
 $lg_chat_rows   = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_chat`" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 $lg_booking_rows = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_bookings`" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+// Activity log rows (the Front Desk audit journal) must survive every legacy action, so seed one and count them.
+$lg_audit_table = TZFD_Local_Audit::table_name();
+TZFD_Local_Audit::install();
+TZFD_Local_Audit::insert( 1, 1, 'user', array( 'action' => 'booking.created', 'entity' => 'booking', 'entity_id' => 1, 'summary' => 'legacy rt seed' ) );
+$lg_audit_rows = (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_audit_table`" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 // 1. Nothing is deleted when WordPress loads or an admin screen opens.
 foreach ( array( 'init', 'wp_loaded', 'admin_init' ) as $lg_hook ) {
@@ -83,6 +88,7 @@ TZFD_Legacy_AI_Data::export_json();
 $lg_r = TZFD_Legacy_AI_Data::delete_scope( 'connection', TZFD_Legacy_AI_Data::PHRASE );
 tzfd_lg_ok( 'legacy-ai: connection delete removes credential and provider only', true === $lg_r['ok'] && false === get_option( 'tz_fd_ai_api_key', false ) && false === get_option( 'tz_fd_ai_model', false ) && 'Boiler repairs; Drain clearing' === get_option( 'tz_fd_ai_services' ) );
 tzfd_lg_ok( 'legacy-ai: connection delete keeps chat rows', (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_chat`" ) === $lg_chat_rows ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+tzfd_lg_ok( 'legacy-ai: connection delete keeps activity log rows', (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_audit_table`" ) === $lg_audit_rows ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 // 5. Restore from the export: chats come back, the credential is not restored and is flagged for re-entry.
 $lg_restore = TZFD_Legacy_AI_Data::restore_from_json( $lg_json );
@@ -96,12 +102,14 @@ $lg_r = TZFD_Legacy_AI_Data::delete_scope( 'chats', TZFD_Legacy_AI_Data::PHRASE 
 tzfd_lg_ok( 'legacy-ai: chat delete removes every chat row after backup', true === $lg_r['ok'] && 0 === (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_chat`" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 tzfd_lg_ok( 'legacy-ai: bookings count unchanged by legacy deletes', (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_bookings`" ) === $lg_booking_rows ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 tzfd_lg_ok( 'legacy-ai: configuration kept after chat delete', 'Boiler repairs; Drain clearing' === get_option( 'tz_fd_ai_services' ) );
+tzfd_lg_ok( 'legacy-ai: activity log rows kept after chat delete', (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_audit_table`" ) === $lg_audit_rows ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 // 7. Restore brings the chats back from the export taken just before the chat delete.
 $lg_restore = TZFD_Legacy_AI_Data::restore_from_json( $lg_json );
 tzfd_lg_ok( 'legacy-ai: restore re-adds the chat rows from the export', true === $lg_restore['ok'] && $lg_chat_rows === (int) $lg_restore['chats_inserted'] && $lg_chat_rows === (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_chat`" ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 $lg_again = TZFD_Legacy_AI_Data::restore_from_json( $lg_json );
 tzfd_lg_ok( 'legacy-ai: a second restore adds nothing', 0 === $lg_again['chats_inserted'] );
+tzfd_lg_ok( 'legacy-ai: restore leaves activity log rows unchanged', (int) $wpdb->get_var( "SELECT COUNT(*) FROM `$lg_audit_table`" ) === $lg_audit_rows ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 // 8. Privacy exporter and eraser are registered and cover historic chats for an exact address.
 $lg_exporters = apply_filters( 'wp_privacy_personal_data_exporters', array() );
@@ -118,6 +126,7 @@ delete_option( 'tz_fd_ai_services' );
 delete_option( 'tz_fd_ai_system_prompt' );
 delete_option( TZFD_Legacy_AI_Data::RECEIPT );
 delete_option( TZFD_Legacy_AI_Data::RESTORE_LOG );
+$wpdb->delete( $lg_audit_table, array( 'summary' => 'legacy rt seed' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
 echo 'Summary (legacy-ai-runtime): ' . (int) $GLOBALS['tzfd_lg']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_lg']['FAIL'] . " failed\n";
 exit( (int) $GLOBALS['tzfd_lg']['FAIL'] > 0 ? 1 : 0 );

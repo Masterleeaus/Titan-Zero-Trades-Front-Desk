@@ -37,8 +37,13 @@ not counted as a pass).
 
 - Single site: 85 passed, 0 failed, 2 gaps, 10 skipped.
 - Multisite: 86 passed, 0 failed, 2 gaps, 8 skipped.
-- Upgrade 3.0.128 (`22dc106`) to this checkout and back: 16 passed, 0 failed, 2 gaps. Both sides report version
-  3.0.128, so the upgrade check asserts which source folder is loaded rather than the version string.
+- Upgrade from the real v3.0.128 release ZIP (`titan-zero-trades-front-desk-3.0.128-r16.zip`, read from `22dc106^`) to this
+  checkout and back: 31 passed, 0 failed, 0 gap(s). Run with `SAME_VERSION_OK=1`, because both sides report 3.0.128, so the
+  check asserts which source folder is loaded rather than the version string. Bookings, AI settings and saved chat rows
+  survived both directions.
+- Multisite (same date): 346 passed, 1 failed (`ai-answer-box: page_id sent as a hidden field`), 7 skipped. The failure
+  is in the AI answer box form and reproduces on main; it is tracked as open work on #252, not fixed here.
+- Clean install of the built free ZIP (`scripts/build-package.sh`, 782 files): active at 3.0.128 with 15 `tz_` tables.
 
 ## Gaps observed (reported, not fixed here)
 
@@ -55,8 +60,8 @@ not counted as a pass).
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.
 - PHP 8.1, 8.2, 8.4 and other WordPress versions: only PHP 8.3.6 and WordPress 7.1.4 are provisioned.
 - Refunds and deposits: not in this lane's runtime surface; no check exists.
-- The upgrade is a folder swap plus deactivate and reactivate, not a ZIP install. A clean install from the packaged ZIP
-  has not been tested.
+- The upgrade is a folder swap plus deactivate and reactivate, not a ZIP install. A clean install from the built ZIP was
+  checked once by hand (see results above) but is not in a script yet.
 
 ## Weak checks, labelled as such
 

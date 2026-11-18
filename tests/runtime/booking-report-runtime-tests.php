@@ -89,19 +89,32 @@ tzfd_br_ok( 'booking-report: administrator sees the totals', false !== strpos( $
 tzfd_br_ok( 'booking-report: screen says what is not measured', false !== strpos( $br_html, 'Not measured yet' ) && false !== strpos( $br_html, 'lead source' ) );
 tzfd_br_ok( 'booking-report: screen shows no customer name or email', false === strpos( $br_html, 'rt-report@example.test' ) && false === strpos( $br_html, 'RT Customer' ) );
 
-$br_sub = get_users( array( 'role' => 'subscriber', 'number' => 1, 'fields' => 'ID' ) );
-if ( ! empty( $br_sub ) ) {
-	wp_set_current_user( (int) $br_sub[0] );
+// 3. Permission isolation: a non-administrator sees nothing, whichever roles exist on this site.
+// A temporary editor and a temporary subscriber are created here, so the check never depends on existing users.
+require_once ABSPATH . 'wp-admin/includes/user.php';
+foreach ( array( 'editor', 'subscriber' ) as $br_role ) {
+	$br_login = 'rt_report_' . $br_role . '_' . wp_rand( 100000, 999999 );
+	$br_uid   = wp_insert_user( array(
+		'user_login' => $br_login,
+		'user_pass'  => wp_generate_password( 24, true, true ),
+		'user_email' => $br_login . '@example.test',
+		'role'       => $br_role,
+	) );
+	if ( ! is_int( $br_uid ) || $br_uid < 1 ) {
+		tzfd_br_ok( 'booking-report: temporary ' . $br_role . ' user created', false, 'wp_insert_user failed' );
+		continue;
+	}
+	wp_set_current_user( $br_uid );
 	$_GET['from'] = $br_from; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- test input only.
 	$_GET['to']   = $br_to;   // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- test input only.
 	ob_start();
 	TZFD_Booking_Report_Admin::render();
-	$br_sub_html = ob_get_clean();
+	$br_other_html = ob_get_clean();
 	unset( $_GET['from'], $_GET['to'] );
-	tzfd_br_ok( 'booking-report: subscriber sees nothing', '' === $br_sub_html );
+	tzfd_br_ok( 'booking-report: ' . $br_role . ' sees nothing', '' === $br_other_html );
+	tzfd_br_ok( 'booking-report: ' . $br_role . ' cannot read the report capability', ! current_user_can( TZFD_Booking_Report_Admin::CAP ) );
 	wp_set_current_user( 1 );
-} else {
-	tzfd_br_ok( 'booking-report: subscriber check skipped (no subscriber on this site)', true );
+	wp_delete_user( $br_uid );
 }
 
 // Clean up.

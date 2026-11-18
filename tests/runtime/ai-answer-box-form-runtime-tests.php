@@ -40,6 +40,12 @@ update_option( 'permalink_structure', '' );
 $wp_rewrite->set_permalink_structure( '' );
 
 // A page that carries the answer box, as a visitor would reach it.
+// The checks below are about plain permalinks (?page_id=N). Multisite provisioning leaves pretty permalinks on,
+// which would give no page_id field, so set plain permalinks for this check.
+update_option( 'permalink_structure', '' );
+$GLOBALS['wp_rewrite']->set_permalink_structure( '' ); // the in-memory rewrite object was loaded before the option changed
+flush_rewrite_rules( false );
+
 $ab_page_id = wp_insert_post(
 	array(
 		'post_type'    => 'page',

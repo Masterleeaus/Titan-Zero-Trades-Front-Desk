@@ -85,8 +85,17 @@ function tzfd_authz_body_for( $class, $method ) {
 	return null;
 }
 
-/** Resolves the body that actually performs the check: a helper named guard() is followed one level. */
+/** Resolves the body that actually performs the check: a helper named guard() or guard_*() is followed one level. */
 function tzfd_authz_effective_body( $body ) {
+	if ( null !== $body ) {
+		// Named guard helpers the body calls, e.g. self::guard_connector_request(): followed one level.
+		if ( preg_match_all( '/(?:self|static|\$this)::(guard_[A-Za-z_]+)\(/', $body, $named ) ) {
+			foreach ( array_unique( $named[1] ) as $helper ) {
+				$h = tzfd_authz_body_for( '', $helper );
+				if ( null !== $h ) { $body .= ' ' . $h; }
+			}
+		}
+	}
 	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard\(/', $body ) ) {
 		$guard = tzfd_authz_body_for( '', 'guard' );
 		if ( null !== $guard ) { $body .= ' ' . $guard; }

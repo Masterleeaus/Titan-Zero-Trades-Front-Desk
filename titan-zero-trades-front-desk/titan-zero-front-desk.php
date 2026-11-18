@@ -26,6 +26,8 @@ if ( ! defined( 'TZFD_VERSION' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-tables.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-placeholder-service-cleanup.php';
+TZFD_Placeholder_Service_Cleanup::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-free-services.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-history-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-migration-handoff.php';
@@ -127,7 +129,7 @@ if ( ! defined( 'TZFD_BOOK_DEFER_SCRIPTS_LOADING' ) ) {
 }
 
 if ( ! defined( 'TZFD_BOOK_DEFAULT_form_structure' ) ) {
-    define('TZFD_BOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fapp","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Appointment","services":[{"name":"Service 1","price":1,"duration":60}],"openhours":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"allOH":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"dateFormat":"mm/dd/yy","showDropdown":false,"dropdownRange":"-10:+10","working_dates":[true,true,true,true,true,true,true],"numberOfMonths":1,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","required":true,"fBuild":{}},{"form_identifier":"","name":"email","shortlabel":"","index":1,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"tz_fd_m5","evalequations":1,"autocomplete":1}]]');
+    define('TZFD_BOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fapp","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Appointment","services":[],"openhours":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"allOH":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"dateFormat":"mm/dd/yy","showDropdown":false,"dropdownRange":"-10:+10","working_dates":[true,true,true,true,true,true,true],"numberOfMonths":1,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","required":true,"fBuild":{}},{"form_identifier":"","name":"email","shortlabel":"","index":1,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"tz_fd_m5","evalequations":1,"autocomplete":1}]]');
 }
 
 

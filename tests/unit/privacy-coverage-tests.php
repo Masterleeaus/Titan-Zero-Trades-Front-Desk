@@ -192,11 +192,11 @@ class TZFD_Test_Wpdb {
 $GLOBALS['wpdb'] = new TZFD_Test_Wpdb();
 $wpdb            = $GLOBALS['wpdb'];
 
-$tz_root = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/';
-require_once $tz_root . 'class-tzfd-tables.php';
-require_once $tz_root . 'class-tzfd-stored-data.php';
-require_once $tz_root . 'class-tzfd-contact-rules.php';
-require_once $tz_root . 'class-tzfd-privacy-exporter.php';
+$tzfd_root = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/';
+require_once $tzfd_root . 'class-tzfd-tables.php';
+require_once $tzfd_root . 'class-tzfd-stored-data.php';
+require_once $tzfd_root . 'class-tzfd-contact-rules.php';
+require_once $tzfd_root . 'class-tzfd-privacy-exporter.php';
 
 // ---- Schema and seed data ---------------------------------------------------------------------------------------
 

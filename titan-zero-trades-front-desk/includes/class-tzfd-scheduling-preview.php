@@ -16,46 +16,46 @@ final class TZFD_Scheduling_Preview {
         add_submenu_page('',__('Scheduling Preview','titan-zero-trades-front-desk'),__('Scheduling Preview','titan-zero-trades-front-desk'),
             'tz_fd_access','tzfd-scheduling-preview',array(__CLASS__,'page'));
     }
-    private static function text($post,$tz_key,$default=''){
-        if(!isset($post[$tz_key])){return $default;}
-        if(!is_string($post[$tz_key]) || strlen($post[$tz_key])>8192){throw new InvalidArgumentException('invalid_input');}
-        return sanitize_text_field(wp_unslash($post[$tz_key]));
+    private static function text($post,$tzfd_key,$default=''){
+        if(!isset($post[$tzfd_key])){return $default;}
+        if(!is_string($post[$tzfd_key]) || strlen($post[$tzfd_key])>8192){throw new InvalidArgumentException('invalid_input');}
+        return sanitize_text_field(wp_unslash($post[$tzfd_key]));
     }
     public static function request($engine,$post){
         if(!current_user_can('tz_fd_access')){throw new InvalidArgumentException('permission_denied');}
         if(!is_array($post) || !wp_verify_nonce(self::text($post,'tz_fd_nonce'),'titan_zero_front_desk_schedule_preview')){throw new InvalidArgumentException('invalid_nonce');}
-        $tz_form=TZFD_Scheduling::integer(self::text($post,'form_id'),1,PHP_INT_MAX);
+        $tzfd_local_form=TZFD_Scheduling::integer(self::text($post,'form_id'),1,PHP_INT_MAX);
         $index=TZFD_Scheduling::integer(self::text($post,'service_index'),0);
         $quantity=TZFD_Scheduling::integer(self::text($post,'quantity'),1);
-        $tz_count=TZFD_Scheduling::integer(self::text($post,'count'),1,366);
+        $tzfd_local_count=TZFD_Scheduling::integer(self::text($post,'count'),1,366);
         $interval=TZFD_Scheduling::integer(self::text($post,'interval'),1,52);
         $field=self::text($post,'field_name');
-        if($tz_form===null || $index===null || $quantity===null || $tz_count===null || $interval===null || !preg_match('/\A[a-zA-Z0-9_-]{1,100}\z/D',$field)){throw new InvalidArgumentException('invalid_input');}
+        if($tzfd_local_form===null || $index===null || $quantity===null || $tzfd_local_count===null || $interval===null || !preg_match('/\A[a-zA-Z0-9_-]{1,100}\z/D',$field)){throw new InvalidArgumentException('invalid_input');}
         // A WordPress capability alone does not grant access to another company's occupancy.
         if(!class_exists('TZFD_Scoped_Store') || TZFD_Scoped_Store::company_id() < 1 ||
-            TZFD_Scoped_Store::company_for_form($tz_form) !== TZFD_Scoped_Store::company_id()) {
+            TZFD_Scoped_Store::company_for_form($tzfd_local_form) !== TZFD_Scoped_Store::company_id()) {
             throw new InvalidArgumentException('permission_denied');
         }
         $excluded=self::text($post,'exclude_dates');
-        $rule=array('frequency'=>self::text($post,'frequency'),'count'=>$tz_count,'interval'=>$interval,
+        $rule=array('frequency'=>self::text($post,'frequency'),'count'=>$tzfd_local_count,'interval'=>$interval,
             'month_policy'=>self::text($post,'month_policy'),'exclude_dates'=>$excluded===''?array():preg_split('/[\s,;]+/',$excluded));
-        $tz_date=self::text($post,'start_date');$time=self::text($post,'start_time');
+        $tzfd_date=self::text($post,'start_date');$time=self::text($post,'start_time');
         // Validate bounded recurrence before any database read.
-        TZFD_Scheduling::expand_dates($tz_date,$rule);TZFD_Scheduling::slot($time,1);
+        TZFD_Scheduling::expand_dates($tzfd_date,$rule);TZFD_Scheduling::slot($time,1);
         $original=$engine->getId();
-        try{$engine->setId($tz_form);return $engine->preview_schedule($field,$index,$tz_date,$time,$quantity,$rule);}
+        try{$engine->setId($tzfd_local_form);return $engine->preview_schedule($field,$index,$tzfd_date,$time,$quantity,$rule);}
         finally{$engine->setId($original);}
     }
-    private static function input($name,$tz_label,$tz_value,$type='text',$min=null,$max=null){
-        echo '<tr><th scope="row"><label for="tzfd-'.esc_attr($name).'">'.esc_html($tz_label).'</label></th><td><input class="regular-text" id="tzfd-'.esc_attr($name).'" name="'.esc_attr($name).'" type="'.esc_attr($type).'" value="'.esc_attr($tz_value).'"';
+    private static function input($name,$tzfd_label,$tzfd_value,$type='text',$min=null,$max=null){
+        echo '<tr><th scope="row"><label for="tzfd-'.esc_attr($name).'">'.esc_html($tzfd_label).'</label></th><td><input class="regular-text" id="tzfd-'.esc_attr($name).'" name="'.esc_attr($name).'" type="'.esc_attr($type).'" value="'.esc_attr($tzfd_value).'"';
         if($min!==null){echo ' min="'.esc_attr($min).'"';}if($max!==null){echo ' max="'.esc_attr($max).'"';}
         echo ' required></td></tr>';
     }
     public static function page(){
         if(!current_user_can('tz_fd_access')){wp_die(esc_html__('You cannot access this preview.','titan-zero-trades-front-desk'),'',array('response'=>403));return;}
         TZFD_Admin_Menu::render_settings_tabs('preview');
-        global $tz_plugin;
-        if(!($tz_plugin instanceof TZFD_Scheduling_Plugin)){wp_die(esc_html__('Scheduling engine is unavailable.','titan-zero-trades-front-desk'));return;}
+        global $tzfd_plugin;
+        if(!($tzfd_plugin instanceof TZFD_Scheduling_Plugin)){wp_die(esc_html__('Scheduling engine is unavailable.','titan-zero-trades-front-desk'));return;}
         $values=array('form_id'=>'1','field_name'=>'fieldname1','service_index'=>'0','start_date'=>current_time('Y-m-d'),'start_time'=>'09:00',
             'quantity'=>'1','frequency'=>'weekly','count'=>'4','interval'=>'1','month_policy'=>'skip','exclude_dates'=>'');
         $result=null;$error='';
@@ -63,8 +63,8 @@ final class TZFD_Scheduling_Preview {
             try{
                 // The dedicated nonce is verified before any posted value is read; request() repeats the check and the capability test.
                 if(!isset($_POST['tz_fd_nonce']) || !is_string($_POST['tz_fd_nonce']) || !wp_verify_nonce(tzfd_request_text( 'post', 'tz_fd_nonce' ),'titan_zero_front_desk_schedule_preview')){throw new InvalidArgumentException('invalid_nonce');}
-                $result=self::request($tz_plugin,$_POST);
-                foreach($values as$tz_key=>$default){$values[$tz_key]=self::text($_POST,$tz_key,$default);}
+                $result=self::request($tzfd_plugin,$_POST);
+                foreach($values as$tzfd_key=>$default){$values[$tzfd_key]=self::text($_POST,$tzfd_key,$default);}
             }catch(InvalidArgumentException $exception){$error=__('The preview could not run. Check your inputs, refresh the page, or inspect the stored booking data.','titan-zero-trades-front-desk');}
         }
         echo '<div class="wrap"><h1>'.esc_html__('Scheduling Preview','titan-zero-trades-front-desk').'</h1>';
@@ -83,8 +83,8 @@ final class TZFD_Scheduling_Preview {
         self::input('interval',__('Repeat every N periods','titan-zero-trades-front-desk'),$values['interval'],'number',1,52);
         $selects=array('frequency'=>array(__('Frequency','titan-zero-trades-front-desk'),array('daily'=>__('Daily','titan-zero-trades-front-desk'),'weekly'=>__('Weekly','titan-zero-trades-front-desk'),'monthly'=>__('Monthly','titan-zero-trades-front-desk'))),
             'month_policy'=>array(__('Short-month handling','titan-zero-trades-front-desk'),array('skip'=>__('Skip months without that day','titan-zero-trades-front-desk'),'last_day'=>__('Use the last day, keeping the original anchor','titan-zero-trades-front-desk'))));
-        foreach($selects as$name=>$tz_options){echo '<tr><th><label for="tzfd-'.esc_attr($name).'">'.esc_html($tz_options[0]).'</label></th><td><select id="tzfd-'.esc_attr($name).'" name="'.esc_attr($name).'">';
-            foreach($tz_options[1]as$tz_key=>$tz_label){echo '<option value="'.esc_attr($tz_key).'"'.selected($values[$name],$tz_key,false).'>'.esc_html($tz_label).'</option>';}echo '</select></td></tr>';}
+        foreach($selects as$name=>$tzfd_options){echo '<tr><th><label for="tzfd-'.esc_attr($name).'">'.esc_html($tzfd_options[0]).'</label></th><td><select id="tzfd-'.esc_attr($name).'" name="'.esc_attr($name).'">';
+            foreach($tzfd_options[1]as$tzfd_key=>$tzfd_label){echo '<option value="'.esc_attr($tzfd_key).'"'.selected($values[$name],$tzfd_key,false).'>'.esc_html($tzfd_label).'</option>';}echo '</select></td></tr>';}
         echo '<tr><th><label for="tzfd-exclusions">'.esc_html__('Excluded dates','titan-zero-trades-front-desk').'</label></th><td><textarea id="tzfd-exclusions" name="exclude_dates" class="large-text" rows="3">'.esc_textarea($values['exclude_dates']).'</textarea><p class="description">'.esc_html__('Optional ISO dates (YYYY-MM-DD), separated by commas or spaces. Excluded dates do not add extra visits at the end.','titan-zero-trades-front-desk').'</p></td></tr></tbody></table>';
         submit_button(__('Preview only — do not create bookings','titan-zero-trades-front-desk'));echo '</form>';
         if(is_array($result)){

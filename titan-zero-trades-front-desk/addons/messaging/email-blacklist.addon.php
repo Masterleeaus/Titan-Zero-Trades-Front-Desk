@@ -76,18 +76,18 @@ if( !class_exists( 'TZFD_EmailBlacklistaddon' ) )
         /************************ HOOKS *****************************/
 
         /** Runs before insert. Stops the submission when the customer's email is listed. */
-        public function check_submission( $tz_params )
+        public function check_submission( $tzfd_local_params )
         {
             if ( defined( 'TZFD_HOUR_BLOCK_TIMES_PROCESS' ) ) { return; }
             if ( is_admin() && current_user_can( 'tz_fd_access' ) ) { return; } // Staff-entered bookings are trusted.
 
-            global $tz_plugin;
-            $field = is_object( $tz_plugin ) ? $tz_plugin->get_option( 'cu_user_email_field', 'email' ) : 'email';
-            if ( ! is_array( $tz_params ) || ! isset( $tz_params[ $field ] ) || ! is_string( $tz_params[ $field ] ) ) { return; }
+            global $tzfd_plugin;
+            $field = is_object( $tzfd_plugin ) ? $tzfd_plugin->get_option( 'cu_user_email_field', 'email' ) : 'email';
+            if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params[ $field ] ) || ! is_string( $tzfd_local_params[ $field ] ) ) { return; }
 
             $settings = TZFD_Addon_Support::global_settings( self::KEY, self::defaults() );
             $entries  = TZFD_Addon_Support::parse_entries( $settings['entries'] );
-            if ( TZFD_Addon_Support::address_listed( $tz_params[ $field ], $entries ) ) {
+            if ( TZFD_Addon_Support::address_listed( $tzfd_local_params[ $field ], $entries ) ) {
                 echo esc_html( self::visitor_message( $settings['message'] ) );
                 exit;
             }
@@ -101,6 +101,6 @@ if( !class_exists( 'TZFD_EmailBlacklistaddon' ) )
     $TZFD_EmailBlacklistaddon_obj = new TZFD_EmailBlacklistaddon();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_EmailBlacklistaddon_obj->get_addon_id() ] = $TZFD_EmailBlacklistaddon_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_EmailBlacklistaddon_obj->get_addon_id() ] = $TZFD_EmailBlacklistaddon_obj;
 }

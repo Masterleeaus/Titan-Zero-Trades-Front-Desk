@@ -5,9 +5,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-if ( class_exists( 'TZ_UI_Front_Desk_Reads', false ) ) { return; }
+if ( class_exists( 'TZFD_UI_Front_Desk_Reads', false ) ) { return; }
 
-final class TZ_UI_Front_Desk_Reads {
+final class TZFD_UI_Front_Desk_Reads {
 	const DOMAIN = 'titan-zero-trades-front-desk';
 
 	public static function company() {

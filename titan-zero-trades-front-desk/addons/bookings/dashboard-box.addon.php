@@ -71,20 +71,20 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
 							<tr>
 								<td style="white-space:nowrap;width:200px;" valign="top"><?php esc_html_e('Maximum items listed', 'titan-zero-trades-front-desk');?>:</td>
 								<td>
-									<input type="text" name="tz_fd_dashboard_maxitems" value="<?php echo esc_attr(( ( $tz_key = self::setting( 'tz_fd_dashboard_maxitems', '10' ) ) !== false ) ? $tz_key : '10'); ?>"   size="10" />
+									<input type="text" name="tz_fd_dashboard_maxitems" value="<?php echo esc_attr(( ( $tzfd_key = self::setting( 'tz_fd_dashboard_maxitems', '10' ) ) !== false ) ? $tzfd_key : '10'); ?>"   size="10" />
 								</td>
 							</tr>
 							<tr>
 								<td style="white-space:nowrap;width:200px;" valign="top"><?php esc_html_e('Columns', 'titan-zero-trades-front-desk');?>:</td>
 								<td>
-									<input type="text" name="tz_fd_dashboard_columns" value="<?php echo esc_attr(( ( $tz_key = self::setting( 'tz_fd_dashboard_columns', 'TIME,SERVICE,data' ) ) !== false ) ? $tz_key : 'TIME,SERVICE,data'); ?>"  style="width:80%;" /><br />
+									<input type="text" name="tz_fd_dashboard_columns" value="<?php echo esc_attr(( ( $tzfd_key = self::setting( 'tz_fd_dashboard_columns', 'TIME,SERVICE,data' ) ) !== false ) ? $tzfd_key : 'TIME,SERVICE,data'); ?>"  style="width:80%;" /><br />
                                     <em><?php print esc_html(__('Sample column names', 'titan-zero-trades-front-desk')); ?>: final_price,formname,...<?php print esc_html(__('Click for more info about supported column names', 'titan-zero-trades-front-desk')); ?>.</em>
 								</td>
 							</tr>
                             <tr>
 								<td style="white-space:nowrap;width:200px;" valign="top"><?php esc_html_e('Column labels', 'titan-zero-trades-front-desk');?>:</td>
 								<td>
-									<input type="text" name="tz_fd_dashboard_columnlabels" value="<?php echo esc_attr(( ( $tz_key = self::setting( 'tz_fd_dashboard_columnlabels', 'Time,Service,Data' ) ) !== false ) ? $tz_key : 'Time,Service,Data'); ?>"  style="width:80%;" /><br />
+									<input type="text" name="tz_fd_dashboard_columnlabels" value="<?php echo esc_attr(( ( $tzfd_key = self::setting( 'tz_fd_dashboard_columnlabels', 'Time,Service,Data' ) ) !== false ) ? $tzfd_key : 'Time,Service,Data'); ?>"  style="width:80%;" /><br />
                                     <em><?php print esc_html(__('Visual column names at the top of the table', 'titan-zero-trades-front-desk')); ?>.</em>
 								</td>
 							</tr>
@@ -157,27 +157,27 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
          * Counts come from the bookings already loaded by the widget, so no extra
          * booking query is run. Quote counts moved to Titan Zero Quotes (19 Oct split) and are not shown here.
          */
-        private function render_glance( $tz_events )
+        private function render_glance( $tzfd_events )
         {
             global $wpdb;
-            $tz_today = current_time( 'Y-m-d' );
-            $tz_week  = gmdate( 'Y-m-d', strtotime( $tz_today . ' +6 days' ) );
+            $tzfd_today = current_time( 'Y-m-d' );
+            $tzfd_week  = gmdate( 'Y-m-d', strtotime( $tzfd_today . ' +6 days' ) );
             $n_today = 0; $n_week = 0; $n_pending = 0;
 
-            foreach ( (array) $tz_events as $tz_item )
+            foreach ( (array) $tzfd_events as $tzfd_item )
             {
-                if ( ! is_object( $tz_item ) || ! isset( $tz_item->posted_data ) ) { continue; }
-                $tz_data = TZFD_Stored_Data::decode_booking( $tz_item->posted_data );
-                if ( ! is_array( $tz_data ) || empty( $tz_data['apps'] ) || ! is_array( $tz_data['apps'] ) ) continue;
-                foreach ( $tz_data['apps'] as $tz_app )
+                if ( ! is_object( $tzfd_item ) || ! isset( $tzfd_item->posted_data ) ) { continue; }
+                $tzfd_data = TZFD_Stored_Data::decode_booking( $tzfd_item->posted_data );
+                if ( ! is_array( $tzfd_data ) || empty( $tzfd_data['apps'] ) || ! is_array( $tzfd_data['apps'] ) ) continue;
+                foreach ( $tzfd_data['apps'] as $tzfd_app )
                 {
-                    if ( ! is_array( $tz_app ) ) { continue; }
-                    $date  = isset( $tz_app['date'] ) && is_string( $tz_app['date'] ) ? $tz_app['date'] : '';
-                    $state = isset( $tz_app['cancelled'] ) && is_string( $tz_app['cancelled'] ) ? $tz_app['cancelled'] : '';
+                    if ( ! is_array( $tzfd_app ) ) { continue; }
+                    $date  = isset( $tzfd_app['date'] ) && is_string( $tzfd_app['date'] ) ? $tzfd_app['date'] : '';
+                    $state = isset( $tzfd_app['cancelled'] ) && is_string( $tzfd_app['cancelled'] ) ? $tzfd_app['cancelled'] : '';
                     if ( $date === '' || strpos( $state, 'Cancelled' ) === 0 ) continue;
-                    if ( $date === $tz_today ) $n_today++;
-                    if ( $date >= $tz_today && $date <= $tz_week ) $n_week++;
-                    if ( $date >= $tz_today && $state === 'Pending' ) $n_pending++;
+                    if ( $date === $tzfd_today ) $n_today++;
+                    if ( $date >= $tzfd_today && $date <= $tzfd_week ) $n_week++;
+                    if ( $date >= $tzfd_today && $state === 'Pending' ) $n_pending++;
                 }
             }
 
@@ -227,7 +227,7 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
          */
 		public function pp_DashboardWidget($atts = array())
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
             extract( shortcode_atts( array(
 	        	'calendar' => '',
 	        	'showdelete' => '0', // Still accepted so existing shortcodes keep working; renders nothing.
@@ -242,8 +242,11 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
 	        ), $atts ) );
 
             // Shortcodes are public input: reject nested values before string operations.
+            // Variable variables are limited to the fixed allow-list above, so no other variable can be overwritten.
             foreach ( array( 'columns', 'columnlabels', 'datefrom', 'dateto', 'paidonly', 'maxitems', 'datelabel', 'status' ) as $parameter ) {
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals -- fixed allow-list above; no other variable can be overwritten.
                 if ( ! is_string( $$parameter ) && ! is_int( $$parameter ) ) { return; }
+                // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals -- fixed allow-list above; no other variable can be overwritten.
                 $$parameter = (string) $$parameter;
             }
             if ( strlen( $columns ) > 500 || strlen( $columnlabels ) > 1000 || strlen( $status ) > 60 ) { return; }
@@ -284,73 +287,73 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
 
             // Table names are bound as %i identifiers and the calendar id as %d. The former raw-SQL filter on this query was removed because raw SQL cannot be prepared.
             if ( $calendar ) {
-                $tz_events = $wpdb->get_results( $wpdb->prepare(
+                $tzfd_events = $wpdb->get_results( $wpdb->prepare(
                     "SELECT %i.* FROM %i INNER JOIN %i ON %i.formid = %i.id WHERE %i.company_id = %d AND %i.company_id = %d AND %i.formid = %d ORDER BY %i.time DESC",
                     $table_messages, $table_messages, $table_items, $table_messages, $table_items,
                     $table_messages, $company_id, $table_items, $company_id, $table_messages, $calendar, $table_messages
                 ) );
             } else {
-                $tz_events = $wpdb->get_results( $wpdb->prepare(
+                $tzfd_events = $wpdb->get_results( $wpdb->prepare(
                     "SELECT %i.* FROM %i INNER JOIN %i ON %i.formid = %i.id WHERE %i.company_id = %d AND %i.company_id = %d ORDER BY %i.time DESC",
                     $table_messages, $table_messages, $table_items, $table_messages, $table_items,
                     $table_messages, $company_id, $table_items, $company_id, $table_messages
                 ) );
             }
 
-            $this->render_glance( $tz_events );
+            $this->render_glance( $tzfd_events );
             echo '<h2 class="tzfd-section-title">'.esc_html(__('Next','titan-zero-trades-front-desk'))." ".intval($maxitems)." ".esc_html(__('upcoming appointments','titan-zero-trades-front-desk')).'</h2>';
 
             // pre-select time-slots
-            $tz_selection = array();
-            foreach((array)$tz_events as $tz_item)
+            $tzfd_selection = array();
+            foreach((array)$tzfd_events as $tzfd_item)
             {
-                if (!is_object($tz_item) || !isset($tz_item->posted_data, $tz_item->notifyto, $tz_item->data, $tz_item->id)) { continue; }
-                $tz_data = TZFD_Stored_Data::decode_booking($tz_item->posted_data);
-                if (is_array($tz_data) && isset($tz_data["apps"]) && is_array($tz_data["apps"]) && (!$paidonly || !empty($tz_data['paid'])))
+                if (!is_object($tzfd_item) || !isset($tzfd_item->posted_data, $tzfd_item->notifyto, $tzfd_item->data, $tzfd_item->id)) { continue; }
+                $tzfd_data = TZFD_Stored_Data::decode_booking($tzfd_item->posted_data);
+                if (is_array($tzfd_data) && isset($tzfd_data["apps"]) && is_array($tzfd_data["apps"]) && (!$paidonly || !empty($tzfd_data['paid'])))
                 {
-                    foreach($tz_data["apps"] as $tz_app)
-                        if (is_array($tz_app) && isset($tz_app['date'], $tz_app['slot'], $tz_app['cancelled'], $tz_app['service']) && is_string($tz_app['date']) && is_string($tz_app['slot']) && is_string($tz_app['cancelled']) && is_string($tz_app['service'])
-                            && $tz_app["date"] >= $from && $tz_app["date"] <= $to && ($status == '-1' || $status == $tz_app["cancelled"]) 
-						   && $tz_app["cancelled"] != 'Cancelled' && $tz_app["cancelled"] != 'Cancelled by customer')
+                    foreach($tzfd_data["apps"] as $tzfd_app)
+                        if (is_array($tzfd_app) && isset($tzfd_app['date'], $tzfd_app['slot'], $tzfd_app['cancelled'], $tzfd_app['service']) && is_string($tzfd_app['date']) && is_string($tzfd_app['slot']) && is_string($tzfd_app['cancelled']) && is_string($tzfd_app['service'])
+                            && $tzfd_app["date"] >= $from && $tzfd_app["date"] <= $to && ($status == '-1' || $status == $tzfd_app["cancelled"]) 
+						   && $tzfd_app["cancelled"] != 'Cancelled' && $tzfd_app["cancelled"] != 'Cancelled by customer')
                         {
-                            $tz_selection[] = array( $tz_app["date"]." ".$tz_app["slot"], // 0
-                                                  $tz_app["date"], // 1
-                                                  $tz_app["slot"], // 2
-                                                  $tz_data, // 3
-                                                  sanitize_email($tz_item->notifyto), // 4
-                                                  $tz_item->data, // 5
-                                                  $tz_app["cancelled"], // 6
-                                                  $tz_app["service"], // 7
+                            $tzfd_selection[] = array( $tzfd_app["date"]." ".$tzfd_app["slot"], // 0
+                                                  $tzfd_app["date"], // 1
+                                                  $tzfd_app["slot"], // 2
+                                                  $tzfd_data, // 3
+                                                  sanitize_email($tzfd_item->notifyto), // 4
+                                                  $tzfd_item->data, // 5
+                                                  $tzfd_app["cancelled"], // 6
+                                                  $tzfd_app["service"], // 7
                                                  '', // 8
                                                  '', // 9
-                                                 $tz_item->id                      // 10
+                                                 $tzfd_item->id                      // 10
                                                  );
                         }
                 }
             }
 
             // order time-slots
-            usort($tz_selection, function ($a, $b) { return ($a[0] > $b[0]?1:-1); } );
+            usort($tzfd_selection, function ($a, $b) { return ($a[0] > $b[0]?1:-1); } );
 
-            $count_selection = count($tz_selection);
+            $count_selection = count($tzfd_selection);
             // Join consecutive items of the same booking
             if ( $compact )
             {
-                for ($tz_i = 0; $tz_i < count($tz_selection)-1; $tz_i++)
+                for ($tzfd_i = 0; $tzfd_i < count($tzfd_selection)-1; $tzfd_i++)
                 {
-                    if (isset($tz_selection[$tz_i]) && isset($tz_selection[$tz_i+1]) && $tz_selection[$tz_i][10] == $tz_selection[$tz_i+1][10])
+                    if (isset($tzfd_selection[$tzfd_i]) && isset($tzfd_selection[$tzfd_i+1]) && $tzfd_selection[$tzfd_i][10] == $tzfd_selection[$tzfd_i+1][10])
                     {
-                        $time1 = explode("-",str_replace("/","-",$tz_selection[$tz_i][2]));
-                        $time2 = explode("-",str_replace("/","-",$tz_selection[$tz_i+1][2]));
+                        $time1 = explode("-",str_replace("/","-",$tzfd_selection[$tzfd_i][2]));
+                        $time2 = explode("-",str_replace("/","-",$tzfd_selection[$tzfd_i+1][2]));
                         if (count($time1) >= 2 && count($time2) >= 2 && $time1[1] == $time2[0])
                         {
-                            $tz_selection[$tz_i][2] = $time1[0] ."-".$time2[1];
-                            $tz_selection[$tz_i][0] = $tz_selection[$tz_i][1]." ".$tz_selection[$tz_i][2];
-                            //unset($tz_selection[$tz_i+1]);
-                            for ($tz_j = $tz_i+1; $tz_j < count($tz_selection)-1; $tz_j++)
-                                $tz_selection[$tz_j] = $tz_selection[$tz_j+1];
-                            $tz_i--;
-                            unset($tz_selection[count($tz_selection)-1]);
+                            $tzfd_selection[$tzfd_i][2] = $time1[0] ."-".$time2[1];
+                            $tzfd_selection[$tzfd_i][0] = $tzfd_selection[$tzfd_i][1]." ".$tzfd_selection[$tzfd_i][2];
+                            //unset($tzfd_selection[$tzfd_i+1]);
+                            for ($tzfd_j = $tzfd_i+1; $tzfd_j < count($tzfd_selection)-1; $tzfd_j++)
+                                $tzfd_selection[$tzfd_j] = $tzfd_selection[$tzfd_j+1];
+                            $tzfd_i--;
+                            unset($tzfd_selection[count($tzfd_selection)-1]);
                         }
                     }
                 }
@@ -358,13 +361,13 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
 
             // clean fields IDs
             $fields = explode(",",trim($columns));
-            for($tz_j=0; $tz_j<count($fields); $tz_j++)
-                $fields[$tz_j] = strtolower(trim($fields[$tz_j]));
+            for($tzfd_j=0; $tzfd_j<count($fields); $tzfd_j++)
+                $fields[$tzfd_j] = strtolower(trim($fields[$tzfd_j]));
 
             $columnlabels = explode(",", $columnlabels);
             $columns = explode(",", $columns);
 
-            if (!count($tz_selection))
+            if (!count($tzfd_selection))
             {
                 if (class_exists('TZFD_Local_Brand')) { TZFD_Local_Brand::empty_state('calendar', __('No upcoming appointments found','titan-zero-trades-front-desk')); } else { echo esc_html(__('No upcoming appointments found','titan-zero-trades-front-desk')); }
                 return;
@@ -375,59 +378,59 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
             // list data rows
             $colnum = 0;
             $lastdate = '';
-            for($tz_i=0; $tz_i<count($tz_selection) && $tz_i<$maxitems; $tz_i++)
+            for($tzfd_i=0; $tzfd_i<count($tzfd_selection) && $tzfd_i<$maxitems; $tzfd_i++)
             {
                 $colnum++;
-                if ($lastdate != $tz_selection[$tz_i][1])
+                if ($lastdate != $tzfd_selection[$tzfd_i][1])
                 {
                     if ($lastdate != '') echo '</table></div>';
-                    $lastdate = $tz_selection[$tz_i][1];
+                    $lastdate = $tzfd_selection[$tzfd_i][1];
                     echo '<div style="overflow-x:auto;"><table class="tzfdbtable"><tr>';
                     // list header rows
                     echo '<th class="tzfdbheadermth">'.esc_html($datelabel).'</th>';
                     echo '<td class="tzfdbheadermtd" nowrap>'.esc_html($lastdate).'</td>';
                     echo '<tr>';
                     $colnum = 0;
-                    foreach ($columnlabels as $tz_item)
+                    foreach ($columnlabels as $tzfd_item)
                     {
                         $colnum++;
-                        echo '<th class="tzfdbheader'.intval($colnum).' tzfdbth">'.esc_html(trim($tz_item)).'</th>';
+                        echo '<th class="tzfdbheader'.intval($colnum).' tzfdbth">'.esc_html(trim($tzfd_item)).'</th>';
                     }
                     echo '</tr>';
                 }
-                echo '<tr class="'.($tz_selection[$tz_i][6]!=''?' tz_fd_cancelled':'').'">';
-                for($tz_j=0; $tz_j<count($fields); $tz_j++)
+                echo '<tr class="'.($tzfd_selection[$tzfd_i][6]!=''?' tz_fd_cancelled':'').'">';
+                for($tzfd_j=0; $tzfd_j<count($fields); $tzfd_j++)
                 {
                    $nbsp = "\u{00A0}";
-                   switch ($fields[$tz_j]) {
+                   switch ($fields[$tzfd_j]) {
                         case 'date':
-                            $tz_value = $tz_selection[$tz_i][1];
+                            $tzfd_value = $tzfd_selection[$tzfd_i][1];
                             break;
                         case 'time':
-                            $tz_value = $tz_selection[$tz_i][2];
+                            $tzfd_value = $tzfd_selection[$tzfd_i][2];
                             break;
                         case 'email':
-                            $tz_value = sanitize_email($tz_selection[$tz_i][4]).$nbsp;
+                            $tzfd_value = sanitize_email($tzfd_selection[$tzfd_i][4]).$nbsp;
                             break;
                         case 'service':
-                            $tz_value = $tz_selection[$tz_i][7].$nbsp;
+                            $tzfd_value = $tzfd_selection[$tzfd_i][7].$nbsp;
                             break;
                         case 'cancelled':
-                            $tz_value = $nbsp;
+                            $tzfd_value = $nbsp;
                             break;
                         case 'data':
-                            $message = is_string($tz_selection[$tz_i][5]) ? $tz_selection[$tz_i][5] : '';
+                            $message = is_string($tzfd_selection[$tzfd_i][5]) ? $tzfd_selection[$tzfd_i][5] : '';
                             $separator = strpos($message, "\n\n");
-                            $tz_value = false !== $separator ? substr($message, $separator + 2) : $message;
+                            $tzfd_value = false !== $separator ? substr($message, $separator + 2) : $message;
                             break;
                         case 'paid':
-                            $tz_value = (!empty($tz_selection[$tz_i][3]['paid'])?__('Yes','titan-zero-trades-front-desk'):$nbsp);
+                            $tzfd_value = (!empty($tzfd_selection[$tzfd_i][3]['paid'])?__('Yes','titan-zero-trades-front-desk'):$nbsp);
                             break;
                         default:
-                            $field_value = $tz_selection[$tz_i][3][$fields[$tz_j]] ?? '';
-                            $tz_value = is_scalar($field_value) && '' !== (string)$field_value ? (string)$field_value . $nbsp : $nbsp;
+                            $field_value = $tzfd_selection[$tzfd_i][3][$fields[$tzfd_j]] ?? '';
+                            $tzfd_value = is_scalar($field_value) && '' !== (string)$field_value ? (string)$field_value . $nbsp : $nbsp;
                    }
-                    echo '<td class="tzfdbcol'.esc_html($colnum).'">'.esc_html(trim($tz_value)).'</td>';
+                    echo '<td class="tzfdbcol'.esc_html($colnum).'">'.esc_html(trim($tzfd_value)).'</td>';
                 }
                 echo '</tr>';
             }
@@ -443,6 +446,6 @@ if( !class_exists( 'TZFD_DashboardWidget' ) )
     $TZFD_DashboardWidget_obj = new TZFD_DashboardWidget();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_DashboardWidget_obj->get_addon_id() ] = $TZFD_DashboardWidget_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_DashboardWidget_obj->get_addon_id() ] = $TZFD_DashboardWidget_obj;
 }

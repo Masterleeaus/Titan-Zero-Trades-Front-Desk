@@ -10,9 +10,9 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 if ( defined( 'ABSPATH' ) ) { require_once __DIR__ . '/../../includes/class-tzfd-request-scalar.php'; }
 
-if ( class_exists( 'TZ_UI_Core', false ) ) { return; }
+if ( class_exists( 'TZFD_UI_Core', false ) ) { return; }
 
-abstract class TZ_UI_Core {
+abstract class TZFD_UI_Core {
 	const VERSION = '1.0.0';
 
 	/** App slug used in handles and file names, e.g. 'front-desk'. */

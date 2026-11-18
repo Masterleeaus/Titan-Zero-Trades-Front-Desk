@@ -65,17 +65,17 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
             );
         }
 
-        public static function normalize_booking_id( $tz_value ) {
-            if ( ! is_int( $tz_value ) && ! is_string( $tz_value ) ) {
+        public static function normalize_booking_id( $tzfd_value ) {
+            if ( ! is_int( $tzfd_value ) && ! is_string( $tzfd_value ) ) {
                 return 0;
             }
 
-            $tz_value = (string) $tz_value;
-            if ( ! preg_match( '/^[0-9]+$/D', $tz_value ) ) {
+            $tzfd_value = (string) $tzfd_value;
+            if ( ! preg_match( '/^[0-9]+$/D', $tzfd_value ) ) {
                 return 0;
             }
 
-            $digits = ltrim( $tz_value, '0' );
+            $digits = ltrim( $tzfd_value, '0' );
             if ( '' === $digits ) {
                 return 0;
             }
@@ -120,7 +120,7 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
                     return false;
                 }
                 $keys = array( 'apps' );
-                for ( $tz_i = 1; $tz_i <= count( $envelope['apps'] ); $tz_i++ ) { $keys[] = 'app_status_' . $tz_i; }
+                for ( $tzfd_i = 1; $tzfd_i <= count( $envelope['apps'] ); $tzfd_i++ ) { $keys[] = 'app_status_' . $tzfd_i; }
                 $decoded = TZFD_Stored_Data::project( $serialized, $keys );
             } catch ( Throwable $error ) {
                 return false;
@@ -128,15 +128,15 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
             return is_array( $decoded ) ? $decoded : false;
         }
 
-        public static function status_is_saved( $tz_posted_data, $status, $indexonly ) {
-            if ( ! is_array( $tz_posted_data ) || ! is_string( $status ) ||
-                 ! isset( $tz_posted_data['apps'] ) || ! is_array( $tz_posted_data['apps'] ) ||
-                 empty( $tz_posted_data['apps'] ) ) {
+        public static function status_is_saved( $tzfd_posted_data, $status, $indexonly ) {
+            if ( ! is_array( $tzfd_posted_data ) || ! is_string( $status ) ||
+                 ! isset( $tzfd_posted_data['apps'] ) || ! is_array( $tzfd_posted_data['apps'] ) ||
+                 empty( $tzfd_posted_data['apps'] ) ) {
                 return false;
             }
 
-            $tz_count = count( $tz_posted_data['apps'] );
-            if ( array_keys( $tz_posted_data['apps'] ) !== range( 0, $tz_count - 1 ) ) {
+            $tzfd_local_count = count( $tzfd_posted_data['apps'] );
+            if ( array_keys( $tzfd_posted_data['apps'] ) !== range( 0, $tzfd_local_count - 1 ) ) {
                 return false;
             }
 
@@ -145,21 +145,21 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
                 return false;
             }
 
-            $indexes = -1 === $selector ? range( 0, $tz_count - 1 ) : array( $selector );
+            $indexes = -1 === $selector ? range( 0, $tzfd_local_count - 1 ) : array( $selector );
             foreach ( $indexes as $index ) {
-                if ( ! array_key_exists( $index, $tz_posted_data['apps'] ) ||
-                     ! is_array( $tz_posted_data['apps'][ $index ] ) ) {
+                if ( ! array_key_exists( $index, $tzfd_posted_data['apps'] ) ||
+                     ! is_array( $tzfd_posted_data['apps'][ $index ] ) ) {
                     return false;
                 }
 
                 $flat_key = 'app_status_' . ( $index + 1 );
-                if ( ! array_key_exists( 'cancelled', $tz_posted_data['apps'][ $index ] ) ||
-                     ! array_key_exists( $flat_key, $tz_posted_data ) ) {
+                if ( ! array_key_exists( 'cancelled', $tzfd_posted_data['apps'][ $index ] ) ||
+                     ! array_key_exists( $flat_key, $tzfd_posted_data ) ) {
                     return false;
                 }
 
-                $nested_status = $tz_posted_data['apps'][ $index ]['cancelled'];
-                $flat_status = $tz_posted_data[ $flat_key ];
+                $nested_status = $tzfd_posted_data['apps'][ $index ]['cancelled'];
+                $flat_status = $tzfd_posted_data[ $flat_key ];
                 if ( ! is_string( $nested_status ) || ! is_string( $flat_status ) ||
                      $status !== $nested_status || $status !== $flat_status ) {
                     return false;
@@ -221,11 +221,11 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
             }
 
             $recipient = self::single_recipient( isset( $row->notifyto ) ? $row->notifyto : null );
-            $tz_posted_data = self::decode_posted_data(
+            $tzfd_posted_data = self::decode_posted_data(
                 isset( $row->posted_data ) ? $row->posted_data : null
             );
-            if ( '' === $recipient || ! is_array( $tz_posted_data ) ||
-                 ! self::status_is_saved( $tz_posted_data, $status, $indexonly ) ) {
+            if ( '' === $recipient || ! is_array( $tzfd_posted_data ) ||
+                 ! self::status_is_saved( $tzfd_posted_data, $status, $indexonly ) ) {
                 return;
             }
 
@@ -236,7 +236,7 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
             $status_update = $scope . ' status is now: ' . $display_status . '.';
             if ( $partial ) {
                 $status_update .= ' This update applies only to this appointment.';
-                foreach ( $tz_posted_data['apps'] as $appointment ) {
+                foreach ( $tzfd_posted_data['apps'] as $appointment ) {
                     if ( is_array( $appointment ) && isset( $appointment['cancelled'] ) &&
                          'Pending' === $appointment['cancelled'] ) {
                         $status_update .= ' This booking still has appointments pending review.';

@@ -74,6 +74,7 @@ final class TZFD_Public_Slot_Records {
             update_option( self::SKIPPED_OPTION, $all, false );
         }
         foreach ( $booking_ids as $booking_id ) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- operator diagnostic for unreadable stored data; logs only numeric ids, never customer fields.
             error_log( sprintf( 'Titan Zero Scheduling & Enquiries Manager: skipped stored booking %d of calendar %d in public availability (unreadable payload).', $booking_id, $calendar_id ) );
         }
     }

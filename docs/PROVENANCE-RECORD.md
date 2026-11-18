@@ -55,6 +55,10 @@ The upstream author credit remains in readme.txt (Credits), THIRD-PARTY-NOTICES.
 
 - `scripts/package-excludes.txt`: one list of exclusions, shared by the manifest and the build.
 - `scripts/source-manifest.sh <plugin-dir>`: SHA-256 for each shipped file, sorted with `LC_ALL=C`. The committed copy is `docs/provenance/SHA256SUMS.txt`.
+- Baseline manifests (generated 2026-11-18 with `scripts/source-manifest.sh`):
+  - `docs/provenance/SHA256SUMS-v3.0.128.txt`: 720 files, source at commit `22dc106` (plugin header 3.0.128, "Extract Trades Front Desk 3.0.128 r16").
+  - `docs/provenance/SHA256SUMS-main-eb7b8bd.txt`: 782 files, `main` at commit `eb7b8bd`.
+  - `docs/provenance/SHA256SUMS.txt` predates both and matches neither; it is kept unchanged.
 - `scripts/build-package.sh [out-dir]`: stages the plugin, runs `php -l` on every PHP file, sets mtimes to `SOURCE_DATE_EPOCH` (default: HEAD commit time), and writes `titan-zero-trades-front-desk-<version>.zip`, its `.sha256`, and `SHA256SUMS.txt`. Output goes to `dist/`, which is git-ignored.
 
 Reproducibility check on 2026-11-16: two consecutive builds produced byte-identical ZIPs (`cmp` passed). The build result is recorded in the PR.

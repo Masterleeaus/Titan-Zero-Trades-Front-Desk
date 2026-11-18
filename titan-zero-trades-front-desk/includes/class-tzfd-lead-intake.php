@@ -36,6 +36,8 @@ final class TZFD_Lead_Intake {
         $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'email', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Email', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <input required aria-required="true" type="email" maxlength="190" name="email" autocomplete="email"></label>';
         $out .= '<label>' . wp_kses( TZFD_UI_Graphics::channel_html( 'phone', 24 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( 'Phone (optional)', 'titan-zero-trades-front-desk' ) . ' <input maxlength="60" name="phone" autocomplete="tel"></label>';
         $out .= '<label>' . esc_html__( 'How can we help?', 'titan-zero-trades-front-desk' ) . ' ' . $req . ' <textarea required aria-required="true" maxlength="5000" name="enquiry"></textarea></label>';
+        // Privacy consent is required before submit. The wording is PLACEHOLDER text pending owner review (filter: tzfd_enquiry_consent_text).
+        $out .= '<label class="tzfd-consent"><input required type="checkbox" name="privacy_consent" value="1"> ' . esc_html( self::consent_text() ) . '</label>';
         $out .= '<div class="tzfd-hp" aria-hidden="true" style="position:absolute;left:-9999px"><label>Website <input name="website" tabindex="-1" autocomplete="off"></label></div>';
         $out .= '<button type="submit">' . esc_html__( 'Send enquiry', 'titan-zero-trades-front-desk' ) . '</button></form>';
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only view parameter; no state change.
@@ -54,17 +56,37 @@ final class TZFD_Lead_Intake {
         $name = sanitize_text_field( wp_unslash( $_POST['name'] ?? '' ) );
         $message = sanitize_textarea_field( wp_unslash( $_POST['enquiry'] ?? '' ) );
         if ( ! is_email( $email ) || '' === trim( $name ) || '' === trim( $message ) || strlen( $message ) > 5000 ) { wp_die( esc_html__( 'Please complete all required fields', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
+        // Consent is recorded only when the box was ticked on this submission. Refusal stores nothing.
+        if ( ! isset( $_POST['privacy_consent'] ) || '1' !== sanitize_text_field( wp_unslash( $_POST['privacy_consent'] ) ) ) { wp_die( esc_html__( 'Please tick the privacy consent box to send your enquiry.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) ); }
         // One enquiry per address per company per minute. TZFD_Rate_Limit claims the slot in one atomic statement,
         // so parallel posts from one address cannot all pass a check that ran before any of them wrote.
         require_once __DIR__ . '/class-tzfd-rate-limit.php';
         $key = 'lead-intake|' . $company . '|' . (string) sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) );
         if ( ! TZFD_Rate_Limit::allow( $key, 1, MINUTE_IN_SECONDS ) ) { wp_die( esc_html__( 'Please wait before submitting another enquiry', 'titan-zero-trades-front-desk' ), '', array( 'response' => 429 ) ); }
         $ip_hash = hash_hmac( 'sha256', sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ), wp_salt( 'auth' ) );
-        $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form', 'triage_ip_hash' => $ip_hash ) );
+        $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form', 'triage_ip_hash' => $ip_hash, 'privacy_consent_utc' => gmdate( 'Y-m-d H:i:s' ) ) );
         if ( ! $saved ) { wp_die( esc_html__( 'Your enquiry could not be saved. Please contact us directly.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }
         $referer = wp_get_referer();
         wp_safe_redirect( add_query_arg( 'tzfd_enquiry_sent', '1', $referer ? $referer : home_url( '/' ) ) );
         exit;
+    }
+
+    /** Placeholder consent wording. Owner review pending; override with the tzfd_enquiry_consent_text filter. */
+    public static function consent_text() {
+        $default = '[PLACEHOLDER - pending owner review] I agree that my details may be used to reply to this enquiry.';
+        $text    = apply_filters( 'tzfd_enquiry_consent_text', $default );
+        return is_string( $text ) && '' !== trim( $text ) ? $text : $default;
+    }
+
+    /** Adds the consent column to an existing tz_enquiries table once (activation only creates it on fresh installs). */
+    private static function ensure_consent_column( $table ) {
+        global $wpdb;
+        if ( get_option( 'tzfd_enq_consent_col_v1' ) ) { return; }
+        $has = $wpdb->get_results( "SHOW COLUMNS FROM `{$table}` LIKE 'privacy_consent_utc'" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- trusted plugin table name.
+        if ( empty( $has ) ) {
+            $wpdb->query( "ALTER TABLE `{$table}` ADD COLUMN privacy_consent_utc datetime NULL DEFAULT NULL" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- trusted plugin table name, no user input.
+        }
+        update_option( 'tzfd_enq_consent_col_v1', 1, false );
     }
 
     /**
@@ -107,6 +129,8 @@ final class TZFD_Lead_Intake {
             'campaign_title'    => isset( $payload['campaign_title'] ) && is_scalar( $payload['campaign_title'] ) ? substr( sanitize_text_field( (string) $payload['campaign_title'] ), 0, 190 ) : '',
             'source'            => isset( $payload['source'] ) && is_scalar( $payload['source'] ) ? substr( sanitize_key( (string) $payload['source'] ), 0, 60 ) : '',
             'received_utc'      => $received,
+            // Null means no consent was recorded (Builder payloads and rows stored before this column existed).
+            'privacy_consent_utc' => isset( $payload['privacy_consent_utc'] ) && is_string( $payload['privacy_consent_utc'] ) && preg_match( '/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/D', $payload['privacy_consent_utc'] ) ? $payload['privacy_consent_utc'] : null,
             'status'            => 'new',
             'created'           => current_time( 'mysql' ),
         );
@@ -118,6 +142,7 @@ final class TZFD_Lead_Intake {
             $company_id, $email, $name, $enquiry, gmdate( 'Y-m-d H:i:s', current_time( 'timestamp' ) - 600 )) );
         // A duplicate is a success, not a failure: return the stored row so the caller shows the same confirmation. Nothing is stored twice.
         if ( $dupe ) { return (int) $dupe; }
+        self::ensure_consent_column( $table );
         $ok    = $wpdb->insert( $table, $row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Front Desk's own table; company_id set above.
         if ( ! $ok ) { return 0; }
         $new_id = (int) $wpdb->insert_id;

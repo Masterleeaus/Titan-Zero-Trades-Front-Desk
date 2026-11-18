@@ -312,6 +312,7 @@ final class TZFD_AI_Connector {
      */
     public static function configure( $endpoint, $site_id, $secret ) {
         if ( ! is_string( $endpoint ) || ! is_string( $site_id ) || ! is_string( $secret ) ) { return false; }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- pure-PHP suite runs without WordPress; the scheme/host check below is the same either way.
         $parts = parse_url( $endpoint );
         if ( ! is_array( $parts ) || ! isset( $parts['scheme'], $parts['host'] ) || 'https' !== strtolower( $parts['scheme'] ) ) {
             return false;
@@ -404,6 +405,7 @@ final class TZFD_AI_Connector {
 
     private static function configured( array $cfg, $secret ) {
         if ( '' === $cfg['endpoint'] || '' === $cfg['site_id'] ) { return false; }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- pure-PHP suite runs without WordPress; the scheme/host check below is the same either way.
         $parts = parse_url( $cfg['endpoint'] );
         return is_array( $parts ) && isset( $parts['scheme'], $parts['host'] )
             && 'https' === strtolower( $parts['scheme'] )

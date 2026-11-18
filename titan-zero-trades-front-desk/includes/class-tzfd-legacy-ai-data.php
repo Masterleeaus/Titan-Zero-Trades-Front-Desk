@@ -430,6 +430,11 @@ final class TZFD_Legacy_AI_Data {
         if ( empty( $file['tmp_name'] ) || ! isset( $file['error'] ) || UPLOAD_ERR_OK !== (int) $file['error'] || ! is_uploaded_file( $file['tmp_name'] ) || (int) $file['size'] > self::MAX_UPLOAD ) {
             self::back( 'bad_file' );
         }
+        // Only a .json export is accepted, matching the pack upload. The content is still parsed and validated below.
+        $name = isset( $file['name'] ) ? sanitize_file_name( wp_unslash( (string) $file['name'] ) ) : '';
+        if ( 'json' !== strtolower( pathinfo( $name, PATHINFO_EXTENSION ) ) ) {
+            self::back( 'bad_file' );
+        }
         $json   = file_get_contents( $file['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local uploaded temp file, size-checked above.
         $result = self::restore_from_json( false === $json ? '' : $json );
         self::back( $result['ok'] ? 'restored' : $result['code'] );

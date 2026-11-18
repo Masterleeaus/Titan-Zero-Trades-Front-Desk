@@ -1,6 +1,6 @@
 <?php
 /**
- * Benchmark for the Free AI foundation (#42). Not part of the assertion runner. Run by hand:
+ * Benchmark for the Free AI foundation (#42). Run by hand or in CI (exit 1 on a zero-model-call violation):
  *   php tests/unit/bench-free-ai-foundation.php
  * Reports cold (rules, cache miss) and warm (exact cache hit) answer time, and peak memory, for the 100-entry
  * pilot sizing target and a 1000-entry stress size. The 100-entry figure is a hosted pilot target, not a local
@@ -34,6 +34,7 @@ function bench_build( $entries ) {
     return array( 'store' => $store, 'search' => $search, 'mem' => $mem );
 }
 
+$failures = array();
 foreach ( array( 100, 1000 ) as $size ) {
     $mem_before = memory_get_usage();
     $t0         = microtime( true );
@@ -68,4 +69,15 @@ foreach ( array( 100, 1000 ) as $size ) {
         "entries=%-5d build=%.1fms  cold(200 q)=%.1fms (%.3fms/q)  warm(200 q)=%.1fms  cache_hits=%d  model_calls=%d  heap_delta=%.2fMB  peak=%.2fMB\n",
         $size, $build_ms, $cold_ms, $cold_ms / 200, $warm_ms, $hits, $miss_calls, $mem_used_mb, $peak_mb
     );
+
+    // Gate (correctness only, not speed): known requests must not reach a model, and the warm pass must hit the cache.
+    if ( 0 !== $miss_calls ) { $failures[] = "entries=$size: $miss_calls model calls on the cold pass"; }
+    if ( $hits < 1 ) { $failures[] = "entries=$size: warm pass produced no cache hits"; }
 }
+
+if ( $failures ) {
+    foreach ( $failures as $f ) { fwrite( STDERR, "FAIL $f\n" ); }
+    exit( 1 );
+}
+echo "PASS: zero model calls on known requests; warm pass served from cache\n";
+exit( 0 );

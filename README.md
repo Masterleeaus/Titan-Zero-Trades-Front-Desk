@@ -63,6 +63,8 @@ Required checks include activation/upgrade rollback from real previous versions;
 - **Runtime quality:** [#191](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/191), [#193](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/193), [#194](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/194), [#196](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/196).
 - **Brand/accessibility:** [#175](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/175)–[#181](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues/181), including responsive admin screens and the official name.
 
+**DB integration tests** (`tests/integration/`, CI job `db-integration`): create the two scratch databases once with `bash tests/integration/setup-scratch-dbs.sh`, then run `php tests/integration/contact-db-tests.php` and `php tests/integration/enquiry-triage-db-test.php`. Environment variables: `TZFD_TEST_DB_HOST` (default `127.0.0.1`), `TZFD_TEST_DB_PORT` (default `3306`), `TZFD_TEST_DB_USER` (default `root`), `TZFD_TEST_DB_PASS` (default empty), and `TZFD_TEST_DB_NAME` (set by CI to `tzfd_lane_test` or `tzfd_triage_test`). A missing database exits with code 2 and prints the setup command. The tests only drop tables inside their own scratch databases.
+
 A source PR, a merged feature, an installed WordPress admin page and a passing isolated PHP test are **different evidence levels**. Check each open issue's `[ ]` tasks only after its specified runtime/CI/security evidence exists; [view open tasks](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues?q=is%3Aissue+is%3Aopen).
 
 ## Commercial, licensing and release safety

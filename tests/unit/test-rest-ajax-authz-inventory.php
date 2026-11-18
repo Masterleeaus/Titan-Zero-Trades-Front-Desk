@@ -85,10 +85,15 @@ function tzfd_authz_body_for( $class, $method ) {
 	return null;
 }
 
-/** Resolves the body that actually performs the check: a helper named guard() is followed one level. */
+/**
+ * Resolves the body that actually performs the check: a helper named guard() or guard_<something>() is followed
+ * one level. The AI Services page uses guard_connector_request(), which runs current_user_can() and
+ * check_admin_referer(), so the helper prefix must cover it too.
+ */
 function tzfd_authz_effective_body( $body ) {
-	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard\(/', $body ) ) {
-		$guard = tzfd_authz_body_for( '', 'guard' );
+	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard(?:_\w+)?\(/', $body, $m ) ) {
+		$helper = substr( $m[0], strpos( $m[0], '::' ) + 2, -1 );
+		$guard  = tzfd_authz_body_for( '', $helper );
 		if ( null !== $guard ) { $body .= ' ' . $guard; }
 		// Also include every class-scoped guard, because each admin class keeps its own copy.
 		foreach ( tzfd_authz_index()['functions'] as $key => $g ) {

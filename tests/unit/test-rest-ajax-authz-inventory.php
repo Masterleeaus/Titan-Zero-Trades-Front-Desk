@@ -87,6 +87,11 @@ function tzfd_authz_body_for( $class, $method ) {
 
 /** Resolves the body that actually performs the check: a helper named guard() is followed one level. */
 function tzfd_authz_effective_body( $body ) {
+	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard_connector_request\(/', $body ) ) {
+		// AI Services handlers check the capability and the nonce inside guard_connector_request().
+		$guard = tzfd_authz_body_for( '', 'guard_connector_request' );
+		if ( null !== $guard ) { $body .= ' ' . $guard; }
+	}
 	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard\(/', $body ) ) {
 		$guard = tzfd_authz_body_for( '', 'guard' );
 		if ( null !== $guard ) { $body .= ' ' . $guard; }

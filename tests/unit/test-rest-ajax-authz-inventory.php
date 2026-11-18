@@ -85,14 +85,18 @@ function tzfd_authz_body_for( $class, $method ) {
 	return null;
 }
 
-/** Resolves the body that actually performs the check: a helper named guard() is followed one level. */
+/**
+ * Resolves the body that actually performs the check: a helper named guard() or guard_connector_request()
+ * (the AI Services admin guard, which checks the capability and check_admin_referer) is followed one level.
+ */
 function tzfd_authz_effective_body( $body ) {
-	if ( null !== $body && preg_match( '/(?:self|static|\$this)::guard\(/', $body ) ) {
-		$guard = tzfd_authz_body_for( '', 'guard' );
+	foreach ( array( 'guard', 'guard_connector_request' ) as $helper ) {
+		if ( null === $body || ! preg_match( '/(?:self|static|\$this)::' . $helper . '\(/', $body ) ) { continue; }
+		$guard = tzfd_authz_body_for( '', $helper );
 		if ( null !== $guard ) { $body .= ' ' . $guard; }
-		// Also include every class-scoped guard, because each admin class keeps its own copy.
+		// Also include every class-scoped copy of the helper, because each admin class keeps its own.
 		foreach ( tzfd_authz_index()['functions'] as $key => $g ) {
-			if ( '::guard' === substr( $key, -7 ) ) { $body .= ' ' . $g; }
+			if ( '::' . $helper === substr( $key, -strlen( '::' . $helper ) ) ) { $body .= ' ' . $g; }
 		}
 	}
 	return (string) $body;

@@ -1,4 +1,5 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 /**
  * Unit checks for TZFD_Human_Handoff (issue #27). Pure PHP, no WordPress needed.
  * Run: php -I /home/claude/wt/issue-27/tests/runtime/handoff-unit-tests.php

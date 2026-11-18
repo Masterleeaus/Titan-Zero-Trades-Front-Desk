@@ -19,6 +19,8 @@ final class TZFD_Booking_View {
     const MAX_ROWS = 20000;
     /** Chips shown in one Month cell before the "+ more" link. */
     const MONTH_CHIPS = 3;
+    /** Colour slots for service types on the Calendar screen. Each slot has a tzfd-svc-N style in admin-layout (issue #179). */
+    const SERVICE_COLOURS = 8;
     private static $calendar_names_available = true;
 
     /* ---------------------------------------------------------------
@@ -432,6 +434,7 @@ final class TZFD_Booking_View {
 
     /** Week view: seven columns, one per day, with the day's appointments listed in each. */
     private static function render_week( array $range, array $by ) {
+        echo self::scroll_hint();
         echo '<div class="tzfd-card tzfd-cal-scroll"><table class="tzfd-cal-grid tzfd-cal-week"><thead><tr>';
         foreach ( $range['days'] as $day ) {
             echo '<th scope="col"' . ( self::is_today( $day ) ? ' class="tzfd-cal-today"' : '' ) . '><a href="' . esc_url( self::url( array( 'view' => 'day', 'date' => $day, 'fcal' => self::cal_arg() ) ) ) . '">' . esc_html( self::label( $day, 'D j M' ) ) . '</a></th>';
@@ -448,6 +451,7 @@ final class TZFD_Booking_View {
     /** Month view: a grid of whole weeks. Days outside the month are muted; busy days link to their Day view. */
     private static function render_month( array $range, array $by ) {
         $month = substr( $range['date'], 0, 7 );
+        echo self::scroll_hint();
         echo '<div class="tzfd-card tzfd-cal-scroll"><table class="tzfd-cal-grid tzfd-cal-month"><thead><tr>';
         for ( $i = 0; $i < 7; $i++ ) {
             echo '<th scope="col">' . esc_html( self::label( $range['days'][ $i ], 'D' ) ) . '</th>';
@@ -475,13 +479,30 @@ final class TZFD_Booking_View {
      * Small render helpers
      * ------------------------------------------------------------- */
 
+    /** Shown above the week and month grids. It is hidden on wide screens and visible on narrow ones, where the grid scrolls sideways (issue #179). */
+    public static function scroll_hint() {
+        return '<p class="tzfd-cal-hint">' . esc_html__( 'Swipe sideways to see every day.', 'titan-zero-trades-front-desk' ) . '</p>';
+    }
+
     /** One appointment as a coloured chip linking to its calendar's Booking Orders. */
     private static function render_chip( array $item ) {
         $text = trim( ( '' !== $item['start'] ? $item['start'] . ' ' : '' ) . $item['customer'] );
         $title = trim( $item['customer'] . ' · ' . $item['service'] . ' · ' . $item['status'] . ' · ' . $item['calendar'], ' ·' );
-        // Live bookings take a colour from their service so each service reads at a glance; cancelled ones keep the status style.
-        $svc = 'cancelled' === $item['status_class'] ? '' : ' tzfd-svc-' . ( ( crc32( (string) $item['service'] ) & 3 ) + 1 );
+        // Live bookings take the colour of their service type, so each service reads at a glance; cancelled ones keep the status style.
+        $svc = 'cancelled' === $item['status_class'] ? '' : ' tzfd-svc-' . self::service_colour_slot( $item['service'] );
         echo '<a class="tzfd-chip tzfd-chip-' . esc_attr( $item['status_class'] ) . esc_attr( $svc ) . '" href="' . esc_url( self::booking_list_url( $item ) ) . '" title="' . esc_attr( $title ) . '">' . esc_html( $text ) . '</a>';
+    }
+
+    /**
+     * Colour slot (1 to SERVICE_COLOURS) for a service type. The same service name always gets the same slot, in every
+     * view and period, and names are compared without case or surrounding spaces. Issue #179.
+     *
+     * @param string $service Service name as stored on the booking.
+     * @return int
+     */
+    public static function service_colour_slot( $service ) {
+        $key = strtolower( trim( (string) $service ) );
+        return ( (int) sprintf( '%u', crc32( $key ) ) % self::SERVICE_COLOURS ) + 1;
     }
 
     private static function time_text( array $item ) {

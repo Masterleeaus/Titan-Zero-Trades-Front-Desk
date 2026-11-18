@@ -4,8 +4,13 @@
  * MariaDB server, through a minimal $wpdb shim and a few WordPress function stubs. It is NOT a WordPress install: it
  * does not test the admin screen rendering, nonces or capability checks in WordPress itself.
  *
- * Run from the repository root with a scratch database that may be created and dropped:
- *   TZFD_TEST_DB_HOST=localhost TZFD_TEST_DB_USER=root TZFD_TEST_DB_PASS= TZFD_TEST_DB_NAME=tzfd_triage_test \
+ * Environment:
+ *   TZFD_TEST_DB_NAME  scratch database (required; the test drops and recreates its tables in it).
+ *   TZFD_TEST_DB_HOST  host (default localhost). TZFD_TEST_DB_PORT TCP port (default 3306).
+ *   TZFD_TEST_DB_USER / TZFD_TEST_DB_PASS  credentials (default root, empty password).
+ * Create the scratch database first: bash tests/integration/setup-scratch-dbs.sh (it creates tzfd_triage_test too).
+ * Run from the repository root:
+ *   TZFD_TEST_DB_HOST=127.0.0.1 TZFD_TEST_DB_USER=root TZFD_TEST_DB_PASS= TZFD_TEST_DB_NAME=tzfd_triage_test \
  *     php tests/integration/enquiry-triage-db-test.php
  */
 if ( ! getenv( 'TZFD_TEST_DB_NAME' ) ) { fwrite( STDERR, "Set TZFD_TEST_DB_NAME (scratch database).\n" ); exit( 2 ); }
@@ -19,7 +24,15 @@ define( 'ABSPATH', $abs );
 define( 'MINUTE_IN_SECONDS', 60 );
 
 mysqli_report( MYSQLI_REPORT_OFF ); // $wpdb reports errors through last_error, not exceptions.
-$mysqli = new mysqli( getenv( 'TZFD_TEST_DB_HOST' ) ?: 'localhost', getenv( 'TZFD_TEST_DB_USER' ) ?: 'root', (string) getenv( 'TZFD_TEST_DB_PASS' ), getenv( 'TZFD_TEST_DB_NAME' ) );
+$db_name = getenv( 'TZFD_TEST_DB_NAME' );
+$db_port = (int) ( getenv( 'TZFD_TEST_DB_PORT' ) ?: ini_get( 'mysqli.default_port' ) );
+try {
+	$mysqli = new mysqli( getenv( 'TZFD_TEST_DB_HOST' ) ?: 'localhost', getenv( 'TZFD_TEST_DB_USER' ) ?: 'root', (string) getenv( 'TZFD_TEST_DB_PASS' ), $db_name, $db_port );
+} catch ( mysqli_sql_exception $e ) {
+	fwrite( STDERR, "Connect failed for scratch database '{$db_name}': " . $e->getMessage() . "\n" );
+	fwrite( STDERR, "Create it first: bash tests/integration/setup-scratch-dbs.sh (see the header of this file).\n" );
+	exit( 2 );
+}
 if ( $mysqli->connect_errno ) { fwrite( STDERR, 'Connect failed: ' . $mysqli->connect_error . "\n" ); exit( 2 ); }
 
 /** Minimal $wpdb: prepare() with %i %d %s, plus the methods the triage code calls. */

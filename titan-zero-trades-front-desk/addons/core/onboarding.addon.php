@@ -669,16 +669,16 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 if ( '' !== $err ) return self::go( 8, $err );
 
                 // Booking intake: the chosen mode becomes the site default and applies to every calendar in the setup.
-                $tz_intake = TZFD_Intake_Mode::normalize( $d['intake_mode'] ?? '' );
-                TZFD_Intake_Mode::set_default( $tz_intake );
+                $tzfd_intake = TZFD_Intake_Mode::normalize( $d['intake_mode'] ?? '' );
+                TZFD_Intake_Mode::set_default( $tzfd_intake );
                 global $wpdb;
-                $tz_intake_ids = $wpdb->get_col( $wpdb->prepare(
+                $tzfd_intake_ids = $wpdb->get_col( $wpdb->prepare(
                     'SELECT id FROM %i WHERE company_id = %d',
                     $wpdb->prefix . TZFD_Tables::FORMS,
                     TZFD_Scoped_Store::company_id()
                 ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin's own table name, bound with %i.
-                foreach ( (array) $tz_intake_ids as $tz_intake_id ) {
-                    TZFD_Intake_Mode::set_for_form( (int) $tz_intake_id, $tz_intake );
+                foreach ( (array) $tzfd_intake_ids as $tzfd_intake_id ) {
+                    TZFD_Intake_Mode::set_for_form( (int) $tzfd_intake_id, $tzfd_intake );
                 }
 
                 TZFD_Scoped_Store::update( self::DONE, gmdate( 'Y-m-d H:i' ) . ' UTC' );
@@ -1014,10 +1014,10 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<h2>' . esc_html__( '8. Booking confirmation and text-back', 'titan-zero-trades-front-desk' ) . '</h2>';
                 echo wp_kses( $form_open, self::form_allowed_html() );
                 echo '<input type="hidden" name="tz_fd_setup_action" value="confirm" />';
-                $tz_intake_now = isset( $d['intake_mode'] ) ? $d['intake_mode'] : TZFD_Intake_Mode::default_mode();
+                $tzfd_intake_now = isset( $d['intake_mode'] ) ? $d['intake_mode'] : TZFD_Intake_Mode::default_mode();
                 echo '<p><label>' . esc_html__( 'When a customer books online, how should it be confirmed?', 'titan-zero-trades-front-desk' ) . '<br><select name="intake_mode">';
-                echo '<option value="instant"' . selected( $tz_intake_now, TZFD_Intake_Mode::MODE_INSTANT, false ) . '>' . esc_html__( 'Straight away. The booking is confirmed at once.', 'titan-zero-trades-front-desk' ) . '</option>';
-                echo '<option value="request"' . selected( $tz_intake_now, TZFD_Intake_Mode::MODE_REQUEST, false ) . '>' . esc_html__( 'After I approve it. The booking waits as Pending until you approve it.', 'titan-zero-trades-front-desk' ) . '</option>';
+                echo '<option value="instant"' . selected( $tzfd_intake_now, TZFD_Intake_Mode::MODE_INSTANT, false ) . '>' . esc_html__( 'Straight away. The booking is confirmed at once.', 'titan-zero-trades-front-desk' ) . '</option>';
+                echo '<option value="request"' . selected( $tzfd_intake_now, TZFD_Intake_Mode::MODE_REQUEST, false ) . '>' . esc_html__( 'After I approve it. The booking waits as Pending until you approve it.', 'titan-zero-trades-front-desk' ) . '</option>';
                 echo '</select></label></p>';
                 echo '<p class="description">' . esc_html__( 'Choose "After I approve it" if you check every job before you accept it. You can change this for each calendar later in Settings.', 'titan-zero-trades-front-desk' ) . '</p>';
                 echo '<h3>' . esc_html__( 'Text back missed calls (optional)', 'titan-zero-trades-front-desk' ) . '</h3>';
@@ -1031,8 +1031,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<h2>' . esc_html__( '9. Review and finish', 'titan-zero-trades-front-desk' ) . '</h2>';
                 echo '<p>' . esc_html__( 'Trade:', 'titan-zero-trades-front-desk' ) . ' <strong>' . esc_html( $draft['vertical'] ?: '—' ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Services:', 'titan-zero-trades-front-desk' ) . ' <strong>' . count( $draft['services'] ) . '</strong></p>';
-                $tz_review_mode = TZFD_Intake_Mode::normalize( $draft['details']['intake_mode'] ?? '' );
-                echo '<p>' . esc_html__( 'Booking confirmation:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( TZFD_Intake_Mode::MODE_REQUEST === $tz_review_mode ? esc_html__( 'after you approve it', 'titan-zero-trades-front-desk' ) : esc_html__( 'straight away', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
+                $tzfd_review_mode = TZFD_Intake_Mode::normalize( $draft['details']['intake_mode'] ?? '' );
+                echo '<p>' . esc_html__( 'Booking confirmation:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( TZFD_Intake_Mode::MODE_REQUEST === $tzfd_review_mode ? esc_html__( 'after you approve it', 'titan-zero-trades-front-desk' ) : esc_html__( 'straight away', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Booking page:', 'titan-zero-trades-front-desk' ) . ' <strong>' . esc_html( self::booking_summary( $draft['details'] ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Text back missed calls:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( ! empty( $draft['details']['missed_call_on'] ) ? esc_html__( 'on', 'titan-zero-trades-front-desk' ) : esc_html__( 'off', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
                 self::render_ai_setup_review( $draft );
@@ -1049,9 +1049,9 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
     } // End Class
 
     // Main add-on code
-    $tz_onboarding_obj = new TZFD_Onboarding();
+    $tzfd_onboarding_obj = new TZFD_Onboarding();
 
     // Add addon object to the objects list
-    global $tz_addons_objs_list;
-    $tz_addons_objs_list[ $tz_onboarding_obj->get_addon_id() ] = $tz_onboarding_obj;
+    global $tzfd_addons_objs_list;
+    $tzfd_addons_objs_list[ $tzfd_onboarding_obj->get_addon_id() ] = $tzfd_onboarding_obj;
 }

@@ -1,52 +1,52 @@
 <?php
 /**
  * Partial: list table for one set of records. Read-only.
- * Expects $tz_table = array('caption', 'columns' => [label...], 'rows' => [array('url', 'cells' => [...])], 'empty').
+ * Expects $tzfd_table = array('caption', 'columns' => [label...], 'rows' => [array('url', 'cells' => [...])], 'empty').
  * A cell is a string, or array('text', 'badge' => true, 'tone'). The first cell links to 'url' when given.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-$tz_domain  = isset( $tz_app['domain'] ) ? (string) $tz_app['domain'] : 'default';
-$tz_table   = isset( $tz_table ) && is_array( $tz_table ) ? $tz_table : array();
-$tz_columns = isset( $tz_table['columns'] ) && is_array( $tz_table['columns'] ) ? array_values( $tz_table['columns'] ) : array();
-$tz_rows    = isset( $tz_table['rows'] ) && is_array( $tz_table['rows'] ) ? $tz_table['rows'] : array();
-$tz_caption = isset( $tz_table['caption'] ) ? (string) $tz_table['caption'] : '';
-$tz_allowed_tones = array( 'ink', 'info', 'ok', 'warn', 'bad', 'neutral' );
-if ( empty( $tz_rows ) ) :
-	$tz_empty_title = '';
-	$tz_empty_text  = isset( $tz_table['empty'] ) ? (string) $tz_table['empty'] : __( 'Nothing to show yet.', 'titan-zero-trades-front-desk' );
+$tzfd_domain  = isset( $tzfd_app['domain'] ) ? (string) $tzfd_app['domain'] : 'default';
+$tzfd_table   = isset( $tzfd_table ) && is_array( $tzfd_table ) ? $tzfd_table : array();
+$tzfd_columns = isset( $tzfd_table['columns'] ) && is_array( $tzfd_table['columns'] ) ? array_values( $tzfd_table['columns'] ) : array();
+$tzfd_local_rows    = isset( $tzfd_table['rows'] ) && is_array( $tzfd_table['rows'] ) ? $tzfd_table['rows'] : array();
+$tzfd_caption = isset( $tzfd_table['caption'] ) ? (string) $tzfd_table['caption'] : '';
+$tzfd_allowed_tones = array( 'ink', 'info', 'ok', 'warn', 'bad', 'neutral' );
+if ( empty( $tzfd_local_rows ) ) :
+	$tzfd_empty_title = '';
+	$tzfd_empty_text  = isset( $tzfd_table['empty'] ) ? (string) $tzfd_table['empty'] : __( 'Nothing to show yet.', 'titan-zero-trades-front-desk' );
 	include __DIR__ . '/empty-state.php';
 else :
 ?>
-<div class="tz-app-table-wrap" role="region" tabindex="0" aria-label="<?php echo esc_attr( $tz_caption ); ?>">
+<div class="tz-app-table-wrap" role="region" tabindex="0" aria-label="<?php echo esc_attr( $tzfd_caption ); ?>">
 	<table class="tz-app-table">
-		<?php if ( '' !== $tz_caption ) : ?><caption class="screen-reader-text"><?php echo esc_html( $tz_caption ); ?></caption><?php endif; ?>
+		<?php if ( '' !== $tzfd_caption ) : ?><caption class="screen-reader-text"><?php echo esc_html( $tzfd_caption ); ?></caption><?php endif; ?>
 		<thead>
 			<tr>
-				<?php foreach ( $tz_columns as $tz_col ) : ?>
-					<th scope="col"><?php echo esc_html( (string) $tz_col ); ?></th>
+				<?php foreach ( $tzfd_columns as $tzfd_col ) : ?>
+					<th scope="col"><?php echo esc_html( (string) $tzfd_col ); ?></th>
 				<?php endforeach; ?>
 			</tr>
 		</thead>
 		<tbody>
-			<?php foreach ( $tz_rows as $tz_row ) :
-				$tz_url   = isset( $tz_row['url'] ) ? (string) $tz_row['url'] : '';
-				$tz_cells = isset( $tz_row['cells'] ) && is_array( $tz_row['cells'] ) ? array_values( $tz_row['cells'] ) : array();
+			<?php foreach ( $tzfd_local_rows as $tzfd_local_row ) :
+				$tzfd_url   = isset( $tzfd_local_row['url'] ) ? (string) $tzfd_local_row['url'] : '';
+				$tzfd_cells = isset( $tzfd_local_row['cells'] ) && is_array( $tzfd_local_row['cells'] ) ? array_values( $tzfd_local_row['cells'] ) : array();
 				?>
 				<tr>
-					<?php foreach ( $tz_cells as $tz_i => $tz_cell ) :
-						$tz_is_arr = is_array( $tz_cell );
-						$tz_text   = $tz_is_arr ? (string) ( $tz_cell['text'] ?? '' ) : (string) $tz_cell;
-						$tz_label  = isset( $tz_columns[ $tz_i ] ) ? (string) $tz_columns[ $tz_i ] : '';
+					<?php foreach ( $tzfd_cells as $tzfd_i => $tzfd_cell ) :
+						$tzfd_is_arr = is_array( $tzfd_cell );
+						$tzfd_text   = $tzfd_is_arr ? (string) ( $tzfd_cell['text'] ?? '' ) : (string) $tzfd_cell;
+						$tzfd_label  = isset( $tzfd_columns[ $tzfd_i ] ) ? (string) $tzfd_columns[ $tzfd_i ] : '';
 						?>
-						<td data-label="<?php echo esc_attr( $tz_label ); ?>">
-							<?php if ( $tz_is_arr && ! empty( $tz_cell['badge'] ) ) :
-								$tz_badge_text = $tz_text;
-								$tz_badge_tone = in_array( (string) ( $tz_cell['tone'] ?? '' ), $tz_allowed_tones, true ) ? (string) $tz_cell['tone'] : 'neutral';
+						<td data-label="<?php echo esc_attr( $tzfd_label ); ?>">
+							<?php if ( $tzfd_is_arr && ! empty( $tzfd_cell['badge'] ) ) :
+								$tzfd_badge_text = $tzfd_text;
+								$tzfd_badge_tone = in_array( (string) ( $tzfd_cell['tone'] ?? '' ), $tzfd_allowed_tones, true ) ? (string) $tzfd_cell['tone'] : 'neutral';
 								include __DIR__ . '/status-badge.php';
-							elseif ( 0 === $tz_i && '' !== $tz_url ) : ?>
-								<a href="<?php echo esc_url( $tz_url ); ?>"><?php echo esc_html( $tz_text ); ?></a>
+							elseif ( 0 === $tzfd_i && '' !== $tzfd_url ) : ?>
+								<a href="<?php echo esc_url( $tzfd_url ); ?>"><?php echo esc_html( $tzfd_text ); ?></a>
 							<?php else : ?>
-								<?php echo esc_html( $tz_text ); ?>
+								<?php echo esc_html( $tzfd_text ); ?>
 							<?php endif; ?>
 						</td>
 					<?php endforeach; ?>

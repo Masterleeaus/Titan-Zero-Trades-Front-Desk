@@ -4,9 +4,9 @@
  * Run: wp --allow-root eval-file tests/runtime/security-runtime-tests.php
  * Requires the plugin active on the disposable test site (see WP-TESTSITE.md).
  */
-$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php', 'class-tzfd-signed-request.php' ) as $tz_file ) {
-    require_once $tz_inc . $tz_file;
+$tzfd_local_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
+foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php', 'class-tzfd-signed-request.php' ) as $tzfd_local_file ) {
+    require_once $tzfd_local_inc . $tzfd_local_file;
 }
 global $wpdb;
 $GLOBALS['sr_pass'] = 0; $GLOBALS['sr_fail'] = 0;

@@ -16,9 +16,9 @@ if ( null === $this->item ) {
 require_once __DIR__ . '/includes/class-tzfd-admin-report-scope.php';
 TZFD_Admin_Report_Scope::enforce( $this->item );
 $current_user = wp_get_current_user();
-$tz_current_user_access = current_user_can( 'tz_fd_access' );
-$tz_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
-if ( ! is_admin() || ( ! $tz_current_user_access && ! in_array( $current_user->ID, $tz_calendar_access_ids, true ) ) ) {
+$tzfd_current_user_access = current_user_can( 'tz_fd_access' );
+$tzfd_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
+if ( ! is_admin() || ( ! $tzfd_current_user_access && ! in_array( $current_user->ID, $tzfd_calendar_access_ids, true ) ) ) {
     wp_die( esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 
@@ -29,11 +29,11 @@ define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_
 define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_BOOK_DEFAULT_fp_from_email);
 
 // Notice only. Shown only after a save whose anonce is valid (the same tz_fd_actions_admin check the save handler makes).
-$tz_saved_notice = ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST[$this->prefix.'_post_options'] ) && wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_admin' ) );
-if ( $tz_saved_notice )
+$tzfd_saved_notice = ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST[$this->prefix.'_post_options'] ) && wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_admin' ) );
+if ( $tzfd_saved_notice )
     echo "<div id='setting-error-settings_updated' class='updated'> <h2>" . esc_html__( 'Settings saved.', 'titan-zero-trades-front-desk' ) . "</h2></div>";
 
-$tz_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
+$tzfd_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
 // Page assets (review R2). This template renders after admin_enqueue_scripts, so the handles are enqueued here.
 // Both are printed by WordPress on the admin page (footer script, late style).
 wp_register_style( 'tzfd-admin-int-inline', false, array(), '2.0.1' );
@@ -52,7 +52,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
 
 
 <form method="post" action="" name="tzfdformconf">
-<input name="anonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+<input name="anonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
 <input name="<?php echo esc_attr($this->prefix); ?>_post_options" type="hidden" value="1" />
 <input name="<?php echo esc_attr($this->prefix); ?>_id" type="hidden" value="<?php echo intval($this->item); ?>" />
 <input type="hidden" name="templates" id="templates" value="<?php echo esc_attr( wp_json_encode( $this->available_templates() ) ); ?>" />
@@ -149,20 +149,20 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <td scope="row">
              <strong><?php esc_html_e('Submit button label (text)','titan-zero-trades-front-desk'); ?>:</strong><br />
-             <input type="text" name="vs_text_submitbtn" size="40" value="<?php $tz_label = ($this->get_option('vs_text_submitbtn', 'Submit')); echo esc_attr($tz_label==''?'Submit':$tz_label); ?>" />
+             <input type="text" name="vs_text_submitbtn" size="40" value="<?php $tzfd_label = ($this->get_option('vs_text_submitbtn', 'Submit')); echo esc_attr($tzfd_label==''?'Submit':$tzfd_label); ?>" />
             </td>
             <td>
               <strong><?php esc_html_e('Page {0} of {0} (text','titan-zero-trades-front-desk'); ?>):</strong><br />
-              <input type="text" name="vs_text_pageof" size="40" value="<?php $tz_label = ($this->get_option('vs_text_pageof', 'Page {0} of {0}')); echo esc_attr($tz_label==''?'Page {0} of {0}':$tz_label); ?>" />
+              <input type="text" name="vs_text_pageof" size="40" value="<?php $tzfd_label = ($this->get_option('vs_text_pageof', 'Page {0} of {0}')); echo esc_attr($tzfd_label==''?'Page {0} of {0}':$tzfd_label); ?>" />
             </td>
             </tr>
             <tr valign="top">
             <td scope="row">
              <strong><?php esc_html_e('Previous page button label (text)','titan-zero-trades-front-desk'); ?>:</strong><br />
-             <input type="text" name="vs_text_previousbtn" size="40" value="<?php $tz_label = ($this->get_option('vs_text_previousbtn', 'Previous')); echo esc_attr($tz_label==''?'Previous':$tz_label); ?>" /></td>
+             <input type="text" name="vs_text_previousbtn" size="40" value="<?php $tzfd_label = ($this->get_option('vs_text_previousbtn', 'Previous')); echo esc_attr($tzfd_label==''?'Previous':$tzfd_label); ?>" /></td>
             <td scope="row">
              <strong><?php esc_html_e('Next page button label (text)','titan-zero-trades-front-desk'); ?>:</strong><br />
-             <input type="text" name="vs_text_nextbtn" size="40" value="<?php $tz_label = $this->get_option('vs_text_nextbtn', 'Next'); echo esc_attr($tz_label==''?'Next':$tz_label); ?>" /></td>
+             <input type="text" name="vs_text_nextbtn" size="40" value="<?php $tzfd_label = $this->get_option('vs_text_nextbtn', 'Next'); echo esc_attr($tzfd_label==''?'Next':$tzfd_label); ?>" /></td>
             </tr>
             <tr valign="top">
             <td colspan="2">The  <em>class="pbSubmit"</em> can be used to modify the button styles.  For further modifications the submit button is located at the end of the file <em>"tzfd-public-int.inc.php"</em>. For general CSS styles modifications to the form and samples check the FAQ.</td>
@@ -262,7 +262,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
         <hr>
 		<div class="tzfd-buttons-container">
 			<input type="button" value="<?php esc_html_e('Next Step - General Settings >','titan-zero-trades-front-desk'); ?>" class="button tzfd-action-right" data-tzfd-goto="2" />
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>
@@ -303,110 +303,110 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
          <table class="form-table">
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Date Format','titan-zero-trades-front-desk'); ?></th>
-            <td><?php $tz_v = $this->get_option('date_format','mm/dd/yy'); ?>
+            <td><?php $tzfd_local_v = $this->get_option('date_format','mm/dd/yy'); ?>
          	   <select name="date_format" id="date_format">
-    		   <option <?php if ($tz_v == '' || $tz_v == 'mm/dd/yy') echo 'selected'; ?> value="mm/dd/yy"><?php echo esc_html__( 'Default - mm/dd/yyyy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'dd/mm/yy') echo 'selected'; ?> value="dd/mm/yy"><?php echo esc_html__( 'dd/mm/yyyy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'mm.dd.yy') echo 'selected'; ?> value="mm.dd.yy"><?php echo esc_html__( 'mm.dd.yyyy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'dd.mm.yy') echo 'selected'; ?> value="dd.mm.yy"><?php echo esc_html__( 'dd.mm.yyyy', 'titan-zero-trades-front-desk' ); ?></option>
-    		   <option <?php if ($tz_v == 'yy-mm-dd') echo 'selected'; ?> value="yy-mm-dd"><?php echo esc_html__( 'ISO 8601 - yyyy-mm-dd', 'titan-zero-trades-front-desk' ); ?></option>
-    		   <option <?php if ($tz_v == 'd M, y') echo 'selected'; ?> value="d M, y"><?php echo esc_html__( 'Short (UK) - d M, yy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'M d, yy') echo 'selected'; ?> value="M d, yy"><?php echo esc_html__( 'Short - M d, yy', 'titan-zero-trades-front-desk' ); ?></option>
-    		   <option <?php if ($tz_v == 'd MM, y') echo 'selected'; ?> value="d MM, y"><?php echo esc_html__( 'Medium (UK) - d MM, yy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'MM d, yy') echo 'selected'; ?> value="MM d, yy"><?php echo esc_html__( 'Medium - MM d, yy', 'titan-zero-trades-front-desk' ); ?></option>
-    		   <option <?php if ($tz_v == 'DD, d MM, yy') echo 'selected'; ?> value="DD, d MM, yy"><?php echo esc_html__( 'Full (UK) - DD, d MM, yyyy', 'titan-zero-trades-front-desk' ); ?></option>
-               <option <?php if ($tz_v == 'DD, MM d, yy') echo 'selected'; ?> value="DD, MM d, yy"><?php echo esc_html__( 'Full - DD, MM d, yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+    		   <option <?php if ($tzfd_local_v == '' || $tzfd_local_v == 'mm/dd/yy') echo 'selected'; ?> value="mm/dd/yy"><?php echo esc_html__( 'Default - mm/dd/yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'dd/mm/yy') echo 'selected'; ?> value="dd/mm/yy"><?php echo esc_html__( 'dd/mm/yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'mm.dd.yy') echo 'selected'; ?> value="mm.dd.yy"><?php echo esc_html__( 'mm.dd.yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'dd.mm.yy') echo 'selected'; ?> value="dd.mm.yy"><?php echo esc_html__( 'dd.mm.yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+    		   <option <?php if ($tzfd_local_v == 'yy-mm-dd') echo 'selected'; ?> value="yy-mm-dd"><?php echo esc_html__( 'ISO 8601 - yyyy-mm-dd', 'titan-zero-trades-front-desk' ); ?></option>
+    		   <option <?php if ($tzfd_local_v == 'd M, y') echo 'selected'; ?> value="d M, y"><?php echo esc_html__( 'Short (UK) - d M, yy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'M d, yy') echo 'selected'; ?> value="M d, yy"><?php echo esc_html__( 'Short - M d, yy', 'titan-zero-trades-front-desk' ); ?></option>
+    		   <option <?php if ($tzfd_local_v == 'd MM, y') echo 'selected'; ?> value="d MM, y"><?php echo esc_html__( 'Medium (UK) - d MM, yy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'MM d, yy') echo 'selected'; ?> value="MM d, yy"><?php echo esc_html__( 'Medium - MM d, yy', 'titan-zero-trades-front-desk' ); ?></option>
+    		   <option <?php if ($tzfd_local_v == 'DD, d MM, yy') echo 'selected'; ?> value="DD, d MM, yy"><?php echo esc_html__( 'Full (UK) - DD, d MM, yyyy', 'titan-zero-trades-front-desk' ); ?></option>
+               <option <?php if ($tzfd_local_v == 'DD, MM d, yy') echo 'selected'; ?> value="DD, MM d, yy"><?php echo esc_html__( 'Full - DD, MM d, yyyy', 'titan-zero-trades-front-desk' ); ?></option>
         	   </select>
             </td>
             </tr>
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Calendar Language','titan-zero-trades-front-desk'); ?></th>
-            <td><?php $tz_v = $this->get_option('calendar_language',''); ?>
+            <td><?php $tzfd_local_v = $this->get_option('calendar_language',''); ?>
                  <select name="calendar_language" id="calendar_language">
-    <option <?php if ($tz_v == '') echo 'selected'; ?> value=""><?php echo esc_html__( ' - auto-detect - ', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'af') echo 'selected'; ?> value="af"><?php echo esc_html__( 'Afrikaans', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'sq') echo 'selected'; ?> value="sq"><?php echo esc_html__( 'Albanian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ar') echo 'selected'; ?> value="ar"><?php echo esc_html__( 'Arabic', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ar_DZ') echo 'selected'; ?> value="ar_DZ"><?php echo esc_html__( 'Arabic (Algeria)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'hy_AM') echo 'selected'; ?> value="hy_AM"><?php echo esc_html__( 'Armenian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'az') echo 'selected'; ?> value="az"><?php echo esc_html__( 'Azerbaijani', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'eu') echo 'selected'; ?> value="eu"><?php echo esc_html__( 'Basque', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'bs_BA') echo 'selected'; ?> value="bs_BA"><?php echo esc_html__( 'Bosnian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'bg_BG') echo 'selected'; ?> value="bg_BG"><?php echo esc_html__( 'Bulgarian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'be_BY') echo 'selected'; ?> value="be_BY"><?php echo esc_html__( 'Byelorussian (Belarusian)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'km') echo 'selected'; ?> value="km"><?php echo esc_html__( 'Cambodian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ca') echo 'selected'; ?> value="ca"><?php echo esc_html__( 'Catalan', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'zh_HK') echo 'selected'; ?> value="zh_HK"><?php echo esc_html__( 'Chinese (Hong Kong SAR)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'zh_CN') echo 'selected'; ?> value="zh_CN"><?php echo esc_html__( 'Chinese (PRC)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'zh_TW') echo 'selected'; ?> value="zh_TW"><?php echo esc_html__( 'Chinese (Taiwan)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'hr') echo 'selected'; ?> value="hr"><?php echo esc_html__( 'Croatian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'cs_CZ') echo 'selected'; ?> value="cs_CZ"><?php echo esc_html__( 'Czech', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'da_DK') echo 'selected'; ?> value="da_DK"><?php echo esc_html__( 'Danish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'nl_NL') echo 'selected'; ?> value="nl_NL"><?php echo esc_html__( 'Dutch', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'nl_BE') echo 'selected'; ?> value="nl_BE"><?php echo esc_html__( 'Dutch - Belgium', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'en_AU') echo 'selected'; ?> value="en_AU"><?php echo esc_html__( 'English (Australia)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'en_NZ') echo 'selected'; ?> value="en_NZ"><?php echo esc_html__( 'English (New Zealand)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'en_GB') echo 'selected'; ?> value="en_GB"><?php echo esc_html__( 'English (United Kingdom)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'eo_EO') echo 'selected'; ?> value="eo"><?php echo esc_html__( 'Esperanto', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'et') echo 'selected'; ?> value="et"><?php echo esc_html__( 'Estonian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fo') echo 'selected'; ?> value="fo"><?php echo esc_html__( 'Faeroese', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fa_IR') echo 'selected'; ?> value="fa_IR"><?php echo esc_html__( 'Farsi', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fi') echo 'selected'; ?> value="fi"><?php echo esc_html__( 'Finnish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fr_FR') echo 'selected'; ?> value="fr_FR"><?php echo esc_html__( 'French', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fr_CA') echo 'selected'; ?> value="fr_CA"><?php echo esc_html__( 'French (Canada)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'fr_CH') echo 'selected'; ?> value="fr_CH"><?php echo esc_html__( 'French (Switzerland)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'gl_ES') echo 'selected'; ?> value="gl_ES"><?php echo esc_html__( 'Galician', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ka_GE') echo 'selected'; ?> value="ka_GE"><?php echo esc_html__( 'Georgian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'de_DE') echo 'selected'; ?> value="de_DE"><?php echo esc_html__( 'German', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'el') echo 'selected'; ?> value="el"><?php echo esc_html__( 'Greek', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'he_IL') echo 'selected'; ?> value="he_IL"><?php echo esc_html__( 'Hebrew', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'hi_IN') echo 'selected'; ?> value="hi_IN"><?php echo esc_html__( 'Hindi', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'hu_HU') echo 'selected'; ?> value="hu_HU"><?php echo esc_html__( 'Hungarian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'is') echo 'selected'; ?> value="is"><?php echo esc_html__( 'Icelandic', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'id_ID') echo 'selected'; ?> value="id_ID"><?php echo esc_html__( 'Indonesian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'it_IT') echo 'selected'; ?> value="it_IT"><?php echo esc_html__( 'Italian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'it_CH') echo 'selected'; ?> value="it_CH"><?php echo esc_html__( 'Italian (Switzerland)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ja') echo 'selected'; ?> value="ja"><?php echo esc_html__( 'Japanese', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'kk') echo 'selected'; ?> value="kk"><?php echo esc_html__( 'Kazakh', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ky') echo 'selected'; ?> value="ky"><?php echo esc_html__( 'Kirghiz', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ko_KR') echo 'selected'; ?> value="ko_KR"><?php echo esc_html__( 'Korean', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'lv') echo 'selected'; ?> value="lv"><?php echo esc_html__( 'Latvian (Lettish)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'lt_LT') echo 'selected'; ?> value="lt_LT"><?php echo esc_html__( 'Lithuanian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'lb') echo 'selected'; ?> value="lb"><?php echo esc_html__( 'Luxembourgish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'mk_MK') echo 'selected'; ?> value="mk_MK"><?php echo esc_html__( 'Macedonian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ms_MY') echo 'selected'; ?> value="ms_MY"><?php echo esc_html__( 'Malay', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ml_IN') echo 'selected'; ?> value="ml_IN"><?php echo esc_html__( 'Malayalam', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'no') echo 'selected'; ?> value="no"><?php echo esc_html__( 'Norwegian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'nb_NO') echo 'selected'; ?> value="nb_NO"><?php echo esc_html__( 'Norwegian (Bokm&aring;l)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'nn') echo 'selected'; ?> value="nn"><?php echo esc_html__( 'Norwegian Nynorsk', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'pl_PL') echo 'selected'; ?> value="pl_PL"><?php echo esc_html__( 'Polish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'pt_PT') echo 'selected'; ?> value="pt_PT"><?php echo esc_html__( 'Portuguese', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'pt_BR') echo 'selected'; ?> value="pt_BR"><?php echo esc_html__( 'Portuguese (Brazil)', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'rm') echo 'selected'; ?> value="rm"><?php echo esc_html__( 'Rhaeto-Romance', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ro_RO') echo 'selected'; ?> value="ro_RO"><?php echo esc_html__( 'Romanian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ru_RU') echo 'selected'; ?> value="ru_RU"><?php echo esc_html__( 'Russian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'sr_SR') echo 'selected'; ?> value="sr_SR"><?php echo esc_html__( 'Serbian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'sk_SK') echo 'selected'; ?> value="sk_SK"><?php echo esc_html__( 'Slovak', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'sl_SI') echo 'selected'; ?> value="sl_SI"><?php echo esc_html__( 'Slovenian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'es_ES') echo 'selected'; ?> value="es_ES"><?php echo esc_html__( 'Spanish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'sv_SE') echo 'selected'; ?> value="sv_SE"><?php echo esc_html__( 'Swedish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'tj') echo 'selected'; ?> value="tj"><?php echo esc_html__( 'Tajikistan', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'ta') echo 'selected'; ?> value="ta"><?php echo esc_html__( 'Tamil', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'th') echo 'selected'; ?> value="th"><?php echo esc_html__( 'Thai', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'tr_TR') echo 'selected'; ?> value="tr_TR"><?php echo esc_html__( 'Turkish', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'uk') echo 'selected'; ?> value="uk"><?php echo esc_html__( 'Ukrainian', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'vi') echo 'selected'; ?> value="vi"><?php echo esc_html__( 'Vietnamese', 'titan-zero-trades-front-desk' ); ?></option>
-    <option <?php if ($tz_v == 'cy_GB') echo 'selected'; ?> value="cy_GB"><?php echo esc_html__( 'Welsh/UK', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == '') echo 'selected'; ?> value=""><?php echo esc_html__( ' - auto-detect - ', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'af') echo 'selected'; ?> value="af"><?php echo esc_html__( 'Afrikaans', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'sq') echo 'selected'; ?> value="sq"><?php echo esc_html__( 'Albanian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ar') echo 'selected'; ?> value="ar"><?php echo esc_html__( 'Arabic', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ar_DZ') echo 'selected'; ?> value="ar_DZ"><?php echo esc_html__( 'Arabic (Algeria)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'hy_AM') echo 'selected'; ?> value="hy_AM"><?php echo esc_html__( 'Armenian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'az') echo 'selected'; ?> value="az"><?php echo esc_html__( 'Azerbaijani', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'eu') echo 'selected'; ?> value="eu"><?php echo esc_html__( 'Basque', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'bs_BA') echo 'selected'; ?> value="bs_BA"><?php echo esc_html__( 'Bosnian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'bg_BG') echo 'selected'; ?> value="bg_BG"><?php echo esc_html__( 'Bulgarian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'be_BY') echo 'selected'; ?> value="be_BY"><?php echo esc_html__( 'Byelorussian (Belarusian)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'km') echo 'selected'; ?> value="km"><?php echo esc_html__( 'Cambodian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ca') echo 'selected'; ?> value="ca"><?php echo esc_html__( 'Catalan', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'zh_HK') echo 'selected'; ?> value="zh_HK"><?php echo esc_html__( 'Chinese (Hong Kong SAR)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'zh_CN') echo 'selected'; ?> value="zh_CN"><?php echo esc_html__( 'Chinese (PRC)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'zh_TW') echo 'selected'; ?> value="zh_TW"><?php echo esc_html__( 'Chinese (Taiwan)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'hr') echo 'selected'; ?> value="hr"><?php echo esc_html__( 'Croatian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'cs_CZ') echo 'selected'; ?> value="cs_CZ"><?php echo esc_html__( 'Czech', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'da_DK') echo 'selected'; ?> value="da_DK"><?php echo esc_html__( 'Danish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'nl_NL') echo 'selected'; ?> value="nl_NL"><?php echo esc_html__( 'Dutch', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'nl_BE') echo 'selected'; ?> value="nl_BE"><?php echo esc_html__( 'Dutch - Belgium', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'en_AU') echo 'selected'; ?> value="en_AU"><?php echo esc_html__( 'English (Australia)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'en_NZ') echo 'selected'; ?> value="en_NZ"><?php echo esc_html__( 'English (New Zealand)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'en_GB') echo 'selected'; ?> value="en_GB"><?php echo esc_html__( 'English (United Kingdom)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'eo_EO') echo 'selected'; ?> value="eo"><?php echo esc_html__( 'Esperanto', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'et') echo 'selected'; ?> value="et"><?php echo esc_html__( 'Estonian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fo') echo 'selected'; ?> value="fo"><?php echo esc_html__( 'Faeroese', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fa_IR') echo 'selected'; ?> value="fa_IR"><?php echo esc_html__( 'Farsi', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fi') echo 'selected'; ?> value="fi"><?php echo esc_html__( 'Finnish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fr_FR') echo 'selected'; ?> value="fr_FR"><?php echo esc_html__( 'French', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fr_CA') echo 'selected'; ?> value="fr_CA"><?php echo esc_html__( 'French (Canada)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'fr_CH') echo 'selected'; ?> value="fr_CH"><?php echo esc_html__( 'French (Switzerland)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'gl_ES') echo 'selected'; ?> value="gl_ES"><?php echo esc_html__( 'Galician', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ka_GE') echo 'selected'; ?> value="ka_GE"><?php echo esc_html__( 'Georgian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'de_DE') echo 'selected'; ?> value="de_DE"><?php echo esc_html__( 'German', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'el') echo 'selected'; ?> value="el"><?php echo esc_html__( 'Greek', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'he_IL') echo 'selected'; ?> value="he_IL"><?php echo esc_html__( 'Hebrew', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'hi_IN') echo 'selected'; ?> value="hi_IN"><?php echo esc_html__( 'Hindi', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'hu_HU') echo 'selected'; ?> value="hu_HU"><?php echo esc_html__( 'Hungarian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'is') echo 'selected'; ?> value="is"><?php echo esc_html__( 'Icelandic', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'id_ID') echo 'selected'; ?> value="id_ID"><?php echo esc_html__( 'Indonesian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'it_IT') echo 'selected'; ?> value="it_IT"><?php echo esc_html__( 'Italian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'it_CH') echo 'selected'; ?> value="it_CH"><?php echo esc_html__( 'Italian (Switzerland)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ja') echo 'selected'; ?> value="ja"><?php echo esc_html__( 'Japanese', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'kk') echo 'selected'; ?> value="kk"><?php echo esc_html__( 'Kazakh', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ky') echo 'selected'; ?> value="ky"><?php echo esc_html__( 'Kirghiz', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ko_KR') echo 'selected'; ?> value="ko_KR"><?php echo esc_html__( 'Korean', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'lv') echo 'selected'; ?> value="lv"><?php echo esc_html__( 'Latvian (Lettish)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'lt_LT') echo 'selected'; ?> value="lt_LT"><?php echo esc_html__( 'Lithuanian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'lb') echo 'selected'; ?> value="lb"><?php echo esc_html__( 'Luxembourgish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'mk_MK') echo 'selected'; ?> value="mk_MK"><?php echo esc_html__( 'Macedonian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ms_MY') echo 'selected'; ?> value="ms_MY"><?php echo esc_html__( 'Malay', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ml_IN') echo 'selected'; ?> value="ml_IN"><?php echo esc_html__( 'Malayalam', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'no') echo 'selected'; ?> value="no"><?php echo esc_html__( 'Norwegian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'nb_NO') echo 'selected'; ?> value="nb_NO"><?php echo esc_html__( 'Norwegian (Bokm&aring;l)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'nn') echo 'selected'; ?> value="nn"><?php echo esc_html__( 'Norwegian Nynorsk', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'pl_PL') echo 'selected'; ?> value="pl_PL"><?php echo esc_html__( 'Polish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'pt_PT') echo 'selected'; ?> value="pt_PT"><?php echo esc_html__( 'Portuguese', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'pt_BR') echo 'selected'; ?> value="pt_BR"><?php echo esc_html__( 'Portuguese (Brazil)', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'rm') echo 'selected'; ?> value="rm"><?php echo esc_html__( 'Rhaeto-Romance', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ro_RO') echo 'selected'; ?> value="ro_RO"><?php echo esc_html__( 'Romanian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ru_RU') echo 'selected'; ?> value="ru_RU"><?php echo esc_html__( 'Russian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'sr_SR') echo 'selected'; ?> value="sr_SR"><?php echo esc_html__( 'Serbian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'sk_SK') echo 'selected'; ?> value="sk_SK"><?php echo esc_html__( 'Slovak', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'sl_SI') echo 'selected'; ?> value="sl_SI"><?php echo esc_html__( 'Slovenian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'es_ES') echo 'selected'; ?> value="es_ES"><?php echo esc_html__( 'Spanish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'sv_SE') echo 'selected'; ?> value="sv_SE"><?php echo esc_html__( 'Swedish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'tj') echo 'selected'; ?> value="tj"><?php echo esc_html__( 'Tajikistan', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'ta') echo 'selected'; ?> value="ta"><?php echo esc_html__( 'Tamil', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'th') echo 'selected'; ?> value="th"><?php echo esc_html__( 'Thai', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'tr_TR') echo 'selected'; ?> value="tr_TR"><?php echo esc_html__( 'Turkish', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'uk') echo 'selected'; ?> value="uk"><?php echo esc_html__( 'Ukrainian', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'vi') echo 'selected'; ?> value="vi"><?php echo esc_html__( 'Vietnamese', 'titan-zero-trades-front-desk' ); ?></option>
+    <option <?php if ($tzfd_local_v == 'cy_GB') echo 'selected'; ?> value="cy_GB"><?php echo esc_html__( 'Welsh/UK', 'titan-zero-trades-front-desk' ); ?></option>
     </select>
     </td>
             </tr>
            <tr valign="top">
             <th scope="row"><?php esc_html_e('Include appointment end-time in the confirmation emails?','titan-zero-trades-front-desk'); ?>:</th>
             <td>
-              <?php $tz_option = $this->get_option('display_emails_endtime', ''); ?>
+              <?php $tzfd_option = $this->get_option('display_emails_endtime', ''); ?>
               <select name="display_emails_endtime">
-               <option value=""<?php if ($tz_option == '') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
-               <option value="false"<?php if ($tz_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value=""<?php if ($tzfd_option == '') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value="false"<?php if ($tzfd_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
            </tr>             
@@ -420,12 +420,12 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <th scope="row"><?php esc_html_e('Select users with access (CTRL+click for multiple selection)','titan-zero-trades-front-desk'); ?>:</th>
             <td>
               <?php
-                 $tz_users = $wpdb->get_results( $wpdb->prepare( "SELECT user_login,ID FROM %i ORDER BY user_login ASC LIMIT 0,500", $wpdb->users ) );
-                 $tz_options = $tz_calendar_access_ids;
+                 $tzfd_users = $wpdb->get_results( $wpdb->prepare( "SELECT user_login,ID FROM %i ORDER BY user_login ASC LIMIT 0,500", $wpdb->users ) );
+                 $tzfd_options = $tzfd_calendar_access_ids;
               ?>
               <select name="tz_fd_user_access[]" multiple="multiple" size="5">
-                <?php foreach ($tz_users as $tz_user) { ?>
-                 <option value="<?php echo esc_attr($tz_user->ID); ?>"<?php if ( in_array ($tz_user->ID, $tz_options, true) ) echo ' selected'; ?>><?php echo esc_html($tz_user->user_login); ?></option>
+                <?php foreach ($tzfd_users as $tzfd_user) { ?>
+                 <option value="<?php echo esc_attr($tzfd_user->ID); ?>"<?php if ( in_array ($tzfd_user->ID, $tzfd_options, true) ) echo ' selected'; ?>><?php echo esc_html($tzfd_user->user_login); ?></option>
                 <?php  } ?>
               </select>
             </td>
@@ -433,10 +433,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
            <tr valign="top">
             <th scope="row"><?php esc_html_e('Allow selected users access also to the calendar settings?','titan-zero-trades-front-desk'); ?>:</th>
             <td>
-              <?php $tz_option = $this->get_option('tz_fd_user_access_settings', ''); ?>
+              <?php $tzfd_option = $this->get_option('tz_fd_user_access_settings', ''); ?>
               <select name="tz_fd_user_access_settings">
-               <option value="true"<?php if ($tz_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
-               <option value=""<?php if ($tz_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value="true"<?php if ($tzfd_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value=""<?php if ($tzfd_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
            </tr>            
@@ -445,7 +445,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
       <hr>
 		<div class="tzfd-buttons-container">
 			<input type="button" value="<?php esc_html_e('Next Step - Notification Emails >','titan-zero-trades-front-desk'); ?>" class="button tzfd-action-right" data-tzfd-goto="3" />
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>
@@ -459,10 +459,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Send email "From"','titan-zero-trades-front-desk'); ?> </th>
             <td>
-              <?php $tz_option = $this->get_option('fp_emailfrommethod', "fixed"); ?>
+              <?php $tzfd_option = $this->get_option('fp_emailfrommethod', "fixed"); ?>
                <select name="fp_emailfrommethod">
-                 <option value="fixed"<?php if ($tz_option == 'fixed') echo ' selected'; ?>><?php esc_html_e('From fixed email address indicated below - Recommended option','titan-zero-trades-front-desk'); ?></option>
-                 <option value="customer"<?php if ($tz_option == 'customer') echo ' selected'; ?>><?php esc_html_e('From the email address indicated by the customer','titan-zero-trades-front-desk'); ?></option>
+                 <option value="fixed"<?php if ($tzfd_option == 'fixed') echo ' selected'; ?>><?php esc_html_e('From fixed email address indicated below - Recommended option','titan-zero-trades-front-desk'); ?></option>
+                 <option value="customer"<?php if ($tzfd_option == 'customer') echo ' selected'; ?>><?php esc_html_e('From the email address indicated by the customer','titan-zero-trades-front-desk'); ?></option>
                 </select><br />
                 <span class="tzfd-hint-small">
                 * <?php esc_html_e('If you select "from fixed..." the customer email address will appear in the "to" address when you hit "reply", this is the recommended setting to avoid mail server restrictions.','titan-zero-trades-front-desk'); ?>
@@ -484,10 +484,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
 
             <th scope="row"><?php esc_html_e('Send email "To"','titan-zero-trades-front-desk'); ?> </th>
             <td>
-              <?php $tz_option = $this->get_option('fp_emailtomethod', "fixed"); ?>
+              <?php $tzfd_option = $this->get_option('fp_emailtomethod', "fixed"); ?>
                <select name="fp_emailtomethod">
-                 <option value="fixed"<?php if ($tz_option == 'fixed') echo ' selected'; ?>><?php esc_html_e('To the fixed email(s) address(es) indicated below - Recommended option','titan-zero-trades-front-desk'); ?></option>
-                 <option value="customer"<?php if ($tz_option == 'customer') echo ' selected'; ?>><?php esc_html_e('To the email address selected in a form field (ex: captcha image enabled is recommended in this case)','titan-zero-trades-front-desk'); ?></option>
+                 <option value="fixed"<?php if ($tzfd_option == 'fixed') echo ' selected'; ?>><?php esc_html_e('To the fixed email(s) address(es) indicated below - Recommended option','titan-zero-trades-front-desk'); ?></option>
+                 <option value="customer"<?php if ($tzfd_option == 'customer') echo ' selected'; ?>><?php esc_html_e('To the email address selected in a form field (ex: captcha image enabled is recommended in this case)','titan-zero-trades-front-desk'); ?></option>
                 </select><br />
                 <span class="tzfd-hint-small">
                 * <?php esc_html_e('If you select "To fixed..." enter the destination emails in the next field. ','titan-zero-trades-front-desk'); ?>
@@ -496,11 +496,11 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
                 </span>
             </td>
             </tr>
-            <tr valign="top" id="tz_fd_destemails" <?php if ($tz_option == 'customer') echo ' style="display:none;"'; ?>>
+            <tr valign="top" id="tz_fd_destemails" <?php if ($tzfd_option == 'customer') echo ' style="display:none;"'; ?>>
             <th scope="row"><?php esc_html_e('Destination emails (comma separated)','titan-zero-trades-front-desk'); ?></th>
             <td><input type="text" name="fp_destination_emails" size="40" value="<?php echo esc_attr($this->get_option('fp_destination_emails', TZFD_BOOK_DEFAULT_fp_destination_emails)); ?>" /></td>
             </tr>
-            <tr valign="top" id="tz_fd_dropemails" <?php if ($tz_option != 'customer') echo ' style="display:none;"'; ?>>
+            <tr valign="top" id="tz_fd_dropemails" <?php if ($tzfd_option != 'customer') echo ' style="display:none;"'; ?>>
             <th scope="row"><?php esc_html_e('Field that contains the destination email(s)','titan-zero-trades-front-desk'); ?></th>
             <td>
                 <select id="fp_destination_emails_field" name="fp_destination_emails_field" def="<?php echo esc_attr($this->get_option('fp_destination_emails_field', '')); ?>"></select>
@@ -519,20 +519,20 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Include additional information?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('fp_inc_additional_info', TZFD_BOOK_DEFAULT_fp_inc_additional_info); ?>
+              <?php $tzfd_option = $this->get_option('fp_inc_additional_info', TZFD_BOOK_DEFAULT_fp_inc_additional_info); ?>
               <select name="fp_inc_additional_info">
-               <option value="true"<?php if ($tz_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
-               <option value="false"<?php if ($tz_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value="true"<?php if ($tzfd_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value="false"<?php if ($tzfd_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Email format?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('fp_emailformat', TZFD_BOOK_DEFAULT_email_format); ?>
+              <?php $tzfd_option = $this->get_option('fp_emailformat', TZFD_BOOK_DEFAULT_email_format); ?>
               <select name="fp_emailformat">
-               <option value="text"<?php if ($tz_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
-               <option value="html"<?php if ($tz_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
+               <option value="text"<?php if ($tzfd_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
+               <option value="html"<?php if ($tzfd_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -549,10 +549,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Send confirmation/thank you message to user?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('cu_enable_copy_to_user', TZFD_BOOK_DEFAULT_cu_enable_copy_to_user); ?>
+              <?php $tzfd_option = $this->get_option('cu_enable_copy_to_user', TZFD_BOOK_DEFAULT_cu_enable_copy_to_user); ?>
               <select name="cu_enable_copy_to_user">
-               <option value="true"<?php if ($tz_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
-               <option value="false"<?php if ($tz_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value="true"<?php if ($tzfd_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value="false"<?php if ($tzfd_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -567,10 +567,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Email format?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('cu_emailformat', TZFD_BOOK_DEFAULT_email_format); ?>
+              <?php $tzfd_option = $this->get_option('cu_emailformat', TZFD_BOOK_DEFAULT_email_format); ?>
               <select name="cu_emailformat">
-               <option value="text"<?php if ($tz_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
-               <option value="html"<?php if ($tz_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
+               <option value="text"<?php if ($tzfd_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
+               <option value="html"<?php if ($tzfd_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -583,7 +583,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
 		<hr>
 		<div class="tzfd-buttons-container">
 			<input type="button" value="<?php esc_html_e('Next Step - Antispam >','titan-zero-trades-front-desk'); ?>" class="button tzfd-action-right" data-tzfd-goto="4" />
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>
@@ -597,10 +597,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Use Captcha Verification?','titan-zero-trades-front-desk'); ?></th>
             <td colspan="5">
-              <?php $tz_option = $this->get_option('cv_enable_captcha', TZFD_BOOK_DEFAULT_cv_enable_captcha); ?>
+              <?php $tzfd_option = $this->get_option('cv_enable_captcha', TZFD_BOOK_DEFAULT_cv_enable_captcha); ?>
               <select name="cv_enable_captcha">
-               <option value="true"<?php if ($tz_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
-               <option value="false"<?php if ($tz_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value="true"<?php if ($tzfd_option == 'true') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value="false"<?php if ($tzfd_option == 'false') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -663,7 +663,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
 		<hr>
 		<div class="tzfd-buttons-container">
 			<input type="button" value="<?php esc_html_e('Next Step - Reports >','titan-zero-trades-front-desk'); ?>" class="button tzfd-action-right" data-tzfd-goto="5" />
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>
@@ -676,10 +676,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Enable Reports?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('rep_enable', 'no'); ?>
+              <?php $tzfd_option = $this->get_option('rep_enable', 'no'); ?>
               <select name="rep_enable">
-               <option value="no"<?php if ($tz_option == 'no' || $tz_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
-               <option value="yes"<?php if ($tz_option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+               <option value="no"<?php if ($tzfd_option == 'no' || $tzfd_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+               <option value="yes"<?php if ($tzfd_option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -692,9 +692,9 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <td>
               <select name="rep_hour">
                <?php
-                 $tz_hour = $this->get_option('rep_hour', '0');
-                 for ($tz_k=0;$tz_k<24;$tz_k++)
-                     echo '<option value="'.intval($tz_k).'"'.($tz_hour==$tz_k?' selected':'').'>'.($tz_k<10?'0':'').intval($tz_k).'</option>';
+                 $tzfd_hour = $this->get_option('rep_hour', '0');
+                 for ($tzfd_k=0;$tzfd_k<24;$tzfd_k++)
+                     echo '<option value="'.intval($tzfd_k).'"'.($tzfd_hour==$tzfd_k?' selected':'').'>'.($tzfd_k<10?'0':'').intval($tzfd_k).'</option>';
                ?>
               </select>
             </td>
@@ -710,10 +710,10 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
             <tr valign="top">
             <th scope="row"><?php esc_html_e('Email format?','titan-zero-trades-front-desk'); ?></th>
             <td>
-              <?php $tz_option = $this->get_option('rep_emailformat', 'text'); ?>
+              <?php $tzfd_option = $this->get_option('rep_emailformat', 'text'); ?>
               <select name="rep_emailformat">
-               <option value="text"<?php if ($tz_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
-               <option value="html"<?php if ($tz_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
+               <option value="text"<?php if ($tzfd_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain Text (default)','titan-zero-trades-front-desk'); ?></option>
+               <option value="html"<?php if ($tzfd_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (use html in the textarea below)','titan-zero-trades-front-desk'); ?></option>
               </select>
             </td>
             </tr>
@@ -726,7 +726,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
         <hr>
 		<div class="tzfd-buttons-container">
 			<input type="button" value="<?php esc_html_e('Next Step - Add Ons >','titan-zero-trades-front-desk'); ?>" class="button tzfd-action-right" data-tzfd-goto="6" />
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>
@@ -735,9 +735,9 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
 
     <div class="tzfd-adintsection" data-step="6">
      <?php
-    	global $tz_addons_objs_list, $tz_addons_active_list;
-        $tz_printed = false;
-    	if( count( $tz_addons_active_list ) )
+    	global $tzfd_addons_objs_list, $tzfd_addons_active_list;
+        $tzfd_printed = false;
+    	if( count( $tzfd_addons_active_list ) )
     	{
     		echo wp_kses( 
                             __( '<h2>Add-Ons Settings:</h2><hr />', 'titan-zero-trades-front-desk' ), 
@@ -747,12 +747,12 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
                             ) 
                         );
             ob_start();
-    		foreach( $tz_addons_active_list as $tz_addon_id ) if( isset( $tz_addons_objs_list[ $tz_addon_id ] ) ) echo wp_kses( (string) $tz_addons_objs_list[ $tz_addon_id ]->get_addon_form_settings( $this->item ), $this->admin_markup_allowed() );
-            $tz_printed = ob_get_contents() != '';
+    		foreach( $tzfd_addons_active_list as $tzfd_addon_id ) if( isset( $tzfd_addons_objs_list[ $tzfd_addon_id ] ) ) echo wp_kses( (string) $tzfd_addons_objs_list[ $tzfd_addon_id ]->get_addon_form_settings( $this->item ), $this->admin_markup_allowed() );
+            $tzfd_printed = ob_get_contents() != '';
             ob_end_flush();
     	}
         
-        if (!$tz_printed)
+        if (!$tzfd_printed)
         {
             ?>
             <p><?php esc_html_e('You can optionally','titan-zero-trades-front-desk'); ?> <?php esc_html_e('activate add ons in the add ons section','titan-zero-trades-front-desk'); ?>.</p>
@@ -768,7 +768,7 @@ wp_localize_script( 'tzfd-admin-int', 'tzfdAdminIntData', array(
      ?>
 		<hr>
 		<div class="tzfd-buttons-container">
-			<?php if ($tz_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
+			<?php if ($tzfd_current_user_access) { ?><input type="submit" name="savepublish" value="<?php esc_html_e('Save and Publish','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" /><?php } ?>
 			<input type="submit" name="savereturn" value="<?php esc_html_e('Save and Return','titan-zero-trades-front-desk'); ?>" class="button button-primary tzfd-action-right" />
 			<div class="clear"></div>
 		</div>

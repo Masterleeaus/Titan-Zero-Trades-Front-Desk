@@ -12,9 +12,9 @@ if ( ! function_exists( 'tz_fd_unschedule_all_events' ) ) {
             wp_unschedule_hook( $hook );
             return;
         }
-        foreach ( (array) _get_cron_array() as $timestamp => $tz_events ) {
-            if ( empty( $tz_events[ $hook ] ) ) { continue; }
-            foreach ( $tz_events[ $hook ] as $event ) {
+        foreach ( (array) _get_cron_array() as $timestamp => $tzfd_events ) {
+            if ( empty( $tzfd_events[ $hook ] ) ) { continue; }
+            foreach ( $tzfd_events[ $hook ] as $event ) {
                 wp_unschedule_event( $timestamp, $hook, $event['args'] );
             }
         }

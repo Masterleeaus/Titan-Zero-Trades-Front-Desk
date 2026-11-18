@@ -350,6 +350,7 @@ class TZFD_Privacy_Exporter {
 		list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the WHERE fragment is built from fixed column clauses in the table config; every value is a placeholder.
 				'SELECT * FROM %i WHERE ' . $sql . ' ORDER BY id ASC LIMIT %d OFFSET %d',
 				...array_merge( array( $table ), $values, array( self::PAGE_SIZE + 1, ( $page - 1 ) * self::PAGE_SIZE ) )
 			)
@@ -471,6 +472,7 @@ class TZFD_Privacy_Exporter {
 			list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
 			$wpdb->last_error     = '';
 			$count                = $wpdb->query( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the WHERE fragment is built from fixed column clauses in the table config; every value is a placeholder.
 				'DELETE FROM %i WHERE ' . $sql,
 				...array_merge( array( $table_name ), $values )
 			) );
@@ -531,6 +533,7 @@ class TZFD_Privacy_Exporter {
 			}
 			$wpdb->last_error = '';
 			$count            = $wpdb->query( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- placeholders are generated from a count of integer ids; every value is a placeholder.
 				'DELETE FROM %i WHERE booking_id IN (' . $placeholders . ')',
 				...array_merge( array( $table ), $booking_ids )
 			) );

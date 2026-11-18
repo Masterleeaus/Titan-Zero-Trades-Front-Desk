@@ -77,7 +77,7 @@ final class TZFD_Service_Finder_Core {
 	 */
 	public static function normalise_query( $raw ) {
 		if ( ! is_string( $raw ) ) { return ''; }
-		$text = strip_tags( $raw );
+		$text = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $raw ) : preg_replace( '/<[^>]*>?|\x00/', '', $raw );
 		$text = preg_replace( '/[\x00-\x1F\x7F]+/u', ' ', $text );
 		$text = function_exists( 'mb_substr' ) ? mb_substr( (string) $text, 0, self::MAX_QUERY_CHARS, 'UTF-8' ) : substr( (string) $text, 0, self::MAX_QUERY_CHARS );
 		$text = function_exists( 'mb_strtolower' ) ? mb_strtolower( (string) $text, 'UTF-8' ) : strtolower( (string) $text );

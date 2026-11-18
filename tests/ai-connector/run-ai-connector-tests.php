@@ -368,5 +368,25 @@ $C::request( 'faq.answer' );
 $ages = array_map( function ( $e ) { return time() - $e['at']; }, $C::events() );
 check( 'event older than retention is pruned on the next write', 2 === count( $C::events() ) && max( $ages ) < 7 * 86400 + 5 );
 
+// 22. Budget race (single-process interleaving): ten requests made inside an outer provider call never push
+// model_fallback past its limit of 3. Each interleaved request reserves before it calls the provider.
+reset_state();
+connect_all();
+with_limits( array( 'model_fallback' => 3 ) );
+$interleaved = array();
+$depth       = 0;
+$GLOBALS['tz_reply'] = function ( $req ) use ( $C, &$interleaved, &$depth ) {
+    if ( 0 === $depth ) {
+        $depth++;
+        for ( $i = 0; $i < 10; $i++ ) { $interleaved[] = $C::request( 'faq.answer' )['status']; }
+        $depth--;
+    }
+    return fake_reply( $req );
+};
+$outer  = $C::request( 'faq.answer' );
+$counts = array_count_values( $interleaved );
+check( 'interleaved requests stop at the model_fallback limit of 3', 3 === calls() && 'ok' === $outer['status'] && 2 === ( $counts['ok'] ?? 0 ) && 8 === ( $counts['allowance_exhausted'] ?? 0 ) );
+check( 'race leaves exactly 3 units recorded', 3 === ( $C::usage()['budget']['model_fallback'] ?? -1 ) );
+
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

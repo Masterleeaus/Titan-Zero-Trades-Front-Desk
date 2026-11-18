@@ -1,6 +1,8 @@
 /* Titan Zero Trades: Front Desk. Public enquiry and callback forms only (.tzfd-public-enquiry, .tzfd-callback-form).
    Loaded by includes/class-tzfd-public-form-assets.php when one of these shortcodes is rendered. Nothing here targets the page or the theme.
-   Labels inherit the theme's text colour. Inputs carry their own background and text colour so they stay readable on light and dark themes. */
+   Labels inherit the theme's text colour. Inputs carry their own background and text colour so they stay readable on light and dark themes.
+   Hybrid palette (issue #181): field surfaces and borders stay neutral for readability; the brand navy #06152e and cyan #00cfe8
+   carry the button and the focus rings. Every text pair is at least 4.5:1 and every focus ring at least 3:1 (WCAG AA). */
 
 .tzfd-public-enquiry,
 .tzfd-callback-form {
@@ -62,7 +64,7 @@
 .tzfd-callback-form > label > textarea:focus,
 .tzfd-public-enquiry > label > input[type="checkbox"]:focus,
 .tzfd-callback-form > label > input[type="checkbox"]:focus {
-    outline: 3px solid #1a56db;
+    outline: 3px solid #06152e;
     outline-offset: 1px;
 }
 
@@ -96,8 +98,8 @@
     padding: 0.5rem 1.25rem;
     border: 0;
     border-radius: 4px;
-    background: #1a56db;
-    color: #ffffff;
+    background: #00cfe8;
+    color: #06152e;
     font: inherit;
     font-weight: 600;
     cursor: pointer;
@@ -118,6 +120,14 @@
         border-color: #9ca3af;
         background: #111827;
         color: #f9fafb;
+    }
+
+    /* On dark fields the navy ring would vanish, so the cyan brand colour carries the focus ring there. */
+    .tzfd-public-enquiry > label > input:focus,
+    .tzfd-public-enquiry > label > textarea:focus,
+    .tzfd-callback-form > label > input:focus,
+    .tzfd-callback-form > label > textarea:focus {
+        outline-color: #00cfe8;
     }
 }
 

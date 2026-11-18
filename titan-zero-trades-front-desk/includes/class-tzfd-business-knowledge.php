@@ -259,7 +259,7 @@ final class TZFD_Business_Knowledge {
     /** Plain text only: tags and control characters removed, whitespace collapsed. Null when empty or too long. */
     private static function clean( $value, $max, $allow_empty = false ) {
         if ( ! is_string( $value ) ) { return null; }
-        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $value ) : strip_tags( $value );
+        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $value ) : preg_replace( '/<[^>]*>?|\x00/', '', $value );
         $value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', $value );
         $value = trim( preg_replace( '/\s+/', ' ', $value ) );
         if ( '' === $value ) { return $allow_empty ? '' : null; }

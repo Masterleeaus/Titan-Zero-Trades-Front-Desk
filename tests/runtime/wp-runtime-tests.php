@@ -77,6 +77,19 @@ $tzfd_orphan_before = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FRO
 $tzfd_bad = TZFD_Booking_Create_Transaction::create( $wpdb, 0, $tzfd_row, $tzfd_params, TZFD_Intake_Mode::MODE_INSTANT );
 tzfd_rt_ok( 'A2 create for an invalid company fails closed with no row', 'failed' === ( $tzfd_bad['status'] ?? '' ) && $tzfd_orphan_before === (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i', $tzfd_bookings ) ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw table count, bypasses the object cache
 
+// Issue 299: a booking saved from the default form (name, email, phone) keeps the name, and the bookings view reads it.
+if ( is_readable( $tzfd_inc . 'class-tzfd-booking-view.php' ) ) { require_once $tzfd_inc . 'class-tzfd-booking-view.php'; }
+$tzfd_name_params = array( 'formid' => $tzfd_form, 'name' => 'RT Named Customer', 'email' => 'rt-name-' . substr( md5( uniqid( '', true ) ), 0, 8 ) . '@example.test', 'phone' => '0412 345 678' );
+$tzfd_name_row    = array(
+	'formid' => $tzfd_form, 'time' => current_time( 'mysql' ), 'ipaddr' => '127.0.0.1',
+	'notifyto' => $tzfd_name_params['email'], 'posted_data' => serialize( $tzfd_name_params ), 'data' => 'RT NAMED CUSTOMER', 'whoadded' => (string) $tzfd_admin_id, // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- posted_data must hold the posted fields, as the public form writes them.
+);
+$tzfd_name_res = TZFD_Booking_Create_Transaction::create( $wpdb, $tzfd_company, $tzfd_name_row, $tzfd_name_params, TZFD_Intake_Mode::MODE_INSTANT );
+$tzfd_name_id  = (int) ( $tzfd_name_res['id'] ?? 0 );
+$tzfd_name_data = $tzfd_name_id ? TZFD_Stored_Data::decode_booking( (string) $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d AND company_id=%d', $tzfd_bookings, $tzfd_name_id, $tzfd_company ) ) ) : null; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- read back the stored row to check what was saved.
+tzfd_rt_ok( 'A2b booking with name and email stores the name and phone', is_array( $tzfd_name_data ) && 'RT Named Customer' === ( $tzfd_name_data['name'] ?? '' ) && '0412 345 678' === ( $tzfd_name_data['phone'] ?? '' ) );
+tzfd_rt_ok( 'A2c bookings view shows the stored name, not the email', class_exists( 'TZFD_Booking_View' ) && is_array( $tzfd_name_data ) && 'RT Named Customer' === TZFD_Booking_View::customer_name( $tzfd_name_data ) );
+
 // Slot holds: the table is an explicit, admin-only install.
 $tzfd_hold_ok = class_exists( 'TZFD_Slot_Holds' ) && true === TZFD_Slot_Holds::install();
 tzfd_rt_ok( 'A3 slot-hold table installs and passes schema check (admin)', $tzfd_hold_ok );

@@ -10,7 +10,7 @@
  * and no hosted AI call is made. Confidence is an input supplied by whichever engine produced the reply; when no
  * engine supplied one, the enquiry is treated as low confidence.
  */
-if ( ! defined( 'ABSPATH' ) && PHP_SAPI !== 'cli' ) { exit; }
+defined( 'ABSPATH' ) || exit;
 
 final class TZFD_Human_Handoff {
 

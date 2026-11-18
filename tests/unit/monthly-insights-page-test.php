@@ -101,6 +101,15 @@ try {
 }
 mp_ok( 'user without the capability is refused', $refused );
 
+
+// #41: the local report makes no ROI, revenue, customer profiling or staff surveillance claims.
+$ins_agg = array( 'base' => 12, 'by_status' => array( 'new' => 7, 'booked' => 5 ), 'by_source' => array( 'web' => 9, 'phone' => 3 ) );
+$ins_report = TZFD_Ai_Monthly_Insights::local_report( '2026-10', $ins_agg, array() );
+$ins_json = strtolower( json_encode( $ins_report ) );
+mp_ok( 'insights report has the 12-enquiry denominator', 12 === (int) $ins_report['base'] );
+mp_ok( 'insights report has no ROI or revenue wording', false === strpos( $ins_json, 'roi' ) && false === strpos( $ins_json, 'revenue' ) );
+mp_ok( 'insights report has no customer profiling or staff surveillance wording', false === strpos( $ins_json, 'profil' ) && false === strpos( $ins_json, 'surveil' ) && false === strpos( $ins_json, 'staff' ) );
+
 echo 'Passed: ' . $GLOBALS['tzfd_pass'] . "\n";
 echo 'Failed: ' . $GLOBALS['tzfd_fail'] . "\n";
 exit( 0 === $GLOBALS['tzfd_fail'] ? 0 : 1 );

@@ -191,10 +191,10 @@ final class TZFD_Admin_Layout {
 .tzfd-screen .tzfd-badge-live { font-weight:700; letter-spacing:.04em; }
 
 /* Calendar */
-.tzfd-screen .tzfd-cal-toolbar { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:0 0 14px; }
-.tzfd-screen .tzfd-cal-nav { display:flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.tzfd-screen .tzfd-cal-toolbar { display:flex; flex-wrap:wrap; gap:10px 16px; align-items:center; margin:0 0 14px; min-width:0; max-width:100%; }
+.tzfd-screen .tzfd-cal-nav { display:flex; flex-wrap:wrap; gap:6px; align-items:center; min-width:0; max-width:100%; }
 .tzfd-screen .tzfd-cal-title { margin-left:8px; font-size:16px; font-weight:600; color:var(--tz-text,#f2f4f8); }
-.tzfd-screen .tzfd-cal-views { display:flex; gap:0; }
+.tzfd-screen .tzfd-cal-views { display:flex; flex-wrap:wrap; gap:0; max-width:100%; }
 .tzfd-screen .tzfd-cal-views .tzfd-btn { border-radius:0; margin-left:-1px; }
 .tzfd-screen .tzfd-cal-views .tzfd-btn:first-child { border-radius:8px 0 0 8px; margin-left:0; }
 .tzfd-screen .tzfd-cal-views .tzfd-btn:last-child { border-radius:0 8px 8px 0; }
@@ -208,16 +208,29 @@ final class TZFD_Admin_Layout {
 .tzfd-screen .tzfd-cal-month td { height:104px; }
 .tzfd-screen .tzfd-cal-out { background:var(--tz-field,#1f232d); }
 .tzfd-screen .tzfd-cal-out .tzfd-cal-daynum { color:var(--tz-muted,#e0e6ef); }
-.tzfd-screen .tzfd-cal-today { background:#2b1d21; }
-.tzfd-screen .tzfd-cal-today .tzfd-cal-daynum, .tzfd-screen th.tzfd-cal-today a { color:var(--tz-accent,#E31B23); font-weight:700; }
+/* Today uses the brand cyan, not the old dark red (issue #179). */
+.tzfd-screen .tzfd-cal-today { background:#0c2c3c; }
+.tzfd-screen .tzfd-cal-today .tzfd-cal-daynum, .tzfd-screen th.tzfd-cal-today a { color:var(--tz-accent,#00cfe8); font-weight:700; }
 .tzfd-screen .tzfd-cal-daynum { display:inline-block; font-weight:600; color:var(--tz-text,#f2f4f8); text-decoration:none; margin-bottom:4px; }
 .tzfd-screen .tzfd-cal-grid .tzfd-chip { display:block; max-width:100%; overflow:hidden; text-overflow:ellipsis; margin:0 0 4px; border-radius:6px; padding:3px 8px; }
-.tzfd-screen .tzfd-cal-more { display:block; font-size:12px; color:var(--tz-accent,#E31B23); }
+.tzfd-screen .tzfd-cal-more { display:block; font-size:12px; color:var(--tz-accent,#00cfe8); }
+/* Service-type colours: one slot per TZFD_Booking_View::service_colour_slot() value (eight slots). Each pair meets 4.5:1. */
 .tzfd-screen .tzfd-svc-1 { background:#e8f0fb !important; color:#1f4f8f !important; }
 .tzfd-screen .tzfd-svc-2 { background:#e6f6ec !important; color:#17693a !important; }
 .tzfd-screen .tzfd-svc-3 { background:#fff4dc !important; color:#8a5300 !important; }
 .tzfd-screen .tzfd-svc-4 { background:#f1e9fb !important; color:#5b2d9b !important; }
-@media screen and (max-width:782px) { .tzfd-screen .tzfd-cal-title { margin-left:0; width:100%; } }
+.tzfd-screen .tzfd-svc-5 { background:#fde8ec !important; color:#9b1c3a !important; }
+.tzfd-screen .tzfd-svc-6 { background:#e3f7f9 !important; color:#0e5f6b !important; }
+.tzfd-screen .tzfd-svc-7 { background:#fdeee3 !important; color:#8f3f0f !important; }
+.tzfd-screen .tzfd-svc-8 { background:#eceff3 !important; color:#374151 !important; }
+/* Narrow screens: the grid keeps its width and scrolls sideways, so a hint says so. */
+.tzfd-screen .tzfd-cal-hint { display:none; font-size:12px; color:var(--tz-muted,#e0e6ef); margin:0 0 8px; }
+@media screen and (max-width:782px) {
+  .tzfd-screen .tzfd-cal-title { margin-left:0; width:100%; }
+  .tzfd-screen .tzfd-cal-hint { display:block; }
+  .tzfd-screen .tzfd-cal-toolbar, .tzfd-screen .tzfd-cal-right { width:100%; }
+  .tzfd-screen .tzfd-cal-filter select { max-width:100%; }
+}
 
 /* Customer details and search */
 .tzfd-screen .tzfd-dl { display:grid; grid-template-columns:minmax(120px,max-content) 1fr; gap:8px 18px; margin:0; }

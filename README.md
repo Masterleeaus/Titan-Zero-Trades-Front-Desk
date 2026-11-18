@@ -70,3 +70,9 @@ A source PR, a merged feature, an installed WordPress admin page and a passing i
 Source uses GPL-2.0-only plus retained original notices. WordPress.org submission requires approved plugin metadata, accessibility, lawful third-party service consent, no remote executable code, no locked local functionality and reproducible packages. Hosted AI terms, cost controls, safe degradation, subscription cancellation and retention must be verified before advertising live services.
 
 **Read first:** [single-plugin architecture](docs/SINGLE-PLUGIN-AI-SERVICES-ARCHITECTURE.md) · [subscription/downgrade](docs/AI-SERVICES-ENTITLEMENT-AND-DOWNGRADE.md) · [WordPress plugin readme](titan-zero-trades-front-desk/readme.txt) · [source issue tracker](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues).
+
+## Find every README and developer guide
+
+- **[Complete README directory](docs/README_DIRECTORY.md)** — direct links to every README-style file in this repository, including component, test, vendor and historical documentation.
+- **[Documentation index](docs/README.md)** — curated entry point to the main technical guides and developer workflows.
+- **[Seven-repository platform map](https://github.com/Masterleeaus/Central/blob/main/docs/PLATFORM_MAP.md)** — cross-product architecture, ownership and integration boundaries.

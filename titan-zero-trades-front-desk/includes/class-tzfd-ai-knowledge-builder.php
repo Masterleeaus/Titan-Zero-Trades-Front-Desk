@@ -143,7 +143,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$out = array();
 		foreach ( $co['entries'] as $e ) {
 			if ( 'published' === $e['status'] ) {
-				$out[] = array( 'id' => $e['id'], 'question' => $e['question'], 'answer' => $e['answer'], 'sources' => $e['sources'] );
+				$out[] = array( 'id' => $e['id'], 'question' => $e['question'], 'answer' => $e['answer'], 'sources' => $e['sources'], 'updated' => (int) ( $e['updated'] ?? 0 ) );
 			}
 		}
 		return $out;

@@ -118,6 +118,41 @@ final class TZFD_AI_Services {
     }
 
     /**
+     * Plain-words sentence for a reason code returned by resolve(). Owners see this, never the raw code.
+     * Unknown codes (for example a revoked or cancelled state) get the generic sentence, so no snake_case
+     * value is ever shown on the AI Services screen. Issue #273.
+     *
+     * @param string $reason Reason code from resolve().
+     * @return string
+     */
+    public static function reason_text( $reason ) {
+        $reason = (string) $reason;
+        $free   = __( 'Your site is on the Free level.', 'titan-zero-trades-front-desk' );
+        switch ( $reason ) {
+            case 'active':
+                return __( 'Hosted AI is active on this site.', 'titan-zero-trades-front-desk' );
+            case 'grace':
+                return __( 'Hosted AI is active during a short grace period.', 'titan-zero-trades-front-desk' );
+            case 'paused_agents':
+                return __( 'The Agent Team is paused on this site.', 'titan-zero-trades-front-desk' );
+            case 'no_entitlement':
+                return __( 'No hosted AI plan is connected to this site.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'unsupported_schema':
+                return __( 'The hosted plan details are from a version this site does not support.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'invalid_company':
+                return __( 'The hosted plan details do not name a valid company.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'company_mismatch':
+                return __( 'The hosted plan belongs to a different company.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'cache_expired':
+                return __( 'The hosted plan details have expired and need to be checked again.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'no_known_entitlement':
+                return __( 'The hosted plan does not include a hosted AI level.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            default:
+                return __( 'Hosted AI is not active on this site.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+        }
+    }
+
+    /**
      * Local features are never gated by hosted level. Always true, for every level and state.
      *
      * @param array $resolved Output of resolve().

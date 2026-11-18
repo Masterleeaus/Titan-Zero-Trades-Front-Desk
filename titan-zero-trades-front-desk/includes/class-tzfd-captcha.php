@@ -57,6 +57,20 @@ class TZFD_Captcha {
         return $code;
     }
 
+    /**
+     * Wrong answers allowed per client address. Production always uses IP_MAX_FAILURES.
+     * A test-only override (issue #196, owner decision: keep the limit, add a test-only override) applies
+     * only when BOTH constants are defined on a test site: TZFD_CAPTCHA_TEST_MODE is true and
+     * TZFD_CAPTCHA_TEST_IP_MAX_FAILURES is a positive integer. Neither constant is set by the plugin.
+     */
+    public static function ip_max_failures() {
+        if (defined('TZFD_CAPTCHA_TEST_MODE') && true === TZFD_CAPTCHA_TEST_MODE && defined('TZFD_CAPTCHA_TEST_IP_MAX_FAILURES')) {
+            $override = filter_var(TZFD_CAPTCHA_TEST_IP_MAX_FAILURES, FILTER_VALIDATE_INT);
+            if (false !== $override && $override >= 1) { return $override; }
+        }
+        return self::IP_MAX_FAILURES;
+    }
+
     /** Client address used to count failed answers. Stored as a hash, never as the address itself. */
     public static function client_key() {
         $ip = isset($_SERVER['REMOTE_ADDR']) ? tzfd_request_text( 'server', 'REMOTE_ADDR' ) : '';
@@ -75,7 +89,7 @@ class TZFD_Captcha {
         $client_key   = 'tzfd-captcha-ip-' . $client;
         $code         = '' !== $challenge_id ? get_transient('tzfd-captcha-' . $challenge_id) : false;
 
-        if ((int) get_transient($client_key) >= self::IP_MAX_FAILURES) { return false; }
+        if ((int) get_transient($client_key) >= self::ip_max_failures()) { return false; }
         if (!is_string($code) || '' === $code) { self::count_failure($client_key, '', 0); return false; }
 
         $tries_key = 'tzfd-captcha-tries-' . $challenge_id;

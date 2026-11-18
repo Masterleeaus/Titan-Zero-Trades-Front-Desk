@@ -66,7 +66,7 @@ final class TZFD_AI_Services_Page {
                     <tr><th scope="row"><?php esc_html_e( 'Hosted level', 'titan-zero-trades-front-desk' ); ?></th>
                         <td><?php echo esc_html( self::label_for( $resolved['level'], $levels ) ); ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Reason', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php echo esc_html( $resolved['reason'] ); ?></td></tr>
+                        <td><?php echo esc_html( TZFD_AI_Services::reason_text( $resolved['reason'] ) ); ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Local features', 'titan-zero-trades-front-desk' ); ?></th>
                         <td><?php esc_html_e( 'Always enabled', 'titan-zero-trades-front-desk' ); ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted data consent', 'titan-zero-trades-front-desk' ); ?></th>

@@ -4,8 +4,13 @@
  *
  * Runs against a real MySQL/MariaDB database (unique keys and atomic UPDATEs are what is being tested).
  * It uses a small $wpdb shim and stubs for the few WordPress functions used, so no WordPress install is needed.
- * Environment: TZFD_TEST_DB_NAME (default tzfd_lane_test, which must already exist), TZFD_TEST_DB_SOCKET (default /var/run/mysqld/mysqld.sock).
- * Root access over the socket is assumed. Create the scratch database first: CREATE DATABASE tzfd_lane_test.
+ * Environment:
+ *   TZFD_TEST_DB_NAME    scratch database name (default tzfd_lane_test).
+ *   TZFD_TEST_DB_HOST    TCP host, e.g. 127.0.0.1 for the CI service container. Unset: local socket.
+ *   TZFD_TEST_DB_PORT    TCP port when TZFD_TEST_DB_HOST is set (default 3306).
+ *   TZFD_TEST_DB_USER / TZFD_TEST_DB_PASS  credentials (default root, empty password) when TZFD_TEST_DB_HOST is set.
+ *   TZFD_TEST_DB_SOCKET  socket path when TZFD_TEST_DB_HOST is unset (default /var/run/mysqld/mysqld.sock).
+ * The scratch database must exist first. Create it with: bash tests/integration/setup-scratch-dbs.sh
  * Run: php tests/integration/contact-db-tests.php   (from the repository root)
  * The test drops and recreates wp_tz_contact_actions and wp_tz_sms_conversations in that scratch database only.
  */
@@ -17,9 +22,17 @@ $db_name   = getenv( 'TZFD_TEST_DB_NAME' ) ?: 'tzfd_lane_test';
 $db_socket = getenv( 'TZFD_TEST_DB_SOCKET' ) ?: '/var/run/mysqld/mysqld.sock';
 // TZFD_TEST_DB_HOST (with TZFD_TEST_DB_PASS) connects over TCP, e.g. to a CI service container; unset, the local socket is used.
 $db_host = getenv( 'TZFD_TEST_DB_HOST' ) ?: '';
-$mysqli  = '' !== $db_host
-	? @new mysqli( $db_host, getenv( 'TZFD_TEST_DB_USER' ) ?: 'root', (string) getenv( 'TZFD_TEST_DB_PASS' ), $db_name, 3306 )
-	: @new mysqli( 'localhost', 'root', '', $db_name, 0, $db_socket );
+$db_port = (int) ( getenv( 'TZFD_TEST_DB_PORT' ) ?: 3306 );
+// mysqli throws on a missing database (PHP 8.1+ default). Catch it so the reason is printed, not an uncaught exception.
+try {
+	$mysqli = '' !== $db_host
+		? new mysqli( $db_host, getenv( 'TZFD_TEST_DB_USER' ) ?: 'root', (string) getenv( 'TZFD_TEST_DB_PASS' ), $db_name, $db_port )
+		: new mysqli( 'localhost', 'root', '', $db_name, 0, $db_socket );
+} catch ( mysqli_sql_exception $e ) {
+	fwrite( STDERR, "DB connect failed for scratch database '{$db_name}': " . $e->getMessage() . "\n" );
+	fwrite( STDERR, "Create it first: bash tests/integration/setup-scratch-dbs.sh (see the header of this file).\n" );
+	exit( 2 );
+}
 if ( $mysqli->connect_errno ) { fwrite( STDERR, 'DB connect failed: ' . $mysqli->connect_error . "\n" ); exit( 2 ); }
 
 final class TZ_WPDB {

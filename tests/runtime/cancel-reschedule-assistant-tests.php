@@ -4,10 +4,10 @@
  * Run: wp --allow-root eval-file cancel-reschedule-assistant-tests.php   (not shipped in the plugin)
  * Uses the real wp_salt('auth') secret and the real $wpdb, against the disposable test site only.
  */
-// Path from WordPress itself, so it matches the file the plugin loads (issue #191: was a hard-coded /var/www/html path).
-$tzfd_local_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-scoped-store.php', 'class-tzfd-customer-cancellation.php', 'class-tzfd-cancel-reschedule-assistant.php' ) as $tzfd_local_file ) {
-    require_once $tzfd_local_inc . $tzfd_local_file;
+// Path from WordPress itself, so it matches the file the plugin loads (issue #191: was a hard-coded server path).
+$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
+foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-scoped-store.php', 'class-tzfd-customer-cancellation.php', 'class-tzfd-cancel-reschedule-assistant.php' ) as $tz_file ) {
+    require_once $tz_inc . $tz_file;
 }
 global $wpdb;
 $GLOBALS['ra_pass'] = 0; $GLOBALS['ra_fail'] = 0;

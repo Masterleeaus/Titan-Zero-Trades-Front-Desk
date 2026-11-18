@@ -79,15 +79,22 @@ function tzfd_test_public_form_assets() {
 	tzfd_assert( false !== strpos( $bare, 'prefers-color-scheme: dark' ), 'stylesheet has a dark-preference rule for the fields' );
 	tzfd_assert( false === strpos( $bare, 'tzfd-hp' ), 'stylesheet does not touch the honeypot class' );
 
+	/* Hybrid palette (#181): brand navy and cyan on the button and focus rings, neutral fields. */
+	tzfd_assert( false === stripos( $bare, '#1a56db' ), 'stylesheet no longer uses the old #1a56db blue' );
 	$pairs = array(
 		array( '#1d2327', '#ffffff', 4.5, 'light field text on field background' ),
 		array( '#f9fafb', '#111827', 4.5, 'dark field text on field background' ),
-		array( '#ffffff', '#1a56db', 4.5, 'button text on button background' ),
+		array( '#06152e', '#00cfe8', 4.5, 'button text (brand navy) on button background (brand cyan)' ),
+		array( '#06152e', '#ffffff', 3.0, 'light focus ring (brand navy) on field background' ),
+		array( '#00cfe8', '#111827', 3.0, 'dark focus ring (brand cyan) on dark field background' ),
 	);
 	foreach ( $pairs as $p ) {
 		tzfd_assert( false !== stripos( $bare, $p[0] ) && false !== stripos( $bare, $p[1] ), 'stylesheet uses the colour pair for ' . $p[3] );
 		tzfd_assert( tzfd_contrast_ratio( $p[0], $p[1] ) >= $p[2], 'contrast of ' . $p[3] . ' is at least ' . $p[2] . ':1' );
 	}
+	tzfd_assert( false !== strpos( $bare, "background: #00cfe8;\n    color: #06152e;" ), 'button sets brand cyan background with brand navy text' );
+	tzfd_assert( false !== strpos( $bare, 'outline: 3px solid #06152e;' ), 'focus ring is brand navy on light fields' );
+	tzfd_assert( false !== strpos( $bare, 'outline-color: #00cfe8;' ), 'dark-preference focus ring is brand cyan' );
 	tzfd_assert( tzfd_contrast_ratio( '#6b7280', '#ffffff' ) >= 3.0, 'field border on white meets the 3:1 non-text contrast' );
 	tzfd_assert( tzfd_contrast_ratio( '#9ca3af', '#111827' ) >= 3.0, 'field border on dark field meets the 3:1 non-text contrast' );
 }

@@ -144,6 +144,34 @@ final class TZFD_Ai_Gap_Page {
 				</tbody>
 			</table>
 
+			<?php if ( $cid > 0 ) : ?>
+				<?php $outdated = TZFD_Ai_Gap_Detection::outdated( TZFD_Ai_Knowledge_Builder::published( $cid ), $now, TZFD_Ai_Gap_Detection::outdated_days() ); ?>
+				<h2><?php esc_html_e( 'Outdated approved content', 'titan-zero-trades-front-desk' ); ?></h2>
+				<p class="description"><?php
+					/* translators: %d: number of days since an approved answer was last edited. */
+					echo esc_html( sprintf( __( 'Approved answers not edited for %d days or more. Review them and publish an update if the facts have changed.', 'titan-zero-trades-front-desk' ), TZFD_Ai_Gap_Detection::outdated_days() ) );
+				?></p>
+				<table class="widefat striped" style="max-width:56em">
+					<thead><tr>
+						<th scope="col"><?php esc_html_e( 'Question', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Last edited', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Age in days', 'titan-zero-trades-front-desk' ); ?></th>
+					</tr></thead>
+					<tbody>
+					<?php if ( empty( $outdated ) ) : ?>
+						<tr><td colspan="3"><?php esc_html_e( 'No approved answers are outdated.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+					<?php endif; ?>
+					<?php foreach ( $outdated as $row ) : ?>
+						<tr>
+							<td><?php echo esc_html( $row['question'] ); ?></td>
+							<td><?php echo esc_html( gmdate( 'Y-m-d', $row['updated'] ) ); ?></td>
+							<td><?php echo esc_html( number_format_i18n( $row['age_days'] ) ); ?></td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
+
 			<?php if ( $cid > 0 && count( $all['topics'] ) > 1 ) : ?>
 				<h2><?php esc_html_e( 'Group topics', 'titan-zero-trades-front-desk' ); ?></h2>
 				<p class="description"><?php esc_html_e( 'Merging adds the counts of the first topic into the second for reporting. Nothing is deleted.', 'titan-zero-trades-front-desk' ); ?></p>

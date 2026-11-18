@@ -13,7 +13,7 @@
  *   contradictory only when two different dates are named.
  * - Spam is never deletion. A held enquiry keeps its status and stays in the admin queue.
  */
-if ( ! defined( 'ABSPATH' ) && PHP_SAPI !== 'cli' ) { exit; }
+defined( 'ABSPATH' ) || exit;
 
 final class TZFD_Enquiry_Triage_Rules {
 
@@ -319,6 +319,54 @@ final class TZFD_Enquiry_Triage_Rules {
             'duplicate_of' => $dup_of,
             'dup_kind'     => $dup_kind,
         );
+    }
+
+    /**
+     * Groups held enquiries for operator review by identical message signature. Pure: no database, no personal data
+     * in the output (contacts are counted, never listed). Only items with hold = true are grouped; an enquiry with no
+     * signature (empty or invalid text) is never grouped with another.
+     *
+     * Each input item: array( 'id' => int|string, 'signature' => string, 'email' => string, 'ts' => int, 'hold' => bool ).
+     * Output: list of array( 'signature', 'ids' (sorted), 'count', 'distinct_contacts', 'first_ts', 'last_ts' ),
+     * largest group first, then by first_ts, then by signature, so the order is deterministic.
+     *
+     * @return array<int, array{signature: string, ids: array, count: int, distinct_contacts: int, first_ts: int, last_ts: int}>
+     */
+    public static function review_groups( array $items ) {
+        $by = array();
+        foreach ( $items as $item ) {
+            if ( empty( $item['hold'] ) ) { continue; }
+            $sig = isset( $item['signature'] ) && is_string( $item['signature'] ) ? $item['signature'] : '';
+            $id  = $item['id'] ?? null;
+            if ( null === $id || '' === $id ) { continue; }
+            $key = '' === $sig ? 'solo|' . (string) $id : $sig;
+            $ts  = isset( $item['ts'] ) ? (int) $item['ts'] : 0;
+            $em  = strtolower( trim( (string) ( $item['email'] ?? '' ) ) );
+            if ( ! isset( $by[ $key ] ) ) {
+                $by[ $key ] = array( 'signature' => $sig, 'ids' => array(), 'emails' => array(), 'first_ts' => $ts, 'last_ts' => $ts );
+            }
+            $by[ $key ]['ids'][]  = $id;
+            if ( '' !== $em ) { $by[ $key ]['emails'][ $em ] = true; }
+            $by[ $key ]['first_ts'] = min( $by[ $key ]['first_ts'], $ts );
+            $by[ $key ]['last_ts']  = max( $by[ $key ]['last_ts'], $ts );
+        }
+        $out = array();
+        foreach ( $by as $g ) {
+            $ids = $g['ids'];
+            sort( $ids );
+            $out[] = array(
+                'signature'         => $g['signature'],
+                'ids'               => $ids,
+                'count'             => count( $ids ),
+                'distinct_contacts' => count( $g['emails'] ),
+                'first_ts'          => $g['first_ts'],
+                'last_ts'           => $g['last_ts'],
+            );
+        }
+        usort( $out, static function ( $a, $b ) {
+            return array( -$a['count'], $a['first_ts'], $a['signature'] ) <=> array( -$b['count'], $b['first_ts'], $b['signature'] );
+        } );
+        return $out;
     }
 
     /**

@@ -111,6 +111,22 @@ rv_ok( 'duplicate match ignores case and spacing', 1 === count( array_filter( $S
 // describe ignores unknown types.
 rv_ok( 'describe ignores unknown suggestion types', '' === $S::describe( array( 'type' => 'price', 'value' => '60' ) ) );
 
+
+// #171 / #254: missing configuration blocks enabling AI; administrator confirmation is required.
+$enable_empty = $S::enable_ai( array(), true, 1700000000 );
+rv_ok( 'enable AI refused on empty site with missing_configuration', false === $enable_empty['ok'] && 'missing_configuration' === $enable_empty['error'] && in_array( 'business_name', $enable_empty['missing'], true ) );
+rv_ok( 'enable AI refused on empty site leaves consent off', false === TZFD_Ai_Free_Core::consent_granted() );
+$enable_unconfirmed = $S::enable_ai( $full, false, 1700000000 );
+rv_ok( 'enable AI refused without administrator confirmation', false === $enable_unconfirmed['ok'] && 'admin_confirmation_required' === $enable_unconfirmed['error'] );
+rv_ok( 'unconfirmed enable leaves consent off', false === TZFD_Ai_Free_Core::consent_granted() );
+$no_key_required = array_filter( $S::missing( array_merge( $full, array( 'connector_available' => false ) ) ), static function ( $i ) { return $i['required']; } );
+rv_ok( 'no AI connector adds no required setup item (no AI needed to configure or book)', array() === $no_key_required );
+rv_ok( 'confirm refused without administrator confirmation', false === $S::confirm( array( 'type' => 'greeting', 'value' => 'Hi there.', 'source' => 'template' ), array() )['ok'] );
+$confirmed_greeting = $S::confirm( array( 'type' => 'greeting', 'value' => 'Hi there.', 'source' => 'template' ), array( 'confirmed' => true ) );
+rv_ok( 'confirmed greeting is saved only after confirm', true === $confirmed_greeting['ok'] && 'Hi there.' === $confirmed_greeting['value'] );
+$enable_ok = $S::enable_ai( $full, true, 1700000000 );
+rv_ok( 'complete site with confirmation enables AI', true === $enable_ok['ok'] && true === TZFD_Ai_Free_Core::consent_granted() );
+
 echo 'Passed: ' . $GLOBALS['tzfd_pass'] . "\n";
 echo 'Failed: ' . $GLOBALS['tzfd_fail'] . "\n";
 exit( 0 === $GLOBALS['tzfd_fail'] ? 0 : 1 );

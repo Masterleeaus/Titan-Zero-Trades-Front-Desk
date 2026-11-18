@@ -87,6 +87,10 @@ function tzfd_test_agent_tool_permissions() {
 	tzfd_assert_same( 'invalid_grant', $P::decide( $bad, $req() )['reason'], 'grant naming an unknown tool is denied' );
 	$bad = array_merge( $grant, array( 'auto_approve' => array( 'follow_up' ) ) );
 	tzfd_throws( function () use ( $P, $bad ) { $P::validate_grant( $bad ); }, 'auto-approve of an ungranted tool throws' );
+	$bad = array( 'tools' => array( 'answer', 'follow_up' ), 'auto_approve' => array( 'follow_up' ) ) + $grant;
+	tzfd_throws( function () use ( $P, $bad ) { $P::validate_grant( $bad ); }, 'external follow-up can never be auto-approved' );
+	$ok_book = array_merge( $grant, array( 'auto_approve' => array( 'book' ) ) );
+	tzfd_assert_same( array( 'book' ), $P::validate_grant( $ok_book )['auto_approve'], 'owner pre-approval of a granted write tool still validates' );
 	$bad = array_merge( $grant, array( 'max_per_hour' => array( 'book' => 11 ) ) );
 	tzfd_throws( function () use ( $P, $bad ) { $P::validate_grant( $bad ); }, 'ceiling above the catalogue maximum throws' );
 	$bad = array_merge( $grant, array( 'state' => 'running' ) );

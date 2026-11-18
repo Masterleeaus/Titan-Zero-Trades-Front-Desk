@@ -87,5 +87,32 @@ hh_check( 'summary capped', strlen( $H::permitted_summary( str_repeat( 'a', 900 
 hh_check( 'rate limit allows below cap', $H::within_rate_limit( 2 ) === true );
 hh_check( 'rate limit blocks at cap', $H::within_rate_limit( 3 ) === false );
 
+// Explicit requests for a person escalate with customer_requested, unless negated.
+$d = $H::decide( array( 'text' => 'Can I speak to a person about my booking?', 'needs_ai' => false ) );
+hh_check( 'asking for a person escalates', $d['escalate'] === true && $d['reasons'] === array( 'customer_requested' ) );
+$d = $H::decide( array( 'text' => 'Please call me back on Thursday', 'needs_ai' => false ) );
+hh_check( 'call me back escalates', $d['reasons'] === array( 'customer_requested' ) );
+$d = $H::decide( array( 'text' => 'I would like to talk to someone, not a bot', 'needs_ai' => false ) );
+hh_check( 'talk to someone escalates', $d['reasons'] === array( 'customer_requested' ) );
+$d = $H::decide( array( 'text' => 'Talk to a human please. Refund and a legal complaint', 'needs_ai' => false ) );
+hh_check( 'request plus policy keeps fixed order', $d['reasons'] === array( 'policy_sensitive', 'customer_requested' ) );
+$d = $H::decide( array( 'text' => "It\xE2\x80\x99s urgent, please talk to a human", 'needs_ai' => false ) );
+hh_check( 'curly apostrophe does not break phrase match', $d['reasons'] === array( 'customer_requested' ) );
+$d = $H::decide( array( 'text' => 'No need to speak to someone, the price is fine', 'needs_ai' => false ) );
+hh_check( 'negated request does not escalate', $d['escalate'] === false );
+$d = $H::decide( array( 'text' => "I don't want to speak to a person", 'needs_ai' => false ) );
+hh_check( 'dont want to speak is negated', $d['escalate'] === false );
+$d = $H::decide( array( 'text' => 'Do you do gutters and what are your opening hours?', 'needs_ai' => false ) );
+hh_check( 'ordinary question does not escalate', $d['escalate'] === false );
+$d = $H::decide( array( 'text' => 'my real personal details are fine', 'needs_ai' => false ) );
+hh_check( 'real person needs the exact phrase', $d['escalate'] === false );
+hh_check( 'asks_for_person empty string', $H::asks_for_person( '' ) === false );
+$r = $H::build_enquiry( array(
+    'text' => 'speak to a person', 'source' => 'ai-assistant', 'intent' => 'callback', 'confidence' => null,
+    'reasons' => array( 'low_confidence', 'customer_requested', 'customer_requested' ), 'consent' => true,
+    'name' => 'A', 'email' => 'a@example.test', 'phone' => '',
+) );
+hh_check( 'enquiry reasons keep fixed order without duplicates', $r['ok'] === true && $r['enquiry']['reasons'] === array( 'customer_requested', 'low_confidence' ) );
+
 echo "\n$pass passed, $fail failed\n";
 exit( $fail ? 1 : 0 );

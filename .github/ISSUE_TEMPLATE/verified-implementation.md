@@ -21,4 +21,4 @@ Identify the actual source paths, integrations, security or privacy constraints,
 - [ ] Document affected contracts, deployment/rollback, and PR/commit references.
 
 ## Definition of done
-Every checkbox must correspond to completed **verified** work. Keep tasks unchecked when work, review, or test evidence is missing. The issue-closure workflow reopens issues closed with missing or unchecked tasks.
+A checkbox may be ticked only when its task is **done** (verified), **duplicated** elsewhere, **superseded** by another issue or PR (name it), or **no longer relevant** (state why). Keep tasks unchecked when work, review, or test evidence is missing and the task still applies. The issue-closure workflow reopens issues closed with missing or unchecked tasks.

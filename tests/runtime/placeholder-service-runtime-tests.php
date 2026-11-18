@@ -29,6 +29,9 @@ if ( ! is_readable( $tzfd_plugin . 'includes/class-tzfd-placeholder-service-clea
 }
 require_once $tzfd_plugin . 'includes/class-tzfd-placeholder-service-cleanup.php';
 
+// eval-file runs without a user unless --user is given; the upgrade is an administrator action, so act as user 1.
+wp_set_current_user( 1 );
+
 global $wpdb;
 $forms    = $wpdb->prefix . TZFD_Tables::FORMS;
 $bookings = $wpdb->prefix . TZFD_Tables::BOOKINGS;

@@ -153,7 +153,7 @@ final class TZFD_AI_Multilingual {
     public static function accept_hosted( $candidate, array $protected ) {
         if ( ! TZFD_AI_Locale::is_valid_utf8( $candidate ) || '' === trim( $candidate ) ) { return false; }
         if ( mb_strlen( $candidate, 'UTF-8' ) > self::MAX_HOSTED_CHARS ) { return false; }
-        if ( $candidate !== strip_tags( $candidate ) || false !== strpos( $candidate, '<' ) ) { return false; }
+        if ( false !== strpos( $candidate, '<' ) ) { return false; }
         foreach ( $protected as $term ) {
             if ( '' !== $term && false === strpos( $candidate, $term ) ) { return false; }
         }
@@ -175,7 +175,7 @@ final class TZFD_AI_Multilingual {
         foreach ( array( 'service', 'date' ) as $key ) {
             if ( isset( $vars[ $key ] ) ) {
                 $value = TZFD_AI_Locale::clean_text( (string) $vars[ $key ] );
-                $value = null === $value ? '' : strip_tags( $value );
+                $value = null === $value ? '' : ( function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $value ) : preg_replace( '/<[^>]*>?|\x00/', '', $value ) );
                 $out   = str_replace( '{' . $key . '}', $value, $out );
             }
         }

@@ -92,6 +92,8 @@ final class TZFD_Agent_Tool_Permissions {
 		$auto  = self::tool_list( $grant['auto_approve'] ?? array(), $catalogue );
 		foreach ( $auto as $tool ) {
 			if ( ! in_array( $tool, $tools, true ) ) { throw new InvalidArgumentException( 'auto_approve_not_granted' ); }
+			// No unattended outbound messages: an external-risk tool always waits for a person.
+			if ( 'external' === $catalogue[ $tool ]['risk'] ) { throw new InvalidArgumentException( 'external_needs_approval' ); }
 		}
 
 		$caps = $grant['max_per_hour'] ?? array();

@@ -7,7 +7,7 @@
  */
 if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
     // Load from the plugin copy that WordPress itself uses (WP_PLUGIN_DIR), not a fixed server path.
-    $tzfd_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR : '/var/www/html/wp-content/plugins' ) . '/titan-zero-trades-front-desk/includes/';
+    $tzfd_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR . '/titan-zero-trades-front-desk' : dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk' ) . '/includes/';
     require_once $tzfd_inc . 'class-tzfd-scoped-store.php';
     require_once $tzfd_inc . 'class-tzfd-ai-connector.php';
     require_once $tzfd_inc . 'class-tzfd-faq-retrieval.php';

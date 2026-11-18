@@ -10,7 +10,7 @@ Requires PHP: 7.4
 
 Tested up to: 7.1
 
-Stable tag: 3.0.128
+Stable tag: 3.1.0
 License: GPL-2.0-only
 
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -350,6 +350,10 @@ The complete source code is in this plugin folder and is licensed under GPLv2. N
 Support: support@titanzero.io
 
 == Changelog ==
+
+= 3.1.0 =
+* Missed-call webhook: a repeated signed request is refused atomically. The signature claim is a single INSERT IGNORE on the unique option name, so two identical requests arriving together cannot both be accepted. Expired claims are removed as they are found.
+* Minor version bump from 3.0.128 (owner release decision, issue #163). The version now differs from the previous release, so upgrade checks prove a real version change.
 
 = 3.0.128 =
 * Missed-call webhook: the plugin generates the inbound secret and shows it once. Each request is signed with HMAC-SHA256 over its timestamp and raw body, and is refused when it is more than five minutes off or repeated. The X-TZFD-Secret header is removed.

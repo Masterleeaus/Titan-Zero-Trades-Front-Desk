@@ -4,6 +4,7 @@
  * Not shipped in the plugin package (lives outside the plugin folder).
  */
 define( 'TZFD_CONTRACT_TEST', 1 );
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-service-contract.php';
 
 $C       = 'TZFD_Service_Contract';

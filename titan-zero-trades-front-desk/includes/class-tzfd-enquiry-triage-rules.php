@@ -13,7 +13,7 @@
  *   contradictory only when two different dates are named.
  * - Spam is never deletion. A held enquiry keeps its status and stays in the admin queue.
  */
-if ( ! defined( 'ABSPATH' ) && PHP_SAPI !== 'cli' ) { exit; }
+defined( 'ABSPATH' ) || exit;
 
 final class TZFD_Enquiry_Triage_Rules {
 

@@ -27,6 +27,8 @@ if ( ! is_readable( $tzfd_inc . 'class-tzfd-staff-access.php' ) ) {
 	tzfd_sa_ok( 'staff-access: class file readable', false, 'class-tzfd-staff-access.php not found in the active plugin' );
 	exit( 1 );
 }
+require_once $tzfd_inc . 'class-tzfd-location-registry.php';
+require_once $tzfd_inc . 'class-tzfd-location-store.php';
 require_once $tzfd_inc . 'class-tzfd-staff-access.php';
 require_once $tzfd_inc . 'class-tzfd-staff-access-admin.php';
 
@@ -40,6 +42,14 @@ $ROLES  = 'TZFD_Delegated_Roles';
 foreach ( array( $sa_co, $sa_oth ) as $sa_c ) {
 	delete_option( 'tzfd_staff_access_g_' . $sa_c );
 	delete_option( 'tzfd_staff_access_l_' . $sa_c );
+	delete_option( 'tzfd_locations_' . $sa_c );
+	delete_option( 'tzfd_location_log_' . $sa_c );
+}
+
+// Locations must be registered before a grant can name them (issue #362).
+foreach ( array( 'loc-a', 'loc-b' ) as $sa_loc ) {
+	$sa_added = TZFD_Location_Store::add( $sa_co, 1, array( 'id' => $sa_loc, 'name' => 'Site ' . $sa_loc, 'timezone' => 'UTC' ), time() );
+	tzfd_sa_ok( 'staff-access: location ' . $sa_loc . ' registered', true === $sa_added['ok'] );
 }
 
 // Disposable users: one staff member, one location admin, one company admin.
@@ -60,6 +70,8 @@ tzfd_sa_ok( 'staff-access: staff may not edit another staff member\'s booking', 
 tzfd_sa_ok( 'staff-access: staff sees the schedule at its location only', $SA::allowed( $sa_co, $sa_staff, 'loc-a', 'view_schedule' ) && false === $SA::allowed( $sa_co, $sa_staff, 'loc-b', 'view_schedule' ) );
 tzfd_sa_ok( 'staff-access: staff cannot approve bookings or see reports (least privilege)', false === $SA::allowed( $sa_co, $sa_staff, 'loc-a', 'approve_bookings' ) && false === $SA::allowed( $sa_co, $sa_staff, 'loc-a', 'view_reports' ) );
 tzfd_sa_ok( 'staff-access: grants do not cross companies', false === $SA::allowed( $sa_oth, $sa_staff, 'loc-a', 'view_schedule' ) );
+$sa_r = $SA::assign( $sa_co, 1, true, array( 'company_id' => $sa_co, 'user_id' => $sa_staff, 'role' => 'viewer', 'location_ids' => array( 'free-text-id' ), 'staff_id' => null ), $sa_now );
+tzfd_sa_ok( 'staff-access: a grant naming an unregistered location is refused', false === $sa_r['ok'] && 'unknown_location' === $sa_r['code'] );
 
 // 2. Administrator makes a location admin for loc-a. That user can then manage staff at loc-a only.
 $sa_r = $SA::assign( $sa_co, 1, true, array( 'company_id' => $sa_co, 'user_id' => $sa_locad, 'role' => 'location_admin', 'location_ids' => array( 'loc-a' ), 'staff_id' => null ), $sa_now );
@@ -140,6 +152,8 @@ wp_set_current_user( 1 );
 foreach ( array( $sa_co, $sa_oth ) as $sa_c ) {
 	delete_option( 'tzfd_staff_access_g_' . $sa_c );
 	delete_option( 'tzfd_staff_access_l_' . $sa_c );
+	delete_option( 'tzfd_locations_' . $sa_c );
+	delete_option( 'tzfd_location_log_' . $sa_c );
 }
 foreach ( array( $sa_staff, $sa_locad, $sa_coadm ) as $sa_u ) {
 	if ( $sa_u > 0 ) { wp_delete_user( $sa_u ); }

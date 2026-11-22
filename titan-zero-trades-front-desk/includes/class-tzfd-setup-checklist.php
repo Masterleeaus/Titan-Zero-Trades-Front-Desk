@@ -19,6 +19,34 @@ final class TZFD_Setup_Checklist {
 	const CONSENT_OPTION  = 'tzfd_setup_progress_consent';
 	const PROGRESS_OPTION = 'tzfd_setup_progress';
 	const MANUAL_OPTION   = 'tzfd_setup_manual';
+	const DISCOVERY_OPTION = 'tzfd_setup_discovery';
+
+	/**
+	 * Discovery links to optional services. Off by default, and shown only after the administrator opts in AND the
+	 * plugin is in use (see discovery_visible()). Each link opens an admin screen; none asks for registration.
+	 * There is no separate Pro plugin, so the "pro" link points to local features that are included in this plugin.
+	 *
+	 * @return array key => label, hint, page (admin.php?page= slug).
+	 */
+	public static function discovery_links() {
+		return array(
+			'pro'       => array( 'label' => __( 'Local reports and staff access', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Included in this plugin at no extra cost. There is no separate Pro plugin.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-booking-report' ),
+			'ai'        => array( 'label' => __( 'Titan Zero AI Assistant (optional, hosted, paid)', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Off until you connect it and record consent. Booking works without it.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-ai-services' ),
+			'agent'     => array( 'label' => __( 'Titan Zero AI Agent Team (optional, hosted, paid)', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Acts only through the tools you grant. Review its receipts before you grant more.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-agent-receipts' ),
+		);
+	}
+
+	/**
+	 * Links show only when the administrator has opted in (default off, so a null or missing option is off) and the
+	 * plugin is activated in use: at least one service or calendar exists. Nothing is shown before that.
+	 *
+	 * @param mixed $opt_in   Stored discovery option; only a literal true counts.
+	 * @param array $detected step => bool from facts().
+	 */
+	public static function discovery_visible( $opt_in, $detected ) {
+		$detected = is_array( $detected ) ? $detected : array();
+		return true === $opt_in && ( ! empty( $detected['services'] ) || ! empty( $detected['calendar'] ) );
+	}
 
 	/** Step key => label, how it is known, and what it means. Order is the order on screen. */
 	public static function steps() {

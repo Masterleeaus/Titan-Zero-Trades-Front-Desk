@@ -7,7 +7,7 @@
 # WordPress does not run the activation hook on a file-replacement update; deactivate and reactivate is the
 # closest reproducible equivalent, and it is what the plugin's install routines run on.
 #
-# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: SAME_VERSION_OK (default 1, same-version release ZIP), BASE_SHA (default 22dc106^), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN
+# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: SAME_VERSION_OK (default 1, same-version release ZIP), BASE_SHA (default 22dc106^), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN, UPGRADE_MULTISITE=1 (provision a network and run the same upgrade and downgrade on it)
 # Exit:  0 all upgrade checks passed; 1 a check failed; 3 prerequisites missing.
 set -u
 
@@ -64,11 +64,13 @@ if [ "$OLD_VER" = "$NEW_VER" ] && [ "${SAME_VERSION_OK:-0}" != 1 ]; then
 fi
 
 # 2. Site on the old plugin.
-PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }
+MS_ARGS=()
+if [ "${UPGRADE_MULTISITE:-0}" = 1 ]; then MS_ARGS=(--multisite); say "Network (multisite) run: UPGRADE_MULTISITE=1"; fi
+PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" "${MS_ARGS[@]}" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }
 eval "$(echo "$PROV" | grep '^TZFD_RT_')"
 DB="$TZFD_RT_DB_NAME"
 PLUGIN_LINK="$WORK/wp/wp-content/plugins/titan-zero-trades-front-desk"
-say "PASS provision on $OLD_VER"
+say "PASS provision on $OLD_VER${MS_ARGS:+ (multisite)}"
 
 FP="$WORK/fingerprint.json"
 run_php() { TZFD_RT_PHASE="$1" TZFD_RT_FINGERPRINT="$FP" TZFD_RT_EXPECT_DIR="$CURRENT_SRC" $WP_CLI --allow-root --path="$WORK/wp" eval-file "$HERE/upgrade-seed-verify.php" --user=1 2>/dev/null | tee -a "$LOG"; }

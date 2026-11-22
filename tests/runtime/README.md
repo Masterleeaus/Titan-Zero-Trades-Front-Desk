@@ -33,6 +33,19 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
+## Results on main with the #370 harness, 2026-11-23 (issue #370; PHP 8.3.6, MariaDB 10.11.14, WP-CLI 2.12.0)
+
+- Single site, WordPress 7.1.4: 377 passed, 0 failed, 0 gap(s), 9 skipped.
+- Single site, WordPress 6.6 (`TZFD_RT_WP_VERSION=6.6`, the plugin's minimum): 377 passed, 0 failed, 0 gap(s), 9 skipped.
+- Multisite, WordPress 7.1.4: 378 passed, 0 failed, 0 gap(s), 7 skipped. The `ai-answer-box: page_id sent as a hidden
+  field` check passes here on main, so the multisite failure recorded on 2026-11-16 does not reproduce on this checkout.
+- Upgrade from the v3.0.128 release ZIP, single site: 31 passed, 0 failed, 0 gap(s).
+- Upgrade from the v3.0.128 release ZIP, network (`UPGRADE_MULTISITE=1`): 31 passed, 0 failed, 0 gap(s).
+- dbDelta on MariaDB 10.11.14: the slot-hold table installs, and a second run issues no `ALTER` (`slot-holds` checks, 5 of 5).
+  The `Invalid default value for 'id'` message did not appear.
+- PHP 8.1, 8.2 and 8.4 are not run locally (no `mysqli` in the static CLI builds, no Docker). The CI matrix in
+  `.github/workflows/tests.yml` runs them (issue #370, PR #426).
+
 ## Last recorded results (2026-11-18, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11.14, WP-CLI 2.12.0)
 
 Run on this branch on 2026-11-23, after merging `main` at c68f795 (run with `PORT=8093` under `runtime.lock`):

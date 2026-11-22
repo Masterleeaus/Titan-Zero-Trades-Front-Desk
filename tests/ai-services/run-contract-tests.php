@@ -115,5 +115,51 @@ $prices_ok = $prices_ok && 29 === ( $levels['assistant']['price'] ?? null ) && 9
 tzfd_ai_check( 'descriptor: approved prices only (Assistant 29, Agent Team 99, Free null)', $prices_ok );
 tzfd_ai_check( 'descriptor: local features always enabled', count( array_filter( $levels, static function ( $lvl ) { return ( $lvl['local_features'] ?? '' ) !== 'always_enabled'; } ) ) === 0 );
 
+// 5. Outage (connector unreachable, cache only) and malformed or hostile payloads (issue #340).
+// Outage: the cached entitlement is the only input. Remote services stop when it expires, local features never change.
+// Malformed: every odd type resolves to Free without a PHP warning and without granting a paid level.
+$outage_warnings = 0;
+set_error_handler( static function ( $no, $str ) use ( &$outage_warnings ) { $outage_warnings++; return true; } );
+$o_now     = 1900000000;
+$o_active  = array( 'schema_version' => 1, 'company_id' => 1, 'state' => 'active', 'entitlements' => array( 'agent_team' ), 'expires_at' => $o_now + 600 );
+$o_grace   = array( 'schema_version' => 1, 'company_id' => 1, 'state' => 'grace', 'entitlements' => array( 'agent_team' ), 'expires_at' => $o_now + 600 );
+$o_expired = array_merge( $o_active, array( 'expires_at' => $o_now - 1 ) );
+
+$o_offline_none = S::resolve( null, 1, $o_now );
+tzfd_ai_check( 'outage: never connected stays free', $o_offline_none['level'] === S::LEVEL_FREE && $o_offline_none['reason'] === 'no_entitlement' );
+tzfd_ai_check( 'outage: never connected keeps local features', S::local_features_enabled( $o_offline_none ) === true );
+
+$o_within_ttl = S::resolve( $o_active, 1, $o_now + 300 );
+tzfd_ai_check( 'outage: cache within TTL keeps agent team', $o_within_ttl['level'] === S::LEVEL_AGENT_TEAM );
+tzfd_ai_check( 'outage: grace keeps paid level while connector is down', S::resolve( $o_grace, 1, $o_now )['level'] === S::LEVEL_AGENT_TEAM );
+
+$o_past_ttl = S::resolve( $o_active, 1, $o_now + 600 );
+tzfd_ai_check( 'outage: cache at exact expiry drops to free', $o_past_ttl['level'] === S::LEVEL_FREE && $o_past_ttl['reason'] === 'cache_expired' );
+tzfd_ai_check( 'outage: expired cache keeps local features', S::local_features_enabled( $o_past_ttl ) === true );
+tzfd_ai_check( 'outage: expired cache resolves to free, not agent team', $o_past_ttl['level'] !== S::LEVEL_AGENT_TEAM );
+$o_down = S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_FREE );
+tzfd_ai_check( 'outage: downgrade on expiry keeps all local data', array_diff( array( 'bookings', 'customers', 'services', 'calendars', 'reminders', 'faq_knowledge', 'local_rules', 'local_reports', 'privacy_exports', 'local_audit_log' ), $o_down['preserved'] ) === array() && $o_down['disabled_local'] === array() );
+tzfd_ai_check( 'outage: expired paused-agents cache keeps no assistant', S::resolve( array_merge( $o_active, array( 'state' => 'paused_agents', 'entitlements' => array( 'assistant' ), 'expires_at' => $o_now - 5 ) ), 1, $o_now )['level'] === S::LEVEL_FREE );
+
+// Malformed and hostile payloads.
+$m_base = array( 'schema_version' => 1, 'company_id' => 1, 'state' => 'active', 'entitlements' => array( 'agent_team' ), 'expires_at' => $o_now + 600 );
+$m_cases = array(
+    'payload is a string'            => array( 'garbage', S::LEVEL_FREE, 'no_entitlement' ),
+    'payload is an int'              => array( 42, S::LEVEL_FREE, 'no_entitlement' ),
+    'state is an array'              => array( array_merge( $m_base, array( 'state' => array( 'active' ) ) ), S::LEVEL_FREE, 'unknown_state' ),
+    'entitlements is a bare string'  => array( array_merge( $m_base, array( 'entitlements' => 'agent_team' ) ), S::LEVEL_FREE, 'no_known_entitlement' ),
+    'entitlement is nested array'    => array( array_merge( $m_base, array( 'entitlements' => array( array( 'agent_team' ) ) ) ), S::LEVEL_FREE, 'no_known_entitlement' ),
+    'entitlement is unknown name'    => array( array_merge( $m_base, array( 'entitlements' => array( 'enterprise' ) ) ), S::LEVEL_FREE, 'no_known_entitlement' ),
+    'company id is negative'         => array( array_merge( $m_base, array( 'company_id' => -1 ) ), S::LEVEL_FREE, 'invalid_company' ),
+    'schema version is future'       => array( array_merge( $m_base, array( 'schema_version' => 2 ) ), S::LEVEL_FREE, 'unsupported_schema' ),
+    'expires_at is not numeric'      => array( array_merge( $m_base, array( 'expires_at' => 'soon' ) ), S::LEVEL_FREE, 'cache_expired' ),
+);
+foreach ( $m_cases as $label => $row ) {
+    $got = S::resolve( $row[0], 1, $o_now );
+    tzfd_ai_check( 'malformed: ' . $label . ' resolves to free', $got['level'] === $row[1] && $got['reason'] === $row[2], 'got ' . $got['level'] . '/' . $got['reason'] );
+}
+tzfd_ai_check( 'malformed: no PHP warning raised by any payload above', $outage_warnings === 0, 'warnings=' . $outage_warnings );
+restore_error_handler();
+
 echo "\nPASS {$GLOBALS['tzfd_ai_pass']}  FAIL {$GLOBALS['tzfd_ai_fail']}\n";
 exit( $GLOBALS['tzfd_ai_fail'] > 0 ? 1 : 0 );

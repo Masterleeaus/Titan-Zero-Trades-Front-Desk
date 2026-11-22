@@ -106,6 +106,32 @@ $html = render_page();
 check( 'agent panel heading renders', false !== strpos( $html, 'Agent Team controls' ) );
 check( 'agent panel says unavailable when the gateway is not loaded', false !== strpos( $html, 'Agent permissions are not available on this build.' ) );
 check( 'agent panel adds no write form', false === strpos( $html, 'tzfd_agent_state' ) && false === strpos( $html, 'tzfd_agent_grant' ) );
+// Connect and disconnect screen (#333): the secret field is write-only and the page shows only paired / not paired.
+$GLOBALS['tz_opts'] = array();
+$html = render_page();
+check( 'unpaired screen offers the connect form', false !== strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'name="endpoint"' ) && false !== strpos( $html, 'name="site_id"' ) );
+check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tzfd_ai_connector_disconnect' ) );
+check( 'secret input is a password field with no value attribute', 1 === preg_match( '/<input type="password" id="tzfd-ai-secret" name="secret"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) );
+check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
+
+TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
+$html = render_page();
+check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'paired screen never renders the secret', false === strpos( $html, $secret ) && false === strpos( $html, 'S3CRET' ) );
+
+TZFD_AI_Connector::disconnect();
+$html = render_page();
+check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="secret"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'after disconnect the secret is not stored', false === TZFD_AI_Connector::status()['secret_set'] );
+
+$GLOBALS['tz_opts'] = array();
+$_GET['tzfd_ai'] = 'connect_invalid';
+$html = render_page();
+check( 'invalid connection notice is shown', false !== strpos( $html, 'Connection not saved' ) );
+$_GET['tzfd_ai'] = 'disconnected';
+$html = render_page();
+check( 'disconnect notice is shown', false !== strpos( $html, 'Hosted AI disconnected' ) );
+unset( $_GET['tzfd_ai'] );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

@@ -12,7 +12,7 @@ Command: `git diff --numstat 22dc106 origin/main -- titan-zero-trades-front-desk
 - +29,194 / -7,359 lines in total.
 - The largest single line count is the generated translation template `languages/titan-zero-trades-front-desk.pot` (+10,151).
 - Largest new code files: `includes/ai-assist/` (+844), `class-tzfd-ai-connector.php` (+598), `class-tzfd-legacy-ai-data.php` (+550), `class-tzfd-enquiry-triage-rules.php` (+502), `class-tzfd-faq-retrieval.php` (+489).
-- The legacy AI code is still present (removal is not in scope: owner decision on #360).
+- The legacy AI screen and its restore and delete handlers were removed under #360 (PR #467). The privacy exporter and eraser for historic `tz_ai_conversations` rows are kept in `includes/class-tzfd-legacy-privacy.php`.
 
 ## 2. Threat model (surfaces and what tests cover)
 
@@ -54,3 +54,25 @@ Verdict: **not verified for production.** The checks above pass on the disposabl
 - PHP 7.4 unit job: it failed on `tests/unit/test-retention-downgrade-multisite.php` (a private method invoked without `setAccessible`) before main was updated. On the PR #426 merge commit (`d6ccbd7`) the job passed.
 
 Decisions made in this pass are logged in `/home/claude/supercharged-fixes-checklist.md` with the date.
+
+## 5. Missed-call provider decision and callback tasks (issue #357)
+
+Owner decision (#357): the approved missed-call provider is Twilio, and a missed-call event may create a callback task automatically. The route does not send an SMS and does not contact the caller.
+
+Baseline on main before this change (checked 2026-11-23):
+
+- No Twilio voice call-status route existed. Twilio's only inbound route was the SMS delivery status (`tzfd/v1/twilio-status`).
+- No credentials resolver is installed for `tzfd_telephony_provider_credentials_v1`, so `/titan-zero-front-desk/v1/call-events` refuses every request. It fails closed.
+- No owner decision was recorded in the repository.
+
+| Task | Status on this branch |
+| --- | --- |
+| Record the owner decision (Twilio; callback task may be automatic) | Done (this section) |
+| Twilio voice status route `tzfd/v1/twilio-call-status`: verifies `X-Twilio-Signature`, requires this site's `AccountSid`, maps `no-answer` and `busy` to one missed event and one callback task | Done: `includes/class-tzfd-twilio-call-events.php`, booted from `titan-zero-front-desk.php` |
+| Off by default: needs `TZFD_TWILIO_SMS_ENABLED` and `TZFD_TWILIO_CALL_STATUS_CALLBACK_URL` (the exact route URL, https) | Done |
+| Functional, negative and replay tests: URL, payload, forged and wrong-URL signatures, wrong tenant, failed-write retry, one task per call, no outbound call | Done: `tests/unit/twilio-call-events-tests.php` (runs in the unit job) |
+| Per-call task idempotency on real tables | Existing: `tests/integration/contact-db-tests.php` (DB integration job) |
+| Generic call-events credentials resolver (`tzfd_telephony_provider_credentials_v1`) | Not installed. The generic route stays fail closed. Out of scope for #357 |
+| Live Twilio account test with a real missed call | Needs the owner's Twilio account and number; not run |
+
+Owner setup: define `TZFD_TWILIO_CALL_STATUS_CALLBACK_URL` in `wp-config.php` as `https://<site>/wp-json/tzfd/v1/twilio-call-status`, and point the Twilio number's voice status callback at the same URL. The route acts only on a final `no-answer` or `busy` status.

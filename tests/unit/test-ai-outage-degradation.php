@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 require_once __DIR__ . '/wp-stubs.php';
 require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
 require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-ai-services.php';
+require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 
 if ( ! function_exists( 'tzfd_assert' ) ) {
 	// Direct run (php tests/unit/test-ai-outage-degradation.php): minimal assert with the same contract as run.php.
@@ -25,6 +26,26 @@ if ( ! function_exists( 'tzfd_assert' ) ) {
 	}
 }
 
+/**
+ * Signed Central pairing for this site (issue #376). The connector refuses every hosted call without it,
+ * so the outage matrix pairs the site first, the same way the AI connector suite does.
+ */
+function tzfd_outage_pair_site( $site, $secret ) {
+	$now   = time();
+	$nonce = bin2hex( random_bytes( 16 ) );
+	$body  = json_encode( array(
+		'contract' => 'central-pairing/1', 'site' => $site, 'company_uuid' => '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f',
+		'operations' => array( 'hosted.request' ), 'nonce' => $nonce,
+		'issued_at' => $now, 'expires_at' => $now + 600,
+	) );
+	$headers = array(
+		'X-TZFD-Timestamp' => (string) $now,
+		'X-TZFD-Nonce'     => $nonce,
+		'X-TZFD-Signature' => TZFD_Central_Tenant::sign( $secret, (string) $now, $nonce, $body ),
+	);
+	return TZFD_Central_Tenant::connect( $body, $headers, $site, $secret, $now );
+}
+
 /** Resets stored options, filters and the call log, then configures the connector for faq.answer. */
 function tzfd_outage_setup( $transport ) {
 	$GLOBALS['tzfd_test_options'] = array();
@@ -33,7 +54,9 @@ function tzfd_outage_setup( $transport ) {
 	} else {
 		$GLOBALS['tzfd_test_filters']['tzfd_ai_connector_transport'] = $transport;
 	}
-	TZFD_AI_Connector::configure( 'https://ai.example.test/v1/request', 'site-a', str_repeat( 'k', 48 ) );
+	$secret = str_repeat( 'k', 48 );
+	TZFD_AI_Connector::configure( 'https://ai.example.test/v1/request', 'site-a', $secret );
+	tzfd_outage_pair_site( 'site-a', $secret );
 	TZFD_AI_Connector::grant_consent( array( 'faq.read', 'reports.read', 'customer.read', 'booking.read', 'booking.write' ) );
 	TZFD_AI_Connector::set_entitlements( array( 'free_ai', 'assistant', 'agent_team' ) );
 }

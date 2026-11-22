@@ -73,6 +73,46 @@ final class TZFD_Setup_Checklist {
 	}
 
 	/**
+	 * Measures from one consented progress record (issue #367). Pure: reads no WordPress state and sends nothing.
+	 *
+	 * Times are the moments the Get-started screen first saw each step done, so they are as precise as the
+	 * administrator's visits to that screen. Unknown keys and non-positive values are ignored.
+	 *
+	 * @param array $record step => unix time first seen done.
+	 * The booking step is excluded from "configured" because a booking is the outcome being measured. Conversion
+	 * means a first booking seen on or after the time every configuration step was first seen done.
+	 *
+	 * @return array setup_complete (bool, all seven steps recorded), steps_recorded (int), setup_completed_at
+	 *               (int|null, last of the seven), configured_at (int|null, last of the six non-booking steps),
+	 *               first_booking_at (int|null), seconds_to_first_booking (int|null, from the earliest recorded
+	 *               step), converted (bool).
+	 */
+	public static function measures( $record ) {
+		$record = is_array( $record ) ? $record : array();
+		$times  = array();
+		foreach ( array_keys( self::steps() ) as $key ) {
+			if ( isset( $record[ $key ] ) && is_numeric( $record[ $key ] ) && (int) $record[ $key ] > 0 ) {
+				$times[ $key ] = (int) $record[ $key ];
+			}
+		}
+		$config   = array_diff_key( $times, array( 'test_booking' => true ) );
+		$complete = count( $times ) === count( self::steps() );
+		$setup_at = $complete ? max( $times ) : null;
+		$config_at = count( $config ) === count( self::steps() ) - 1 ? max( $config ) : null;
+		$started  = $times ? min( $times ) : null;
+		$first_at = isset( $times['test_booking'] ) ? $times['test_booking'] : null;
+		return array(
+			'setup_complete'           => $complete,
+			'steps_recorded'           => count( $times ),
+			'setup_completed_at'       => $setup_at,
+			'configured_at'            => $config_at,
+			'first_booking_at'         => $first_at,
+			'seconds_to_first_booking' => ( null !== $first_at && null !== $started ) ? max( 0, $first_at - $started ) : null,
+			'converted'                => null !== $first_at && null !== $config_at && $first_at >= $config_at,
+		);
+	}
+
+	/**
 	 * Current company facts for detected steps. Reads only counts, never names, emails or other customer fields.
 	 * Each read is guarded so that a missing table or company returns false for that step, not an error.
 	 *

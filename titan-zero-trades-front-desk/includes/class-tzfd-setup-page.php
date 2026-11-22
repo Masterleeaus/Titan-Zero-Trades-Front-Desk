@@ -119,6 +119,16 @@ final class TZFD_Setup_Page {
 			wp_nonce_field( 'tzfd_setup_consent', '_wpnonce' );
 			echo '<input type="hidden" name="action" value="tzfd_setup_consent"><input type="hidden" name="progress" value="clear">';
 			echo '<button class="button" type="submit">' . esc_html__( 'Clear the records', 'titan-zero-trades-front-desk' ) . '</button></form>';
+
+			$measures = TZFD_Setup_Checklist::measures( $record );
+			$fmt      = static function ( $ts ) { return null === $ts ? __( 'Not yet', 'titan-zero-trades-front-desk' ) : date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $ts ); };
+			echo '<h3>' . esc_html__( 'Measures from these records (this site only)', 'titan-zero-trades-front-desk' ) . '</h3>';
+			echo '<ul>';
+			echo '<li>' . esc_html__( 'Setup complete', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $measures['setup_complete'] ? __( 'Yes', 'titan-zero-trades-front-desk' ) : __( 'No', 'titan-zero-trades-front-desk' ) ) . ' (' . esc_html( (string) $measures['steps_recorded'] ) . ' / ' . esc_html( (string) count( TZFD_Setup_Checklist::steps() ) ) . ')</li>';
+			echo '<li>' . esc_html__( 'Setup completed', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $fmt( $measures['setup_completed_at'] ) ) . '</li>';
+			echo '<li>' . esc_html__( 'First booking seen', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $fmt( $measures['first_booking_at'] ) ) . '</li>';
+			echo '<li>' . esc_html__( 'Booked after setup was complete', 'titan-zero-trades-front-desk' ) . ': ' . esc_html( $measures['converted'] ? __( 'Yes', 'titan-zero-trades-front-desk' ) : __( 'No', 'titan-zero-trades-front-desk' ) ) . '</li>';
+			echo '</ul>';
 		}
 
 		echo '<h2>' . esc_html__( 'Optional hosted services', 'titan-zero-trades-front-desk' ) . '</h2>';

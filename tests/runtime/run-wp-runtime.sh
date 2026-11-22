@@ -66,19 +66,7 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZF
 # Contract v1 REST route (#349): a test-only mu-plugin holds the company 7 credentials and a booking.list executor.
 # Nothing here reaches the hosted service. The file lives only in the disposable site.
 CONTRACT_KEY="$(openssl rand -hex 32)"
-mkdir -p "$WP_ROOT/wp-content/mu-plugins"
-cat > "$WP_ROOT/wp-content/mu-plugins/tzfd-test-contract.php" <<PHPEOF
-<?php
-/* TEST ONLY: written by tests/runtime/run-wp-runtime.sh into the disposable site. Never shipped. */
-add_filter( 'tzfd_contract_credentials_v1', function ( \$creds, \$tenant_id ) {
-    if ( 7 !== (int) \$tenant_id ) { return \$creds; }
-    return array( 'secret' => '$CONTRACT_KEY', 'actor' => array( 'type' => 'owner', 'tenant_id' => 7, 'caps' => array( 'tz_fd_access' ) ) );
-}, 10, 2 );
-add_filter( 'tzfd_contract_executor_v1', function ( \$result, \$op, \$tenant_id, \$payload ) {
-    if ( 'booking.list' !== \$op ) { return \$result; }
-    return array( 'stub' => true, 'op' => \$op, 'tenant_id' => \$tenant_id, 'items' => array() );
-}, 10, 4 );
-PHPEOF
+"$HERE/install-contract-test-mu.sh" "$WP_ROOT" "$CONTRACT_KEY"
 export TZFD_RT_CONTRACT_KEY="$CONTRACT_KEY"
 
 # Several workers so the concurrent replay check can race (PHP's default single worker serialises requests).

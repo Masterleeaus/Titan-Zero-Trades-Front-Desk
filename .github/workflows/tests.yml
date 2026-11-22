@@ -166,6 +166,12 @@ jobs:
             test "$c" = "200"
           fi
           B="$WP_URL" SECRET="$(cat /tmp/fd-secret.txt)" bash http-auth-tests.sh
+      - name: Contract v1 REST route over HTTP (contract-rest-tests.sh, #349)
+        run: |
+          cd "$GITHUB_WORKSPACE/tests/runtime"
+          CONTRACT_KEY="$(openssl rand -hex 32)"
+          bash install-contract-test-mu.sh "$WP_DIR" "$CONTRACT_KEY"
+          B="$WP_URL" TZFD_RT_CONTRACT_KEY="$CONTRACT_KEY" bash contract-rest-tests.sh
       - name: Concurrent replay of a signed missed-call request
         run: |
           cd "$GITHUB_WORKSPACE/tests/runtime"

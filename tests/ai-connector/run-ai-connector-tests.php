@@ -334,7 +334,7 @@ $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { re
 check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );
 unset( $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
-check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
+check( 'default terms link is the owner-approved terms page (not draft)', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] && 'owner_approved_issue_348' === $n['terms_status'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
 check( 'terms link comes from the tzfd_ai_terms_url filter', 'https://owner.example.test/terms' === TZFD_AI_Connector::setup_notice()['terms_url'] );
 unset( $GLOBALS['tz_filters']['tzfd_ai_terms_url'] );
@@ -429,6 +429,28 @@ $counts = array_count_values( $interleaved );
 check( 'interleaved requests stop at the model_fallback limit of 3', 3 === calls() && 'ok' === $outer['status'] && 2 === ( $counts['ok'] ?? 0 ) && 8 === ( $counts['allowance_exhausted'] ?? 0 ) );
 check( 'race leaves exactly 3 units recorded', 3 === ( $C::usage()['budget']['model_fallback'] ?? -1 ) );
 
+// 20. Hosted fallback hook (#353): the answer box's tzfd_ai_generative_fallback is wired to the connector,
+// so every hosted answer is charged to the model_fallback monthly budget.
+require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-answer-box.php';
+$H = 'TZFD_AI_Answer_Box';
+reset_state();
+check( 'hook passes through text an earlier provider supplied, with no call', 'earlier' === $H::hosted_fallback( 'earlier', 'q', 'en' ) && 0 === calls() );
+reset_state();
+check( 'hook returns null when the connector is not configured or paired', null === $H::hosted_fallback( null, 'hours', 'en' ) && 0 === calls() );
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) {
+    return fake_reply( $req, array( 'json' => array(
+        'contract' => 'tzfd-ai/1', 'site' => SITE, 'status' => 'ok',
+        'data' => array( 'answer' => 'We are open weekdays.' ),
+        'usage' => array( 'tokens_in' => 5, 'tokens_out' => 7, 'cache_hit' => false ),
+    ) ) );
+};
+$ans = $H::hosted_fallback( null, 'hours', 'en' );
+check( 'hook returns the hosted answer and charges model_fallback once', 'We are open weekdays.' === $ans && 1 === calls() && 1 === ( $C::usage()['budget']['model_fallback'] ?? -1 ) );
+with_limits( array( 'model_fallback' => 1 ) );
+$second = $H::hosted_fallback( null, 'hours again', 'en' );
+check( 'hook returns null once the monthly model_fallback budget is used, with no transport call', null === $second && 1 === calls() );
 // 14. Connect, consent, revoke and disconnect leave an audit trail with no secret (issue #372).
 reset_state();
 $C::configure( 'https://ai.example.test/v1/request', SITE, SECRET );

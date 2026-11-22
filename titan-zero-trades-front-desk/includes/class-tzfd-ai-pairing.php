@@ -49,7 +49,7 @@ final class TZFD_AI_Pairing {
         if ( defined( self::ENDPOINT_CONST ) ) {
             $raw = constant( self::ENDPOINT_CONST );
         } elseif ( function_exists( 'apply_filters' ) ) {
-            $raw = apply_filters( self::ENDPOINT_FILTER, '' );
+            $raw = apply_filters( 'tzfd_ai_pairing_endpoint', '' );
         }
         return self::valid_https_url( $raw ) ? (string) $raw : '';
     }
@@ -155,7 +155,7 @@ final class TZFD_AI_Pairing {
     }
 
     private static function transport( array $request ) {
-        $raw = function_exists( 'apply_filters' ) ? apply_filters( self::TRANSPORT_FILTER, null, $request ) : null;
+        $raw = function_exists( 'apply_filters' ) ? apply_filters( 'tzfd_ai_pairing_transport', null, $request ) : null;
         if ( null !== $raw ) { return $raw; }
         if ( ! function_exists( 'wp_remote_post' ) ) { return array( 'error' => 'offline' ); }
         $response = wp_remote_post( $request['url'], array(

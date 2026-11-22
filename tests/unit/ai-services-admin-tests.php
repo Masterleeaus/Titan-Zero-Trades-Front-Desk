@@ -32,6 +32,9 @@ function __( $s, $d = '' ) { return $s; }
 function checked( $c, $cur = true, $echo = true ) { $r = $c ? " checked='checked'" : ''; if ( $echo ) { echo $r; } return $r; }
 
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
+// Agent team block (#335): the gateway classes it reads, and a one-company stub for the scoped store.
+require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-agent-gateway-admin.php';
+class TZFD_Scoped_Store { public static function company_id() { return 7; } }
 
 $GLOBALS['tz_fail'] = 0;
 $GLOBALS['tz_pass'] = 0;
@@ -100,6 +103,27 @@ check( 'after revocation the screen shows no consent', false !== strpos( $html, 
 
 // Connector-side retention accepts the page's values.
 check( 'connector accepts retention set by the page', $P::normalise_retention( '45' ) === 45 && TZFD_AI_Connector::set_retention_days( 45 ) && 45 === TZFD_AI_Connector::retention_days() );
+
+// Agent team block: no grant, then an active grant, then a paused grant.
+$GLOBALS['tz_opts'] = array();
+$html = render_page();
+check( 'agent block says nothing is allowed without a grant', false !== strpos( $html, 'No agent permissions are set' ) );
+check( 'agent block has no pause control without a grant', false === strpos( $html, 'tzfd_agent_state' ) );
+
+$agent_store = new TZFD_Agent_Gateway_Option_Store();
+TZFD_Agent_Gateway::save_grant( $agent_store, array(
+    'company_id' => '7', 'agent_id' => 'front-desk-agent', 'state' => 'active', 'dry_run' => false, 'version' => 1,
+    'expires_at' => null, 'tools' => array( 'answer' ), 'auto_approve' => array(), 'max_per_hour' => array(),
+) );
+$html = render_page();
+check( 'agent block shows the active state', false !== strpos( $html, 'Agent state' ) && false !== strpos( $html, '<strong>Active</strong>' ) );
+check( 'agent block offers pause and emergency stop when active', false !== strpos( $html, '>Pause<' ) && false !== strpos( $html, '>Emergency stop<' ) && false === strpos( $html, '>Resume<' ) );
+check( 'agent block links to receipts waiting for approval', false !== strpos( $html, 'page=tzfd-agent-receipts' ) && false !== strpos( $html, 'outcome=needs_approval' ) );
+
+TZFD_Agent_Gateway::set_state( $agent_store, '7', 'paused' );
+$html = render_page();
+check( 'agent block shows paused state and offers resume', false !== strpos( $html, '<strong>Paused</strong>' ) && false !== strpos( $html, '>Resume<' ) && false === strpos( $html, '>Pause<' ) );
+check( 'agent block emergency stop posts state stopped through the shared handler', 1 === preg_match( '/name="state" value="stopped"/', $html ) && false !== strpos( $html, 'value="tzfd_agent_state"' ) );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

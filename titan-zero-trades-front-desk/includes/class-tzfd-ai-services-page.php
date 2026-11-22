@@ -233,7 +233,54 @@ final class TZFD_AI_Services_Page {
                     </p>
                 </form>
             <?php endif; ?>
+
+            <?php self::render_agent_team(); ?>
         </div>
+        <?php
+    }
+
+    /**
+     * Agent team controls (#335, from #292): the agent state, pause, resume and emergency stop, and a link to the
+     * receipts waiting for approval. The buttons post to the same handler as the Agent permissions page.
+     * Approving a waiting action is not on this screen yet; that part sits with the hosted service.
+     */
+    private static function render_agent_team() {
+        if ( ! class_exists( 'TZFD_Agent_Gateway_Option_Store' ) || ! class_exists( 'TZFD_Agent_Gateway_Admin' ) ) {
+            return;
+        }
+        $store   = new TZFD_Agent_Gateway_Option_Store();
+        $company = class_exists( 'TZFD_Scoped_Store' ) ? (string) TZFD_Scoped_Store::company_id() : '0';
+        $grant   = '0' === $company ? null : $store->get_grant( $company );
+        $labels  = array(
+            'active'  => __( 'Active', 'titan-zero-trades-front-desk' ),
+            'paused'  => __( 'Paused', 'titan-zero-trades-front-desk' ),
+            'stopped' => __( 'Stopped (emergency stop)', 'titan-zero-trades-front-desk' ),
+        );
+        $controls = array(
+            'active'  => __( 'Resume', 'titan-zero-trades-front-desk' ),
+            'paused'  => __( 'Pause', 'titan-zero-trades-front-desk' ),
+            'stopped' => __( 'Emergency stop', 'titan-zero-trades-front-desk' ),
+        );
+        ?>
+        <h2><?php esc_html_e( 'Agent team', 'titan-zero-trades-front-desk' ); ?></h2>
+        <?php if ( ! is_array( $grant ) ) : ?>
+            <p><?php esc_html_e( 'No agent permissions are set. Nothing is allowed until you grant it on the Agent permissions page.', 'titan-zero-trades-front-desk' ); ?></p>
+        <?php else : ?>
+            <?php $state = isset( $labels[ $grant['state'] ] ) ? (string) $grant['state'] : 'active'; ?>
+            <p><?php esc_html_e( 'Agent state', 'titan-zero-trades-front-desk' ); ?>: <strong><?php echo esc_html( $labels[ $state ] ); ?></strong></p>
+            <?php if ( current_user_can( 'manage_options' ) ) : ?>
+                <?php foreach ( $controls as $value => $label ) : ?>
+                    <?php if ( $value === $state ) { continue; } ?>
+                    <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="display:inline-block;margin-right:8px">
+                        <?php wp_nonce_field( 'tzfd_agent_state', '_wpnonce' ); ?>
+                        <input type="hidden" name="action" value="tzfd_agent_state" />
+                        <input type="hidden" name="state" value="<?php echo esc_attr( $value ); ?>" />
+                        <button type="submit" class="button button-secondary"><?php echo esc_html( $label ); ?></button>
+                    </form>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        <?php endif; ?>
+        <p><a href="<?php echo esc_url( admin_url( 'admin.php?page=' . TZFD_Agent_Gateway_Admin::PAGE . '&outcome=needs_approval' ) ); ?>"><?php esc_html_e( 'Review actions waiting for approval', 'titan-zero-trades-front-desk' ); ?></a></p>
         <?php
     }
 

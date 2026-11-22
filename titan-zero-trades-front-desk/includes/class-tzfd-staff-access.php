@@ -18,6 +18,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 require_once __DIR__ . '/class-tzfd-delegated-roles.php';
+require_once __DIR__ . '/class-tzfd-location-store.php';
 
 final class TZFD_Staff_Access {
 
@@ -62,6 +63,9 @@ final class TZFD_Staff_Access {
 		if ( $new['company_id'] !== $company ) { return self::result( false, 'company_mismatch' ); }
 		if ( TZFD_Delegated_Roles::ROLE_COMPANY_ADMIN === $new['role'] && ! $actor_is_admin ) { return self::result( false, 'forbidden' ); }
 		if ( ! $actor_is_admin && ! self::may_manage( $company, $actor_id, $new['location_ids'] ) ) { return self::result( false, 'forbidden' ); }
+		// Only registered, active locations take a grant (issue #362). Checked after the actor checks so an
+		// unauthorised caller learns nothing about which locations exist.
+		if ( TZFD_Delegated_Roles::ROLE_COMPANY_ADMIN !== $new['role'] && ! TZFD_Location_Store::has_active( $company, $new['location_ids'] ) ) { return self::result( false, 'unknown_location' ); }
 
 		$stored = self::grants( $company )['grants'];
 		$merged = false;

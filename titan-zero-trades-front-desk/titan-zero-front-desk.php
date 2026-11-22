@@ -85,6 +85,10 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway-admin.php
 TZFD_Agent_Gateway_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-report-admin.php';
 TZFD_Booking_Report_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-registry.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-store.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-admin.php';
+TZFD_Location_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access-admin.php';
 TZFD_Staff_Access_Admin::register();

@@ -41,6 +41,8 @@ final class TZFD_AI_Connector {
     const TIMEOUT          = 8;      // seconds
     const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
     const EVENT_LIMIT      = 50;     // events kept
+    const AUDIT_OPTION     = 'tzfd_ai_connector_audit';  // connect, consent and disconnect trail, newest last
+    const AUDIT_LIMIT      = 100;    // audit entries kept
     const RETENTION_DEFAULT = 30;    // days an event is kept
     const RETENTION_MAX    = 365;    // days
 
@@ -367,6 +369,7 @@ final class TZFD_AI_Connector {
         $opt['site_id']  = $site_id;
         update_option( self::OPTION, $opt, false );
         update_option( self::SECRET_OPTION, $secret, false );
+        self::audit( 'connect' );
         return true;
     }
 
@@ -378,6 +381,7 @@ final class TZFD_AI_Connector {
         $opt['consent_at']      = time();
         $opt['scopes']      = self::clean_scopes( $scopes );
         update_option( self::OPTION, $opt, false );
+        self::audit( 'consent_granted', array( 'scopes' => $opt['scopes'] ) );
         return true;
     }
 
@@ -387,6 +391,7 @@ final class TZFD_AI_Connector {
         $opt['consent'] = false;
         $opt['scopes']  = array();
         update_option( self::OPTION, $opt, false );
+        self::audit( 'consent_revoked' );
         return true;
     }
 
@@ -402,7 +407,19 @@ final class TZFD_AI_Connector {
     public static function disconnect() {
         delete_option( self::SECRET_OPTION );
         update_option( self::OPTION, array( 'consent' => false, 'scopes' => array(), 'endpoint' => '', 'site_id' => '', 'entitlements' => array() ), false );
+        self::audit( 'disconnect' );
         return true;
+    }
+
+    /**
+     * Connect, consent and disconnect trail, oldest first. Each entry holds only at, action and, for consent
+     * changes, the scopes granted. The endpoint, site ID and secret are never recorded.
+     *
+     * @return array<int, array{at:int, action:string, scopes?:string[]}>
+     */
+    public static function audit_log() {
+        $rows = get_option( self::AUDIT_OPTION, array() );
+        return is_array( $rows ) ? array_values( array_filter( $rows, 'is_array' ) ) : array();
     }
 
     // ---- internals -------------------------------------------------------
@@ -590,6 +607,16 @@ final class TZFD_AI_Connector {
      * Appends one redacted event and prunes entries older than the retention window. Best effort:
      * skipped when the lock is busy, so it never delays or fails a request.
      */
+    private static function audit( $action, array $detail = array() ) {
+        $entry = array( 'at' => time(), 'action' => (string) $action );
+        if ( isset( $detail['scopes'] ) && is_array( $detail['scopes'] ) ) {
+            $entry['scopes'] = self::clean_scopes( $detail['scopes'] );
+        }
+        $rows   = self::audit_log();
+        $rows[] = $entry;
+        update_option( self::AUDIT_OPTION, array_slice( $rows, -self::AUDIT_LIMIT ), false );
+    }
+
     private static function log_event( $feature, $status, $latency ) {
         if ( ! self::lock() ) { return; }
         $now    = time();

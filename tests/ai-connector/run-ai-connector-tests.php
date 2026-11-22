@@ -29,6 +29,7 @@ function apply_filters( $tag, $value, ...$args ) {
     return $value;
 }
 function wp_json_encode( $v ) { return json_encode( $v ); }
+function __( $text, $domain = '' ) { return $text; } // translation shim for the pure audit_rows() helper
 
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
@@ -427,6 +428,31 @@ $outer  = $C::request( 'faq.answer' );
 $counts = array_count_values( $interleaved );
 check( 'interleaved requests stop at the model_fallback limit of 3', 3 === calls() && 'ok' === $outer['status'] && 2 === ( $counts['ok'] ?? 0 ) && 8 === ( $counts['allowance_exhausted'] ?? 0 ) );
 check( 'race leaves exactly 3 units recorded', 3 === ( $C::usage()['budget']['model_fallback'] ?? -1 ) );
+
+// 14. Connect, consent, revoke and disconnect leave an audit trail with no secret (issue #372).
+reset_state();
+$C::configure( 'https://ai.example.test/v1/request', SITE, SECRET );
+$C::grant_consent( array( 'faq.read', 'booking.write', 'bogus.scope' ) );
+$C::revoke_consent();
+$C::disconnect();
+$trail   = $C::audit_log();
+$actions = array_column( $trail, 'action' );
+check( 'audit trail records connect, consent, revoke and disconnect in order', array( 'connect', 'consent_granted', 'consent_revoked', 'disconnect' ) === $actions, implode( ',', $actions ) );
+check( 'connect entry holds no endpoint, host or site id', array( 'at', 'action' ) === array_keys( $trail[0] ) && false === strpos( json_encode( $trail ), 'ai.example.test' ) && false === strpos( json_encode( $trail ), SITE ) );
+check( 'consent entry keeps only known granted scopes', array( 'faq.read', 'booking.write' ) === $trail[1]['scopes'] );
+check( 'audit trail never holds the secret', false === strpos( json_encode( $trail ), SECRET ) );
+check( 'disconnect keeps the audit trail', 4 === count( $C::audit_log() ) );
+check( 'audit trail is bounded', TZFD_AI_Connector::AUDIT_LIMIT === 100 );
+reset_state();
+for ( $i = 0; $i < TZFD_AI_Connector::AUDIT_LIMIT + 5; $i++ ) { $C::revoke_consent(); }
+check( 'audit trail is pruned to the limit', TZFD_AI_Connector::AUDIT_LIMIT === count( $C::audit_log() ) );
+reset_state();
+check( 'rejected connection writes no audit entry', false === $C::configure( 'http://ai.example.test/x', SITE, SECRET ) && array() === $C::audit_log() );
+
+require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
+$rows = TZFD_AI_Services_Page::audit_rows( array( array( 'at' => 5, 'action' => 'connect' ), array( 'at' => 6, 'action' => 'bogus' ), array( 'at' => 7, 'action' => 'consent_granted', 'scopes' => array( 'faq.read', 'booking.write' ) ) ) );
+check( 'audit page rows map known actions only, with scope detail', 2 === count( $rows ) && '' === $rows[0]['detail'] && 'faq.read, booking.write' === $rows[1]['detail'] );
+check( 'audit page rows carry no secret text', false === strpos( json_encode( $rows ), SECRET ) );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

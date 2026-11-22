@@ -22,30 +22,30 @@ tzfdformjQuery(function(){
 	// Load Module files
 	try 
 	{
-        $tz_md = dir( dirname( __FILE__ )."/modules" );
-		$tz_modules_files = array();
-        while( false !== ( $tz_entry = $tz_md->read() ) ) 
+        $tzfd_md = dir( dirname( __FILE__ )."/modules" );
+		$tzfd_modules_files = array();
+        while( false !== ( $tzfd_local_entry = $tzfd_md->read() ) ) 
 		{    
-            if ( strlen( $tz_entry ) > 3 && is_dir( $tz_md->path.'/'.$tz_entry ) )
+            if ( strlen( $tzfd_local_entry ) > 3 && is_dir( $tzfd_md->path.'/'.$tzfd_local_entry ) )
 			{
-				if ( file_exists( $tz_md->path.'/'.$tz_entry.'/public' ) )
+				if ( file_exists( $tzfd_md->path.'/'.$tzfd_local_entry.'/public' ) )
 				{
-					$m = dir( $tz_md->path.'/'.$tz_entry.'/public' );
-					while( false !== ( $tz_mentry = $m->read() ) )
+					$m = dir( $tzfd_md->path.'/'.$tzfd_local_entry.'/public' );
+					while( false !== ( $tzfd_mentry = $m->read() ) )
 					{	
-						if( strlen( $tz_mentry ) > 3 && strtolower( substr( $tz_mentry, strlen( $tz_mentry ) - 3 ) ) == '.js' )
+						if( strlen( $tzfd_mentry ) > 3 && strtolower( substr( $tzfd_mentry, strlen( $tzfd_mentry ) - 3 ) ) == '.js' )
 						{
-							$tz_modules_files[] = $m->path.'/'.$tz_mentry;
+							$tzfd_modules_files[] = $m->path.'/'.$tzfd_mentry;
 						}
 					}
 				}	
 						
 			}			
         }
-		sort( $tz_modules_files );
-		foreach( $tz_modules_files as $tz_file_path )
+		sort( $tzfd_modules_files );
+		foreach( $tzfd_modules_files as $tzfd_file_path )
 		{
-			require $tz_file_path;
+			require $tzfd_file_path;
 		}
 	} 
 	catch (Exception $e) 
@@ -58,17 +58,17 @@ tzfdformjQuery(function(){
     require __DIR__ . '/tzfd-calendar.js';
     require __DIR__ . '/tzfdform-core-public.jquery.js';
     try {
-        $tz_d = dir( dirname( __FILE__ )."/tzfdform-public-fields" );
-		$tz_controls_files = array();
-        while (false !== ($tz_entry = $tz_d->read())) {            
-            if (strlen($tz_entry) > 3 && strtolower(substr($tz_entry,strlen($tz_entry)-3)) == '.js')
-                if ( file_exists( $tz_d->path.'/'.$tz_entry ) )
-                    $tz_controls_files[] = $tz_d->path.'/'.$tz_entry;
+        $tzfd_d = dir( dirname( __FILE__ )."/tzfdform-public-fields" );
+		$tzfd_controls_files = array();
+        while (false !== ($tzfd_local_entry = $tzfd_d->read())) {            
+            if (strlen($tzfd_local_entry) > 3 && strtolower(substr($tzfd_local_entry,strlen($tzfd_local_entry)-3)) == '.js')
+                if ( file_exists( $tzfd_d->path.'/'.$tzfd_local_entry ) )
+                    $tzfd_controls_files[] = $tzfd_d->path.'/'.$tzfd_local_entry;
         }
-		sort( $tz_controls_files );
-		foreach( $tz_controls_files as $tz_file_path )
+		sort( $tzfd_controls_files );
+		foreach( $tzfd_controls_files as $tzfd_file_path )
 		{
-			require $tz_file_path;
+			require $tzfd_file_path;
 		}
     } catch (Exception $e) {
         // ignore the error

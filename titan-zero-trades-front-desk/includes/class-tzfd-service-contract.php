@@ -8,7 +8,7 @@
  * handshake, and the signed request envelope with replay and malicious-input checks.
  * Nothing here executes remote code, and nothing here gates a local feature.
  */
-if ( ! defined( 'ABSPATH' ) && ! defined( 'TZFD_CONTRACT_TEST' ) ) { exit; }
+defined( 'ABSPATH' ) || exit;
 
 final class TZFD_Service_Contract {
 

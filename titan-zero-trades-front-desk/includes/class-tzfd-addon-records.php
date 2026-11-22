@@ -387,11 +387,11 @@ final class TZFD_Addon_Records {
         global $wpdb;
         $company = self::company();
         if ( ! $company ) { return array(); }
-        $tz_rows = $wpdb->get_results( $wpdb->prepare(
+        $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM %i WHERE company_id = %d AND addon = %s AND kind = %s AND booking_id = %d ORDER BY id ASC LIMIT 500",
             self::table(), $company, sanitize_key( $addon ), sanitize_key( $kind ), (int) $booking_id
         ) );
-        return array_map( array( __CLASS__, 'hydrate' ), (array) $tz_rows );
+        return array_map( array( __CLASS__, 'hydrate' ), (array) $tzfd_local_rows );
     }
 
     /** Records of one kind, oldest first, limited to $limit. Used by queues. */
@@ -399,11 +399,11 @@ final class TZFD_Addon_Records {
         global $wpdb;
         $company = self::company();
         if ( ! $company ) { return array(); }
-        $tz_rows = $wpdb->get_results( $wpdb->prepare(
+        $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM %i WHERE company_id = %d AND addon = %s AND kind = %s ORDER BY id ASC LIMIT %d",
             self::table(), $company, sanitize_key( $addon ), sanitize_key( $kind ), max( 1, min( 500, (int) $limit ) )
         ) );
-        return array_map( array( __CLASS__, 'hydrate' ), (array) $tz_rows );
+        return array_map( array( __CLASS__, 'hydrate' ), (array) $tzfd_local_rows );
     }
 
     /** Records of one kind whose reference starts with $prefix, oldest first. */
@@ -411,11 +411,11 @@ final class TZFD_Addon_Records {
         global $wpdb;
         $company = self::company();
         if ( ! $company ) { return array(); }
-        $tz_rows = $wpdb->get_results( $wpdb->prepare(
+        $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM %i WHERE company_id = %d AND addon = %s AND kind = %s AND ref LIKE %s ORDER BY id ASC LIMIT %d",
             self::table(), $company, sanitize_key( $addon ), sanitize_key( $kind ), self::like( $prefix ) . '%', max( 1, min( 5000, (int) $limit ) )
         ) );
-        return array_map( array( __CLASS__, 'hydrate' ), (array) $tz_rows );
+        return array_map( array( __CLASS__, 'hydrate' ), (array) $tzfd_local_rows );
     }
 
     /** Number of records of one kind whose reference starts with $prefix. */
@@ -457,9 +457,9 @@ final class TZFD_Addon_Records {
     }
 
     public static function encode( array $payload ) {
-        $tz_json = wp_json_encode( $payload );
-        if ( ! is_string( $tz_json ) || strlen( $tz_json ) > self::MAX_PAYLOAD ) { return null; }
-        return $tz_json;
+        $tzfd_json = wp_json_encode( $payload );
+        if ( ! is_string( $tzfd_json ) || strlen( $tzfd_json ) > self::MAX_PAYLOAD ) { return null; }
+        return $tzfd_json;
     }
 
     public static function hydrate( $row ) {

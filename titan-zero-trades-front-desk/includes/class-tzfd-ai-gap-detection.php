@@ -25,6 +25,9 @@ final class TZFD_Ai_Gap_Detection {
 	const ANSWERED_CONFIDENCE = 0.6;
 	const HANDLED_ACTION      = 'tzfd_ai_question_handled';
 	const VOCAB_FILTER        = 'tzfd_ai_gap_vocabulary';
+	/** Approved entries not edited for this many days are reported as outdated (issue #36, owner decision: age since last edit). */
+	const OUTDATED_DAYS       = 180;
+	const OUTDATED_FILTER     = 'tzfd_ai_outdated_days';
 
 	const STOPWORDS = array(
 		'a', 'an', 'the', 'is', 'are', 'do', 'does', 'you', 'i', 'we', 'my', 'our', 'of', 'to', 'for', 'and', 'or',
@@ -196,6 +199,38 @@ final class TZFD_Ai_Gap_Detection {
 			'insufficient'     => $total < self::MIN_BASE,
 			'topics'           => $rows,
 		);
+	}
+
+	/** Age in days before approved content is reported as outdated. Clamped to 1..3650. */
+	public static function outdated_days() {
+		$days = apply_filters( self::OUTDATED_FILTER, self::OUTDATED_DAYS );
+		return max( 1, min( 3650, (int) $days ) );
+	}
+
+	/**
+	 * Approved entries whose last edit is older than $max_age_days, oldest first.
+	 * Each entry is array( 'id', 'question', 'updated' ) where 'updated' is the last-edit unix time.
+	 * Entries with no usable edit time are skipped rather than guessed at. Entries edited after $now are skipped.
+	 * Only the admin-written question and id are returned: no answer text.
+	 */
+	public static function outdated( array $entries, $now, $max_age_days ) {
+		$now    = (int) $now;
+		$cutoff = $now - max( 1, (int) $max_age_days ) * DAY_IN_SECONDS;
+		$rows   = array();
+		foreach ( $entries as $e ) {
+			$updated = (int) ( $e['updated'] ?? 0 );
+			if ( $updated < 1 || $updated > $now || $updated > $cutoff ) {
+				continue;
+			}
+			$rows[] = array(
+				'id'       => (string) ( $e['id'] ?? '' ),
+				'question' => (string) ( $e['question'] ?? '' ),
+				'updated'  => $updated,
+				'age_days' => (int) floor( ( $now - $updated ) / DAY_IN_SECONDS ),
+			);
+		}
+		usort( $rows, static function ( $a, $b ) { return $b['age_days'] <=> $a['age_days'] ?: strcmp( $a['id'], $b['id'] ); } );
+		return $rows;
 	}
 
 	/** Words of the label appear in approved text, so the topic is covered. */

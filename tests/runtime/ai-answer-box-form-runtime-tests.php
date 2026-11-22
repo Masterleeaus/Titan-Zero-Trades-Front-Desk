@@ -32,6 +32,13 @@ if ( ! is_readable( $tzfd_inc . 'class-tzfd-ai-widget.php' ) ) {
 }
 require_once $tzfd_inc . 'class-tzfd-ai-widget.php';
 
+// The checks below are about plain permalinks. Multisite conversion leaves the main site on pretty permalinks, so pin
+// plain permalinks for this run and restore the previous structure at the end.
+global $wp_rewrite;
+$ab_saved_permalinks = get_option( 'permalink_structure' );
+update_option( 'permalink_structure', '' );
+$wp_rewrite->set_permalink_structure( '' );
+
 // A page that carries the answer box, as a visitor would reach it.
 $ab_page_id = wp_insert_post(
 	array(
@@ -71,6 +78,8 @@ $_GET = $ab_saved;
 tzfd_ab_ok( 'ai-answer-box: submitted question renders the answer box on the page', false !== strpos( $ab_answered, 'class="tzfd-ai-answer"' ) && false !== strpos( $ab_answered, 'value="What are your opening hours?"' ) );
 
 wp_delete_post( $ab_page_id, true );
+update_option( 'permalink_structure', $ab_saved_permalinks );
+$wp_rewrite->set_permalink_structure( $ab_saved_permalinks );
 
 echo "ai-answer-box: {$GLOBALS['tzfd_ab']['PASS']} passed, {$GLOBALS['tzfd_ab']['FAIL']} failed\n";
 exit( $GLOBALS['tzfd_ab']['FAIL'] > 0 ? 1 : 0 );

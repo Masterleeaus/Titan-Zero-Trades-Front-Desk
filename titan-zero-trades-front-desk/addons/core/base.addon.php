@@ -26,7 +26,7 @@ if( !class_exists( 'TZFD_BaseAddon' ) )
 
 		public function get_addon_description()
 		{
-			return $this->tr_known( titan_zero_front_desk_translate_legacy_value( $this->description ) );
+			return $this->tr_known( tzfd_translate_legacy_value( $this->description ) );
 		}
 
 		public function get_addon_form_settings( $form_id )
@@ -41,9 +41,9 @@ if( !class_exists( 'TZFD_BaseAddon' ) )
 
 		public function addon_is_active()
 		{
-			global $tz_addons_active_list;
-            if (!is_array($tz_addons_active_list)) $tz_addons_active_list = TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() );
-			return in_array( $this->get_addon_id(), $tz_addons_active_list );
+			global $tzfd_addons_active_list;
+            if (!is_array($tzfd_addons_active_list)) $tzfd_addons_active_list = TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() );
+			return in_array( $this->get_addon_id(), $tzfd_addons_active_list );
 		}
         
         // Add-on descriptions are set during plugins_loaded, before translations can load.

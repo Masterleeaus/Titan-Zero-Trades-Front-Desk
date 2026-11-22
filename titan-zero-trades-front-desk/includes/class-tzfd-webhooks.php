@@ -131,22 +131,22 @@ class TZFD_Webhooks {
 
         foreach ( $payload['appointments'] as $appointment ) {
             if ( ! is_array( $appointment ) ) { return null; }
-            foreach ( $appointment_keys as $tz_key ) {
-                if ( ! array_key_exists( $tz_key, $appointment ) ) { return null; }
+            foreach ( $appointment_keys as $tzfd_key ) {
+                if ( ! array_key_exists( $tzfd_key, $appointment ) ) { return null; }
             }
-            foreach ( array( 'id', 'service_index', 'duration', 'quantity' ) as $tz_key ) {
-                if ( ! is_int( $appointment[ $tz_key ] ) ) { return null; }
+            foreach ( array( 'id', 'service_index', 'duration', 'quantity' ) as $tzfd_key ) {
+                if ( ! is_int( $appointment[ $tzfd_key ] ) ) { return null; }
             }
-            foreach ( array( 'service_id', 'service', 'date', 'slot', 'status' ) as $tz_key ) {
-                if ( ! is_string( $appointment[ $tz_key ] ) ) { return null; }
+            foreach ( array( 'service_id', 'service', 'date', 'slot', 'status' ) as $tzfd_key ) {
+                if ( ! is_string( $appointment[ $tzfd_key ] ) ) { return null; }
             }
             if ( ! is_int( $appointment['price'] ) && ! is_float( $appointment['price'] ) ) { return null; }
             if ( ! is_finite( (float) $appointment['price'] ) || $appointment['price'] < 0 ) { return null; }
             if ( $appointment['id'] < 0 || $appointment['duration'] < 0 || $appointment['quantity'] < 1 ) { return null; }
 
             $canonical_appointment = array();
-            foreach ( $appointment_keys as $tz_key ) {
-                $canonical_appointment[ $tz_key ] = $appointment[ $tz_key ];
+            foreach ( $appointment_keys as $tzfd_key ) {
+                $canonical_appointment[ $tzfd_key ] = $appointment[ $tzfd_key ];
             }
             $canonical['appointments'][] = $canonical_appointment;
         }

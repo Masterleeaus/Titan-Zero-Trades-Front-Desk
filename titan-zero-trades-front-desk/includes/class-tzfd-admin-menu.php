@@ -60,14 +60,14 @@ final class TZFD_Admin_Menu {
      * reuse the add-on's own object, handlers and render method; nothing is copied.
      */
     private static function packs_addon() {
-        global $tz_addons_objs_list;
+        global $tzfd_addons_objs_list;
         if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             $file = dirname( __DIR__ ) . '/addons/core/vertical-packs.addon.php';
             if ( ! is_file( $file ) ) { return null; }
             require_once $file;
         }
         $key = 'tzfd-VerticalPacks';
-        $obj = ( isset( $tz_addons_objs_list[ $key ] ) && is_object( $tz_addons_objs_list[ $key ] ) ) ? $tz_addons_objs_list[ $key ] : null;
+        $obj = ( isset( $tzfd_addons_objs_list[ $key ] ) && is_object( $tzfd_addons_objs_list[ $key ] ) ) ? $tzfd_addons_objs_list[ $key ] : null;
         // The add-on switch decides. The object is kept even when the add-on is off, so its handlers must not be reachable then.
         if ( null === $obj || ! method_exists( $obj, 'addon_is_active' ) || ! $obj->addon_is_active() ) { return null; }
         return $obj;
@@ -125,7 +125,7 @@ final class TZFD_Admin_Menu {
 
     /** Wraps an existing screen callback with the Front Desk UI pack when it is present. Returns $callback otherwise. */
     public static function ui_wrap( $callback, $page ) {
-        return class_exists( 'TZ_UI_Front_Desk', false ) ? TZ_UI_Front_Desk::wrap( $callback, $page ) : $callback;
+        return class_exists( 'TZFD_UI_Front_Desk', false ) ? TZFD_UI_Front_Desk::wrap( $callback, $page ) : $callback;
     }
 
     /** Pages that are reached from the Settings tab bar or from other pages, not from the main menu. */
@@ -298,8 +298,8 @@ final class TZFD_Admin_Menu {
     }
 
     private static function plugin() {
-        global $tz_plugin;
-        return ( is_object( $tz_plugin ) && method_exists( $tz_plugin, 'settings_page' ) ) ? $tz_plugin : null;
+        global $tzfd_plugin;
+        return ( is_object( $tzfd_plugin ) && method_exists( $tzfd_plugin, 'settings_page' ) ) ? $tzfd_plugin : null;
     }
 
     /** Apply the calendar's own user allow-list to service tools as well as its editor. */

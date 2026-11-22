@@ -24,7 +24,7 @@ Command: `git diff --numstat 22dc106 origin/main -- titan-zero-trades-front-desk
 | Cancel and reschedule links | Per-booking token; state checks; compare-and-swap | `wp-runtime-tests.php`, `cancel-reschedule-assistant-tests.php` | End-to-end customer flow with mail capture (B13) not driven. |
 | Privacy export and erase | Export and erase run as the site user; checked in the suites listed | `runtime-tests.php`, `tests/unit/privacy-coverage-tests.php` | Covered by these checks; no claim beyond them. |
 | Hosted AI connector | Pairing code shown by Supercharged and entered by the site owner (decision #347); consent records kept 30 days (decision #348) | `tests/ai-connector/run-ai-connector-tests.php`, `legacy-ai-runtime-tests.php` | No live hosted endpoint is called. |
-| Multisite tenancy | Network-aware provisioning | Multisite runtime suite (363 passed, 0 failed) | Upgrade with existing data is not proven (owner decision: not needed, no customers yet). |
+| Multisite tenancy | Network-aware provisioning | Multisite runtime suite (392 passed, 0 failed on the merged PR #346 branch, see tests/runtime/README.md) | Upgrade with existing data is not proven (owner decision: not needed, no customers yet). |
 
 Not in this model: refunds and deposits (owner decision: they belong to the invoicing and payments plugin, not this one).
 
@@ -50,6 +50,7 @@ Verdict: **not verified for production.** The checks above pass on the disposabl
 
 - Customer-facing acceptance through the public form (A18), customer cancel and reschedule end to end (B13), and reminder dispatch against a real transport (C11).
 - Automated acceptance, regression, malicious-input, tenant and permission, and outage tests for the full runtime surface (#149) and for the legacy AI data (#173).
-- MySQL and PHP coverage is provided by the CI matrix in `.github/workflows/tests.yml`. The first run of that matrix is the evidence for it.
+- PHP and database coverage: the CI matrix in `.github/workflows/tests.yml` ran the runtime suite green on six entries (PHP 8.1, 8.2, 8.3 and 8.4 on latest WordPress; PHP 8.3 on WordPress 6.6; PHP 8.3 on MySQL 8.0) on commit `50d382d`.
+- Known failure outside this change: the PHP 7.4 standalone unit job fails in `tests/unit/test-retention-downgrade-multisite.php` (`ReflectionMethod::invoke` on a private method without `setAccessible`, PHP below 8.1). The same file is on main.
 
 Decisions made in this pass are logged in `/home/claude/supercharged-fixes-checklist.md` with the date.

@@ -29,6 +29,12 @@ final class TZFD_Setup_Page {
 		add_submenu_page( $parent, __( 'Get started', 'titan-zero-trades-front-desk' ), __( 'Get started', 'titan-zero-trades-front-desk' ), self::CAP, self::PAGE, array( __CLASS__, 'render' ) );
 	}
 
+	/** True while the Get started screen is the request's page. The admin notice renderers stay quiet here (issue #366). */
+	public static function is_current_screen() {
+		$page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+		return self::PAGE === $page;
+	}
+
 	private static function guard( $action ) {
 		if ( ! current_user_can( self::CAP ) ) { wp_die( esc_html__( 'You do not have permission to change setup settings.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
 		check_admin_referer( $action, '_wpnonce' );

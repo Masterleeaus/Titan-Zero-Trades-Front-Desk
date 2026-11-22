@@ -11,6 +11,9 @@
  *   instant can still both pass. The conflict guard catches sequential stale edits, not a true race. Documented in
  *   the PR under "Decisions for review".
  * - No local cap on entry count. The 100-entry figure in #21/#42 is a hosted pilot sizing target only.
+ * - Per-entry size caps (issue #330 decision): question 300 characters, answer 1000 characters, 20 keywords of
+ *   40 characters each. Counted in characters, not bytes. Enforced by sanitise() and pinned by
+ *   tests/unit/content-size-caps-test.php.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 

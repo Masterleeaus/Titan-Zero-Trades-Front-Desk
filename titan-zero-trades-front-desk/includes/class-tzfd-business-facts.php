@@ -21,6 +21,7 @@ final class TZFD_Business_Facts {
     /** Tenant-scoped map: fact key => ['fingerprint' => sha256 at publication, 'published' => unix time]. */
     const PUBLISHED_KEY = 'tz_fd_ai_facts_published_v1';
 
+    /** Per-value cap in characters (issue #330 decision). Longer values are cut at this length, not rejected. */
     const MAX_VALUE = 500;
 
     /**

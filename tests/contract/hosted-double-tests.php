@@ -4,6 +4,8 @@
  * Run: php -d error_reporting=-1 tests/contract/hosted-double-tests.php
  * Standalone, no WordPress, no network, no live AI or billing call. Exit status 1 on any failure.
  */
+// The shared contract class is guarded by defined( 'ABSPATH' ) || exit; without this the run exits 0 with zero checks.
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 require_once __DIR__ . '/hosted-double/class-tzfd-hosted-double.php';
 
 $HD_KEY  = str_repeat( 'd', 32 );

@@ -18,8 +18,8 @@ function ci_check( $name, $ok, $detail = '' ) {
 	echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
 }
 
-$tz_connector = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
-if ( ! class_exists( 'TZFD_AI_Connector' ) && is_readable( $tz_connector ) ) { require_once $tz_connector; }
+$tzfd_connector = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
+if ( ! class_exists( 'TZFD_AI_Connector' ) && is_readable( $tzfd_connector ) ) { require_once $tzfd_connector; }
 ci_check( 'connector class loads on a clean install', class_exists( 'TZFD_AI_Connector' ) );
 
 // 1. No AI connection, secret, consent or entitlement is stored by default.

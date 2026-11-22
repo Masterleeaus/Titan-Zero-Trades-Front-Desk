@@ -121,6 +121,27 @@ final class TZFD_Setup_Page {
 			echo '<button class="button" type="submit">' . esc_html__( 'Clear the records', 'titan-zero-trades-front-desk' ) . '</button></form>';
 		}
 
+		$measures = TZFD_Setup_Checklist::metrics( $record, $consent );
+		if ( $measures['measured'] ) {
+			echo '<h3>' . esc_html__( 'Setup measures for this site', 'titan-zero-trades-front-desk' ) . '</h3><ul>';
+			echo '<li>' . esc_html( sprintf(
+				/* translators: 1: completion percentage, 2: steps recorded, 3: total steps. */
+				__( 'Setup completion: %1$d%% (%2$d of %3$d steps recorded).', 'titan-zero-trades-front-desk' ),
+				$measures['completion_percent'], $measures['steps_done'], $measures['total']
+			) ) . '</li>';
+			if ( null !== $measures['first_booking_at'] ) {
+				echo '<li>' . esc_html( sprintf(
+					/* translators: %s: date and time of the first booking seen. */
+					__( 'First booked job seen: %s.', 'titan-zero-trades-front-desk' ),
+					wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $measures['first_booking_at'] )
+				) ) . '</li>';
+			} else {
+				echo '<li>' . esc_html__( 'First booked job seen: none yet.', 'titan-zero-trades-front-desk' ) . '</li>';
+			}
+			echo '<li>' . esc_html( $measures['converted'] ? __( 'Setup to first booking: reached.', 'titan-zero-trades-front-desk' ) : __( 'Setup to first booking: not yet reached.', 'titan-zero-trades-front-desk' ) ) . '</li>';
+			echo '</ul>';
+		}
+
 		echo '<h2>' . esc_html__( 'Optional hosted services', 'titan-zero-trades-front-desk' ) . '</h2>';
 		echo '<p>' . esc_html__( 'Booking, the calendar, customer records, reports, exports and staff access all work with this plugin alone. Nothing here is needed to take bookings.', 'titan-zero-trades-front-desk' ) . '</p>';
 		echo '<ul>';

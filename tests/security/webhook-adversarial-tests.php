@@ -12,7 +12,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', '/tmp/tzfd-test-wp/' ); }
 
-$tz_plugin = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/';
+$tzfd_plugin = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/';
 
 // ---- minimal WordPress stubs -------------------------------------------------
 function __( $text ) { return $text; }
@@ -53,11 +53,11 @@ class WP_Error { public function __construct( $c = '', $m = '', $d = null ) { $t
 class WP_REST_Response { public $data; public function __construct( $d = null ) { $this->data = $d; } }
 class TZFD_Call_Lifecycle { const EVENTS = array( 'received', 'answered', 'missed', 'abandoned', 'completed', 'failed' ); }
 
-require_once $tz_plugin . 'includes/class-tzfd-signed-request.php';
-require_once $tz_plugin . 'includes/class-tzfd-rest-request-guard.php';
-require_once $tz_plugin . 'includes/class-tzfd-telephony-adapter.php';
+require_once $tzfd_plugin . 'includes/class-tzfd-signed-request.php';
+require_once $tzfd_plugin . 'includes/class-tzfd-rest-request-guard.php';
+require_once $tzfd_plugin . 'includes/class-tzfd-telephony-adapter.php';
 if ( ! defined( 'TZFD_TWILIO_AUTH_TOKEN' ) ) { define( 'TZFD_TWILIO_AUTH_TOKEN', str_repeat( 't', 32 ) ); }
-require_once $tz_plugin . 'includes/class-tzfd-twilio-status.php';
+require_once $tzfd_plugin . 'includes/class-tzfd-twilio-status.php';
 
 // ---- tiny request double for TZFD_REST_Request_Guard ------------------------
 class TZ_Fake_Request {

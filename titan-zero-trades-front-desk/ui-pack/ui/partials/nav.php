@@ -1,22 +1,22 @@
 <?php
 /**
  * Partial: navigation built from this plugin's registered admin pages.
- * Expects $tz_app (label), $tz_nav (array of page, label, url) and $tz_current (page slug).
+ * Expects $tzfd_app (label), $tzfd_nav (array of page, label, url) and $tzfd_current (page slug).
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
-$tz_nav     = isset( $tz_nav ) && is_array( $tz_nav ) ? $tz_nav : array();
-$tz_current = isset( $tz_current ) ? (string) $tz_current : '';
-$tz_label   = isset( $tz_app['label'] ) ? (string) $tz_app['label'] : '';
-$tz_domain  = isset( $tz_app['domain'] ) ? (string) $tz_app['domain'] : 'default';
-if ( ! empty( $tz_nav ) ) :
+$tzfd_nav     = isset( $tzfd_nav ) && is_array( $tzfd_nav ) ? $tzfd_nav : array();
+$tzfd_current = isset( $tzfd_current ) ? (string) $tzfd_current : '';
+$tzfd_label   = isset( $tzfd_app['label'] ) ? (string) $tzfd_app['label'] : '';
+$tzfd_domain  = isset( $tzfd_app['domain'] ) ? (string) $tzfd_app['domain'] : 'default';
+if ( ! empty( $tzfd_nav ) ) :
 ?>
-<nav class="tz-app-nav" aria-label="<?php echo esc_attr( $tz_label . ' ' . __( 'pages', 'titan-zero-trades-front-desk' ) ); ?>">
+<nav class="tz-app-nav" aria-label="<?php echo esc_attr( $tzfd_label . ' ' . __( 'pages', 'titan-zero-trades-front-desk' ) ); ?>">
 	<ul>
-		<?php foreach ( $tz_nav as $tz_item ) :
-			$tz_is_here = isset( $tz_item['page'] ) && $tz_item['page'] === $tz_current;
+		<?php foreach ( $tzfd_nav as $tzfd_item ) :
+			$tzfd_is_here = isset( $tzfd_item['page'] ) && $tzfd_item['page'] === $tzfd_current;
 			?>
 			<li>
-				<a href="<?php echo esc_url( (string) $tz_item['url'] ); ?>"<?php echo $tz_is_here ? ' class="is-current" aria-current="page"' : ''; ?>><?php echo esc_html( (string) $tz_item['label'] ); ?></a>
+				<a href="<?php echo esc_url( (string) $tzfd_item['url'] ); ?>"<?php echo $tzfd_is_here ? ' class="is-current" aria-current="page"' : ''; ?>><?php echo esc_html( (string) $tzfd_item['label'] ); ?></a>
 			</li>
 		<?php endforeach; ?>
 	</ul>

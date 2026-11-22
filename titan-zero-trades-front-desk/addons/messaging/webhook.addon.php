@@ -98,9 +98,9 @@ if( !class_exists( 'TZFD_WebHook' ) )
     } // End Class
 
     // Main add-on code
-    $tz_webhook_obj = new TZFD_WebHook();
+    $tzfd_webhook_obj = new TZFD_WebHook();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_webhook_obj->get_addon_id() ] = $tz_webhook_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_webhook_obj->get_addon_id() ] = $tzfd_webhook_obj;
 }

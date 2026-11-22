@@ -37,9 +37,9 @@ final class TZFD_Addon_Support {
      * the current Workspace company owns that calendar. Older options are
      * copied for the verified owner only, preserving saved configuration.
      */
-    public static function form_option_name( $tz_key, $formid ) {
+    public static function form_option_name( $tzfd_key, $formid ) {
         $formid = absint( $formid );
-        $legacy = self::OPTION_PREFIX . sanitize_key( $tz_key ) . '_form_' . $formid;
+        $legacy = self::OPTION_PREFIX . sanitize_key( $tzfd_key ) . '_form_' . $formid;
         if ( ! class_exists( 'TZFD_Scoped_Store' ) || $formid < 1 ) { return ''; }
         $company = TZFD_Scoped_Store::company_id();
         if ( $company < 1 || $company !== TZFD_Scoped_Store::company_for_form( $formid ) ) { return ''; }
@@ -53,8 +53,8 @@ final class TZFD_Addon_Support {
         return $scoped;
     }
 
-    public static function global_option_name( $tz_key ) {
-        $legacy = self::OPTION_PREFIX . sanitize_key( $tz_key ) . '_global';
+    public static function global_option_name( $tzfd_key ) {
+        $legacy = self::OPTION_PREFIX . sanitize_key( $tzfd_key ) . '_global';
         if ( ! class_exists( 'TZFD_Scoped_Store' ) ) { return ''; }
         $company = class_exists( 'TZFD_Scoped_Store' ) ? TZFD_Scoped_Store::company_id() : 0;
         if ( $company > 0 ) {
@@ -70,11 +70,11 @@ final class TZFD_Addon_Support {
     }
 
     /** Per-form settings merged over defaults. Unknown stored keys are ignored. */
-    public static function form_settings( $tz_key, $formid, array $defaults ) {
+    public static function form_settings( $tzfd_key, $formid, array $defaults ) {
         // Site-wide defaults apply to calendars that have no value of their own yet.
-        $form_option = self::form_option_name( $tz_key, $formid );
+        $form_option = self::form_option_name( $tzfd_key, $formid );
         if ( '' === $form_option ) { return $defaults; }
-        $global_option = self::global_option_name( $tz_key );
+        $global_option = self::global_option_name( $tzfd_key );
         $site = self::merge_stored( '' === $global_option ? array() : get_option( $global_option, array() ), $defaults );
         return self::merge_stored( get_option( $form_option, array() ), $site );
     }
@@ -85,13 +85,13 @@ final class TZFD_Addon_Support {
      * independently checked against the authoritative form row. Normal UI paths
      * continue using form_settings() and their current-company checks.
      */
-    public static function form_settings_for_job( $tz_key, $formid, $company_id, array $defaults ) {
+    public static function form_settings_for_job( $tzfd_key, $formid, $company_id, array $defaults ) {
         $formid = absint( $formid );
         $company_id = absint( $company_id );
         if ( $formid < 1 || $company_id < 1 || is_user_logged_in() ||
              ! class_exists( 'TZFD_Scoped_Store' ) ||
              TZFD_Scoped_Store::company_for_form( $formid ) !== $company_id ) { return $defaults; }
-        $legacy = self::OPTION_PREFIX . sanitize_key( $tz_key );
+        $legacy = self::OPTION_PREFIX . sanitize_key( $tzfd_key );
         $form_name = $legacy . '_form_' . $formid;
         $global_name = $legacy . '_global';
         $form_option = TZFD_Scoped_Store::option_name( $form_name, $company_id );
@@ -120,21 +120,21 @@ final class TZFD_Addon_Support {
      *
      * @return array|null Null means access denied or no settings saved.
      */
-    public static function global_settings_for_job( $tz_key, $company, $booking_id, array $defaults ) {
-        if ( ! is_string( $tz_key ) || ! preg_match( '/^[a-z0-9_-]{1,64}$/D', $tz_key )
+    public static function global_settings_for_job( $tzfd_key, $company, $booking_id, array $defaults ) {
+        if ( ! is_string( $tzfd_key ) || ! preg_match( '/^[a-z0-9_-]{1,64}$/D', $tzfd_key )
             || ! is_int( $company ) || $company < 1 || ! is_int( $booking_id ) || $booking_id < 1
             || is_user_logged_in() || ! class_exists( 'TZFD_Scoped_Store' )
             || ! class_exists( 'TZFD_Addon_Records' )
             || ! TZFD_Addon_Records::booking_belongs_to_company( $company, $booking_id ) ) { return null; }
-        $legacy = self::OPTION_PREFIX . $tz_key . '_global';
+        $legacy = self::OPTION_PREFIX . $tzfd_key . '_global';
         $scoped = TZFD_Scoped_Store::option_name( $legacy, $company );
         $stored = get_option( $scoped, null );
         return is_array( $stored ) ? self::reveal_secrets( self::merge_stored( $stored, $defaults ) ) : null;
     }
 
     /** Global (site-wide) settings merged over defaults. Credential fields are returned decrypted. */
-    public static function global_settings( $tz_key, array $defaults ) {
-        $option = self::global_option_name( $tz_key );
+    public static function global_settings( $tzfd_key, array $defaults ) {
+        $option = self::global_option_name( $tzfd_key );
         $raw    = '' === $option ? array() : get_option( $option, array() );
         $stored = self::merge_stored( $raw, $defaults );
         $legacy = false;
@@ -206,17 +206,17 @@ final class TZFD_Addon_Support {
         return $clean;
     }
 
-    public static function save_form_settings( $tz_key, $formid, array $defaults, array $input ) {
-        $clean = self::store_hashed_fields( $tz_key, self::sanitize_settings( $defaults, $input ) );
-        $option = self::form_option_name( $tz_key, $formid );
+    public static function save_form_settings( $tzfd_key, $formid, array $defaults, array $input ) {
+        $clean = self::store_hashed_fields( $tzfd_key, self::sanitize_settings( $defaults, $input ) );
+        $option = self::form_option_name( $tzfd_key, $formid );
         if ( '' === $option ) { return false; }
         update_option( $option, $clean, false );
         return $clean;
     }
 
-    public static function save_global_settings( $tz_key, array $defaults, array $input ) {
-        $clean = self::store_hashed_fields( $tz_key, self::sanitize_settings( $defaults, $input ) );
-        $option = self::global_option_name( $tz_key );
+    public static function save_global_settings( $tzfd_key, array $defaults, array $input ) {
+        $clean = self::store_hashed_fields( $tzfd_key, self::sanitize_settings( $defaults, $input ) );
+        $option = self::global_option_name( $tzfd_key );
         if ( '' === $option ) { return false; }
         $existing = get_option( $option, array() );
         $clean = self::protect_secrets( $clean, is_array( $existing ) ? $existing : array() );
@@ -236,9 +236,9 @@ final class TZFD_Addon_Support {
      * values stay empty (no password) and values that are already hashes are
      * kept as they are, so re-saving an unchanged form never double-hashes.
      */
-    public static function store_hashed_fields( $tz_key, array $clean ) {
-        if ( empty( self::HASHED_FIELDS[ $tz_key ] ) ) { return $clean; }
-        foreach ( self::HASHED_FIELDS[ $tz_key ] as $field ) {
+    public static function store_hashed_fields( $tzfd_key, array $clean ) {
+        if ( empty( self::HASHED_FIELDS[ $tzfd_key ] ) ) { return $clean; }
+        foreach ( self::HASHED_FIELDS[ $tzfd_key ] as $field ) {
             if ( ! isset( $clean[ $field ] ) || ! is_string( $clean[ $field ] ) || '' === $clean[ $field ] ) { continue; }
             if ( self::is_password_hash( $clean[ $field ] ) ) { continue; }
             $clean[ $field ] = password_hash( $clean[ $field ], PASSWORD_DEFAULT );
@@ -251,14 +251,14 @@ final class TZFD_Addon_Support {
      * successfully. Only the stored option that holds this exact plain value
      * is rewritten; the site-wide option is checked as well.
      */
-    public static function upgrade_plain_password( $tz_key, $formid, $plain ) {
+    public static function upgrade_plain_password( $tzfd_key, $formid, $plain ) {
         if ( ! is_string( $plain ) || '' === $plain || self::is_password_hash( $plain ) ) { return; }
-        $options = array( self::form_option_name( $tz_key, $formid ), self::global_option_name( $tz_key ) );
+        $options = array( self::form_option_name( $tzfd_key, $formid ), self::global_option_name( $tzfd_key ) );
         foreach ( $options as $name ) {
             if ( '' === $name ) { continue; }
             $stored = get_option( $name, null );
-            if ( ! is_array( $stored ) || empty( self::HASHED_FIELDS[ $tz_key ] ) ) { continue; }
-            foreach ( self::HASHED_FIELDS[ $tz_key ] as $field ) {
+            if ( ! is_array( $stored ) || empty( self::HASHED_FIELDS[ $tzfd_key ] ) ) { continue; }
+            foreach ( self::HASHED_FIELDS[ $tzfd_key ] as $field ) {
                 if ( isset( $stored[ $field ] ) && is_string( $stored[ $field ] ) && hash_equals( $stored[ $field ], $plain ) ) {
                     $stored[ $field ] = password_hash( $plain, PASSWORD_DEFAULT );
                     update_option( $name, $stored, false );
@@ -276,25 +276,25 @@ final class TZFD_Addon_Support {
      * Values posted from the per-form editor for one add-on, or null when this
      * request is not a valid save of that add-on's block.
      */
-    public static function form_request( $tz_key, $formid ) {
-        $marker = 'TZFD_' . $tz_key . '_id';
+    public static function form_request( $tzfd_key, $formid ) {
+        $marker = 'TZFD_' . $tzfd_key . '_id';
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- method compared exactly to 'POST'; a sanitizer could strip %xx and change the result.
         if ( 'POST' !== wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) || ! isset( $_POST[ $marker ] ) || ! isset( $_POST['anonce'] ) ) { return null; }
-        if ( ! current_user_can( 'tz_fd_access' ) || '' === self::form_option_name( $tz_key, $formid ) ) { return null; }
+        if ( ! current_user_can( 'tz_fd_access' ) || '' === self::form_option_name( $tzfd_key, $formid ) ) { return null; }
         if ( ! is_string( $_POST['anonce'] ) || ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), self::NONCE_ACTION ) ) { return null; }
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- ctype_digit() and the int cast accept digits only; a sanitizer could change which values match.
         if ( ! is_scalar( $_POST[ $marker ] ) || ! ctype_digit( (string) wp_unslash( $_POST[ $marker ] ) ) || (int) wp_unslash( $_POST[ $marker ] ) !== (int) $formid ) { return null; }
-        return self::posted_with_prefix( 'tz_fd_' . $tz_key . '_', $_POST );
+        return self::posted_with_prefix( 'tz_fd_' . $tzfd_key . '_', $_POST );
     }
 
     /** Values posted from an add-on's site-wide settings block, or null. */
-    public static function global_request( $tz_key ) {
-        $action = 'tz_fd_global_' . $tz_key;
+    public static function global_request( $tzfd_key ) {
+        $action = 'tz_fd_global_' . $tzfd_key;
         // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- method compared exactly to 'POST'; a sanitizer could strip %xx and change the result.
-        if ( 'POST' !== wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) || ! isset( $_POST[ 'tz_fd_save_' . $tz_key ] ) || ! isset( $_POST['_tz_fd_nonce'] ) ) { return null; }
-        if ( ! current_user_can( 'tz_fd_access' ) || '' === self::global_option_name( $tz_key ) ) { return null; }
+        if ( 'POST' !== wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) || ! isset( $_POST[ 'tz_fd_save_' . $tzfd_key ] ) || ! isset( $_POST['_tz_fd_nonce'] ) ) { return null; }
+        if ( ! current_user_can( 'tz_fd_access' ) || '' === self::global_option_name( $tzfd_key ) ) { return null; }
         if ( ! is_string( $_POST['_tz_fd_nonce'] ) || ! wp_verify_nonce( tzfd_request_text( 'post', '_tz_fd_nonce' ), $action ) ) { return null; }
-        return self::posted_with_prefix( 'tz_fd_global_' . $tz_key . '_', $_POST );
+        return self::posted_with_prefix( 'tz_fd_global_' . $tzfd_key . '_', $_POST );
     }
 
     /**
@@ -303,13 +303,13 @@ final class TZFD_Addon_Support {
      */
     private static function posted_with_prefix( $prefix, array $posted ) {
         $values = array();
-        foreach ( $posted as $field => $tz_value ) {
+        foreach ( $posted as $field => $tzfd_value ) {
             $field = (string) $field;
             if ( 0 !== strpos( $field, $prefix ) ) { continue; }
             // Invalid nested values invalidate the entire settings submission; silently
             // converting them to blank could erase API credentials or enable a flag.
-            if ( ! is_string( $tz_value ) ) { return null; }
-            $values[ substr( $field, strlen( $prefix ) ) ] = wp_unslash( $tz_value );
+            if ( ! is_string( $tzfd_value ) ) { return null; }
+            $values[ substr( $field, strlen( $prefix ) ) ] = wp_unslash( $tzfd_value );
         }
         return $values;
     }
@@ -324,23 +324,23 @@ final class TZFD_Addon_Support {
         foreach ( $specs as $name => $spec ) {
             $id    = $prefix . $name;
             $type  = isset( $spec['type'] ) ? $spec['type'] : 'text';
-            $tz_value = isset( $values[ $name ] ) ? $values[ $name ] : '';
+            $tzfd_value = isset( $values[ $name ] ) ? $values[ $name ] : '';
             echo '<tr><th scope="row" style="width:220px;text-align:left;vertical-align:top;padding:8px 10px 8px 0;"><label for="' . esc_attr( $id ) . '">' . esc_html( $spec['label'] ) . '</label></th><td style="padding:8px 0;">';
             switch ( $type ) {
                 case 'bool':
-                    echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="1" ' . checked( (bool) $tz_value, true, false ) . ' />';
+                    echo '<input type="checkbox" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="1" ' . checked( (bool) $tzfd_value, true, false ) . ' />';
                     break;
                 case 'int':
-                    echo '<input type="number" min="0" step="1" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="' . esc_attr( (string) (int) $tz_value ) . '" class="small-text" />';
+                    echo '<input type="number" min="0" step="1" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="' . esc_attr( (string) (int) $tzfd_value ) . '" class="small-text" />';
                     break;
                 case 'textarea':
-                    echo '<textarea id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" rows="4" class="large-text">' . esc_textarea( (string) $tz_value ) . '</textarea>';
+                    echo '<textarea id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" rows="4" class="large-text">' . esc_textarea( (string) $tzfd_value ) . '</textarea>';
                     break;
                 case 'password':
                     echo '<input type="password" autocomplete="new-password" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="" class="regular-text" placeholder="' . esc_attr__( 'Leave blank to keep the current value', 'titan-zero-trades-front-desk' ) . '" />';
                     break;
                 default:
-                    echo '<input type="text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="' . esc_attr( (string) $tz_value ) . '" class="large-text" />';
+                    echo '<input type="text" id="' . esc_attr( $id ) . '" name="' . esc_attr( $id ) . '" value="' . esc_attr( (string) $tzfd_value ) . '" class="large-text" />';
             }
             if ( ! empty( $spec['help'] ) ) {
                 echo '<p class="description">' . esc_html( $spec['help'] ) . '</p>';
@@ -356,25 +356,25 @@ final class TZFD_Addon_Support {
 
     /**
      * Start (or end) of a booked appointment as a timestamp-bearing object.
-     * $tz_date is Y-m-d; $slot is "HH:MM/HH:MM" (24-hour), as stored in bookings.
+     * $tzfd_date is Y-m-d; $slot is "HH:MM/HH:MM" (24-hour), as stored in bookings.
      *
      * @return DateTimeImmutable|false
      */
-    public static function slot_boundary( $tz_date, $slot, $which, $tz ) {
-        if ( ! is_string( $tz_date ) || 1 !== preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/D', $tz_date, $date_parts ) ||
+    public static function slot_boundary( $tzfd_date, $slot, $which, $tz ) {
+        if ( ! is_string( $tzfd_date ) || 1 !== preg_match( '/^(\d{4})-(\d{2})-(\d{2})$/D', $tzfd_date, $date_parts ) ||
              ! checkdate( (int) $date_parts[2], (int) $date_parts[3], (int) $date_parts[1] ) ) { return false; }
         if ( ! is_string( $slot ) || 1 !== preg_match( '/^(\d{2}:\d{2})\/(\d{2}:\d{2})$/', trim( $slot ), $m ) ) { return false; }
         $time = ( 'end' === $which ) ? $m[2] : $m[1];
-        $tz_hour = (int) substr( $time, 0, 2 );
+        $tzfd_hour = (int) substr( $time, 0, 2 );
         $min  = (int) substr( $time, 3, 2 );
-        if ( $min > 59 || $tz_hour > 24 || ( 24 === $tz_hour && $min > 0 ) ) { return false; }
+        if ( $min > 59 || $tzfd_hour > 24 || ( 24 === $tzfd_hour && $min > 0 ) ) { return false; }
         if ( ! ( $tz instanceof DateTimeZone ) ) { $tz = new DateTimeZone( 'UTC' ); }
         try {
-            if ( 24 === $tz_hour ) {
-                $day = new DateTimeImmutable( $tz_date . ' 00:00:00', $tz );
+            if ( 24 === $tzfd_hour ) {
+                $day = new DateTimeImmutable( $tzfd_date . ' 00:00:00', $tz );
                 return $day->modify( '+1 day' );
             }
-            return new DateTimeImmutable( sprintf( '%s %02d:%02d:00', $tz_date, $tz_hour, $min ), $tz );
+            return new DateTimeImmutable( sprintf( '%s %02d:%02d:00', $tzfd_date, $tzfd_hour, $min ), $tz );
         } catch ( Exception $e ) {
             return false;
         }
@@ -383,9 +383,9 @@ final class TZFD_Addon_Support {
     /** Replace %name% tokens with values. Unknown tokens are left untouched. */
     public static function fill_template( $template, array $values ) {
         $out = is_string( $template ) ? $template : '';
-        foreach ( $values as $name => $tz_value ) {
-            if ( ! is_string( $name ) || ! is_scalar( $tz_value ) ) { continue; }
-            $out = str_replace( '%' . $name . '%', (string) $tz_value, $out );
+        foreach ( $values as $name => $tzfd_value ) {
+            if ( ! is_string( $name ) || ! is_scalar( $tzfd_value ) ) { continue; }
+            $out = str_replace( '%' . $name . '%', (string) $tzfd_value, $out );
         }
         return $out;
     }
@@ -398,9 +398,9 @@ final class TZFD_Addon_Support {
     /** Split a free-text list on newlines, commas or semicolons. */
     public static function parse_entries( $text ) {
         $out = array();
-        foreach ( preg_split( '/[\r\n,;]+/', (string) $text ) as $tz_item ) {
-            $tz_item = strtolower( trim( $tz_item ) );
-            if ( '' !== $tz_item ) { $out[] = $tz_item; }
+        foreach ( preg_split( '/[\r\n,;]+/', (string) $text ) as $tzfd_item ) {
+            $tzfd_item = strtolower( trim( $tzfd_item ) );
+            if ( '' !== $tzfd_item ) { $out[] = $tzfd_item; }
         }
         return array_values( array_unique( $out ) );
     }
@@ -414,14 +414,14 @@ final class TZFD_Addon_Support {
         $address = strtolower( trim( (string) $address ) );
         if ( '' === $address || false === strpos( $address, '@' ) ) { return false; }
         $domain = substr( $address, strrpos( $address, '@' ) + 1 );
-        foreach ( $entries as $tz_entry ) {
-            $tz_entry = ltrim( strtolower( trim( (string) $tz_entry ) ), '@' );
-            if ( '' === $tz_entry ) { continue; }
-            if ( false !== strpos( $tz_entry, '@' ) ) {
-                if ( $address === $tz_entry ) { return true; }
+        foreach ( $entries as $tzfd_local_entry ) {
+            $tzfd_local_entry = ltrim( strtolower( trim( (string) $tzfd_local_entry ) ), '@' );
+            if ( '' === $tzfd_local_entry ) { continue; }
+            if ( false !== strpos( $tzfd_local_entry, '@' ) ) {
+                if ( $address === $tzfd_local_entry ) { return true; }
                 continue;
             }
-            if ( $domain === $tz_entry || substr( $domain, -strlen( '.' . $tz_entry ) ) === '.' . $tz_entry ) { return true; }
+            if ( $domain === $tzfd_local_entry || substr( $domain, -strlen( '.' . $tzfd_local_entry ) ) === '.' . $tzfd_local_entry ) { return true; }
         }
         return false;
     }
@@ -439,21 +439,21 @@ final class TZFD_Addon_Support {
     }
 
     /** A limit of 0 means unlimited. */
-    public static function exceeds_limit( $tz_count, $limit ) {
+    public static function exceeds_limit( $tzfd_local_count, $limit ) {
         $limit = (int) $limit;
-        return $limit > 0 && (int) $tz_count > $limit;
+        return $limit > 0 && (int) $tzfd_local_count > $limit;
     }
 
     /** Status stored on one appointment. An empty string means Approved. */
-    public static function appointment_status( $tz_app ) {
-        return ( is_array( $tz_app ) && isset( $tz_app['cancelled'] ) && is_string( $tz_app['cancelled'] ) ) ? $tz_app['cancelled'] : '';
+    public static function appointment_status( $tzfd_app ) {
+        return ( is_array( $tzfd_app ) && isset( $tzfd_app['cancelled'] ) && is_string( $tzfd_app['cancelled'] ) ) ? $tzfd_app['cancelled'] : '';
     }
 
     /** True when every appointment in the booking has exactly this status. */
     public static function all_have_status( array $apps, $status ) {
         if ( empty( $apps ) ) { return false; }
-        foreach ( $apps as $tz_app ) {
-            if ( self::appointment_status( $tz_app ) !== $status ) { return false; }
+        foreach ( $apps as $tzfd_app ) {
+            if ( self::appointment_status( $tzfd_app ) !== $status ) { return false; }
         }
         return true;
     }
@@ -485,22 +485,22 @@ final class TZFD_Addon_Support {
     }
 
     /** Digits only, for wa.me links. */
-    public static function whatsapp_url( $number, $tz_message ) {
+    public static function whatsapp_url( $number, $tzfd_message ) {
         $digits = preg_replace( '/\D+/', '', (string) $number );
         if ( strlen( $digits ) < 6 || strlen( $digits ) > 15 ) { return ''; }
-        return 'https://wa.me/' . $digits . '?text=' . rawurlencode( (string) $tz_message );
+        return 'https://wa.me/' . $digits . '?text=' . rawurlencode( (string) $tzfd_message );
     }
 
     /** sms: link with a leading + kept when present. */
-    public static function sms_url( $number, $tz_message ) {
+    public static function sms_url( $number, $tzfd_message ) {
         $clean = preg_replace( '/[^\d+]/', '', (string) $number );
         if ( 1 !== preg_match( '/^\+?\d{6,15}$/', $clean ) ) { return ''; }
-        return 'sms:' . $clean . '?body=' . rawurlencode( (string) $tz_message );
+        return 'sms:' . $clean . '?body=' . rawurlencode( (string) $tzfd_message );
     }
 
     /** Keep the newest $max entries of a log. */
-    public static function append_log( array $log, array $tz_entry, $max = 500 ) {
-        $log[] = $tz_entry;
+    public static function append_log( array $log, array $tzfd_local_entry, $max = 500 ) {
+        $log[] = $tzfd_local_entry;
         if ( count( $log ) > $max ) { $log = array_slice( $log, -$max ); }
         return $log;
     }

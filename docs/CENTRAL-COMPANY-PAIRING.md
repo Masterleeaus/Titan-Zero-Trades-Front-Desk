@@ -1,6 +1,6 @@
 # Central company pairing (issue #376)
 
-Status: local side implemented and tested (`includes/class-tzfd-central-tenant.php`). The owner accepted the wire format `central-pairing/1` as the contract on #451 (decision recorded there). The Central #186 text could not be read from this session, so it is not independently confirmed against Central. Hosted pairing is not live; the endpoint URL is not recorded.
+Status: local side implemented and tested (`includes/class-tzfd-central-tenant.php`). The owner accepted the wire format `central-pairing/1` as the contract on #451 (decision recorded there). The Central #186 text could not be read from this session, so it is not independently confirmed against Central. Hosted pairing is not live. The owner-decided endpoint URL (#456) is not yet wired in code on main.
 
 ## 1. Where the local integer `company_id` is used
 
@@ -68,11 +68,22 @@ Disconnecting removes the pairing and credential only. Bookings, customers, sett
 ## 6. Open items
 
 - Central #186 text: not read from this session. The contract id and field names are accepted as `central-pairing/1` by the owner decision on #451. Confirming them against Central #186 needs owner or Central sign-off.
-- Pairing endpoint URL: not recorded. Needs owner sign-off (tracked on #456 and #347).
+- Pairing endpoint URL: decided by the owner (issue #456) as `https://central.titanzero.io/api/tzfd/pair`. Not yet in code on main; proposed in PR #427, which is open and not merged.
 - Admin connect screen (enter the pairing code): not built. `TZFD_Central_Tenant::connect()` has no caller yet (tracked on #452).
 - Live end-to-end pairing against the hosted service: not run. It needs the endpoint URL and the hosted side.
 
-## 7. Task breakdown for #451
+## 7. Task breakdown and status (issue #456)
+
+| Task | Status on main |
+| --- | --- |
+| Baseline: no endpoint constant, filter or default on main (`grep -rn TZFD_AI_PAIRING_ENDPOINT` and `grep -rn central.titanzero.io` return nothing) | Recorded here |
+| Endpoint URL decision recorded | Done (section 6) |
+| Pairing endpoint constant or filter with https-only validation, off by default | Open in PR #427 (not merged) |
+| Pairing handshake and entitlement fetch, admin connect and disconnect | Open in PR #427 and issue #458 |
+| Hosted Central contract (#186), signing keys, per-site secret issuance | Needs owner sign-off; not ticked |
+| Live end-to-end test against the hosted service | Needs the hosted service; issue #458 |
+
+## 8. Task breakdown for #451
 
 Each task is independently verifiable. "Done" means evidence on main.
 
@@ -84,5 +95,5 @@ Each task is independently verifiable. "Done" means evidence on main.
 | 4 | Keep the local integer `company_id` out of the hosted call and out of company UUID checks | Done | `is_company_uuid()` rejects integers; test "local integer 1 is not a company UUID" in the central tenant runner |
 | 5 | Admin screen to enter a pairing code | Open (#452) | No caller of `connect()` in the admin UI |
 | 6 | Confirm the Central #186 contract text | Open, owner or Central sign-off | Not readable from this session |
-| 7 | Record the hosted pairing endpoint URL | Open, owner sign-off (#456, #347) | No URL in code or docs |
+| 7 | Wire the owner-decided endpoint URL as an https-only default | Open in PR #427 (not merged) | No URL in code on main |
 | 8 | Live pairing end to end against the hosted service | Open, blocked by 6 and 7 | Not run |

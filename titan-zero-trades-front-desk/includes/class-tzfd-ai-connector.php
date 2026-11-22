@@ -280,23 +280,25 @@ final class TZFD_AI_Connector {
     }
 
     /**
-     * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
-     * OWNER REVIEW REQUIRED: the wording is a placeholder until the owner approves it. The default terms link
-     * is a draft page pending legal review.
+     * Setup notice shown before the administrator keeps AI on: what leaves the site, how long events are kept,
+     * and where the terms are. Wording, retention default and terms link are agent-proposed defaults (issue #348);
+     * the owner can replace the wording or the link through the filters below without a code change.
      * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
      */
     public static function setup_notice() {
         $d    = self::disclosure();
-        $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
-            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
-            . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
-        // DRAFT: this terms page is pending legal review. Replace or confirm it before AI is offered to real sites.
+        $text = 'AI is on by default for this plugin. When a hosted AI endpoint is connected and you tick consent, the text a visitor types and the fields each AI feature needs ('
+            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . '. '
+            . 'The hosted service only receives the data classes you have ticked. Only the time, feature, result and latency of each hosted call are logged, '
+            . 'and those events are kept for ' . self::RETENTION_DEFAULT . ' days by default (you can set 1 to ' . self::RETENTION_MAX . ' days). '
+            . 'Booking, calendar, customer and reminder features work without AI. You can revoke consent or turn AI off at any time.';
+        // Default terms link carried over from the existing draft. Confirm it or replace it with the tzfd_ai_terms_url filter.
         $url  = 'https://titanzero.io/scheduling-enquiries-terms/';
         if ( function_exists( 'apply_filters' ) ) {
             $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
             $url  = apply_filters( 'tzfd_ai_terms_url', $url );
         }
-        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => true );
+        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => false );
     }
 
     /** Turns AI on or off for the free plugin. AI is on until an administrator turns it off. */

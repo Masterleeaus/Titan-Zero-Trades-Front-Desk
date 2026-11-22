@@ -291,7 +291,7 @@ check( 'disclosure never includes the secret', false === strpos( json_encode( $d
 reset_state();
 check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
 $n = TZFD_AI_Connector::setup_notice();
-check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice uses the agent-proposed wording, names the data classes and the 30-day retention', false === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'kept for 30 days' ) && false === strpos( $n['text'], 'OWNER REVIEW' ) && false === strpos( $n['text'], 'PLACEHOLDER' ) );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
 check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );

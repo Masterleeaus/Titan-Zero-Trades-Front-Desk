@@ -44,12 +44,15 @@ cleanup() {
   if [ "${KEEP_SITE:-0}" != "1" ]; then
     rm -rf "$WP_ROOT"
     [ -n "${TZFD_RT_DB_NAME:-}" ] && mysql -u"${TZFD_RT_DB_ADMIN:-root}" -e "DROP DATABASE IF EXISTS \`$TZFD_RT_DB_NAME\`" 2>/dev/null
+    [ -n "${TZFD_RT_DB_USER:-}" ] && mysql -u"${TZFD_RT_DB_ADMIN:-root}" -e "DROP USER IF EXISTS '$TZFD_RT_DB_USER'@'localhost'" 2>/dev/null
   fi
 }
 trap cleanup EXIT
 
+# Per-run names: a shared database user would let two concurrent runs overwrite each other's password.
 export TZFD_RT_DB_NAME="tzfd_rt_$$"  # chosen here so cleanup can drop it even if provisioning fails
-PROVISION_OUT="$("$HERE/provision-wp-site.sh" "$WP_ROOT" "$PLUGIN_DIR" $MULTISITE_FLAG 2>"$WORK/provision.err")"
+export TZFD_RT_DB_USER="${TZFD_RT_DB_USER:-tzfd_rt_$$}"
+PROVISION_OUT="$(TZFD_RT_URL="$URL" "$HERE/provision-wp-site.sh" "$WP_ROOT" "$PLUGIN_DIR" $MULTISITE_FLAG 2>"$WORK/provision.err")"
 if [ $? -ne 0 ]; then
   echo "FAIL provision -- $(cat "$WORK/provision.err")"
   echo "Summary: provisioning failed; nothing executed"
@@ -78,6 +81,19 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-
 SECRET_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "\nTZFD_RT_INBOUND_SECRET=" . $s . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_INBOUND_SECRET=')"
 [ -n "$SECRET_LINE" ] && eval "$SECRET_LINE" || echo "FAIL addon setup -- could not store the missed-call secret"
 
+# Hosted-service contract (issue #285): a test key and a read_settings-only agent scope, so the signed route is exercised.
+CONTRACT_LINES="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$k = bin2hex(random_bytes(32)); update_option("tzfd_hosted_contract_key", $k, false); update_option("tzfd_hosted_contract_scopes", array("read_settings"), false); echo "\nTZFD_RT_CONTRACT_KEY=" . $k . "\nTZFD_RT_CONTRACT_TENANT=" . (int) TZFD_Scoped_Store::company_id() . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_CONTRACT_')"
+[ -n "$CONTRACT_LINES" ] && eval "$CONTRACT_LINES" || echo "FAIL contract setup -- could not store the test contract key"
+
+echo "--- hosted-service contract over HTTP (service-contract-http-tests.sh, issue #285)"
+if [ -n "${TZFD_RT_CONTRACT_KEY:-}" ]; then
+  B="$URL" KEY="$TZFD_RT_CONTRACT_KEY" TENANT="$TZFD_RT_CONTRACT_TENANT" "$HERE/service-contract-http-tests.sh" 2>&1 | tee -a "$LOG"
+  CONTRACT_RC=${PIPESTATUS[0]}
+  [ "$CONTRACT_RC" -eq 0 ] || echo "FAIL service-contract-http -- exit status $CONTRACT_RC" | tee -a "$LOG"
+else
+  echo "SKIP service-contract-http -- no contract key was provisioned" | tee -a "$LOG"
+fi
+
 echo "--- http-auth-tests"
 SECRET="${TZFD_RT_INBOUND_SECRET:-}" TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" 2>&1 | tee -a "$LOG"
 HTTP_RC=${PIPESTATUS[0]}
@@ -98,6 +114,10 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --use
 echo "--- real WordPress runtime tests (wp-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
+echo "--- customer cancel end to end over HTTP (customer-cancel-http-tests.sh, issue #334 B13)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-cancel-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- portal session switching (portal-session-switch-tests.php, issue #334)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/portal-session-switch-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- authorisation and tenant checks (security-runtime-tests.php, issue #8)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/security-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- agent gateway (agent-gateway-runtime-tests.php)"
@@ -124,6 +144,8 @@ echo "--- placeholder service (placeholder-service-runtime-tests.php, issue #300
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/placeholder-service-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- default booking form name (booking-default-form-name-runtime-tests.php, issue #299)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-default-form-name-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- SMS gateway outage (outage-runtime-tests.php, issue #340)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/outage-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- get started (setup-page-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 

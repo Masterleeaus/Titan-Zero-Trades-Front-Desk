@@ -9,14 +9,17 @@
 #        TZFD_RT_DB_NAME  (default: tzfd_rt_$$)  disposable database name
 #        TZFD_RT_URL      (default: http://127.0.0.1:8080)
 #        TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS      passwords for the disposable admin and subscriber
+#        TZFD_RT_WP_VERSION (default: latest)     WordPress core version to download, for example 6.6
 # Exit:  0 provisioned; 2 provisioning failed.
 set -u
 
 WP_ROOT="${1:-}"; PLUGIN_DIR="${2:-}"; MULTISITE="${3:-}"
 WP_CLI="${WP_CLI:-wp}"
+WP_VERSION_ARG=""
+[ -n "${TZFD_RT_WP_VERSION:-}" ] && WP_VERSION_ARG="--version=$TZFD_RT_WP_VERSION"
 DB_ADMIN="${TZFD_RT_DB_ADMIN:-root}"
 DB_NAME="${TZFD_RT_DB_NAME:-tzfd_rt_$$}"
-DB_USER="${TZFD_RT_DB_USER:-tzfd_rt}"
+DB_USER="${TZFD_RT_DB_USER:-tzfd_rt_$$}"  # per run: concurrent runs on one MariaDB must not reset each other's password
 DB_HOST="${TZFD_RT_DB_HOST:-localhost}"              # config host; set to 127.0.0.1 for a TCP server (CI)
 DB_GRANT_HOST="${TZFD_RT_DB_GRANT_HOST:-localhost}" # account host the disposable user is created for
 DB_PASS="${TZFD_RT_DB_PASS:-tzfd_rt_$(head -c8 /dev/urandom | od -An -tx1 | tr -d ' \n')}"
@@ -37,10 +40,14 @@ mysql -u"$DB_ADMIN" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`
   ALTER USER '$DB_USER'@'$DB_GRANT_HOST' IDENTIFIED BY '$DB_PASS';
   GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'$DB_GRANT_HOST'; FLUSH PRIVILEGES;" || fail "cannot create database (is MySQL/MariaDB running and $DB_ADMIN allowed?)"
 
-$WP_CLI --allow-root --path="$WP_ROOT" core download --quiet || fail "wp core download failed"
+$WP_CLI --allow-root --path="$WP_ROOT" core download $WP_VERSION_ARG --quiet || fail "wp core download failed"
 $WP_CLI --allow-root --path="$WP_ROOT" config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=$DB_HOST --skip-check --quiet || fail "config create failed"
 $WP_CLI --allow-root --path="$WP_ROOT" core install --url="$URL" --title="Runtime test site" --admin_user=rtadmin \
   --admin_password="$ADMIN_PASS" --admin_email=rt-admin@example.test --skip-email --quiet || fail "core install failed"
+# Pin the site URL to the server root. Left as installed, the stored siteurl can carry the docroot path, and the
+# login cookies are then scoped to that path, so later requests to /wp-admin/ never send them.
+$WP_CLI --allow-root --path="$WP_ROOT" option update siteurl "$URL" --quiet || fail "could not set siteurl"
+$WP_CLI --allow-root --path="$WP_ROOT" option update home "$URL" --quiet || fail "could not set home"
 
 ln -s "$PLUGIN_DIR" "$WP_ROOT/wp-content/plugins/titan-zero-trades-front-desk" || fail "cannot link plugin"
 

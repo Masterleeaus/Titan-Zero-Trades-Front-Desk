@@ -22,6 +22,7 @@ final class TZFD_AI_Services_Page {
     const ACTION_REVOKE     = 'tzfd_ai_connector_revoke';
     const ACTION_RETENTION  = 'tzfd_ai_connector_retention';
     const ACTION_CLEAR      = 'tzfd_ai_connector_clear_events';
+    const ACTION_DISCONNECT = 'tzfd_ai_connector_disconnect';
     const CONNECTOR_NONCE   = 'tzfd_ai_connector_admin';
 
     public static function register() {
@@ -31,6 +32,7 @@ final class TZFD_AI_Services_Page {
         add_action( 'admin_post_' . self::ACTION_REVOKE, array( __CLASS__, 'handle_revoke' ) );
         add_action( 'admin_post_' . self::ACTION_RETENTION, array( __CLASS__, 'handle_retention' ) );
         add_action( 'admin_post_' . self::ACTION_CLEAR, array( __CLASS__, 'handle_clear_events' ) );
+        add_action( 'admin_post_' . self::ACTION_DISCONNECT, array( __CLASS__, 'handle_disconnect' ) );
     }
 
     public static function add_page() {
@@ -82,6 +84,13 @@ final class TZFD_AI_Services_Page {
             self::redirect_notice( 'retention_invalid' );
         }
         self::redirect_notice( 'retention_saved' );
+    }
+
+    /** Opt-out: removes the endpoint, secret, consent and entitlements. Local features and the event log are untouched. */
+    public static function handle_disconnect() {
+        self::guard_connector_request();
+        TZFD_AI_Connector::disconnect();
+        self::redirect_notice( 'disconnected' );
     }
 
     public static function handle_clear_events() {
@@ -177,6 +186,16 @@ final class TZFD_AI_Services_Page {
                     <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
                     <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Revoke consent', 'titan-zero-trades-front-desk' ); ?></button>
                         <span class="description"><?php esc_html_e( 'Hosted requests stop at once. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
+                </form>
+            <?php endif; ?>
+
+            <?php if ( $status['secret_set'] || $status['endpoint_set'] || $status['consent'] ) : ?>
+                <h2><?php esc_html_e( 'Disconnect hosted AI', 'titan-zero-trades-front-desk' ); ?></h2>
+                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                    <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_DISCONNECT ); ?>" />
+                    <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Disconnect', 'titan-zero-trades-front-desk' ); ?></button>
+                        <span class="description"><?php esc_html_e( 'Removes the stored connection and consent. Bookings, customers and settings stay.', 'titan-zero-trades-front-desk' ); ?></span></p>
                 </form>
             <?php endif; ?>
 
@@ -305,6 +324,7 @@ final class TZFD_AI_Services_Page {
             'consent_saved'     => __( 'Hosted AI consent saved for the scopes you ticked.', 'titan-zero-trades-front-desk' ),
             'consent_none'      => __( 'No consent saved. Tick at least one data class to grant consent.', 'titan-zero-trades-front-desk' ),
             'consent_revoked'   => __( 'Hosted AI consent revoked. No hosted requests will be sent.', 'titan-zero-trades-front-desk' ),
+            'disconnected'      => __( 'Hosted AI disconnected. The stored connection and consent were removed. Local features are unchanged.', 'titan-zero-trades-front-desk' ),
             'retention_saved'   => __( 'Event log retention saved.', 'titan-zero-trades-front-desk' ),
             'retention_invalid' => __( 'Retention must be a whole number of days from 1 to 365.', 'titan-zero-trades-front-desk' ),
             'events_cleared'    => __( 'Hosted AI event log cleared.', 'titan-zero-trades-front-desk' ),

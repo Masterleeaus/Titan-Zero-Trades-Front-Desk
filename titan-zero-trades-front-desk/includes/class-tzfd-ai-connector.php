@@ -36,6 +36,7 @@ final class TZFD_AI_Connector {
     const SIGNATURE_WINDOW = 300;    // seconds either side of the server clock
     const MAX_REQUEST_BYTES  = 16384;
     const MAX_RESPONSE_BYTES = 65536;
+    const MAX_CONTENT_CHARS  = 2000;  // owner decision #330: longest text value sent to the hosted service
     const MIN_SECRET       = 32;     // characters
     const TIMEOUT          = 8;      // seconds
     const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
@@ -94,6 +95,7 @@ final class TZFD_AI_Connector {
         $def = is_string( $feature ) && isset( self::features()[ $feature ] ) ? self::features()[ $feature ] : null;
         if ( null === $def ) { return self::result( 'feature_not_allowed' ); }
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
+        if ( ! self::text_within_limit( $payload ) ) { return self::result( 'invalid_request' ); }
 
         $cfg = self::config();
         if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
@@ -363,6 +365,15 @@ final class TZFD_AI_Connector {
     }
 
     // ---- internals -------------------------------------------------------
+
+    /** True when every string in the payload, at any depth, holds at most MAX_CONTENT_CHARS characters. */
+    private static function text_within_limit( $value ) {
+        if ( is_string( $value ) ) { return mb_strlen( $value, 'UTF-8' ) <= self::MAX_CONTENT_CHARS; }
+        if ( is_array( $value ) ) {
+            foreach ( $value as $item ) { if ( ! self::text_within_limit( $item ) ) { return false; } }
+        }
+        return true;
+    }
 
     private static function result( $status, array $data = array(), array $extra = array() ) {
         return $extra + array(

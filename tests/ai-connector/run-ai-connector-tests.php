@@ -128,6 +128,11 @@ connect_all();
 check( 'unknown feature is not allowed', 'feature_not_allowed' === $C::request( 'shell.exec' )['status'] && 0 === calls() );
 $r = $C::request( 'faq.answer', array( 'q' => str_repeat( 'x', 20000 ) ) );
 check( 'oversized payload is invalid and uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2001 ) ) ) );
+check( 'text over 2000 characters is refused even under the byte cap, uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2000 ) ) ) );
+check( 'text of exactly 2000 characters is accepted', 'ok' === $r['status'] && 1 === calls(), $r['status'] . ' calls=' . calls() );
 
 // 6. Happy path: signed request, verified response, no secret in the wire body or result.
 reset_state();

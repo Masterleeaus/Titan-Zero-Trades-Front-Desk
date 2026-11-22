@@ -138,6 +138,7 @@ final class TZFD_Action_Receipt_Viewer {
 			return array();
 		}
 		return array(
+			// translators: %s: receipt sequence number where verification failed.
 			'Receipt history failed verification from sequence %s. Entries from that point are marked as not verified.' => __( 'Receipt history failed verification from sequence %s. Entries from that point are marked as not verified.', 'titan-zero-trades-front-desk' ),
 			'Some stored receipts did not belong to this company and were not shown.' => __( 'Some stored receipts did not belong to this company and were not shown.', 'titan-zero-trades-front-desk' ),
 			'No agent actions have been recorded yet.' => __( 'No agent actions have been recorded yet.', 'titan-zero-trades-front-desk' ),

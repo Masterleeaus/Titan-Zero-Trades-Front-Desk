@@ -45,7 +45,7 @@ jobs:
         run: |
           set -e
           shopt -s nullglob
-          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php tests/ai-connector/run-ai-connector-tests.php tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/hosted-ai-legacy/legacy-ai-tests.php)
+          files=(tests/unit/*.php tests/contract/*.php tests/security/*.php tests/runtime/*-unit-tests.php tests/runtime/*-harness.php tests/ai-connector/run-ai-connector-tests.php tests/central-tenant/run-central-tenant-tests.php tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/hosted-ai-legacy/legacy-ai-tests.php)
           if [ ${#files[@]} -eq 0 ]; then echo "No standalone harnesses found"; exit 0; fi
           for f in "${files[@]}"; do
             echo "== $f"
@@ -55,6 +55,8 @@ jobs:
         run: php -d error_reporting=-1 tests/runtime/quote-request-classifier-tests.php
       - name: AI connector offline and consent tests
         run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
+      - name: Central company pairing tests (issue #376, offline)
+        run: php -d error_reporting=-1 tests/central-tenant/run-central-tenant-tests.php
       - name: AI connector 100 / 1k / 10k tenant cost simulation (issue #43, offline, about 70 s)
         run: php -d error_reporting=-1 tests/ai-connector/cost-simulation-test.php
       - name: Reproducible package and no development files (issue #3)

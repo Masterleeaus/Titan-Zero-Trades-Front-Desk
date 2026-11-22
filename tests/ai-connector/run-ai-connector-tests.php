@@ -30,6 +30,7 @@ function apply_filters( $tag, $value, ...$args ) {
 }
 function wp_json_encode( $v ) { return json_encode( $v ); }
 
+require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
 
 const SECRET = '0123456789abcdef0123456789abcdef0123456789abcdef';
@@ -74,7 +75,24 @@ function reset_state() {
     $GLOBALS['tz_reply'] = null;
     $GLOBALS['tz_filters']['tzfd_ai_connector_budget_limits'] = array();
 }
+/** Signed pairing assertion (issue #376) for this site and company; the hosted call needs it. */
+function pair_site( $company = '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f', $site = SITE ) {
+    $now   = time();
+    $nonce = bin2hex( random_bytes( 16 ) );
+    $body  = json_encode( array(
+        'contract' => 'central-pairing/1', 'site' => $site, 'company_uuid' => $company,
+        'operations' => array( 'hosted.request' ), 'nonce' => $nonce,
+        'issued_at' => $now, 'expires_at' => $now + 600,
+    ) );
+    $headers = array(
+        'X-TZFD-Timestamp' => (string) $now,
+        'X-TZFD-Nonce'     => $nonce,
+        'X-TZFD-Signature' => TZFD_Central_Tenant::sign( SECRET, (string) $now, $nonce, $body ),
+    );
+    return TZFD_Central_Tenant::connect( $body, $headers, $site, SECRET, $now );
+}
 function connect_all() {
+    pair_site();
     TZFD_AI_Connector::configure( 'https://ai.example.test/v1/request', SITE, SECRET );
     TZFD_AI_Connector::grant_consent( array( 'faq.read', 'reports.read', 'customer.read', 'booking.read', 'booking.write' ) );
     TZFD_AI_Connector::set_entitlements( array( 'free_ai', 'assistant', 'agent_team' ) );

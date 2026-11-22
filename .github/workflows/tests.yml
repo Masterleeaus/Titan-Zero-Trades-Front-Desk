@@ -327,3 +327,58 @@ jobs:
           # Empty for "latest": provision-wp-site.sh then downloads the current WordPress core.
           TZFD_RT_WP_VERSION: ${{ matrix.wp != 'latest' && matrix.wp || '' }}
         run: bash tests/runtime/run-wp-runtime.sh --multisite
+
+  clean-install-zip:
+    # Issue #389: the built free ZIP is unpacked into an empty WordPress site, activated and checked.
+    name: Clean install of the built free ZIP (WP latest, PHP 8.3, MariaDB 10.11)
+    runs-on: ubuntu-latest
+    needs: php-lint
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WP_CLI: /tmp/tzfd-ci/wp-cli.phar
+      WP_DIR: ${{ github.workspace }}/wp-site
+      WP_PORT: "8080"
+      WP_URL: http://localhost:8080
+      DB_NAME: wp_zip_ci
+      DB_USER: wpzip
+      DB_PASS: wpzipass
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli, xml, mbstring, curl, zip, gd, intl
+      - name: Build the free ZIP (the same builder as the reproducible-build gate)
+        run: |
+          mkdir -p "$RUNNER_TEMP/zip"
+          bash tools/release/build-zip.sh "$GITHUB_WORKSPACE/titan-zero-trades-front-desk" "$RUNNER_TEMP/zip/titan-zero-trades-front-desk.zip"
+      - name: Get WP-CLI and WordPress
+        run: |
+          mkdir -p "$(dirname "$WP_CLI")"
+          curl -sS -o "$WP_CLI" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          curl -sS -o wordpress.zip https://wordpress.org/latest.zip
+          unzip -q wordpress.zip && mv wordpress "$WP_DIR"
+      - name: Create database and install WordPress (empty site, no plugin yet)
+        run: |
+          mysql -h127.0.0.1 -P3306 -uroot -proot -e "CREATE DATABASE $DB_NAME DEFAULT CHARACTER SET utf8mb4; CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS'; GRANT ALL ON $DB_NAME.* TO '$DB_USER'@'%'; FLUSH PRIVILEGES;"
+          cd "$WP_DIR"
+          php "$WP_CLI" --allow-root config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --dbhost=127.0.0.1:3306 --skip-check
+          php "$WP_CLI" --allow-root core install --url=$WP_URL --title="FD ZIP CI" --admin_user=fdadmin --admin_password=fdadmin-test-pass --admin_email=admin@example.test --skip-email
+      - name: Start web server
+        run: |
+          (PHP_CLI_SERVER_WORKERS=4 nohup php -S localhost:$WP_PORT -t "$WP_DIR" > server.log 2>&1 &)
+          for i in $(seq 1 30); do code=$(curl -s -o /dev/null -w "%{http_code}" $WP_URL/ || true); [ "$code" = "200" ] && break; sleep 1; done
+          test "$code" = "200"
+      - name: Clean install from the built ZIP (unpack, activate, AI check, front page)
+        run: WP_CLI="php $WP_CLI" WP_URL="$WP_URL" bash tests/runtime/clean-install-zip.sh "$RUNNER_TEMP/zip/titan-zero-trades-front-desk.zip" "$WP_DIR"
+      - name: Server log on failure
+        if: failure()
+        run: tail -n 200 server.log || true

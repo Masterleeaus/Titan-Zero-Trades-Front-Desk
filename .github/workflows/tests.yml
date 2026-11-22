@@ -128,6 +128,14 @@ jobs:
         run: |
           cd "$WP_DIR"
           php "$WP_CLI" --allow-root --path="$WP_DIR" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); file_put_contents("/tmp/fd-secret.txt", $s); echo "ok\n";'
+      - name: Discovery links on an empty site (runs before any suite creates records, issue #366)
+        run: |
+          set -o pipefail
+          cd "$WP_DIR"
+          LOG="$RUNNER_TEMP/setup-discovery.log"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/setup-discovery-empty-site.php" --user=1 2>&1 | tee "$LOG"
+          if grep -q '^FAIL ' "$LOG"; then echo "Discovery checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
+          test "$(grep -c '^PASS ' "$LOG")" -gt 0 || { echo "No PASS lines: the file did not run"; exit 1; }
       - name: Runtime tests (gates on every FAIL line and on the missed-call section)
         run: |
           set -o pipefail

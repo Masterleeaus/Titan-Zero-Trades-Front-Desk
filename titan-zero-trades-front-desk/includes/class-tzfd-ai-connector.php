@@ -104,6 +104,11 @@ final class TZFD_AI_Connector {
         }
         $secret = self::secret();
         if ( ! self::configured( $cfg, $secret ) ) { return self::result( 'not_configured' ); }
+        // Issue #376: the site must hold a valid pairing to a Central company before any hosted call.
+        // Fails closed when the pairing class is missing, expired, mismatched or unpaired. No budget is charged.
+        if ( ! class_exists( 'TZFD_Central_Tenant' ) ) { return self::result( 'not_configured' ); }
+        $pair = TZFD_Central_Tenant::resolve( $cfg['site_id'], TZFD_Central_Tenant::OPERATION_HOSTED );
+        if ( empty( $pair['ok'] ) ) { return self::result( 'not_configured' ); }
 
         $body = wp_json_encode( array(
             'contract' => self::CONTRACT,

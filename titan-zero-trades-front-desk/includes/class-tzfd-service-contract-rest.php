@@ -36,31 +36,22 @@ final class TZFD_Service_Contract_REST {
 	}
 
 	public static function register_routes() {
-		if ( ! function_exists( 'register_rest_route' ) ) {
-			return;
-		}
-		// Authentication is the signed envelope itself, checked in handle(). The route is not a WordPress user route.
+		// The permission callback is the signed-envelope check (permit). The route is not a WordPress user route.
 		register_rest_route( self::NAMESPACE_V1, self::ROUTE, array(
 			'methods'             => 'POST',
 			'callback'            => array( __CLASS__, 'handle' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( __CLASS__, 'permit' ),
 		) );
 	}
 
-	/** Operations that have a handler. Each receives the verified envelope and returns the result payload. */
-	public static function executors() {
-		return array(
-			'capability.check' => static function ( $env ) {
-				return array( 'op' => $env['op'], 'allowed' => true );
-			},
-		);
-	}
-
 	/**
+	 * Permission callback: parse the body, require a contract key, verify the signed envelope and claim its signature.
+	 * On success the verified envelope is kept on the request for handle().
+	 *
 	 * @param WP_REST_Request $req
-	 * @return WP_REST_Response
+	 * @return true|WP_Error
 	 */
-	public static function handle( $req ) {
+	public static function permit( $req ) {
 		$raw    = is_object( $req ) && method_exists( $req, 'get_body' ) ? $req->get_body() : '';
 		$parsed = TZFD_Service_Contract::parse( $raw );
 		if ( ! $parsed['ok'] ) {
@@ -84,10 +75,34 @@ final class TZFD_Service_Contract_REST {
 			return self::refuse( 409, 'replay' );
 		}
 
-		$tenant = self::local_tenant();
-		$actor  = array(
+		$req->set_param( 'tzfd_contract_envelope', $env );
+		return true;
+	}
+
+	/** Operations that have a handler. Each receives the verified envelope and returns the result payload. */
+	public static function executors() {
+		return array(
+			'capability.check' => static function ( $env ) {
+				return array( 'op' => $env['op'], 'allowed' => true );
+			},
+		);
+	}
+
+	/**
+	 * Runs after permit(). Authorises the agent for the operation and tenant, then runs the handler if one exists.
+	 *
+	 * @param WP_REST_Request $req
+	 * @return WP_REST_Response|WP_Error
+	 */
+	public static function handle( $req ) {
+		$env = is_object( $req ) && method_exists( $req, 'get_param' ) ? $req->get_param( 'tzfd_contract_envelope' ) : null;
+		if ( ! is_array( $env ) ) {
+			return self::refuse( 403, 'not_verified' );
+		}
+
+		$actor = array(
 			'type'      => 'agent',
-			'tenant_id' => $tenant,
+			'tenant_id' => self::local_tenant(),
 			'scopes'    => self::scopes(),
 			'approved'  => false,
 		);
@@ -134,8 +149,9 @@ final class TZFD_Service_Contract_REST {
 		return class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
 	}
 
+	/** Refusals are WP_Error objects: the code carries the reason, the status carries the HTTP status. */
 	private static function refuse( $status, $reason ) {
-		return new WP_REST_Response( array( 'ok' => false, 'reason' => (string) $reason ), (int) $status );
+		return new WP_Error( (string) $reason, 'Contract call refused: ' . (string) $reason, array( 'status' => (int) $status ) );
 	}
 }
 

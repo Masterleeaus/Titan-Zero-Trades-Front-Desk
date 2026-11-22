@@ -32,7 +32,7 @@ check() { # name, expected code, must-contain (or ''), body
 N1="$(nonce)"; GOOD="$(sign "$KEY" capability.check "$TENANT" "$N1")"
 RESP="$(printf 'not json' | curl -s -o - -w '\n%{http_code}' --max-time 20 -H 'Content-Type: text/plain' --data-binary @- "$ROUTE")"
 CODE="$(printf '%s' "$RESP" | tail -n1)"; RESP="$(printf '%s' "$RESP" | sed '$d')"
-if [ "$CODE" = "400" ] && [[ "$RESP" == *'"ok":false'* ]]; then echo "PASS malformed body refused -- HTTP $CODE"; pass=$((pass+1)); else echo "FAIL malformed body refused -- HTTP $CODE: $RESP"; fail=$((fail+1)); fi
+if [ "$CODE" = "400" ] && [[ "$RESP" == *'"code":"json_invalid"'* ]]; then echo "PASS malformed body refused -- HTTP $CODE"; pass=$((pass+1)); else echo "FAIL malformed body refused -- HTTP $CODE: $RESP"; fail=$((fail+1)); fi
 check "valid signed capability.check allowed" 200 '"allowed":true' "$GOOD"
 check "same signed envelope replayed refused" 409 'replay' "$GOOD"
 check "tampered payload refused" 401 'signature_invalid' "$(sign "$KEY" capability.check "$TENANT" "$(nonce)" tamper)"

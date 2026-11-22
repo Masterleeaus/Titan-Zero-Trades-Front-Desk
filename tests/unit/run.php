@@ -41,6 +41,7 @@ foreach ( array(
 	'class-tzfd-recurring-local-times.php',
 	'class-tzfd-booking-reports.php',
 	'class-tzfd-customer-segments.php',
+	'class-tzfd-report-saved-views.php',
 	'class-tzfd-agent-tool-permissions.php',
 	'class-tzfd-action-receipt.php',
 	'class-tzfd-action-receipt-viewer.php',

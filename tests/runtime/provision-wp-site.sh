@@ -9,11 +9,14 @@
 #        TZFD_RT_DB_NAME  (default: tzfd_rt_$$)  disposable database name
 #        TZFD_RT_URL      (default: http://127.0.0.1:8080)
 #        TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS      passwords for the disposable admin and subscriber
+#        TZFD_RT_WP_VERSION (default: latest)     WordPress core version to download, for example 6.6
 # Exit:  0 provisioned; 2 provisioning failed.
 set -u
 
 WP_ROOT="${1:-}"; PLUGIN_DIR="${2:-}"; MULTISITE="${3:-}"
 WP_CLI="${WP_CLI:-wp}"
+WP_VERSION_ARG=""
+[ -n "${TZFD_RT_WP_VERSION:-}" ] && WP_VERSION_ARG="--version=$TZFD_RT_WP_VERSION"
 DB_ADMIN="${TZFD_RT_DB_ADMIN:-root}"
 DB_NAME="${TZFD_RT_DB_NAME:-tzfd_rt_$$}"
 DB_USER="${TZFD_RT_DB_USER:-tzfd_rt}"
@@ -37,7 +40,7 @@ mysql -u"$DB_ADMIN" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`
   ALTER USER '$DB_USER'@'$DB_GRANT_HOST' IDENTIFIED BY '$DB_PASS';
   GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'$DB_GRANT_HOST'; FLUSH PRIVILEGES;" || fail "cannot create database (is MySQL/MariaDB running and $DB_ADMIN allowed?)"
 
-$WP_CLI --allow-root --path="$WP_ROOT" core download --quiet || fail "wp core download failed"
+$WP_CLI --allow-root --path="$WP_ROOT" core download $WP_VERSION_ARG --quiet || fail "wp core download failed"
 $WP_CLI --allow-root --path="$WP_ROOT" config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=$DB_HOST --skip-check --quiet || fail "config create failed"
 $WP_CLI --allow-root --path="$WP_ROOT" core install --url="$URL" --title="Runtime test site" --admin_user=rtadmin \
   --admin_password="$ADMIN_PASS" --admin_email=rt-admin@example.test --skip-email --quiet || fail "core install failed"

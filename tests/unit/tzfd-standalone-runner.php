@@ -51,6 +51,7 @@ function tzfd_standalone_run( $file ) {
 	foreach ( array(
 		'class-tzfd-delegated-roles.php',
 		'class-tzfd-location-policy.php',
+	'class-tzfd-location-registry.php',
 		'class-tzfd-recurring-local-times.php',
 		'class-tzfd-booking-reports.php',
 		'class-tzfd-customer-segments.php',

@@ -88,6 +88,8 @@ TZFD_Booking_Report_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access-admin.php';
 TZFD_Staff_Access_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-admin.php';
+TZFD_Location_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-setup-page.php';
 TZFD_Setup_Page::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';

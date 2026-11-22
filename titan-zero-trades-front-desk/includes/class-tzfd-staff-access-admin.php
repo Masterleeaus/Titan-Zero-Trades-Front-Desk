@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 require_once __DIR__ . '/class-tzfd-delegated-roles.php';
 require_once __DIR__ . '/class-tzfd-staff-access.php';
+require_once __DIR__ . '/class-tzfd-location-registry.php';
+require_once __DIR__ . '/class-tzfd-location-admin.php';
 
 final class TZFD_Staff_Access_Admin {
 
@@ -44,8 +46,9 @@ final class TZFD_Staff_Access_Admin {
 		$user_id  = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
 		$role     = isset( $_POST['role'] ) ? sanitize_key( wp_unslash( $_POST['role'] ) ) : '';
 		$staff    = isset( $_POST['staff_id'] ) ? sanitize_text_field( wp_unslash( $_POST['staff_id'] ) ) : '';
-		$raw_locs = isset( $_POST['location_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['location_ids'] ) ) : '';
-		$locations = array_values( array_filter( array_map( 'trim', explode( ',', $raw_locs ) ), 'strlen' ) );
+		// Location ids come from registered-location checkboxes, not free text.
+		$raw_locs  = isset( $_POST['location_ids'] ) ? (array) wp_unslash( $_POST['location_ids'] ) : array();
+		$locations = array_values( array_unique( array_map( 'sanitize_text_field', $raw_locs ) ) );
 		$grant = array(
 			'company_id'   => $company,
 			'user_id'      => $user_id,
@@ -54,7 +57,7 @@ final class TZFD_Staff_Access_Admin {
 			'staff_id'     => TZFD_Delegated_Roles::ROLE_STAFF === $role ? $staff : null,
 		);
 		if ( TZFD_Delegated_Roles::ROLE_COMPANY_ADMIN === $role ) { $grant['location_ids'] = array(); }
-		$result = TZFD_Staff_Access::assign( $company, get_current_user_id(), true, $grant, time() );
+		$result = TZFD_Staff_Access::assign( $company, get_current_user_id(), true, $grant, time(), TZFD_Location_Admin::active_ids( $company ) );
 		self::back( $result['ok'] ? 'assigned' : $result['code'] );
 	}
 
@@ -68,6 +71,14 @@ final class TZFD_Staff_Access_Admin {
 		self::back( $result['ok'] ? 'revoked' : $result['code'] );
 	}
 	// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+	/** Display label for a grant's location: registered name, or the id with a note when it is not registered. */
+	private static function location_label( $loc, $registry ) {
+		if ( '' === $loc ) { return __( 'all locations', 'titan-zero-trades-front-desk' ); }
+		$row = TZFD_Location_Registry::find( $registry, $loc );
+		if ( null === $row ) { return $loc . ' (' . __( 'not registered', 'titan-zero-trades-front-desk' ) . ')'; }
+		return $row['name'] . ' (' . $loc . ')' . ( $row['active'] ? '' : ' (' . __( 'inactive', 'titan-zero-trades-front-desk' ) . ')' );
+	}
 
 	private static function guard( $action ) {
 		if ( ! current_user_can( self::CAP ) ) { wp_die( esc_html__( 'You do not have permission to change staff access.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
@@ -84,7 +95,8 @@ final class TZFD_Staff_Access_Admin {
 			echo '<p>' . esc_html__( 'Set up your business first. Staff access applies to one business at a time.', 'titan-zero-trades-front-desk' ) . '</p></div>';
 			return;
 		}
-		$stored = TZFD_Staff_Access::grants( $company );
+		$stored   = TZFD_Staff_Access::grants( $company );
+		$registry = TZFD_Location_Admin::registry( $company )['rows'];
 		if ( $stored['skipped'] > 0 ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( sprintf( /* translators: %d: number of malformed stored grants. */ __( '%d stored grant(s) are malformed and grant nothing. Revoke and re-add them.', 'titan-zero-trades-front-desk' ), $stored['skipped'] ) ) . '</p></div>';
 		}
@@ -96,7 +108,7 @@ final class TZFD_Staff_Access_Admin {
 			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'User ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Role', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Staff ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Locations', 'titan-zero-trades-front-desk' ) . '</th><th></th></tr></thead><tbody>';
 			foreach ( $stored['grants'] as $g ) {
 				foreach ( ( empty( $g['location_ids'] ) ? array( '' ) : $g['location_ids'] ) as $loc ) {
-					echo '<tr><td>' . esc_html( (string) $g['user_id'] ) . '</td><td>' . esc_html( $g['role'] ) . '</td><td>' . esc_html( (string) ( $g['staff_id'] ?? '' ) ) . '</td><td>' . esc_html( '' === $loc ? __( 'all locations', 'titan-zero-trades-front-desk' ) : $loc ) . '</td><td>';
+					echo '<tr><td>' . esc_html( (string) $g['user_id'] ) . '</td><td>' . esc_html( $g['role'] ) . '</td><td>' . esc_html( (string) ( $g['staff_id'] ?? '' ) ) . '</td><td>' . esc_html( self::location_label( $loc, $registry ) ) . '</td><td>';
 					if ( '' !== $loc ) {
 						echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 						wp_nonce_field( 'tzfd_staff_revoke', '_wpnonce' );
@@ -119,7 +131,17 @@ final class TZFD_Staff_Access_Admin {
 			echo '<option value="' . esc_attr( $role ) . '">' . esc_html( $role ) . '</option>';
 		}
 		echo '</select></label></p>';
-		echo '<p><label>' . esc_html__( 'Location IDs (comma separated; not used for company admin)', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="location_ids" class="regular-text"></label></p>';
+		$active = TZFD_Location_Registry::active_ids( $registry );
+		if ( empty( $active ) ) {
+			echo '<p>' . esc_html__( 'No active location is registered. Add one on the Locations screen before granting location access. Company admin needs no location.', 'titan-zero-trades-front-desk' ) . '</p>';
+		} else {
+			echo '<fieldset><legend>' . esc_html__( 'Locations (not used for company admin)', 'titan-zero-trades-front-desk' ) . '</legend>';
+			foreach ( $registry as $loc ) {
+				if ( ! $loc['active'] ) { continue; }
+				echo '<label><input type="checkbox" name="location_ids[]" value="' . esc_attr( $loc['id'] ) . '"> ' . esc_html( $loc['name'] ) . ' (' . esc_html( $loc['id'] ) . ')</label><br>';
+			}
+			echo '</fieldset>';
+		}
 		echo '<p><label>' . esc_html__( 'Staff ID (staff role only)', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="staff_id" class="regular-text"></label></p>';
 		echo '<p><button class="button button-primary" type="submit">' . esc_html__( 'Save access', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
 

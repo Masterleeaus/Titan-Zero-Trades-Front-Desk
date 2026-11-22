@@ -50,9 +50,12 @@ final class TZFD_Staff_Access {
 	/**
 	 * Adds or merges a grant. $actor_is_admin is true for a site administrator.
 	 *
+	 * $allowed_locations, when given, lists the registered, active location ids (TZFD_Location_Registry). Every
+	 * location in the grant must be on it, so a grant cannot name a free-text or deactivated location. Null skips the check.
+	 *
 	 * @return array ok (bool), code (string).
 	 */
-	public static function assign( $company, $actor_id, $actor_is_admin, $grant, $now ) {
+	public static function assign( $company, $actor_id, $actor_is_admin, $grant, $now, $allowed_locations = null ) {
 		$company = self::company( $company );
 		try {
 			$new = TZFD_Delegated_Roles::validate( $grant );
@@ -60,6 +63,11 @@ final class TZFD_Staff_Access {
 			return self::result( false, 'invalid_grant' );
 		}
 		if ( $new['company_id'] !== $company ) { return self::result( false, 'company_mismatch' ); }
+		if ( null !== $allowed_locations ) {
+			foreach ( $new['location_ids'] as $location ) {
+				if ( ! in_array( $location, (array) $allowed_locations, true ) ) { return self::result( false, 'unknown_location' ); }
+			}
+		}
 		if ( TZFD_Delegated_Roles::ROLE_COMPANY_ADMIN === $new['role'] && ! $actor_is_admin ) { return self::result( false, 'forbidden' ); }
 		if ( ! $actor_is_admin && ! self::may_manage( $company, $actor_id, $new['location_ids'] ) ) { return self::result( false, 'forbidden' ); }
 

@@ -41,6 +41,15 @@ $sp_render = function () {
 	return ob_get_clean();
 };
 
+// Activation creates a default booking form, so a fresh site already has a calendar. Clear this company's services
+// (archived) and forms (deleted) first, as setup-page-runtime-tests.php does on main. Disposable test site only.
+global $wpdb;
+$sp_company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+if ( $sp_company > 0 ) {
+	$wpdb->query( $wpdb->prepare( 'UPDATE %i SET archived = 1 WHERE company_id = %d', $wpdb->prefix . 'tzfd_local_services', $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id = %d', $wpdb->prefix . TZFD_Tables::FORMS, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+}
+
 // Precondition: the site really is empty for this company. Without this, the check below proves nothing.
 $sp_detected = TZFD_Setup_Checklist::facts();
 tzfd_sp_ok( 'setup-discovery: site has no service or calendar before the check', empty( $sp_detected['services'] ) && empty( $sp_detected['calendar'] ), 'services=' . ( $sp_detected['services'] ? 'yes' : 'no' ) . ' calendar=' . ( $sp_detected['calendar'] ? 'yes' : 'no' ) );

@@ -15,7 +15,11 @@ require_once __DIR__ . '/class-tzfd-slot-search.php';
 final class TZFD_Guided_Booking {
     const INTENT_BOOK         = 'book';
     const INTENT_AVAILABILITY = 'availability';
+    const INTENT_CHANGE       = 'change';
     const INTENT_UNKNOWN      = 'unknown';
+
+    /** Message when a customer asks to change or cancel an existing booking. Booking flow never handles these. */
+    const CHANGE_MESSAGE = 'This looks like a change to an existing booking. Use the link we emailed you, or ask staff for help.';
     const MAX_TEXT            = 1000;
     const MAX_NAME            = 100;
     const MAX_CONTACT         = 120;
@@ -35,6 +39,11 @@ final class TZFD_Guided_Booking {
             return self::INTENT_UNKNOWN;
         }
         $lower = strtolower( $text );
+        // Change and cancel wording is checked first. "reschedule my appointment" contains "appointment",
+        // which would otherwise start a new booking for an existing one.
+        if ( preg_match( '/\b(cancel\w*|reschedul\w*|rebook\w*|postpone\w*|no longer need)\b/', $lower ) ) {
+            return self::INTENT_CHANGE;
+        }
         if ( preg_match( '/\b(book|booking|appointment|reserve|schedule)\b/', $lower ) ) {
             return self::INTENT_BOOK;
         }
@@ -91,6 +100,45 @@ final class TZFD_Guided_Booking {
         }
         usort( $hits, function ( $a, $b ) { return $b['score'] <=> $a['score']; } );
         return array_map( function ( $hit ) { return $hit['service']; }, $hits );
+    }
+
+    /**
+     * Next step in the guided flow for one customer message. Pure and deterministic: it never books, never invents
+     * a slot, and returns only service IDs from the owner's catalogue.
+     *
+     * Steps: handoff (change or cancel request), fallback (unknown intent), choose_service (the customer must pick,
+     * optionally from a shortlist), confirm_service (one clear match, customer must still confirm) and
+     * show_availability (a valid chosen service ID; the caller then runs propose()).
+     *
+     * @param mixed      $text              Customer text.
+     * @param array      $services          Raw service records, validated with normalise_services().
+     * @param mixed|null $chosen_service_id Service ID the customer picked in the UI, if any.
+     * @return array Keys: step, service_ids, message.
+     * @throws InvalidArgumentException When the service list is invalid.
+     */
+    public static function next_step( $text, $services, $chosen_service_id = null ) {
+        $intent = self::detect_intent( $text );
+        if ( self::INTENT_CHANGE === $intent ) {
+            return array( 'step' => 'handoff', 'service_ids' => array(), 'message' => self::CHANGE_MESSAGE );
+        }
+        if ( self::INTENT_UNKNOWN === $intent ) {
+            return array( 'step' => 'fallback', 'service_ids' => array(), 'message' => self::FALLBACK_MESSAGE );
+        }
+        $services = self::normalise_services( $services );
+        $ids      = array_map( function ( $s ) { return $s['id']; }, $services );
+        if ( null !== $chosen_service_id ) {
+            if ( is_string( $chosen_service_id ) && in_array( $chosen_service_id, $ids, true ) ) {
+                return array( 'step' => 'show_availability', 'service_ids' => array( $chosen_service_id ), 'message' => '' );
+            }
+            // A choice outside the catalogue is refused, never accepted as a new service.
+            return array( 'step' => 'choose_service', 'service_ids' => $ids, 'message' => 'Please choose one of our services.' );
+        }
+        $hits = self::match_services( $services, $text );
+        if ( 1 === count( $hits ) ) {
+            return array( 'step' => 'confirm_service', 'service_ids' => array( $hits[0]['id'] ), 'message' => 'Is this the service you want?' );
+        }
+        $shortlist = count( $hits ) > 1 ? array_map( function ( $s ) { return $s['id']; }, $hits ) : $ids;
+        return array( 'step' => 'choose_service', 'service_ids' => $shortlist, 'message' => 'Which service would you like?' );
     }
 
     /**

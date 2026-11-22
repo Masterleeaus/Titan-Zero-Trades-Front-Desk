@@ -70,11 +70,11 @@ if ( ! class_exists( 'TZFD_MissedCall' ) )
         /** Returns an error message, or an empty string when the settings are valid. */
         public static function settings_error( array $s )
         {
-            if ( '' !== $s['sms_url'] && ! self::is_https( $s['sms_url'] ) ) return 'The SMS address must start with https://.';
-            if ( '' !== $s['booking_url'] && ! self::is_https( $s['booking_url'] ) ) return 'The booking address must start with https://.';
-            if ( '' !== $s['inbound_secret'] && strlen( $s['inbound_secret'] ) < TZFD_Signed_Request::MIN_SECRET ) return 'The inbound secret is not valid. Generate a new one.';
-            if ( false === strpos( $s['message'], '{link}' ) || false === strpos( $s['after_hours_message'], '{link}' ) ) return 'Both text messages must include {link}.';
-            if ( false === self::parse_hours( $s['business_hours'] ) ) return 'Invalid business hours; use mon=09:00-17:00;tue=09:00-17:00.';
+            if ( '' !== $s['sms_url'] && ! self::is_https( $s['sms_url'] ) ) return __( 'The SMS address must start with https://.', 'titan-zero-trades-front-desk' );
+            if ( '' !== $s['booking_url'] && ! self::is_https( $s['booking_url'] ) ) return __( 'The booking address must start with https://.', 'titan-zero-trades-front-desk' );
+            if ( '' !== $s['inbound_secret'] && strlen( $s['inbound_secret'] ) < TZFD_Signed_Request::MIN_SECRET ) return __( 'The inbound secret is not valid. Generate a new one.', 'titan-zero-trades-front-desk' );
+            if ( false === strpos( $s['message'], '{link}' ) || false === strpos( $s['after_hours_message'], '{link}' ) ) return __( 'Both text messages must include {link}.', 'titan-zero-trades-front-desk' );
+            if ( false === self::parse_hours( $s['business_hours'] ) ) return __( 'Invalid business hours; use mon=09:00-17:00;tue=09:00-17:00.', 'titan-zero-trades-front-desk' );
             return '';
         }
 

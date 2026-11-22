@@ -46,4 +46,36 @@ function tzfd_test_location_policy_bulk() {
 		$bad[] = array( 'id' => 'r9', 'company_id' => 'co-1', 'location_id' => 'loc-a', 'services' => array( 'svc-1' ), 'min_amount_minor' => null, 'action' => 'delete_booking', 'staff_ids' => array(), 'enabled' => true );
 		$P::bulk_set_enabled( $bad, array( 'r1' ), false, 'co-1' );
 	}, 'malformed stored rule makes the batch fail' );
+
+	// Boundary: exactly 100 known ids is accepted and changes every one of them.
+	$many = array();
+	for ( $i = 1; $i <= 100; $i++ ) { $many[] = $rule( array( 'id' => 'b' . $i, 'enabled' => true ) ); }
+	$out = $P::bulk_set_enabled( $many, array_map( function ( $i ) { return 'b' . $i; }, range( 1, 100 ) ), false, 'co-1' );
+	tzfd_assert_same( 100, count( $out ), 'batch of exactly 100 ids keeps every rule' );
+	tzfd_assert( 0 === count( array_filter( array_column( $out, 'enabled' ) ) ), 'batch of exactly 100 ids disables every selected rule' );
+
+	// Input shape: non-array rules or ids, non-string ids and an invalid company scope all throw.
+	tzfd_throws( function () use ( $P ) { $P::bulk_set_enabled( 'rules', array( 'r1' ), false, 'co-1' ); }, 'non-array rules throw' );
+	tzfd_throws( function () use ( $P, $stored ) { $P::bulk_set_enabled( $stored, 'r1', false, 'co-1' ); }, 'non-array ids throw' );
+	tzfd_throws( function () use ( $P, $stored ) { $P::bulk_set_enabled( $stored, array( 1 ), false, 'co-1' ); }, 'non-string id throws' );
+	tzfd_throws( function () use ( $P, $stored ) { $P::bulk_set_enabled( $stored, array( '' ), false, 'co-1' ); }, 'empty id throws' );
+	tzfd_throws( function () use ( $P, $stored ) { $P::bulk_set_enabled( $stored, array( 'r1' ), false, '../co' ); }, 'malformed company scope throws' );
+
+	// A failed batch returns nothing and leaves the caller's stored rules untouched.
+	$before = $stored;
+	try { $P::bulk_set_enabled( $stored, array( 'r1', 'missing' ), false, 'co-1' ); } catch ( InvalidArgumentException $e ) { $out = null; }
+	tzfd_assert( null === $out && $before === $stored, 'failed batch leaves stored rules unchanged' );
+
+	// Enabling a restrict_staff rule in bulk restores its staff restriction for the matching booking.
+	$booking = array( 'company_id' => 'co-1', 'location_id' => 'loc-b', 'service_id' => 'svc-1', 'amount_minor' => 5000, 'staff_id' => 'st-2' );
+	$off = $P::bulk_set_enabled( $stored, array( 'r3' ), false, 'co-1' );
+	tzfd_assert( true === $P::assignment_allowed( $P::evaluate( $off, $booking ), 'st-2' ), 'disabled restriction allows any staff' );
+	$on = $P::bulk_set_enabled( $off, array( 'r3' ), true, 'co-1' );
+	tzfd_assert( false === $P::assignment_allowed( $P::evaluate( $on, $booking ), 'st-2' ), 'enabled restriction blocks staff outside its list' );
+}
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
 }

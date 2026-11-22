@@ -72,6 +72,17 @@ check( 'event rows skip non-array entries', 2 === count( $rows ) );
 check( 'event rows keep only redacted fields', array( 'at', 'feature', 'status', 'latency_ms' ) === array_keys( $rows[0] ) );
 check( 'event latency is never negative', 0 === $rows[1]['latency_ms'] );
 
+// Usage and fair-use text comes from the descriptor (issue #372 item 3).
+$usage_assistant = $P::usage_text( array( 'usage_model' => 'fair use with published hosted budgets; not unlimited' ) );
+check( 'usage line keeps fair-use wording', 'Fair use with published hosted budgets; not unlimited.' === $usage_assistant, $usage_assistant );
+$usage_agent = $P::usage_text( array( 'usage_model' => 'hosted budgets per company; SMS and voice are passed through at disclosed provider cost' ) );
+check( 'usage line shows SMS and voice pass-through', false !== strpos( $usage_agent, 'SMS and voice are passed through' ) );
+check( 'free level without usage model says no hosted usage', false !== strpos( $P::usage_text( array() ), 'No hosted usage' ) );
+$GLOBALS['tz_opts'] = array();
+$html = render_page();
+check( 'page renders usage and fair-use column', false !== strpos( $html, 'Usage and fair use' ) && false !== strpos( $html, 'Fair use with published hosted budgets' ) );
+check( 'page renders SMS and voice pass-through', false !== strpos( $html, 'SMS and voice are passed through at disclosed provider cost' ) );
+
 // Render: default state, no consent, no secret shown.
 $GLOBALS['tz_opts'] = array();
 $html = render_page();

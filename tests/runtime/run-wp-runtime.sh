@@ -108,6 +108,9 @@ else
   echo "SKIP replay-concurrency -- no inbound secret was provisioned" | tee -a "$LOG"
 fi
 
+echo "--- discovery links on an empty site (setup-discovery-empty-site.php, issue #366)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-discovery-empty-site.php" --user=1 2>&1 | tee -a "$LOG"
+
 echo "--- privacy and signed-request checks (runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 

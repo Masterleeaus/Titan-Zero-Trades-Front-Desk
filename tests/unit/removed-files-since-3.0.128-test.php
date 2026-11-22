@@ -60,6 +60,8 @@ $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $plugin,
 $hits  = array();
 foreach ( $files as $file ) {
 	if ( ! preg_match( '/\.(php|js|html|txt|json)$/i', $file->getFilename() ) ) { continue; }
+	// Owner decision: readme.txt and changelog.txt record the removals by name (#434 requires it), so they are exempt.
+	if ( in_array( $file->getFilename(), array( 'readme.txt', 'changelog.txt' ), true ) ) { continue; }
 	$body = (string) file_get_contents( $file->getPathname() );
 	foreach ( $removed as $rel ) {
 		if ( strpos( $body, basename( $rel ) ) !== false ) {

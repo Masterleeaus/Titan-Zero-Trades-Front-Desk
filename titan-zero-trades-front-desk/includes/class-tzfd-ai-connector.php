@@ -71,7 +71,7 @@ final class TZFD_AI_Connector {
      * Named monthly budget sets per site (issue #331). 'contract' is live by default (the standing contract
      * figures). 'pilot' holds the provisional #284 pilot figures and is selected only through the
      * tzfd_ai_connector_budget_profile filter. The pilot faq_batch (weekly) is approximated as 4 per month.
-     * Per-visitor turn limits from #284 (2 fallback turns, 3 missed-call reply turns) have no counter in code yet.
+     * Per-visitor fallback turn cap (#353, 200 per visitor) is enforced in TZFD_AI_Answer_Box. The 3 missed-call reply turns from #284 have no counter in code yet.
      */
     public static function budget_profiles() {
         return array(

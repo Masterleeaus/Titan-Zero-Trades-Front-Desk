@@ -33,7 +33,28 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
-## Last recorded results (2026-11-16, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11, WP-CLI 2.12.0)
+## Last recorded results (2026-11-18, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11.14, WP-CLI 2.12.0)
+
+Run on this branch on 2026-11-23, after merging `main` at c68f795 (run with `PORT=8093` under `runtime.lock`):
+
+- Single site: 391 passed, 0 failed, 0 gaps, 9 skipped.
+- Multisite: 392 passed, 0 failed, 0 gaps, 7 skipped. Includes `placeholder: upgrade clears placeholder on calendar with no bookings`.
+- Unit harness (`tests/unit/run.php`): 854 passed, 0 failed.
+- The answer-box permalink change that this branch first carried is not needed on current `main`, so it was dropped; the multisite run passes without it.
+- Upgrade from the real v3.0.128 release ZIP to this checkout and back, with seeded bookings and AI settings and chat rows:
+  31 passed, 0 failed, 0 gaps, no SKIP. Command:
+  `BASE_SHA='22dc106^' BASE_ZIP=titan-zero-trades-front-desk-3.0.128-r16.zip SAME_VERSION_OK=1 PORT=8093 tests/runtime/upgrade-from-3.0.128.sh`.
+  One earlier attempt failed at provisioning with a database connection error and passed on re-run with no code change.
+- Not yet covered: other PHP and WordPress versions, and refunds and deposits (out of scope, see issue #149).
+
+Fixed on 2026-11-18 (harness only, no plugin code changed):
+
+- `run-wp-runtime.sh` now passes its URL (`PORT`) into provisioning. Before, a multisite network was built with the
+  default port 8080, so every HTTP check on a different port was redirected (302).
+- `ai-answer-box-form-runtime-tests.php` sets plain permalinks before its check. Multisite provisioning leaves pretty
+  permalinks on, and the check is about `?page_id=N`. It also refreshes the in-memory rewrite object.
+
+Run recorded on `main` (same date; kept alongside the branch run so both records stay visible):
 
 - Single site: 85 passed, 0 failed, 2 gaps, 10 skipped.
 - Multisite: 86 passed, 0 failed, 2 gaps, 8 skipped.
@@ -47,8 +68,9 @@ not counted as a pass).
 
 ## Gaps observed (reported, not fixed here)
 
-- **dbDelta on MariaDB 10.11.** Installing the slot-hold table printed `Invalid default value for 'id'` from
-  `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed.
+- None open on MariaDB 10.11. The dbDelta gap (`Invalid default value for 'id'` on the slot-hold table, issue #186) is
+  closed: the CREATE statement has no `DEFAULT ''`. Re-checked 2026-11-23 on MariaDB 10.11.14: the slot-holds suite
+  passes 5/5 (second run issues no ALTER) and the logs show no `Invalid default` line.
 
 ## Skipped, and why
 

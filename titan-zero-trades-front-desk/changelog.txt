@@ -1,3 +1,6 @@
+= Unreleased =
+* Hosted account pairing (issue #347): AI Services has a Connect hosted account form that takes the single-use pairing code shown by Supercharged. The plugin exchanges it over https for a per-site secret. The pairing endpoint is off by default and is set by the TZFD_AI_PAIRING_ENDPOINT constant or the tzfd_ai_pairing_endpoint filter. A refused or failed pairing leaves the existing connection unchanged, and a successful pairing revokes consent until it is granted again. The manual endpoint, site ID and secret form is removed.
+
 = 3.1.0 =
 * Hook and function prefix (issue #455): the hooks and global functions that Plugin Check flagged now use the tzfd_ prefix, for example tzfd_booking_created and tzfd_update_status. Each renamed hook still fires its old name right after the new one, with the same arguments and the chained filter value, so existing listeners keep working for this release. Listeners on the new names are preferred. The old names are removed in a later release.
 * Missed-call webhook: a repeated signed request is refused atomically. The signature claim is a single INSERT IGNORE on the unique option name, so two identical requests arriving together cannot both be accepted. Expired claims are removed as they are found.

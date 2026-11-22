@@ -128,6 +128,11 @@ connect_all();
 check( 'unknown feature is not allowed', 'feature_not_allowed' === $C::request( 'shell.exec' )['status'] && 0 === calls() );
 $r = $C::request( 'faq.answer', array( 'q' => str_repeat( 'x', 20000 ) ) );
 check( 'oversized payload is invalid and uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2001 ) ) ) );
+check( 'text over 2000 characters is refused even under the byte cap, uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2000 ) ) ) );
+check( 'text of exactly 2000 characters is accepted', 'ok' === $r['status'] && 1 === calls(), $r['status'] . ' calls=' . calls() );
 
 // 6. Happy path: signed request, verified response, no secret in the wire body or result.
 reset_state();
@@ -303,7 +308,12 @@ check( 'disclosure never includes the secret', false === strpos( json_encode( $d
 reset_state();
 check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
 $n = TZFD_AI_Connector::setup_notice();
-check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) );
+check( 'setup notice records the wording as a proposed default pending owner sign-off', 'agent_proposed_default_pending_owner_signoff' === $n['wording_status'] && false === strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice carries a consent confirmation that names the withdrawal right', false !== strpos( $n['confirmation'], 'agree' ) && false !== strpos( $n['confirmation'], 'withdraw' ) );
+$GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { return 'Filtered test confirmation.'; } );
+check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
 check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );

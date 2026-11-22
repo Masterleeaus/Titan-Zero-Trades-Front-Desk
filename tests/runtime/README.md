@@ -80,7 +80,9 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
 - Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.
 - Uninstall with opt-in (F4): covered by `uninstall-wipe-check.php`, which runs as a separate process.
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.
-- PHP 8.1, 8.2, 8.4 and other WordPress versions: only PHP 8.3.6 and WordPress 7.1.4 are provisioned.
+- PHP and WordPress matrix: the CI `wordpress` job (`.github/workflows/tests.yml`) runs PHP 8.1, 8.2, 8.3 and 8.4 on
+  latest WordPress, PHP 8.3 on WordPress 6.6 (the minimum), and MySQL 8.0 next to MariaDB 10.11 (issue #370). Locally only
+  PHP 8.3.6 and WordPress 7.1.x are provisioned, so the matrix is verified by CI, not by these notes.
 - Refunds and deposits: not in this lane's runtime surface; no check exists.
 - The upgrade is a folder swap plus deactivate and reactivate, not a ZIP install. A clean install from the built ZIP was
   checked once by hand (see results above) but is not in a script yet.

@@ -101,6 +101,34 @@ check( 'after revocation the screen shows no consent', false !== strpos( $html, 
 // Connector-side retention accepts the page's values.
 check( 'connector accepts retention set by the page', $P::normalise_retention( '45' ) === 45 && TZFD_AI_Connector::set_retention_days( 45 ) && 45 === TZFD_AI_Connector::retention_days() );
 
+// Opt-in connect and disconnect (#333). Pairing stores the secret but grants no consent.
+$GLOBALS['tz_opts'] = array();
+$connect_in = $P::normalise_connect( array( 'endpoint' => ' https://hosted.example.test/ai ', 'site_id' => 'site-b', 'secret' => $secret ) );
+check( 'connect input is trimmed and kept', is_array( $connect_in ) && 'https://hosted.example.test/ai' === $connect_in['endpoint'] && 'site-b' === $connect_in['site_id'] );
+check( 'connect input refuses a blank or missing field', false === $P::normalise_connect( array( 'endpoint' => 'https://x.test', 'site_id' => '  ', 'secret' => $secret ) ) && false === $P::normalise_connect( array( 'endpoint' => 'https://x.test', 'site_id' => 'a' ) ) );
+check( 'connect input refuses non-string values', false === $P::normalise_connect( array( 'endpoint' => array( 'https://x.test' ), 'site_id' => 'a', 'secret' => $secret ) ) );
+check( 'connector refuses a plain http endpoint', false === TZFD_AI_Connector::configure( 'http://hosted.example.test/ai', 'site-b', $secret ) );
+check( 'connector refuses a short secret', false === TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-b', 'short' ) );
+check( 'refused pairing stores nothing', ! TZFD_AI_Connector::status()['secret_set'] && ! TZFD_AI_Connector::status()['endpoint_set'] );
+$html = render_page();
+check( 'unpaired page shows the connect form', false !== strpos( $html, 'id="tzfd-ai-secret"' ) && false !== strpos( $html, 'name="site_id"' ) );
+check( 'connect form uses a password field for the secret', 1 === preg_match( '/type="password" id="tzfd-ai-secret"/', $html ) );
+check( 'connect form never prefills the secret', false === strpos( $html, 'value="' . $secret . '"' ) );
+check( 'connect form has no disconnect button when unpaired', false === strpos( $html, 'Removes the secret and endpoint' ) );
+
+TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-b', $secret );
+TZFD_AI_Connector::grant_consent( array( $allowed[0] ) );
+TZFD_AI_Connector::revoke_consent(); // what handle_connect does after a successful pairing
+$html = render_page();
+check( 'paired page shows the paired state and no connect form', false !== strpos( $html, 'paired with the hosted service' ) && false === strpos( $html, 'id="tzfd-ai-secret"' ) );
+check( 'paired page never renders the secret', false === strpos( $html, $secret ) );
+check( 'a new pairing starts with no consent', false !== strpos( $html, 'None recorded' ) );
+
+TZFD_AI_Connector::disconnect();
+$html = render_page();
+check( 'disconnect removes the pairing and returns the connect form', false !== strpos( $html, 'id="tzfd-ai-secret"' ) && false === strpos( $html, 'paired with the hosted service' ) );
+check( 'disconnect clears the stored secret flag', false === TZFD_AI_Connector::status()['secret_set'] );
+
 // Agent Team panel: this standalone run does not load the gateway, so the panel must degrade, not fatal.
 $html = render_page();
 check( 'agent panel heading renders', false !== strpos( $html, 'Agent Team controls' ) );

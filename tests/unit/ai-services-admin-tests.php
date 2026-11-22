@@ -72,6 +72,17 @@ check( 'event rows skip non-array entries', 2 === count( $rows ) );
 check( 'event rows keep only redacted fields', array( 'at', 'feature', 'status', 'latency_ms' ) === array_keys( $rows[0] ) );
 check( 'event latency is never negative', 0 === $rows[1]['latency_ms'] );
 
+// Usage and fair-use text comes from the descriptor (issue #372 item 3).
+$usage_assistant = $P::usage_text( array( 'usage_model' => 'fair use with published hosted budgets; not unlimited' ) );
+check( 'usage line keeps fair-use wording', 'Fair use with published hosted budgets; not unlimited.' === $usage_assistant, $usage_assistant );
+$usage_agent = $P::usage_text( array( 'usage_model' => 'hosted budgets per company; SMS and voice are passed through at disclosed provider cost' ) );
+check( 'usage line shows SMS and voice pass-through', false !== strpos( $usage_agent, 'SMS and voice are passed through' ) );
+check( 'free level without usage model says no hosted usage', false !== strpos( $P::usage_text( array() ), 'No hosted usage' ) );
+$GLOBALS['tz_opts'] = array();
+$html = render_page();
+check( 'page renders usage and fair-use column', false !== strpos( $html, 'Usage and fair use' ) && false !== strpos( $html, 'Fair use with published hosted budgets' ) );
+check( 'page renders SMS and voice pass-through', false !== strpos( $html, 'SMS and voice are passed through at disclosed provider cost' ) );
+
 // Render: default state, no consent, no secret shown.
 $GLOBALS['tz_opts'] = array();
 $html = render_page();
@@ -106,6 +117,32 @@ $html = render_page();
 check( 'agent panel heading renders', false !== strpos( $html, 'Agent Team controls' ) );
 check( 'agent panel says unavailable when the gateway is not loaded', false !== strpos( $html, 'Agent permissions are not available on this build.' ) );
 check( 'agent panel adds no write form', false === strpos( $html, 'tzfd_agent_state' ) && false === strpos( $html, 'tzfd_agent_grant' ) );
+// Connect and disconnect screen (#333): the secret field is write-only and the page shows only paired / not paired.
+$GLOBALS['tz_opts'] = array();
+$html = render_page();
+check( 'unpaired screen offers the connect form', false !== strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'name="endpoint"' ) && false !== strpos( $html, 'name="site_id"' ) );
+check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tzfd_ai_connector_disconnect' ) );
+check( 'secret input is a password field with no value attribute', 1 === preg_match( '/<input type="password" id="tzfd-ai-secret" name="secret"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) );
+check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
+
+TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
+$html = render_page();
+check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'paired screen never renders the secret', false === strpos( $html, $secret ) && false === strpos( $html, 'S3CRET' ) );
+
+TZFD_AI_Connector::disconnect();
+$html = render_page();
+check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="secret"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'after disconnect the secret is not stored', false === TZFD_AI_Connector::status()['secret_set'] );
+
+$GLOBALS['tz_opts'] = array();
+$_GET['tzfd_ai'] = 'connect_invalid';
+$html = render_page();
+check( 'invalid connection notice is shown', false !== strpos( $html, 'Connection not saved' ) );
+$_GET['tzfd_ai'] = 'disconnected';
+$html = render_page();
+check( 'disconnect notice is shown', false !== strpos( $html, 'Hosted AI disconnected' ) );
+unset( $_GET['tzfd_ai'] );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

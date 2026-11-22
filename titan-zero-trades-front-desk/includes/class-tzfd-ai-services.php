@@ -90,8 +90,10 @@ final class TZFD_AI_Services {
             return self::result( self::LEVEL_FREE, 'cache_expired' );
         }
 
-        $state = (string) ( $payload['state'] ?? '' );
-        $known = array_values( array_intersect( self::KNOWN_ENTITLEMENTS, (array) ( $payload['entitlements'] ?? array() ) ) );
+        // Malformed field types fail safe: a non-string state is unknown, and only string entitlements count.
+        $state        = is_string( $payload['state'] ?? null ) ? $payload['state'] : '';
+        $entitlements = is_array( $payload['entitlements'] ?? null ) ? array_filter( $payload['entitlements'], 'is_string' ) : array();
+        $known        = array_values( array_intersect( self::KNOWN_ENTITLEMENTS, $entitlements ) );
         if ( array() === $known ) {
             return self::result( self::LEVEL_FREE, 'no_known_entitlement' );
         }

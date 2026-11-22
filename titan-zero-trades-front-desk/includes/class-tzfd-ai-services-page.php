@@ -4,9 +4,10 @@
  *
  * Shows status, the descriptor comparison, the local downgrade and the hosted connector controls:
  * consent (grant and revoke), event retention and the redacted event log (#4, #261).
- * It does not take payment, card details or account credentials, and it makes no network calls.
- * The "Connect account" control stays disabled until the verified pairing (#46) is live.
- * The connector secret is never rendered here; only its stored/not-stored flag is shown.
+ * It does not take payment or card details, and it makes no network calls.
+ * Connect and disconnect: the administrator types the endpoint, site ID and secret once (nonce and capability
+ * checked). The secret field is write-only; the screen shows only its stored/not-stored flag.
+ * The "Connect account" control (hosted account pairing, #46) stays disabled until that verified pairing is live.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -22,6 +23,8 @@ final class TZFD_AI_Services_Page {
     const ACTION_REVOKE     = 'tzfd_ai_connector_revoke';
     const ACTION_RETENTION  = 'tzfd_ai_connector_retention';
     const ACTION_CLEAR      = 'tzfd_ai_connector_clear_events';
+    const ACTION_CONNECT    = 'tzfd_ai_connector_connect';
+    const ACTION_DISCONNECT = 'tzfd_ai_connector_disconnect';
     const CONNECTOR_NONCE   = 'tzfd_ai_connector_admin';
 
     public static function register() {
@@ -31,6 +34,8 @@ final class TZFD_AI_Services_Page {
         add_action( 'admin_post_' . self::ACTION_REVOKE, array( __CLASS__, 'handle_revoke' ) );
         add_action( 'admin_post_' . self::ACTION_RETENTION, array( __CLASS__, 'handle_retention' ) );
         add_action( 'admin_post_' . self::ACTION_CLEAR, array( __CLASS__, 'handle_clear_events' ) );
+        add_action( 'admin_post_' . self::ACTION_CONNECT, array( __CLASS__, 'handle_connect' ) );
+        add_action( 'admin_post_' . self::ACTION_DISCONNECT, array( __CLASS__, 'handle_disconnect' ) );
     }
 
     public static function add_page() {
@@ -72,6 +77,32 @@ final class TZFD_AI_Services_Page {
         self::guard_connector_request();
         TZFD_AI_Connector::revoke_consent();
         self::redirect_notice( 'consent_revoked' );
+    }
+
+    /**
+     * Pairs the site with the hosted service from the admin's typed values. The secret is read once, passed to
+     * the connector and dropped; it is never echoed, logged or stored outside the connector's option.
+     * Consent is revoked after any successful pairing, so data is never sent to a new endpoint on old consent.
+     */
+    public static function handle_connect() {
+        self::guard_connector_request();
+        $endpoint = self::post_string( 'endpoint' );
+        $site_id  = self::post_string( 'site_id' );
+        $secret   = self::post_string( 'secret' );
+        $saved    = TZFD_AI_Connector::configure( $endpoint, $site_id, $secret );
+        $secret   = '';
+        if ( ! $saved ) {
+            self::redirect_notice( 'connect_invalid' );
+        }
+        TZFD_AI_Connector::revoke_consent();
+        self::redirect_notice( 'connect_saved' );
+    }
+
+    /** Removes the secret, endpoint and consent. Usage history and the event log are kept. */
+    public static function handle_disconnect() {
+        self::guard_connector_request();
+        TZFD_AI_Connector::disconnect();
+        self::redirect_notice( 'disconnected' );
     }
 
     public static function handle_retention() {
@@ -133,21 +164,53 @@ final class TZFD_AI_Services_Page {
                             }
                         ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted AI endpoint', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Pairing is not available yet.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Connect below if you use the hosted service.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
+
+            <h2><?php esc_html_e( 'Connection', 'titan-zero-trades-front-desk' ); ?></h2>
+            <?php if ( $status['endpoint_set'] || $status['secret_set'] ) : ?>
+                <p><?php esc_html_e( 'This site is paired with the hosted service. The secret is stored and is never shown on this screen.', 'titan-zero-trades-front-desk' ); ?></p>
+                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                    <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_DISCONNECT ); ?>" />
+                    <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Disconnect', 'titan-zero-trades-front-desk' ); ?></button>
+                        <span class="description"><?php esc_html_e( 'Removes the secret, the endpoint and consent. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
+                </form>
+            <?php else : ?>
+                <p class="description"><?php esc_html_e( 'Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect.', 'titan-zero-trades-front-desk' ); ?></p>
+                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                    <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_CONNECT ); ?>" />
+                    <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                    <p>
+                        <label for="tzfd-ai-endpoint"><?php esc_html_e( 'Endpoint (https)', 'titan-zero-trades-front-desk' ); ?></label><br />
+                        <input type="url" id="tzfd-ai-endpoint" name="endpoint" class="regular-text" required />
+                    </p>
+                    <p>
+                        <label for="tzfd-ai-site-id"><?php esc_html_e( 'Site ID', 'titan-zero-trades-front-desk' ); ?></label><br />
+                        <input type="text" id="tzfd-ai-site-id" name="site_id" maxlength="64" pattern="[A-Za-z0-9_.\-]{1,64}" required />
+                    </p>
+                    <p>
+                        <label for="tzfd-ai-secret"><?php esc_html_e( 'Secret (at least 32 characters)', 'titan-zero-trades-front-desk' ); ?></label><br />
+                        <input type="password" id="tzfd-ai-secret" name="secret" minlength="32" autocomplete="new-password" class="regular-text" required />
+                    </p>
+                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Connect', 'titan-zero-trades-front-desk' ); ?></button></p>
+                </form>
+            <?php endif; ?>
 
             <h2><?php esc_html_e( 'Hosted levels', 'titan-zero-trades-front-desk' ); ?></h2>
             <table class="widefat striped" style="max-width:52em">
                 <thead><tr>
                     <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
                     <th scope="col"><?php esc_html_e( 'What it adds', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage and fair use', 'titan-zero-trades-front-desk' ); ?></th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ( $levels as $key => $level ) : ?>
                     <tr>
                         <td><?php echo esc_html( (string) $level['label'] ); ?></td>
                         <td><?php echo esc_html( (string) $level['disclosure'] ); ?></td>
+                        <td><?php echo esc_html( self::usage_text( $level ) ); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -244,6 +307,21 @@ final class TZFD_AI_Services_Page {
     }
 
     /**
+     * Plain-words usage line for one level: the descriptor's usage model, including SMS and voice
+     * pass-through and fair use. A level without a usage model gets a plain Free line. Pure function.
+     *
+     * @param array $level One level from data/ai-services/capabilities-v1.json.
+     * @return string
+     */
+    public static function usage_text( array $level ) {
+        $model = isset( $level['usage_model'] ) && is_string( $level['usage_model'] ) ? trim( $level['usage_model'] ) : '';
+        if ( '' === $model ) {
+            return __( 'No hosted usage. Hosted AI stays off until you opt in.', 'titan-zero-trades-front-desk' );
+        }
+        return ucfirst( $model ) . '.';
+    }
+
+    /**
      * Keeps only scopes the connector defines for this build. Pure function, no WordPress calls.
      *
      * @param array $raw     Submitted values (untrusted).
@@ -314,7 +392,16 @@ final class TZFD_AI_Services_Page {
             'retention_saved'   => __( 'Event log retention saved.', 'titan-zero-trades-front-desk' ),
             'retention_invalid' => __( 'Retention must be a whole number of days from 1 to 365.', 'titan-zero-trades-front-desk' ),
             'events_cleared'    => __( 'Hosted AI event log cleared.', 'titan-zero-trades-front-desk' ),
+            'connect_saved'     => __( 'Hosted AI service connected. Consent is needed again before any hosted request is sent.', 'titan-zero-trades-front-desk' ),
+            'connect_invalid'   => __( 'Connection not saved. Use an https endpoint, a site ID of up to 64 letters, numbers, dots, dashes or underscores, and a secret of at least 32 characters.', 'titan-zero-trades-front-desk' ),
+            'disconnected'      => __( 'Hosted AI disconnected. The secret, endpoint and consent were removed. Local features are unchanged.', 'titan-zero-trades-front-desk' ),
         );
+    }
+
+    /** Reads one submitted text field. Anything that is not a string (for example an array) reads as empty. */
+    private static function post_string( $key ) {
+        $raw = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        return is_string( $raw ) ? trim( $raw ) : '';
     }
 
     /** Capability and nonce check for every connector form. Stops the request when either fails. */

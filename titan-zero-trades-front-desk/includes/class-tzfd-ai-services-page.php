@@ -247,6 +247,29 @@ final class TZFD_AI_Services_Page {
                 </form>
             <?php endif; ?>
 
+            <h2><?php esc_html_e( 'Connection and consent history', 'titan-zero-trades-front-desk' ); ?></h2>
+            <?php $trail = self::audit_rows( TZFD_AI_Connector::audit_log() ); ?>
+            <?php if ( array() === $trail ) : ?>
+                <p><?php esc_html_e( 'No connection or consent changes recorded.', 'titan-zero-trades-front-desk' ); ?></p>
+            <?php else : ?>
+                <table class="widefat striped" style="max-width:52em">
+                    <thead><tr>
+                        <th scope="col"><?php esc_html_e( 'When (UTC)', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Change', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Detail', 'titan-zero-trades-front-desk' ); ?></th>
+                    </tr></thead>
+                    <tbody>
+                    <?php foreach ( $trail as $row ) : ?>
+                        <tr>
+                            <td><?php echo esc_html( gmdate( 'Y-m-d H:i:s', $row['at'] ) ); ?></td>
+                            <td><?php echo esc_html( $row['label'] ); ?></td>
+                            <td><?php echo esc_html( $row['detail'] ); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
+            <?php endif; ?>
+
             <h2><?php esc_html_e( 'Event log retention', 'titan-zero-trades-front-desk' ); ?></h2>
             <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                 <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_RETENTION ); ?>" />
@@ -371,6 +394,37 @@ final class TZFD_AI_Services_Page {
                 'feature'    => isset( $event['feature'] ) && is_string( $event['feature'] ) ? $event['feature'] : '',
                 'status'     => isset( $event['status'] ) && is_string( $event['status'] ) ? $event['status'] : '',
                 'latency_ms' => isset( $event['latency_ms'] ) ? max( 0, (int) $event['latency_ms'] ) : 0,
+            );
+        }
+        return $rows;
+    }
+
+    /**
+     * Turns stored audit entries into the three fields the screen shows. Pure function.
+     *
+     * @param array $entries Entries from TZFD_AI_Connector::audit_log().
+     * @return array<int, array{at:int, label:string, detail:string}>
+     */
+    public static function audit_rows( array $entries ) {
+        $labels = array(
+            'connect'         => __( 'Connected to the hosted service', 'titan-zero-trades-front-desk' ),
+            'consent_granted' => __( 'Consent granted', 'titan-zero-trades-front-desk' ),
+            'consent_revoked' => __( 'Consent revoked', 'titan-zero-trades-front-desk' ),
+            'disconnect'      => __( 'Disconnected', 'titan-zero-trades-front-desk' ),
+        );
+        $rows = array();
+        foreach ( $entries as $entry ) {
+            if ( ! is_array( $entry ) || ! isset( $entry['action'] ) || ! isset( $labels[ $entry['action'] ] ) ) {
+                continue;
+            }
+            $detail = '';
+            if ( isset( $entry['scopes'] ) && is_array( $entry['scopes'] ) ) {
+                $detail = implode( ', ', array_map( 'strval', $entry['scopes'] ) );
+            }
+            $rows[] = array(
+                'at'     => isset( $entry['at'] ) ? (int) $entry['at'] : 0,
+                'label'  => $labels[ $entry['action'] ],
+                'detail' => $detail,
             );
         }
         return $rows;

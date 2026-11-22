@@ -44,11 +44,14 @@ cleanup() {
   if [ "${KEEP_SITE:-0}" != "1" ]; then
     rm -rf "$WP_ROOT"
     [ -n "${TZFD_RT_DB_NAME:-}" ] && mysql -u"${TZFD_RT_DB_ADMIN:-root}" -e "DROP DATABASE IF EXISTS \`$TZFD_RT_DB_NAME\`" 2>/dev/null
+    [ -n "${TZFD_RT_DB_USER:-}" ] && mysql -u"${TZFD_RT_DB_ADMIN:-root}" -e "DROP USER IF EXISTS '$TZFD_RT_DB_USER'@'localhost'" 2>/dev/null
   fi
 }
 trap cleanup EXIT
 
+# Per-run names: a shared database user would let two concurrent runs overwrite each other's password.
 export TZFD_RT_DB_NAME="tzfd_rt_$$"  # chosen here so cleanup can drop it even if provisioning fails
+export TZFD_RT_DB_USER="${TZFD_RT_DB_USER:-tzfd_rt_$$}"
 PROVISION_OUT="$(TZFD_RT_URL="$URL" "$HERE/provision-wp-site.sh" "$WP_ROOT" "$PLUGIN_DIR" $MULTISITE_FLAG 2>"$WORK/provision.err")"
 if [ $? -ne 0 ]; then
   echo "FAIL provision -- $(cat "$WORK/provision.err")"
@@ -122,6 +125,10 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-confirmation-run
 
 echo "--- placeholder service (placeholder-service-runtime-tests.php, issue #300)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/placeholder-service-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- default booking form name (booking-default-form-name-runtime-tests.php, issue #299)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-default-form-name-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- SMS gateway outage (outage-runtime-tests.php, issue #340)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/outage-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- get started (setup-page-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 

@@ -94,6 +94,9 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 // Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
 TZFD_AI_Widget::boot();
+// Cancel/reschedule assistant runtime entry point (issues #25, #336). Read-only decision; no booking writes.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-cancel-assistant-api.php';
+TZFD_Cancel_Assistant_API::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
 
 /**

@@ -160,7 +160,12 @@ final class TZFD_AI_Connector {
         );
 
         $started = microtime( true );
-        $raw     = self::transport( $request );
+        try {
+            $raw = self::transport( $request );
+        } catch ( Throwable $e ) {
+            // A failing transport must never break the local booking flow: treat it as an outage.
+            $raw = array( 'error' => 'offline' );
+        }
         $latency = (int) round( ( microtime( true ) - $started ) * 1000 );
         $outcome = self::interpret( $raw, $cfg, $secret, $nonce );
 

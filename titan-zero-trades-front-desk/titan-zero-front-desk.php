@@ -86,6 +86,10 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway-admin.php
 TZFD_Agent_Gateway_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-report-admin.php';
 TZFD_Booking_Report_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-registry.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-store.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-admin.php';
+TZFD_Location_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access-admin.php';
 TZFD_Staff_Access_Admin::register();
@@ -95,6 +99,9 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-lead-intake.php';
 // Public AI answer box and service finder (issues #20, #23, #24). Rules-first; no hosted calls by default.
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-widget.php';
 TZFD_AI_Widget::boot();
+// Service finder panel and selected-service field on the booking form (issue #23; owner decision 2026-11-18).
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-service-finder-wiring.php';
+TZFD_Service_Finder_Wiring::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
 
 /**

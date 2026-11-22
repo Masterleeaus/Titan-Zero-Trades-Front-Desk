@@ -106,3 +106,42 @@ Decisions made here, for review:
 - Audit log entry for downgrade: needs the local audit API (see `class-tzfd-local-audit.php`, not wired here).
 - Multisite and per-company tests beyond the company-id check in pure logic.
 - Plugin Check and a live WordPress run of the admin page. This lane ran PHP lint and the pure logic tests only.
+
+## Outage and malformed payloads (issue #340)
+
+Outage means the connector cannot be reached. The only input is the cached option, so the result depends on its `expires_at` and `state`. Covered by the `outage:` checks in `tests/ai-services/run-contract-tests.php` (run in the CI unit job):
+
+| Situation | Level | Reason | Local features |
+|---|---|---|---|
+| Never connected, no cache | `free_ai` | `no_entitlement` | on |
+| Cache inside TTL, `active` with agent team | `agent_team` | `active` | on |
+| Cache inside TTL, `grace` | `agent_team` | `grace` | on |
+| Cache at or after `expires_at` | `free_ai` | `cache_expired` | on |
+| Expired cache with `paused_agents` and assistant | `free_ai` | `cache_expired` | on |
+
+Downgrade on expiry uses `downgrade_actions()`, and the test checks that every local data list stays in `preserved`.
+
+Malformed payloads must resolve to Free with no PHP warning. The checks cover a string or int payload, a non-string `state`, `entitlements` as a bare string or nested array, an unknown entitlement name, a negative company, a future schema version and a non-numeric `expires_at`. Two defects were found and fixed in `class-tzfd-ai-services.php`:
+
+- A non-string `state` (for example an array) raised "Array to string conversion" and produced the reason `Array`. It now resolves to `unknown_state`.
+- `entitlements` given as a bare string (for example `"agent_team"`) was cast to a list and granted Agent Team. Only an array of strings is read now, so a bare string resolves to Free.
+
+Decision for review: a malformed `entitlements` value fails safe to Free, even when it holds a valid name.
+
+### Threat model (summary)
+
+| Threat | Control in this repo | Residual risk |
+|---|---|---|
+| Forged entitlement payload | None here. The payload is read only after the connector verifies it (#16, #4, #43). | Not evidenced in this repo. Blocks release. |
+| Tampered cache option | Only a verified payload is written, and `company_id` must match the site. | A user with `manage_options` can write the option directly. |
+| Replay of an old payload after cancellation | Short `expires_at` TTL, then `cache_expired`. | Replay within the TTL is accepted until the connector moves the state. |
+| Downgrade causes data loss | `preserved` list and `disabled_local` empty, tested. Runtime upgrade/downgrade run also keeps bookings (see `tests/runtime/README.md`). | None known. |
+| Hostile or malformed payload | Type checks in `resolve()`, malformed-input tests. | None known for the cases tested. |
+
+### Readiness assessment (not a sign-off)
+
+Evidenced: pure-logic resolution, downgrade preservation, outage and malformed-input checks (standalone CI job); the recorded runtime upgrade and downgrade run from 2026-11-16 (31 checks, bookings and AI settings survived both directions); the authorisation inventory (PR #317).
+
+Not evidenced: signed payload verification and the connector transport (#16, #4, #43); a live WordPress run of the AI Services admin page; consent records and the downgrade audit entry.
+
+Owner decisions still needed (not made here): production readiness sign-off, the release decision, and the consent wording and retention for the hosted data categories.

@@ -55,6 +55,10 @@ The upstream author credit remains in readme.txt (Credits), THIRD-PARTY-NOTICES.
 
 - `scripts/package-excludes.txt`: one list of exclusions, shared by the manifest and the build.
 - `scripts/source-manifest.sh <plugin-dir>`: SHA-256 for each shipped file, sorted with `LC_ALL=C`. The committed copy is `docs/provenance/SHA256SUMS.txt`.
+- Baseline manifests (generated 2026-11-18 with `scripts/source-manifest.sh`):
+  - `docs/provenance/SHA256SUMS-v3.0.128.txt`: 720 files, source at commit `22dc106` (plugin header 3.0.128, "Extract Trades Front Desk 3.0.128 r16").
+  - `docs/provenance/SHA256SUMS-main-eb7b8bd.txt`: 782 files, `main` at commit `eb7b8bd`.
+  - `docs/provenance/SHA256SUMS.txt` predates both and matches neither; it is kept unchanged.
 - `scripts/build-package.sh [out-dir]`: stages the plugin, runs `php -l` on every PHP file, sets mtimes to `SOURCE_DATE_EPOCH` (default: HEAD commit time), and writes `titan-zero-trades-front-desk-<version>.zip`, its `.sha256`, and `SHA256SUMS.txt`. Output goes to `dist/`, which is git-ignored.
 
 Reproducibility check on 2026-11-16: two consecutive builds produced byte-identical ZIPs (`cmp` passed). The build result is recorded in the PR.
@@ -101,8 +105,25 @@ Run on the plugin tree at e352141 (main, after PR #373). No baseline archive was
 
 Result: no generated or obfuscated executable code was found by these checks. This does not replace the comparison against the v3.0.128 ZIP or the Pass 03 candidate, which are still missing.
 
+## Comparison against v3.0.128 from git history (2026-11-23, issue #341)
+
+The v3.0.128 source is in git history (commit 22dc106, "Extract Trades Front Desk 3.0.128"), so no ZIP was needed. It was read with `git archive`, and both trees were hashed with `scripts/source-manifest.sh`.
+
+- v3.0.128 (22dc106): 720 shipped files. Matches `docs/provenance/SHA256SUMS-v3.0.128.txt`.
+- main (dfc6e9e): 783 shipped files.
+- Same path and same SHA-256: 585 files.
+- Same path, content changed: 120 files.
+- Removed since 3.0.128: 15 files (listed below).
+- Added since 3.0.128: 78 files.
+
+Removed files: `addons/assistant/ai-assistant.addon.php`, `addons/assistant/index.html`, `addons/core/installer.addon.php`, `css/tzfd-smart-wizards.css`, `includes/class-tzfd-ai-conversation-integrity.php`, `includes/class-tzfd-ai-governor.php`, `includes/class-tzfd-ai-image-input.php`, `includes/class-tzfd-ai-options.php`, `includes/class-tzfd-ai-provider-dispatch.php`, `includes/class-tzfd-receptionist-schema.php`, `includes/class-tzfd-smart-wizards.php`, `includes/class-tzfd-workspace-site-ajax.php`, `js/inline/ai-assistant.js`, `js/inline/core-addons-installer.js`, `js/tzfd-smart-wizards.js`. Owner review is needed to confirm each removal is intended (see #341 follow-up). These removals are not reverted here.
+
+Credits: `LICENSE.txt` is byte-identical to 3.0.128. The upstream credit lines in `readme.txt`, `THIRD-PARTY-NOTICES.txt` and `UPSTREAM.txt` are present in both trees (5, 11 and 3 matching lines).
+
+Pass 03 candidate: still not available. The three-way comparison against it cannot be run.
+
 ## Gaps (explicit)
 
-- No v3.0.128 ZIP and no Pass 03 candidate were available. The three-way merge has not been run (steps 1 to 3 above need those ZIPs).
+- No Pass 03 candidate was available. The three-way merge has not been run (steps 1 to 3 above need that ZIP). The v3.0.128 comparison now runs from git history (section above).
 - The file-by-file record for renamed files (INHERITED-FILE-CHANGES.txt section A) was not re-checked beyond the two calendar CSS files.
 - WordPress runtime tests (`tests/runtime/`) were not run: no `wp` CLI or disposable WordPress site in this sandbox.

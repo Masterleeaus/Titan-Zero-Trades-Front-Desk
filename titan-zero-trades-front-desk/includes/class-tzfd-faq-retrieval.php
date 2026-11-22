@@ -12,7 +12,7 @@
  *
  * Tenant rules: every read and write takes an explicit company id through TZFD_Scoped_Store. A company id below 1
  * returns no answer. Before any hosted call, emails and 8+ digit runs are redacted to placeholders. The hosted call
- * is made only with recorded consent, the free_ai entitlement and the monthly cap; otherwise nothing is sent.
+ * is made only with recorded consent and under the monthly cap; otherwise nothing is sent. No plan or entitlement is checked here.
  *
  * Index version: a per-company integer bumped on every save or delete. It is part of the cache key, so an update or
  * delete makes older cached results unreachable at once. The cache TTL bounds any remaining staleness.

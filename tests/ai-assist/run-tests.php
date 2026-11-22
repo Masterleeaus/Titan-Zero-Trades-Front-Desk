@@ -166,6 +166,7 @@ t( 'quote neutralises markup', strpos( TZFD_AI_Smart_Reply::quote( '<script>x</s
 
 // ---- #37 gates: capability, contact redaction, consent-gated hosted gateway ----
 if ( ! class_exists( 'WP_Error' ) ) { class WP_Error { private $c; public function __construct( $c = '', $m = '' ) { $this->c = $c; } public function get_error_code() { return $this->c; } } }
+if ( ! function_exists( 'wp_json_encode' ) ) { function wp_json_encode( $v ) { return json_encode( $v ); } }
 if ( ! function_exists( 'is_wp_error' ) ) { function is_wp_error( $t ) { return $t instanceof WP_Error; } }
 if ( ! function_exists( '__' ) ) { function __( $s ) { return $s; } }
 if ( ! function_exists( 'get_option' ) ) { function get_option( $k, $d = '' ) { return $GLOBALS['t_opts'][ $k ] ?? $d; } }
@@ -273,6 +274,27 @@ t( 'list of only invalid tags saves nothing', TZFD_AI_Multilingual::save_configu
 // ---- #145 summary access: non-owner and empty input ----
 $empty_sum = TZFD_AI_Conversation_Summary::summarise( array(), true, array(), $owner_caps );
 t( 'empty conversation gives no fabricated request', $empty_sum['status'] === 'summary' && ! isset( $empty_sum['stated_request'] ) && $empty_sum['outstanding'] === array() );
+
+// ---- #330 owner decision: hosted content-size cap (refuse, never truncate) ----
+require_once dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-hosted-ai-connector.php';
+$cap_ok   = TZFD_Hosted_AI_Connector::content_size_error( array( 'task' => 'draft', 'quoted' => str_repeat( 'a', 2000 ) ) );
+$cap_long = TZFD_Hosted_AI_Connector::content_size_error( array( 'task' => 'draft', 'quoted' => str_repeat( 'a', 2001 ) ) );
+$cap_nest = TZFD_Hosted_AI_Connector::content_size_error( array( 'facts' => array( 'hours' => array( str_repeat( 'h', 2001 ) ) ) ) );
+$cap_mb   = TZFD_Hosted_AI_Connector::content_size_error( array( 'quoted' => str_repeat( 'é', 1000 ) ) );
+$cap_many = array();
+for ( $i = 0; $i < 40; $i++ ) { $cap_many[ 'k' . $i ] = str_repeat( 'x', 1900 ); }
+$cap_total = TZFD_Hosted_AI_Connector::content_size_error( $cap_many );
+t( 'text of exactly 2000 characters is allowed', null === $cap_ok );
+t( 'text of 2001 characters is refused', is_object( $cap_long ) && 'tzfd_hosted_ai_content_too_large' === $cap_long->get_error_code() );
+t( 'oversized text nested in facts is refused', is_object( $cap_nest ) && 'tzfd_hosted_ai_content_too_large' === $cap_nest->get_error_code() );
+t( 'characters are counted, not bytes (1000 accented letters, 2000 bytes, allowed)', null === $cap_mb );
+t( 'payload over 8192 bytes in total is refused', is_object( $cap_total ) && 'tzfd_hosted_ai_content_too_large' === $cap_total->get_error_code() );
+$GLOBALS['cap_sent'] = 0;
+final class Fx_Counting_Connector { public function send( $c, $p ) { $GLOBALS['cap_sent']++; return array( 'ok' => true, 'text' => 'sent' ); } }
+$GLOBALS['t_opts']      = array( 'tzfd_hosted_ai_consent' => 'granted' );
+$GLOBALS['t_connector'] = new Fx_Counting_Connector();
+$cap_resp = TZFD_Hosted_AI_Connector::request( 'free_ai', array( 'quoted' => str_repeat( 'a', 2001 ) ) );
+t( 'oversized request returns WP_Error and makes no connector call', is_object( $cap_resp ) && 0 === $GLOBALS['cap_sent'] );
 
 printf( "\n%d passed, %d failed\n", $GLOBALS['t_pass'], $GLOBALS['t_fail'] );
 exit( $GLOBALS['t_fail'] > 0 ? 1 : 0 );

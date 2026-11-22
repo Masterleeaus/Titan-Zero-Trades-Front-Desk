@@ -33,6 +33,19 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
+## Results on main, 2026-11-23 (issue #370; PHP 8.3.6, MariaDB 10.11.14, WP-CLI 2.12.0)
+
+- Single site, WordPress 7.1.4: 362 passed, 0 failed, 0 gap(s), 9 skipped.
+- Single site, WordPress 6.6 (`WP_VERSION=6.6`, the plugin's minimum): 362 passed, 0 failed, 0 gap(s), 9 skipped.
+- Multisite, WordPress 7.1.4: 363 passed, 0 failed, 0 gap(s), 7 skipped. The `ai-answer-box: page_id sent as a hidden
+  field` check passes here on main, so the multisite failure recorded on 2026-11-16 does not reproduce on this checkout.
+- Upgrade from the v3.0.128 release ZIP, single site: 31 passed, 0 failed, 0 gap(s).
+- Upgrade from the v3.0.128 release ZIP, network (`UPGRADE_MULTISITE=1`): 31 passed, 0 failed, 0 gap(s).
+- dbDelta on MariaDB 10.11.14: the slot-hold table installs, and a second run issues no `ALTER` (`slot-holds` checks, 5 of 5).
+  The `Invalid default value for 'id'` message did not appear.
+- Not available in this run: PHP 8.1, 8.2 and 8.4. The static CLI builds found for these versions have no `mysqli`
+  extension, and no Docker daemon was available, so no WordPress runtime was provisioned on them.
+
 ## Last recorded results (2026-11-16, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11, WP-CLI 2.12.0)
 
 - Single site: 85 passed, 0 failed, 2 gaps, 10 skipped.
@@ -48,7 +61,8 @@ not counted as a pass).
 ## Gaps observed (reported, not fixed here)
 
 - **dbDelta on MariaDB 10.11.** Installing the slot-hold table printed `Invalid default value for 'id'` from
-  `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed.
+  `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed. Not reproduced on 2026-11-23 (see above); the
+  `SET DEFAULT` came from the `DEFAULT ''` on the id column, which #186 removed.
 
 ## Skipped, and why
 

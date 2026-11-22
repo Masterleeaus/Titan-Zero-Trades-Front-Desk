@@ -38,6 +38,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-messaging-replies.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-telephone-delivery.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-sms.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-status.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-twilio-call-events.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-escalation-ack.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-call-routing.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-escalation-state-store.php';
@@ -296,6 +297,7 @@ if ( ! function_exists( 'tzfd_boot' ) ) {
         TZFD_Telephony_Adapter::register();
         TZFD_Messaging_Replies::register();
         TZFD_Twilio_Status::boot();
+        TZFD_Twilio_Call_Events::boot();
         TZFD_Access::register();
     TZFD_Lead_Intake::register();
     TZFD_Human_Handoff::register();

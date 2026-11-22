@@ -64,6 +64,22 @@ function tzfd_test_setup_checklist() {
 	$skew = $C::metrics( array( 'services' => $now, 'test_booking' => $now - 5 ), true );
 	tzfd_assert( 0 === $skew['seconds_to_first_booking'], 'a booking stamped before the first step is clamped to zero, never negative' );
 	tzfd_assert_same( 1, $C::metrics( array( 'services' => $now, 'bogus' => $now ), true )['steps_done'], 'keys outside the catalogue are not counted as steps' );
+	// Discovery links (issue #366): off by default, after opt-in and activation only, no registration.
+	$active = array( 'services' => true, 'calendar' => false );
+	tzfd_assert( false === $C::discovery_visible( null, $active ), 'discovery links are off when the option was never set' );
+	tzfd_assert( false === $C::discovery_visible( false, $active ), 'discovery links stay off when the administrator has not opted in' );
+	tzfd_assert( false === $C::discovery_visible( 'yes', $active ), 'a truthy non-boolean option does not turn discovery on' );
+	tzfd_assert( false === $C::discovery_visible( true, array() ), 'opt-in alone does not show links before the plugin is in use' );
+	tzfd_assert( false === $C::discovery_visible( true, array( 'services' => false, 'calendar' => false ) ), 'no service or calendar means the plugin is not yet in use' );
+	tzfd_assert( true === $C::discovery_visible( true, $active ), 'opt-in with a service shows the links' );
+	tzfd_assert( true === $C::discovery_visible( true, array( 'calendar' => true ) ), 'opt-in with a calendar shows the links' );
+
+	$links = $C::discovery_links();
+	tzfd_assert_same( array( 'pro', 'ai', 'agent' ), array_keys( $links ), 'discovery links cover Pro, AI and Agent in that order' );
+	tzfd_assert_same( array( 'tzfd-booking-report', 'tzfd-ai-services', 'tzfd-agent-receipts' ), array_column( $links, 'page' ), 'each discovery link points to an existing admin screen' );
+	$text = '';
+	foreach ( $links as $link ) { $text .= $link['label'] . ' ' . $link['hint'] . ' '; }
+	tzfd_assert( false === stripos( $text, 'register' ) && false === stripos( $text, 'sign up' ) && false === stripos( $text, 'buy' ), 'discovery copy never asks for registration or a purchase' );
 }
 
 // Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).

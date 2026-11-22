@@ -79,10 +79,20 @@ if ( ! empty( $sp_sub ) ) {
 	tzfd_sp_ok( 'setup-page: subscriber check skipped (no subscriber on this site)', true );
 }
 
+// 6. Discovery links (#366): off by default, and no link is shown without opt-in.
+delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: discovery links are off by default', false !== strpos( $sp_html, 'Links to optional services are off.' ) && false === strpos( $sp_html, 'admin.php?page=tzfd-ai-services' ) );
+update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: opt-in without any service or calendar shows no links yet', false === strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) );
+update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
+
 // Clean up.
 delete_option( TZFD_Setup_Checklist::CONSENT_OPTION );
 delete_option( TZFD_Setup_Checklist::PROGRESS_OPTION );
 delete_option( TZFD_Setup_Checklist::MANUAL_OPTION );
+delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
 
 echo 'Summary (setup-page-runtime): ' . (int) $GLOBALS['tzfd_sp']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_sp']['FAIL'] . " failed\n";
 exit( (int) $GLOBALS['tzfd_sp']['FAIL'] > 0 ? 1 : 0 );

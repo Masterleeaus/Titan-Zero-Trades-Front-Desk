@@ -18,6 +18,14 @@ final class TZFD_Hosted_AI_Connector {
     const FILTER       = 'tzfd_hosted_ai_connector';
     const CAPABILITIES = array( 'free_ai', 'assistant', 'agent_team' );
 
+    /**
+     * Owner decision (#330, 2026-11-18): hosted AI content is capped. Each text value may hold at most this many
+     * characters, and the encoded payload at most MAX_PAYLOAD_BYTES. Oversized requests are refused, never truncated.
+     * Local rules, the knowledge store and ordinary bookings are not capped. The 2000 matches TZFD_AI_Locale::MAX_TEXT_CHARS.
+     */
+    const MAX_CONTENT_CHARS = 2000;
+    const MAX_PAYLOAD_BYTES = 8192;
+
     /** Consent is recorded by an administrator in the AI Services screen. Nothing is stored by default. */
     public static function consent_granted() {
         return 'granted' === get_option( self::CONSENT, '' );
@@ -45,6 +53,10 @@ final class TZFD_Hosted_AI_Connector {
         if ( ! in_array( $capability, self::CAPABILITIES, true ) ) {
             return new WP_Error( 'tzfd_hosted_ai_unknown_capability', __( 'This hosted AI capability is not recognised.', 'titan-zero-trades-front-desk' ) );
         }
+        $too_big = self::content_size_error( $payload );
+        if ( null !== $too_big ) {
+            return $too_big;
+        }
         if ( ! self::consent_granted() ) {
             return new WP_Error( 'tzfd_hosted_ai_no_consent', __( 'Hosted AI is off until you connect it and allow it.', 'titan-zero-trades-front-desk' ) );
         }
@@ -54,5 +66,39 @@ final class TZFD_Hosted_AI_Connector {
         }
         $response = $connector->send( $capability, $payload );
         return is_wp_error( $response ) || is_array( $response ) ? $response : new WP_Error( 'tzfd_hosted_ai_bad_response', __( 'The hosted AI connection returned an unexpected response.', 'titan-zero-trades-front-desk' ) );
+    }
+
+    /**
+     * Returns null when the payload is within the content cap, otherwise a WP_Error. Pure: no WordPress calls
+     * except wp_json_encode(). Nothing is sent or truncated when the cap is exceeded.
+     *
+     * @param array $payload Data about to leave the site.
+     * @return WP_Error|null
+     */
+    public static function content_size_error( array $payload ) {
+        $too_big = __( 'This message is too long to send to hosted AI. Shorten it and try again.', 'titan-zero-trades-front-desk' );
+        if ( ! self::text_within_limit( $payload ) ) {
+            return new WP_Error( 'tzfd_hosted_ai_content_too_large', $too_big );
+        }
+        $json = wp_json_encode( $payload );
+        if ( ! is_string( $json ) || strlen( $json ) > self::MAX_PAYLOAD_BYTES ) {
+            return new WP_Error( 'tzfd_hosted_ai_content_too_large', $too_big );
+        }
+        return null;
+    }
+
+    /** True when every string, at any depth, holds at most MAX_CONTENT_CHARS characters. */
+    private static function text_within_limit( $value ) {
+        if ( is_string( $value ) ) {
+            return mb_strlen( $value, 'UTF-8' ) <= self::MAX_CONTENT_CHARS;
+        }
+        if ( is_array( $value ) ) {
+            foreach ( $value as $item ) {
+                if ( ! self::text_within_limit( $item ) ) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

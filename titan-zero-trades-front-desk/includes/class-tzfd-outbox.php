@@ -105,28 +105,28 @@ final class TZFD_Outbox {
         }
         foreach ( TZFD_Addon_Records::list_kind( self::ADDON, self::KIND_MESSAGE, 200 ) as $row ) {
             if ( $counts['sent'] + $counts['failed'] + $counts['waiting'] + $counts['skipped'] >= $limit ) { break; }
-            $tz_message = $row['payload'];
-            if ( self::STATUS_QUEUED !== ( $tz_message['status'] ?? '' ) ) { continue; }
-            if ( self::is_opted_out( $tz_message['to'] ?? '' ) ) {
+            $tzfd_message = $row['payload'];
+            if ( self::STATUS_QUEUED !== ( $tzfd_message['status'] ?? '' ) ) { continue; }
+            if ( self::is_opted_out( $tzfd_message['to'] ?? '' ) ) {
                 self::update_status( $row, self::STATUS_FAILED, 'opted_out' );
                 $counts['skipped']++;
                 continue;
             }
-            if ( ! is_string( $tz_message['channel'] ?? null ) || ! in_array( $tz_message['channel'], array( 'sms', 'email' ), true )
-                || ! is_string( $tz_message['to'] ?? null ) || '' === self::normalize_contact( $tz_message['channel'], $tz_message['to'] )
-                || ! is_string( $tz_message['body'] ?? null ) || '' === trim( $tz_message['body'] ) ) {
+            if ( ! is_string( $tzfd_message['channel'] ?? null ) || ! in_array( $tzfd_message['channel'], array( 'sms', 'email' ), true )
+                || ! is_string( $tzfd_message['to'] ?? null ) || '' === self::normalize_contact( $tzfd_message['channel'], $tzfd_message['to'] )
+                || ! is_string( $tzfd_message['body'] ?? null ) || '' === trim( $tzfd_message['body'] ) ) {
                 self::update_status( $row, self::STATUS_FAILED, 'invalid_message' );
                 $counts['failed']++;
                 continue;
             }
-            $result = self::send_one( $tz_message );
+            $result = self::send_one( $tzfd_message );
             if ( true === $result ) {
                 self::update_status( $row, self::STATUS_SENT, '' );
                 $counts['sent']++;
             } elseif ( null === $result ) {
                 $counts['waiting']++; // no sender connected: leave queued
             } else {
-                $attempts = (int) ( $tz_message['attempts'] ?? 0 ) + 1;
+                $attempts = (int) ( $tzfd_message['attempts'] ?? 0 ) + 1;
                 self::update_status( $row, $attempts >= self::MAX_ATTEMPTS ? self::STATUS_FAILED : self::STATUS_QUEUED, 'send_failed', $attempts );
                 $counts['failed']++;
             }
@@ -202,11 +202,11 @@ final class TZFD_Outbox {
     }
 
     /** true = sent, false = sender reported a failure, null = no sender connected. */
-    private static function send_one( array $tz_message ) {
-        if ( 'email' === ( $tz_message['channel'] ?? '' ) ) {
-            return (bool) wp_mail( $tz_message['to'], __( 'Message from us', 'titan-zero-trades-front-desk' ), $tz_message['body'], array( 'Content-Type: text/plain; charset=UTF-8' ) );
+    private static function send_one( array $tzfd_message ) {
+        if ( 'email' === ( $tzfd_message['channel'] ?? '' ) ) {
+            return (bool) wp_mail( $tzfd_message['to'], __( 'Message from us', 'titan-zero-trades-front-desk' ), $tzfd_message['body'], array( 'Content-Type: text/plain; charset=UTF-8' ) );
         }
-        $sent = apply_filters( 'tz_fd_sms_send', null, array( 'to' => $tz_message['to'], 'body' => $tz_message['body'] ) );
+        $sent = apply_filters( 'tz_fd_sms_send', null, array( 'to' => $tzfd_message['to'], 'body' => $tzfd_message['body'] ) );
         if ( null === $sent ) { return null; }
         return true === $sent;
     }
@@ -225,7 +225,7 @@ final class TZFD_Outbox {
 
     /** Queued and finished messages, most recent first, for the admin list. */
     public static function recent( $limit = 50 ) {
-        $tz_rows = TZFD_Addon_Records::list_kind( self::ADDON, self::KIND_MESSAGE, 500 );
-        return array_slice( array_reverse( $tz_rows ), 0, max( 1, min( 500, (int) $limit ) ) );
+        $tzfd_local_rows = TZFD_Addon_Records::list_kind( self::ADDON, self::KIND_MESSAGE, 500 );
+        return array_slice( array_reverse( $tzfd_local_rows ), 0, max( 1, min( 500, (int) $limit ) ) );
     }
 }

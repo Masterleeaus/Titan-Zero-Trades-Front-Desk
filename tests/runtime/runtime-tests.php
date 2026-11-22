@@ -5,9 +5,9 @@
  */
 // Resolves against the active WordPress install (WP_PLUGIN_DIR), not a fixed server path.
 if ( ! defined( 'WP_PLUGIN_DIR' ) ) { echo "FAIL harness -- run through WP-CLI\n"; exit( 1 ); }
-$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php' ) as $tz_file ) {
-    require_once $tz_inc . $tz_file;
+$tzfd_local_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
+foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php', 'class-tzfd-privacy-exporter.php' ) as $tzfd_local_file ) {
+    require_once $tzfd_local_inc . $tzfd_local_file;
 }
 global $wpdb;
 $GLOBALS['rt_pass'] = 0; $GLOBALS['rt_fail'] = 0;
@@ -68,7 +68,7 @@ $before3 = $count();
 TZFD_Privacy_Exporter::erase( '', 1 );
 rt_check( 'erase with empty email removes nothing', $count() === $before3 );
 
-require_once $tz_inc . 'class-tzfd-signed-request.php';
+require_once $tzfd_local_inc . 'class-tzfd-signed-request.php';
 // 7. Missed-call request signatures (HMAC-SHA256 over timestamp.body, 300 s window, replay refused).
 if ( class_exists( 'TZFD_Signed_Request' ) ) {
     $secret = TZFD_Signed_Request::new_secret();

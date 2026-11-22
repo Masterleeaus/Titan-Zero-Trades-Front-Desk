@@ -64,15 +64,15 @@ if( !class_exists( 'TZFD_appLimit' ) )
         /************************ HOOKS *****************************/
 
         /** Runs before insert. Refuses a submission that selects too many appointments. */
-        public function check_submission( $tz_params )
+        public function check_submission( $tzfd_local_params )
         {
             if ( defined( 'TZFD_HOUR_BLOCK_TIMES_PROCESS' ) ) { return; }
             if ( is_admin() && current_user_can( 'tz_fd_access' ) ) { return; }
-            if ( ! is_array( $tz_params ) || ! isset( $tz_params['formid'] ) || ! isset( $tz_params['apps'] ) || ! is_array( $tz_params['apps'] ) ) { return; }
+            if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['formid'] ) || ! isset( $tzfd_local_params['apps'] ) || ! is_array( $tzfd_local_params['apps'] ) ) { return; }
 
-            $settings = TZFD_Addon_Support::form_settings( self::KEY, (int) $tz_params['formid'], self::defaults() );
+            $settings = TZFD_Addon_Support::form_settings( self::KEY, (int) $tzfd_local_params['formid'], self::defaults() );
             $max      = (int) $settings['max'];
-            if ( TZFD_Addon_Support::exceeds_limit( count( $tz_params['apps'] ), $max ) ) {
+            if ( TZFD_Addon_Support::exceeds_limit( count( $tzfd_local_params['apps'] ), $max ) ) {
                 echo esc_html( sprintf( /* translators: %d: maximum number of appointments per customer. */ __( 'Please select a max of %d appointments per customer.', 'titan-zero-trades-front-desk' ), $max ) );
                 exit;
             }
@@ -86,6 +86,6 @@ if( !class_exists( 'TZFD_appLimit' ) )
     $TZFD_appLimit_obj = new TZFD_appLimit();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_appLimit_obj->get_addon_id() ] = $TZFD_appLimit_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_appLimit_obj->get_addon_id() ] = $TZFD_appLimit_obj;
 }

@@ -5,7 +5,7 @@
 
   if ( !is_admin() || !current_user_can('tz_fd_access') ) {echo esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' );exit;}
 
-  $tz_nonce = wp_create_nonce( 'tz_fd_actions_pwizard' );
+  $tzfd_nonce = wp_create_nonce( 'tz_fd_actions_pwizard' );
   wp_enqueue_script( 'tzfd-adminb-publish-wizard', plugins_url( 'js/inline/adminb-publish-wizard.js', __FILE__ ), array(), '2.0.1', true );
 
 ?>
@@ -22,7 +22,7 @@
 
 <form method="post" action="?page=tzfd&pwizard=1" name="regForm" id="regForm">
  <input name="tz_fd_do_action_loaded" type="hidden" value="wizard" />
- <input name="anonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+ <input name="anonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
 
 
 <?php
@@ -59,15 +59,15 @@ if ($this->get_param('tz_fd_do_action_loaded') == 'wizard') {
 <?php
   // Never display calendars from another Workspace company in the publishing wizard.
   require_once __DIR__ . '/includes/class-tzfd-scoped-store.php';
-  $tz_wizard_company = TZFD_Scoped_Store::company_id();
-  $tz_myrows = $tz_wizard_company > 0 ? $wpdb->get_results( $wpdb->prepare(
+  $tzfd_wizard_company = TZFD_Scoped_Store::company_id();
+  $tzfd_myrows = $tzfd_wizard_company > 0 ? $wpdb->get_results( $wpdb->prepare(
       'SELECT id, form_name FROM %i WHERE company_id=%d ORDER BY form_name',
       $wpdb->prefix . TZFD_Tables::FORMS,
-      $tz_wizard_company
+      $tzfd_wizard_company
   ) ) : array();
-  foreach ( (array) $tz_myrows as $tz_item ) {
-      if ( ! $this->check_current_user_access( (int) $tz_item->id ) ) { continue; }
-      echo '<option value="'.esc_attr($tz_item->id).'"'.($tz_item->id==$this->item?' selected':'').'>'.esc_html($tz_item->form_name).'</option>';
+  foreach ( (array) $tzfd_myrows as $tzfd_item ) {
+      if ( ! $this->check_current_user_access( (int) $tzfd_item->id ) ) { continue; }
+      echo '<option value="'.esc_attr($tzfd_item->id).'"'.($tzfd_item->id==$this->item?' selected':'').'>'.esc_html($tzfd_item->form_name).'</option>';
   }
 ?>
             </select>

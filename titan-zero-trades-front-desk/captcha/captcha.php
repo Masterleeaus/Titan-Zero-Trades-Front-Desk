@@ -3,7 +3,7 @@
 if (!defined('ABSPATH')) { exit; }
 require_once dirname(__DIR__) . '/includes/class-tzfd-captcha.php';
 
-function titan_zero_front_desk_get_captcha() {
+function tzfd_get_captcha() {
     if (!ini_get('zlib.output_compression') && ob_get_level() > 0) { ob_clean(); }
     nocache_headers();
     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- CAPTCHA image request: reads the request only to choose the challenge settings and returns an image. Its only write is a random challenge id, never user data.
@@ -35,4 +35,4 @@ function titan_zero_front_desk_get_captcha() {
     exit;
 }
 
-titan_zero_front_desk_get_captcha();
+tzfd_get_captcha();

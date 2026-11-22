@@ -22,7 +22,7 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
   wp_enqueue_script( 'tzfd-adminb-public-form', plugins_url( 'js/inline/adminb-public-form.js', __FILE__ ), array( 'jquery' ), '2.0.1', true );
   
 ?>
-<form class="tz_fd_p_form no-prefetch" name="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" id="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" action="<?php echo esc_attr($path); ?>" method="post" enctype="multipart/form-data" data-tzfd-validate="<?php echo esc_attr($this->prefix); ?>_pform_doValidate<?php echo '_'.esc_attr($this->print_counter); ?>"<?php if ( defined( 'APBCT_NAME' ) ) { echo ' data-tzfd-apbct="1"'; } ?>><input type="hidden" name="tz_fd_pform_psequence" value="<?php echo '_'.esc_attr($this->print_counter); ?>" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_pform_process" value="1" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_id" value="<?php echo esc_attr($this->item); ?>" /><input type="hidden" name="tz_fd_ref_page" value="<?php echo esc_attr($this->get_site_url()); ?>" /><input type="hidden" name="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" id="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" size="180" value="<?php echo esc_attr( (string) $tz_raw_form_str ); // JSON in an HTML attribute must be attribute-escaped at output. 
+<form class="tz_fd_p_form no-prefetch" name="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" id="<?php echo esc_attr($this->prefix); ?>_pform<?php echo '_'.esc_attr($this->print_counter); ?>" action="<?php echo esc_attr($path); ?>" method="post" enctype="multipart/form-data" data-tzfd-validate="<?php echo esc_attr($this->prefix); ?>_pform_doValidate<?php echo '_'.esc_attr($this->print_counter); ?>"<?php if ( defined( 'APBCT_NAME' ) ) { echo ' data-tzfd-apbct="1"'; } ?>><input type="hidden" name="tz_fd_pform_psequence" value="<?php echo '_'.esc_attr($this->print_counter); ?>" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_pform_process" value="1" /><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_id" value="<?php echo esc_attr($this->item); ?>" /><input type="hidden" name="tz_fd_ref_page" value="<?php echo esc_attr($this->get_site_url()); ?>" /><input type="hidden" name="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" id="form_structure<?php echo '_'.esc_attr($this->print_counter); ?>" size="180" value="<?php echo esc_attr( (string) $tzfd_raw_form_str ); // JSON in an HTML attribute must be attribute-escaped at output. 
 ?>" /><input type="hidden" name="refpage<?php echo '_'.esc_attr($this->print_counter); ?>" id="refpage<?php echo '_'.esc_attr($this->print_counter); ?>" value=""><input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_pform_status" value="0" /><input name="anonce" type="hidden" value="<?php echo esc_attr(wp_create_nonce( 'tz_fd_actions_bookingform' )); ?>"/>
 <?php /* phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request value used for display or routing; this code path changes no state. */ ?>
 <?php if (is_admin() && (empty($_GET["action"]) || tzfd_request_text( 'get', "action" ) != 'edit') && !defined('TZFD_HOUR_BLOCK_TIMES')) {?>
@@ -39,10 +39,10 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
          $status = apply_filters('tz_fd_app_admin_default_status', $this->get_option('defaultpaidstatus', '') );        
          if (isset($preload_params) && is_array($preload_params) && count($preload_params) && isset($preload_params["apps"])) 
          {
-            for($tz_k=0; $tz_k<count($preload_params["apps"]); $tz_k++)
-                if (isset($preload_params["apps"][$tz_k]["cancelled"]))
+            for($tzfd_k=0; $tzfd_k<count($preload_params["apps"]); $tzfd_k++)
+                if (isset($preload_params["apps"][$tzfd_k]["cancelled"]))
                 {
-                    $status = $preload_params["apps"][$tz_k]["cancelled"];
+                    $status = $preload_params["apps"][$tzfd_k]["cancelled"];
                     break;
                 }
          }
@@ -70,12 +70,12 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
   <img src="<?php echo esc_url($this->fixurl($this->get_site_url(), $this->prefix.'_captcha=captcha&ps=_'.$this->print_counter.'&inAdmin=1&width='.$this->get_option('cv_width', TZFD_BOOK_DEFAULT_cv_width).'&height='.$this->get_option('cv_height', TZFD_BOOK_DEFAULT_cv_height).'&letter_count='.$this->get_option('cv_chars', TZFD_BOOK_DEFAULT_cv_chars).'&min_size='.$this->get_option('cv_min_font_size', TZFD_BOOK_DEFAULT_cv_min_font_size).'&max_size='.$this->get_option('cv_max_font_size', TZFD_BOOK_DEFAULT_cv_max_font_size).'&noise='.$this->get_option('cv_noise', TZFD_BOOK_DEFAULT_cv_noise).'&noiselength='.$this->get_option('cv_noise_length', TZFD_BOOK_DEFAULT_cv_noise_length).'&bcolor='.$this->get_option('cv_background', TZFD_BOOK_DEFAULT_cv_background).'&border='.$this->get_option('cv_border', TZFD_BOOK_DEFAULT_cv_border).'&font='.$this->get_option('cv_font', TZFD_BOOK_DEFAULT_cv_font))); ?>"  id="captchaimg<?php echo '_'.esc_attr($this->print_counter); ?>" alt="security code" border="0" class="skip-lazy" />
   <br /><label for="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post<?php echo '_'.esc_attr($this->print_counter); ?>"><?php esc_html_e("Please enter the security code",'titan-zero-trades-front-desk'); ?>:</label><br />
   <div class="dfield"><input type="text" size="20" name="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post" id="hdcaptcha_<?php echo esc_attr($this->prefix); ?>_post<?php echo '_'.esc_attr($this->print_counter); ?>" value="" autocomplete="off" data-booking-captcha-error="hdcaptcha_error<?php echo '_'.esc_attr($this->print_counter); ?>" />
-  <div class="tz_fd_efb_error message" id="hdcaptcha_error<?php echo '_'.esc_attr($this->print_counter); ?>" generated="true" role="status" aria-live="polite" aria-atomic="true" style="display:none;"><?php echo esc_html(titan_zero_front_desk_translate_legacy_value($this->get_option('cv_text_enter_valid_captcha', TZFD_BOOK_DEFAULT_cv_text_enter_valid_captcha))); ?></div>
+  <div class="tz_fd_efb_error message" id="hdcaptcha_error<?php echo '_'.esc_attr($this->print_counter); ?>" generated="true" role="status" aria-live="polite" aria-atomic="true" style="display:none;"><?php echo esc_html(tzfd_translate_legacy_value($this->get_option('cv_text_enter_valid_captcha', TZFD_BOOK_DEFAULT_cv_text_enter_valid_captcha))); ?></div>
   </div><br />
 <?php } ?><!-- rcadon -->
 </div>
 </div>
-<div id="tz_fd_subbtn<?php echo '_'.esc_attr($this->print_counter); ?>" class="tz_fd_subbtn"><?php if (defined('TZFD_HOUR_BLOCK_TIMES')) esc_html_e('Block selected dates','titan-zero-trades-front-desk'); else echo esc_html( titan_zero_front_desk_translate_legacy_value( $button_label ) ); ?></div>
+<div id="tz_fd_subbtn<?php echo '_'.esc_attr($this->print_counter); ?>" class="tz_fd_subbtn"><?php if (defined('TZFD_HOUR_BLOCK_TIMES')) esc_html_e('Block selected dates','titan-zero-trades-front-desk'); else echo esc_html( tzfd_translate_legacy_value( $button_label ) ); ?></div>
 <div style="clear:both;"></div>
 <?php if (get_option('tz_fd_honeypot','') != '') echo '<input type="hidden" name="'.esc_attr(get_option('tz_fd_honeypot','')).'" value="">'; ?>
 </form>

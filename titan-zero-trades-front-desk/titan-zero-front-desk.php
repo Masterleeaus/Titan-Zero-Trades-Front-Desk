@@ -102,6 +102,9 @@ TZFD_AI_Widget::boot();
 // Service finder panel and selected-service field on the booking form (issue #23; owner decision 2026-11-18).
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-service-finder-wiring.php';
 TZFD_Service_Finder_Wiring::boot();
+// Cancel/reschedule assistant runtime entry point (issues #25, #336). Read-only decision; no booking writes.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-cancel-assistant-api.php';
+TZFD_Cancel_Assistant_API::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
 
 /**

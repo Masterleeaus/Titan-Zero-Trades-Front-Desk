@@ -223,7 +223,7 @@ jobs:
           LOG="$RUNNER_TEMP/runtime-191.log"
           : > "$LOG"
           # These two files print PASS and FAIL lines and do not set an exit status, so the step gates on the log.
-          for f in cancel-reschedule-assistant-tests.php service-finder-runtime.php; do
+          for f in cancel-reschedule-assistant-tests.php cancel-assistant-api-tests.php service-finder-runtime.php; do
             echo "== $f"
             php "$WP_CLI" --allow-root --path="$WP_DIR" eval-file "$GITHUB_WORKSPACE/tests/runtime/$f" 2>&1 | tee -a "$LOG"
           done

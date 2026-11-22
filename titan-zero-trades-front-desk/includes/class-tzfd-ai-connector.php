@@ -36,6 +36,7 @@ final class TZFD_AI_Connector {
     const SIGNATURE_WINDOW = 300;    // seconds either side of the server clock
     const MAX_REQUEST_BYTES  = 16384;
     const MAX_RESPONSE_BYTES = 65536;
+    const MAX_CONTENT_CHARS  = 2000;  // owner decision #330: longest text value sent to the hosted service
     const MIN_SECRET       = 32;     // characters
     const TIMEOUT          = 8;      // seconds
     const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
@@ -64,9 +65,28 @@ final class TZFD_AI_Connector {
         );
     }
 
-    /** Standing monthly budgets per site (contract figures). The hosted service stays authoritative. */
+    /**
+     * Named monthly budget sets per site (issue #331). 'contract' is live by default (the standing contract
+     * figures). 'pilot' holds the provisional #284 pilot figures and is selected only through the
+     * tzfd_ai_connector_budget_profile filter. The pilot faq_batch (weekly) is approximated as 4 per month.
+     * Per-visitor turn limits from #284 (2 fallback turns, 3 missed-call reply turns) have no counter in code yet.
+     */
+    public static function budget_profiles() {
+        return array(
+            'contract' => array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 ),
+            'pilot'    => array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ),
+        );
+    }
+
+    /** Standing monthly budgets per site. The live set is 'contract' unless the profile filter selects another. */
     public static function budget_limits() {
-        $limits = array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 );
+        $profiles = self::budget_profiles();
+        $profile  = 'contract';
+        if ( function_exists( 'apply_filters' ) ) {
+            $picked = apply_filters( 'tzfd_ai_connector_budget_profile', $profile );
+            if ( is_string( $picked ) && isset( $profiles[ $picked ] ) ) { $profile = $picked; }
+        }
+        $limits = $profiles[ $profile ];
         if ( function_exists( 'apply_filters' ) ) {
             $limits = apply_filters( 'tzfd_ai_connector_budget_limits', $limits );
         }
@@ -94,6 +114,7 @@ final class TZFD_AI_Connector {
         $def = is_string( $feature ) && isset( self::features()[ $feature ] ) ? self::features()[ $feature ] : null;
         if ( null === $def ) { return self::result( 'feature_not_allowed' ); }
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
+        if ( ! self::text_within_limit( $payload ) ) { return self::result( 'invalid_request' ); }
 
         $cfg = self::config();
         if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
@@ -368,6 +389,15 @@ final class TZFD_AI_Connector {
     }
 
     // ---- internals -------------------------------------------------------
+
+    /** True when every string in the payload, at any depth, holds at most MAX_CONTENT_CHARS characters. */
+    private static function text_within_limit( $value ) {
+        if ( is_string( $value ) ) { return mb_strlen( $value, 'UTF-8' ) <= self::MAX_CONTENT_CHARS; }
+        if ( is_array( $value ) ) {
+            foreach ( $value as $item ) { if ( ! self::text_within_limit( $item ) ) { return false; } }
+        }
+        return true;
+    }
 
     private static function result( $status, array $data = array(), array $extra = array() ) {
         return $extra + array(

@@ -128,6 +128,11 @@ connect_all();
 check( 'unknown feature is not allowed', 'feature_not_allowed' === $C::request( 'shell.exec' )['status'] && 0 === calls() );
 $r = $C::request( 'faq.answer', array( 'q' => str_repeat( 'x', 20000 ) ) );
 check( 'oversized payload is invalid and uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2001 ) ) ) );
+check( 'text over 2000 characters is refused even under the byte cap, uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2000 ) ) ) );
+check( 'text of exactly 2000 characters is accepted', 'ok' === $r['status'] && 1 === calls(), $r['status'] . ' calls=' . calls() );
 
 // 6. Happy path: signed request, verified response, no secret in the wire body or result.
 reset_state();
@@ -279,6 +284,18 @@ check( 'default embedding budget is 800 per site per month', 800 === $defaults['
 check( 'default faq_batch budget is 16 per site per month', 16 === $defaults['faq_batch'] );
 check( 'default insight budget is 4 per site per month', 4 === $defaults['insight'] );
 check( 'budget table has no pilot values left', ! in_array( $defaults['model_fallback'], array( 50 ), true ) && ! in_array( $defaults['faq_batch'], array( 4 ), true ) && ! in_array( $defaults['insight'], array( 1 ), true ) );
+
+// 15b. Issue #331: live set is 'contract'; the pilot set is named and selectable only by the profile filter.
+$profiles = $C::budget_profiles();
+check( 'profiles hold contract and pilot sets', array( 'contract', 'pilot' ) === array_keys( $profiles ) );
+check( 'pilot profile holds provisional #284 figures', array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ) === $profiles['pilot'] );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array();
+check( 'live budget profile defaults to contract', $profiles['contract'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array( function () { return 'pilot'; } );
+check( 'profile filter can select the pilot set', $profiles['pilot'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array( function () { return 'unknown'; } );
+check( 'unknown profile name falls back to contract', $profiles['contract'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array();
 
 // 16. Disclosure: provider, data classes, quota; retention is an owner decision (null), never a promise.
 reset_state();

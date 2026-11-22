@@ -24,6 +24,8 @@ final class TZFD_Admin_Notices {
     public static function is_front_desk_screen() {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only check of the current screen.
         $page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : '';
+        // The Get started screen shows no admin notice (issue #366).
+        if ( class_exists( 'TZFD_Setup_Page' ) && TZFD_Setup_Page::is_current_screen() ) { return false; }
         return 0 === strpos( $page, 'tzfd' ) || 0 === strpos( $page, 'titan-zero-trades-front-desk' );
     }
 

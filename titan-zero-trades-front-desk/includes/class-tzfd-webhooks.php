@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 class TZFD_Webhooks {
     const CRON_HOOK = 'titan_zero_front_desk_deliver_webhook';
-    const CONFIG_FILTER = 'titan_zero_front_desk_webhook_config';
+    const CONFIG_FILTER = 'tzfd_webhook_config';
     const MAX_ATTEMPTS = 5;
     const MAX_BODY_BYTES = 65536;
 
     public static function register() {
         if ( ! function_exists( 'add_action' ) ) { return; }
-        add_action( 'titan_zero_front_desk_booking_event', array( __CLASS__, 'receive_event' ), 20, 2 );
+        add_action( 'tzfd_booking_event', array( __CLASS__, 'receive_event' ), 20, 2 );
         add_action( self::CRON_HOOK, array( __CLASS__, 'deliver' ), 10, 3 );
     }
 
@@ -174,7 +174,8 @@ class TZFD_Webhooks {
     private static function get_config() {
         if ( ! function_exists( 'apply_filters' ) || ! function_exists( 'wp_http_validate_url' ) ) { return null; }
 
-        $settings = apply_filters( 'titan_zero_front_desk_webhook_config', array() ); // Same value as self::CONFIG_FILTER; literal keeps the hook name checkable.
+        $settings = apply_filters( 'tzfd_webhook_config', array() ); // Same value as self::CONFIG_FILTER; literal keeps the hook name checkable.
+        $settings = apply_filters( 'titan_zero_front_desk_webhook_config', $settings ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         if ( ! is_array( $settings ) || empty( $settings['url'] ) || ! isset( $settings['secret'] ) ) { return null; }
         if ( ! is_string( $settings['url'] ) || ! is_string( $settings['secret'] ) || strlen( $settings['secret'] ) < 32 ) { return null; }
 

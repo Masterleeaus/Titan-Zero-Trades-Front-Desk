@@ -4,7 +4,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 final class TZFD_Smart_Task_Events {
     public static function register() {
         add_action( 'tzfd_call_lifecycle_transition_v1', array( __CLASS__, 'on_call_transition' ), 20, 1 );
-        add_action( 'titan_zero_front_desk_booking_rescheduled', array( __CLASS__, 'on_booking_rescheduled' ), 20, 3 );
+        add_action( 'tzfd_booking_rescheduled', array( __CLASS__, 'on_booking_rescheduled' ), 20, 3 );
     }
     /** The lifecycle source emits this only after a committed, authenticated transition. */
     public static function on_call_transition( $event ) {

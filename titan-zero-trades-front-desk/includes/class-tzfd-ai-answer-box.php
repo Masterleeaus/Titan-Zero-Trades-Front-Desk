@@ -5,7 +5,7 @@
  * Answers come only from approved entries supplied through the
  * `tzfd_ai_approved_answers` filter (the interface that the FAQ registry of #42
  * will provide). The model fallback is off by default and, when enabled, is capped
- * at twenty generative turns per visitor per hour. Price, slot and availability questions never
+ * at two generative turns per conversation (owner decision, #353). Price, slot and availability questions never
  * reach the model. Unmatched questions are refused with a human handoff.
  *
  * GPL-2.0-only.
@@ -22,7 +22,7 @@ final class TZFD_AI_Answer_Box {
 	const MAX_ANSWER_LENGTH   = 600;
 	const RATE_LIMIT          = 20;
 	const RATE_WINDOW         = 600;
-	const FALLBACK_TURN_LIMIT = 20;
+	const FALLBACK_TURN_LIMIT = 2;
 	const FALLBACK_WINDOW     = 3600;
 	const CACHE_TTL           = 3600;
 
@@ -217,9 +217,11 @@ final class TZFD_AI_Answer_Box {
 	 * @param mixed  $question    Raw question text.
 	 * @param string $visitor_key Hashed visitor key (never a raw IP address).
 	 * @param string $lang        Language code.
+	 * @param string $conversation_key Conversation token from the form (32 hex characters). Empty means the
+	 *                                 visitor key is the conversation.
 	 * @return array{status: string, answer: string, entry_id: string, source: string, handoff: bool, cached: bool}
 	 */
-	public static function answer( $question, $visitor_key, $lang = 'en' ) {
+	public static function answer( $question, $visitor_key, $lang = 'en', $conversation_key = '' ) {
 		$base = array( 'status' => self::STATUS_INVALID, 'answer' => '', 'entry_id' => '', 'source' => 'none', 'handoff' => false, 'cached' => false );
 
 		if ( ! is_string( $question ) || strlen( $question ) > self::MAX_QUESTION_LENGTH ) {
@@ -266,7 +268,7 @@ final class TZFD_AI_Answer_Box {
 			return $refusal;
 		}
 
-		return self::generative_fallback( $norm, (string) $visitor_key, $lang, $refusal );
+		return self::generative_fallback( $norm, (string) $visitor_key, $lang, $refusal, (string) $conversation_key );
 	}
 
 	/** @return bool Whether the proxy fallback is switched on. Off unless the site enables it. */
@@ -275,17 +277,24 @@ final class TZFD_AI_Answer_Box {
 	}
 
 	/**
-	 * Bounded model fallback. Twenty turns per visitor per hour; any failure or offline proxy becomes a handoff.
+	 * Bounded model fallback. Two turns per conversation (#353); any failure or offline proxy becomes a handoff.
 	 *
-	 * @param string $norm        Normalised question.
-	 * @param string $visitor_key Hashed visitor key.
-	 * @param string $lang        Language code.
-	 * @param array  $refusal     Refusal result to return when the fallback cannot answer.
+	 * The turn counter is keyed by the visitor key AND the conversation token, so a token alone never
+	 * grants a budget to another visitor. A turn is counted before the model is called, so a failed or
+	 * offline proxy also uses one turn.
+	 *
+	 * @param string $norm             Normalised question.
+	 * @param string $visitor_key      Hashed visitor key.
+	 * @param string $lang             Language code.
+	 * @param array  $refusal          Refusal result to return when the fallback cannot answer.
+	 * @param string $conversation_key Conversation token, or empty for the visitor key alone.
 	 * @return array
 	 */
-	private static function generative_fallback( $norm, $visitor_key, $lang, array $refusal ) {
+	private static function generative_fallback( $norm, $visitor_key, $lang, array $refusal, $conversation_key = '' ) {
 		require_once __DIR__ . '/class-tzfd-rate-limit.php';
-		if ( ! TZFD_Rate_Limit::allow( self::TURNS_PREFIX . md5( $visitor_key ), self::FALLBACK_TURN_LIMIT, self::RATE_WINDOW ) ) {
+		$conversation = '' !== $conversation_key ? $conversation_key : $visitor_key;
+		$turn_key     = self::TURNS_PREFIX . md5( $visitor_key . '|' . $conversation );
+		if ( ! TZFD_Rate_Limit::allow( $turn_key, self::FALLBACK_TURN_LIMIT, self::FALLBACK_WINDOW ) ) {
 			return $refusal;
 		}
 

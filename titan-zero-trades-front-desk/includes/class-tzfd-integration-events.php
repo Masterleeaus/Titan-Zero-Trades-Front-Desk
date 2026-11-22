@@ -7,7 +7,7 @@ class TZFD_Integration_Events {
     public static function register() {
         if ( function_exists( 'add_action' ) ) {
             add_action( 'tz_fd_process_data', array( __CLASS__, 'dispatch_created' ), 20, 1 );
-            add_action( 'tz_fd_update_status', array( __CLASS__, 'dispatch_status_update_attempted' ), 20, 2 );
+            add_action( 'tzfd_update_status', array( __CLASS__, 'dispatch_status_update_attempted' ), 20, 2 );
         }
     }
 
@@ -100,14 +100,17 @@ class TZFD_Integration_Events {
         $payload = self::normalize_created_payload( $tzfd_local_params );
 
         if ( function_exists( 'apply_filters' ) ) {
-            $filtered = apply_filters( 'titan_zero_front_desk_booking_created_payload', $payload, $tzfd_local_params );
+            $filtered = apply_filters( 'tzfd_booking_created_payload', $payload, $tzfd_local_params );
+            $filtered = apply_filters( 'titan_zero_front_desk_booking_created_payload', $filtered, $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             if ( is_array( $filtered ) ) { $payload = $filtered; }
         }
 
         if ( function_exists( 'do_action' ) ) {
             // Default events deliberately exclude the raw submitted intake.
-            do_action( 'titan_zero_front_desk_booking_created', $payload );
-            do_action( 'titan_zero_front_desk_booking_event', 'booking.created', $payload );
+            do_action( 'tzfd_booking_created', $payload );
+            do_action( 'titan_zero_front_desk_booking_created', $payload ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+            do_action( 'tzfd_booking_event', 'booking.created', $payload );
+            do_action( 'titan_zero_front_desk_booking_event', 'booking.created', $payload ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         }
     }
 
@@ -115,7 +118,9 @@ class TZFD_Integration_Events {
         $payload = self::normalize_status_update_attempted_payload( $booking_id, $status );
         if ( ! is_array( $payload ) || ! function_exists( 'do_action' ) ) { return; }
 
-        do_action( 'titan_zero_front_desk_booking_status_update_attempted', $payload );
-        do_action( 'titan_zero_front_desk_booking_event', 'booking.status_update_attempted', $payload );
+        do_action( 'tzfd_booking_status_update_attempted', $payload );
+        do_action( 'titan_zero_front_desk_booking_status_update_attempted', $payload ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        do_action( 'tzfd_booking_event', 'booking.status_update_attempted', $payload );
+        do_action( 'titan_zero_front_desk_booking_event', 'booking.status_update_attempted', $payload ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
     }
 }

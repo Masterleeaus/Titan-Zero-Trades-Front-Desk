@@ -29,7 +29,9 @@ function apply_filters( $tag, $value, ...$args ) {
     return $value;
 }
 function wp_json_encode( $v ) { return json_encode( $v ); }
+function __( $text, $domain = '' ) { return $text; } // translation shim for the pure audit_rows() helper
 
+require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
 
 const SECRET = '0123456789abcdef0123456789abcdef0123456789abcdef';
@@ -74,7 +76,24 @@ function reset_state() {
     $GLOBALS['tz_reply'] = null;
     $GLOBALS['tz_filters']['tzfd_ai_connector_budget_limits'] = array();
 }
+/** Signed pairing assertion (issue #376) for this site and company; the hosted call needs it. */
+function pair_site( $company = '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f', $site = SITE ) {
+    $now   = time();
+    $nonce = bin2hex( random_bytes( 16 ) );
+    $body  = json_encode( array(
+        'contract' => 'central-pairing/1', 'site' => $site, 'company_uuid' => $company,
+        'operations' => array( 'hosted.request' ), 'nonce' => $nonce,
+        'issued_at' => $now, 'expires_at' => $now + 600,
+    ) );
+    $headers = array(
+        'X-TZFD-Timestamp' => (string) $now,
+        'X-TZFD-Nonce'     => $nonce,
+        'X-TZFD-Signature' => TZFD_Central_Tenant::sign( SECRET, (string) $now, $nonce, $body ),
+    );
+    return TZFD_Central_Tenant::connect( $body, $headers, $site, SECRET, $now );
+}
 function connect_all() {
+    pair_site();
     TZFD_AI_Connector::configure( 'https://ai.example.test/v1/request', SITE, SECRET );
     TZFD_AI_Connector::grant_consent( array( 'faq.read', 'reports.read', 'customer.read', 'booking.read', 'booking.write' ) );
     TZFD_AI_Connector::set_entitlements( array( 'free_ai', 'assistant', 'agent_team' ) );
@@ -128,6 +147,11 @@ connect_all();
 check( 'unknown feature is not allowed', 'feature_not_allowed' === $C::request( 'shell.exec' )['status'] && 0 === calls() );
 $r = $C::request( 'faq.answer', array( 'q' => str_repeat( 'x', 20000 ) ) );
 check( 'oversized payload is invalid and uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2001 ) ) ) );
+check( 'text over 2000 characters is refused even under the byte cap, uncharged', 'invalid_request' === $r['status'] && 0 === calls() && empty( $C::usage()['budget'] ) );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$r = $C::request( 'faq.answer', array( 'q' => 'ok', 'context' => array( 'note' => str_repeat( 'y', 2000 ) ) ) );
+check( 'text of exactly 2000 characters is accepted', 'ok' === $r['status'] && 1 === calls(), $r['status'] . ' calls=' . calls() );
 
 // 6. Happy path: signed request, verified response, no secret in the wire body or result.
 reset_state();
@@ -280,6 +304,18 @@ check( 'default faq_batch budget is 16 per site per month', 16 === $defaults['fa
 check( 'default insight budget is 4 per site per month', 4 === $defaults['insight'] );
 check( 'budget table has no pilot values left', ! in_array( $defaults['model_fallback'], array( 50 ), true ) && ! in_array( $defaults['faq_batch'], array( 4 ), true ) && ! in_array( $defaults['insight'], array( 1 ), true ) );
 
+// 15b. Issue #331: live set is 'contract'; the pilot set is named and selectable only by the profile filter.
+$profiles = $C::budget_profiles();
+check( 'profiles hold contract and pilot sets', array( 'contract', 'pilot' ) === array_keys( $profiles ) );
+check( 'pilot profile holds provisional #284 figures', array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ) === $profiles['pilot'] );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array();
+check( 'live budget profile defaults to contract', $profiles['contract'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array( function () { return 'pilot'; } );
+check( 'profile filter can select the pilot set', $profiles['pilot'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array( function () { return 'unknown'; } );
+check( 'unknown profile name falls back to contract', $profiles['contract'] === $C::budget_limits() );
+$GLOBALS['tz_filters']['tzfd_ai_connector_budget_profile'] = array();
+
 // 16. Disclosure: provider, data classes, quota; retention is an owner decision (null), never a promise.
 reset_state();
 $d = $C::disclosure();
@@ -291,7 +327,12 @@ check( 'disclosure never includes the secret', false === strpos( json_encode( $d
 reset_state();
 check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
 $n = TZFD_AI_Connector::setup_notice();
-check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice is approved by the owner (no review flag) and names the data classes', false === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) );
+check( 'setup notice records the owner approval of issue #348', 'owner_approved_issue_348' === $n['wording_status'] && false === strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice carries a consent confirmation that names the withdrawal right', false !== strpos( $n['confirmation'], 'agree' ) && false !== strpos( $n['confirmation'], 'withdraw' ) );
+$GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { return 'Filtered test confirmation.'; } );
+check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
 check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
@@ -387,6 +428,31 @@ $outer  = $C::request( 'faq.answer' );
 $counts = array_count_values( $interleaved );
 check( 'interleaved requests stop at the model_fallback limit of 3', 3 === calls() && 'ok' === $outer['status'] && 2 === ( $counts['ok'] ?? 0 ) && 8 === ( $counts['allowance_exhausted'] ?? 0 ) );
 check( 'race leaves exactly 3 units recorded', 3 === ( $C::usage()['budget']['model_fallback'] ?? -1 ) );
+
+// 14. Connect, consent, revoke and disconnect leave an audit trail with no secret (issue #372).
+reset_state();
+$C::configure( 'https://ai.example.test/v1/request', SITE, SECRET );
+$C::grant_consent( array( 'faq.read', 'booking.write', 'bogus.scope' ) );
+$C::revoke_consent();
+$C::disconnect();
+$trail   = $C::audit_log();
+$actions = array_column( $trail, 'action' );
+check( 'audit trail records connect, consent, revoke and disconnect in order', array( 'connect', 'consent_granted', 'consent_revoked', 'disconnect' ) === $actions, implode( ',', $actions ) );
+check( 'connect entry holds no endpoint, host or site id', array( 'at', 'action' ) === array_keys( $trail[0] ) && false === strpos( json_encode( $trail ), 'ai.example.test' ) && false === strpos( json_encode( $trail ), SITE ) );
+check( 'consent entry keeps only known granted scopes', array( 'faq.read', 'booking.write' ) === $trail[1]['scopes'] );
+check( 'audit trail never holds the secret', false === strpos( json_encode( $trail ), SECRET ) );
+check( 'disconnect keeps the audit trail', 4 === count( $C::audit_log() ) );
+check( 'audit trail is bounded', TZFD_AI_Connector::AUDIT_LIMIT === 100 );
+reset_state();
+for ( $i = 0; $i < TZFD_AI_Connector::AUDIT_LIMIT + 5; $i++ ) { $C::revoke_consent(); }
+check( 'audit trail is pruned to the limit', TZFD_AI_Connector::AUDIT_LIMIT === count( $C::audit_log() ) );
+reset_state();
+check( 'rejected connection writes no audit entry', false === $C::configure( 'http://ai.example.test/x', SITE, SECRET ) && array() === $C::audit_log() );
+
+require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
+$rows = TZFD_AI_Services_Page::audit_rows( array( array( 'at' => 5, 'action' => 'connect' ), array( 'at' => 6, 'action' => 'bogus' ), array( 'at' => 7, 'action' => 'consent_granted', 'scopes' => array( 'faq.read', 'booking.write' ) ) ) );
+check( 'audit page rows map known actions only, with scope detail', 2 === count( $rows ) && '' === $rows[0]['detail'] && 'faq.read, booking.write' === $rows[1]['detail'] );
+check( 'audit page rows carry no secret text', false === strpos( json_encode( $rows ), SECRET ) );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( $GLOBALS['tz_fail'] > 0 ? 1 : 0 );

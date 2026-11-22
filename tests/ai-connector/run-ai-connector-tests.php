@@ -334,7 +334,7 @@ $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { re
 check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );
 unset( $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
-check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
+check( 'default terms link is the owner-approved terms page (not draft)', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] && 'owner_approved_issue_348' === $n['terms_status'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );
 check( 'terms link comes from the tzfd_ai_terms_url filter', 'https://owner.example.test/terms' === TZFD_AI_Connector::setup_notice()['terms_url'] );
 unset( $GLOBALS['tz_filters']['tzfd_ai_terms_url'] );

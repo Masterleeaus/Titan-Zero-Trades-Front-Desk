@@ -86,9 +86,9 @@ if( !class_exists( 'TZFD_Reminder' ) )
         /************************ HOOKS *****************************/
 
         /** Called after a booking is stored: schedule one reminder per appointment. */
-        public function schedule_reminders( $tz_params )
+        public function schedule_reminders( $tzfd_local_params )
         {
-            TZFD_Timed_Notices::schedule_booking( (array) $tz_params, self::KEY, self::HOOK, 'start', -1, self::defaults() );
+            TZFD_Timed_Notices::schedule_booking( (array) $tzfd_local_params, self::KEY, self::HOOK, 'start', -1, self::defaults() );
         }
 
         /** Booking time changed: drop the queued reminders for the old slot and queue them for the new one. */
@@ -125,9 +125,9 @@ if( !class_exists( 'TZFD_Reminder' ) )
                 (int) $company_id
             ) );
             if ( ! is_object( $row ) ) { return; }
-            $tz_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
-            if ( ! is_array( $tz_data ) || ! isset( $tz_data['apps'] ) || ! is_array( $tz_data['apps'] ) ) { return; }
-            TZFD_Timed_Notices::schedule_booking( array( 'itemnumber' => (int) $row->id, 'formid' => (int) $row->formid, 'apps' => $tz_data['apps'] ),
+            $tzfd_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
+            if ( ! is_array( $tzfd_data ) || ! isset( $tzfd_data['apps'] ) || ! is_array( $tzfd_data['apps'] ) ) { return; }
+            TZFD_Timed_Notices::schedule_booking( array( 'itemnumber' => (int) $row->id, 'formid' => (int) $row->formid, 'apps' => $tzfd_data['apps'] ),
                 self::KEY, self::HOOK, 'start', -1, self::defaults(), (int) $company_id );
         }
 
@@ -142,9 +142,9 @@ if( !class_exists( 'TZFD_Reminder' ) )
     } // End Class
 
     // Main add-on code
-    $tz_Reminder_obj = new TZFD_Reminder();
+    $tzfd_Reminder_obj = new TZFD_Reminder();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_Reminder_obj->get_addon_id() ] = $tz_Reminder_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_Reminder_obj->get_addon_id() ] = $tzfd_Reminder_obj;
 }

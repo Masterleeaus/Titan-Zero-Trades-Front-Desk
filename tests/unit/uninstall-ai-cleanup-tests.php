@@ -8,8 +8,8 @@
 define( 'ABSPATH', __DIR__ );
 define( 'WP_UNINSTALL_PLUGIN', true );
 
-$tz_mode = 'erase' === getenv( 'TZFD_UNINSTALL_CASE' ) ? 'erase' : 'keep';
-if ( 'erase' === $tz_mode ) {
+$tzfd_mode = 'erase' === getenv( 'TZFD_UNINSTALL_CASE' ) ? 'erase' : 'keep';
+if ( 'erase' === $tzfd_mode ) {
     define( 'TZ_DELETE_DATA_ON_UNINSTALL', true );
 }
 
@@ -84,11 +84,11 @@ class TZFD_Uninstall_Test_WPDB {
 }
 $GLOBALS['wpdb'] = new TZFD_Uninstall_Test_WPDB();
 
-$tz_pass = 0;
-$tz_fail = 0;
+$tzfd_pass = 0;
+$tzfd_fail = 0;
 function tz_check( $name, $ok, $detail = '' ) {
-    global $tz_pass, $tz_fail;
-    if ( $ok ) { $tz_pass++; } else { $tz_fail++; }
+    global $tzfd_pass, $tzfd_fail;
+    if ( $ok ) { $tzfd_pass++; } else { $tzfd_fail++; }
     echo ( $ok ? 'PASS ' : 'FAIL ' ) . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) . "\n";
 }
 
@@ -96,7 +96,7 @@ require dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/uninstall.php';
 
 $opts = $GLOBALS['tz_opts'];
 
-if ( 'erase' === $tz_mode ) {
+if ( 'erase' === $tzfd_mode ) {
     tz_check( 'opt-in: AI connector settings are erased', ! isset( $opts['tzfd_ai_connector'] ) );
     tz_check( 'opt-in: AI usage counts are erased', ! isset( $opts['tzfd_ai_usage_2026-11'] ) );
     tz_check( 'opt-in: AI event log is erased', ! isset( $opts['tzfd_ai_events'] ) );
@@ -114,9 +114,9 @@ tz_check( 'always: AI answer-box transient is removed', ! isset( $opts['_transie
 tz_check( 'always: other plugins transients are kept', isset( $opts['_transient_other_plugin_x'] ) );
 tz_check( 'always: WordPress core and unrelated options are kept', 'Site' === ( $opts['blogname'] ?? null ) && 'keep' === ( $opts['acme_unrelated_option'] ?? null ) );
 
-if ( 'erase' === $tz_mode ) {
-    echo "\nChild summary: $tz_pass passed, $tz_fail failed\n";
-    exit( $tz_fail > 0 ? 1 : 0 );
+if ( 'erase' === $tzfd_mode ) {
+    echo "\nChild summary: $tzfd_pass passed, $tzfd_fail failed\n";
+    exit( $tzfd_fail > 0 ? 1 : 0 );
 }
 
 // Keep case in the parent process: run the opt-in case in a child process and fold its result in.
@@ -126,5 +126,5 @@ exec( 'TZFD_UNINSTALL_CASE=erase ' . escapeshellarg( PHP_BINARY ) . ' ' . escape
 echo implode( "\n", array_map( function ( $l ) { return '  [opt-in] ' . $l; }, $child_out ) ) . "\n";
 tz_check( 'opt-in child process passes every erase check', 0 === $child_rc, 'exit=' . $child_rc );
 
-echo "\nSummary: $tz_pass passed, $tz_fail failed\n";
-exit( $tz_fail > 0 ? 1 : 0 );
+echo "\nSummary: $tzfd_pass passed, $tzfd_fail failed\n";
+exit( $tzfd_fail > 0 ? 1 : 0 );

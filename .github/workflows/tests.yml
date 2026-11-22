@@ -255,3 +255,36 @@ jobs:
         run: TZFD_TEST_DB_NAME=tzfd_lane_test php tests/integration/contact-db-tests.php
       - name: Enquiry triage DB tests
         run: TZFD_TEST_DB_NAME=tzfd_triage_test php tests/integration/enquiry-triage-db-test.php
+
+  wordpress-multisite:
+    name: WordPress multisite runtime (latest WordPress, PHP 8.3, MariaDB 10.11)
+    runs-on: ubuntu-latest
+    needs: php-lint
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      TZFD_RT_DB_HOST: 127.0.0.1
+      TZFD_RT_DB_GRANT_HOST: "%"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli, xml, mbstring, curl, zip, gd, intl
+      - name: Get WP-CLI
+        run: curl -sS -o "$RUNNER_TEMP/wp-cli.phar" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+      - name: MySQL client credentials for the runtime scripts (CI service only)
+        run: |
+          printf '[client]\nuser=root\npassword=root\nhost=127.0.0.1\nport=3306\n' > "$HOME/.my.cnf"
+          chmod 600 "$HOME/.my.cnf"
+      - name: Multisite runtime suite (provisions a disposable network, then tears it down)
+        env:
+          WP_CLI: php ${{ runner.temp }}/wp-cli.phar
+        run: bash tests/runtime/run-wp-runtime.sh --multisite

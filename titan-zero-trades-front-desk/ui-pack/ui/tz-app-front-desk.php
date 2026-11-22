@@ -5,9 +5,9 @@
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-if ( class_exists( 'TZ_UI_Front_Desk', false ) ) { return; }
+if ( class_exists( 'TZFD_UI_Front_Desk', false ) ) { return; }
 
-final class TZ_UI_Front_Desk extends TZ_UI_Core {
+final class TZFD_UI_Front_Desk extends TZFD_UI_Core {
 	public static function slug() { return 'front-desk'; }
 	public static function label() { return 'Front Desk'; }
 	public static function domain() { return 'titan-zero-trades-front-desk'; }
@@ -37,7 +37,7 @@ final class TZ_UI_Front_Desk extends TZ_UI_Core {
 		);
 	}
 
-	public static function dashboard_data() { return TZ_UI_Front_Desk_Reads::dashboard(); }
+	public static function dashboard_data() { return TZFD_UI_Front_Desk_Reads::dashboard(); }
 
 	/** No single-record screen exists for Front Desk records in the plugin. */
 	public static function detail_data( $id ) { return null; }

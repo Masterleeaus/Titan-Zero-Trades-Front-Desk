@@ -8,9 +8,9 @@ if ( ! defined( 'WP_PLUGIN_DIR' ) ) {
     fwrite( STDERR, "FAIL harness -- WP_PLUGIN_DIR is not defined; run through WP-CLI inside a WordPress root\n" );
     exit( 2 );
 }
-$tz_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-request-value.php', 'class-tzfd-scoped-store.php', 'class-tzfd-lead-intake.php', 'class-tzfd-enquiry-review.php', 'class-tzfd-human-handoff.php' ) as $tz_file ) {
-    require_once $tz_inc . $tz_file;
+$tzfd_local_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
+foreach ( array( 'class-tzfd-tables.php', 'class-tzfd-request-value.php', 'class-tzfd-scoped-store.php', 'class-tzfd-lead-intake.php', 'class-tzfd-enquiry-review.php', 'class-tzfd-human-handoff.php' ) as $tzfd_local_file ) {
+    require_once $tzfd_local_inc . $tzfd_local_file;
 }
 global $wpdb;
 $GLOBALS['hr_pass'] = 0; $GLOBALS['hr_fail'] = 0;

@@ -10,13 +10,13 @@ final class TZFD_Resource_Catalog {
         return array('schema_version'=>1, 'locations'=>array(), 'resources'=>array());
     }
 
-    public static function decode($tz_json) {
-        if (!is_string($tz_json) || strlen($tz_json)>self::MAX_BYTES) {
+    public static function decode($tzfd_json) {
+        if (!is_string($tzfd_json) || strlen($tzfd_json)>self::MAX_BYTES) {
             throw new InvalidArgumentException('Catalogue must be JSON smaller than 256 KiB.');
         }
-        $tz_value=json_decode($tz_json, true, 16);
+        $tzfd_value=json_decode($tzfd_json, true, 16);
         if (JSON_ERROR_NONE!==json_last_error()) throw new InvalidArgumentException('Invalid catalogue JSON.');
-        return self::validate($tz_value);
+        return self::validate($tzfd_value);
     }
 
     public static function validate($input) {
@@ -61,18 +61,18 @@ final class TZFD_Resource_Catalog {
             foreach(self::list_value(isset($resource['service_ids'])?$resource['service_ids']:array(),100,'service_ids') as $service) {
                 $services[]=self::identifier($service);
             }
-            $tz_weekly=array();
+            $tzfd_weekly=array();
             foreach(self::list_value(isset($resource['weekly'])?$resource['weekly']:array(),56,'weekly') as $window) {
                 if (!is_array($window)) throw new InvalidArgumentException('Invalid opening window.');
                 $day=self::integer(isset($window['day'])?$window['day']:null,1,7,'weekday');
                 $start=self::clock(isset($window['start'])?$window['start']:null,false);
                 $end=self::clock(isset($window['end'])?$window['end']:null,true);
                 if ($start===$end) throw new InvalidArgumentException('Opening and closing must differ; use 00:00 to 24:00 for a full day.');
-                $tz_weekly[]=array('day'=>$day,'start'=>$window['start'],'end'=>$window['end']);
+                $tzfd_weekly[]=array('day'=>$day,'start'=>$window['start'],'end'=>$window['end']);
             }
             $blackouts=array();
-            foreach(self::list_value(isset($resource['blackouts'])?$resource['blackouts']:array(),366,'blackouts') as $tz_date) {
-                $blackouts[]=self::date($tz_date);
+            foreach(self::list_value(isset($resource['blackouts'])?$resource['blackouts']:array(),366,'blackouts') as $tzfd_date) {
+                $blackouts[]=self::date($tzfd_date);
             }
             $result['resources'][]=array('id'=>$id,'name'=>self::name(isset($resource['name'])?$resource['name']:null),
                 'kind'=>$kind,'location_id'=>$location,'enabled'=>self::enabled($resource),
@@ -80,7 +80,7 @@ final class TZFD_Resource_Catalog {
                 'service_ids'=>array_values(array_unique($services)),
                 'buffer_before'=>self::integer(isset($resource['buffer_before'])?$resource['buffer_before']:0,0,1440,'buffer_before'),
                 'buffer_after'=>self::integer(isset($resource['buffer_after'])?$resource['buffer_after']:0,0,1440,'buffer_after'),
-                'weekly'=>$tz_weekly,'blackouts'=>array_values(array_unique($blackouts)),
+                'weekly'=>$tzfd_weekly,'blackouts'=>array_values(array_unique($blackouts)),
                 'role'=>self::plain_optional(isset($resource['role'])?$resource['role']:null,80,'role'),
                 'phone'=>self::phone_optional(isset($resource['phone'])?$resource['phone']:null),
                 'email'=>self::email_optional(isset($resource['email'])?$resource['email']:null),
@@ -93,74 +93,74 @@ final class TZFD_Resource_Catalog {
         return $result;
     }
 
-    public static function identifier($tz_value) {
-        if (!is_string($tz_value) || !preg_match('/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$/D',$tz_value)) {
+    public static function identifier($tzfd_value) {
+        if (!is_string($tzfd_value) || !preg_match('/^[A-Za-z0-9][A-Za-z0-9_.:-]{0,63}$/D',$tzfd_value)) {
             throw new InvalidArgumentException('IDs must contain 1 to 64 letters, digits, dots, underscores, colons or hyphens.');
         }
-        return $tz_value;
+        return $tzfd_value;
     }
 
-    public static function integer($tz_value,$min,$max,$field) {
-        if (!is_int($tz_value) || $tz_value<$min || $tz_value>$max) throw new InvalidArgumentException('Invalid integer value.');
-        return $tz_value;
+    public static function integer($tzfd_value,$min,$max,$field) {
+        if (!is_int($tzfd_value) || $tzfd_value<$min || $tzfd_value>$max) throw new InvalidArgumentException('Invalid integer value.');
+        return $tzfd_value;
     }
 
-    public static function list_value($tz_value,$max,$field) {
-        if (!is_array($tz_value) || count($tz_value)>$max || ($tz_value && array_keys($tz_value)!==range(0,count($tz_value)-1))) {
+    public static function list_value($tzfd_value,$max,$field) {
+        if (!is_array($tzfd_value) || count($tzfd_value)>$max || ($tzfd_value && array_keys($tzfd_value)!==range(0,count($tzfd_value)-1))) {
             throw new InvalidArgumentException('Invalid or oversized list.');
         }
-        return $tz_value;
+        return $tzfd_value;
     }
 
-    public static function postcode($tz_value,$allow_empty=true) {
-        if (!is_string($tz_value) || strlen($tz_value)>16) throw new InvalidArgumentException('Invalid postcode.');
-        $tz_value=strtoupper(trim($tz_value));
-        if ($allow_empty && ''===$tz_value) return '';
-        if (!preg_match('/^[A-Z0-9][A-Z0-9 -]{0,15}$/D',$tz_value)) throw new InvalidArgumentException('Postcodes must be exact codes, not wildcards.');
-        return str_replace(array(' ','-'),'',$tz_value);
+    public static function postcode($tzfd_value,$allow_empty=true) {
+        if (!is_string($tzfd_value) || strlen($tzfd_value)>16) throw new InvalidArgumentException('Invalid postcode.');
+        $tzfd_value=strtoupper(trim($tzfd_value));
+        if ($allow_empty && ''===$tzfd_value) return '';
+        if (!preg_match('/^[A-Z0-9][A-Z0-9 -]{0,15}$/D',$tzfd_value)) throw new InvalidArgumentException('Postcodes must be exact codes, not wildcards.');
+        return str_replace(array(' ','-'),'',$tzfd_value);
     }
 
-    public static function clock($tz_value,$closing=false) {
-        if ($closing && '24:00'===$tz_value) return 1440;
-        if (!is_string($tz_value) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/D',$tz_value)) throw new InvalidArgumentException('Invalid HH:MM opening time.');
-        return (int)substr($tz_value,0,2)*60+(int)substr($tz_value,3,2);
+    public static function clock($tzfd_value,$closing=false) {
+        if ($closing && '24:00'===$tzfd_value) return 1440;
+        if (!is_string($tzfd_value) || !preg_match('/^(?:[01][0-9]|2[0-3]):[0-5][0-9]$/D',$tzfd_value)) throw new InvalidArgumentException('Invalid HH:MM opening time.');
+        return (int)substr($tzfd_value,0,2)*60+(int)substr($tzfd_value,3,2);
     }
 
-    public static function date($tz_value) {
-        if (!is_string($tz_value) || !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D',$tz_value,$m) || !checkdate((int)$m[2],(int)$m[3],(int)$m[1])) {
+    public static function date($tzfd_value) {
+        if (!is_string($tzfd_value) || !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/D',$tzfd_value,$m) || !checkdate((int)$m[2],(int)$m[3],(int)$m[1])) {
             throw new InvalidArgumentException('Invalid YYYY-MM-DD date.');
         }
-        return $tz_value;
+        return $tzfd_value;
     }
 
-    private static function name($tz_value) {
-        if (!is_string($tz_value) || ''===trim($tz_value) || strlen($tz_value)>160 || !preg_match('//u',$tz_value) || preg_match('/[<>\x00-\x1F\x7F]/',$tz_value)) {
+    private static function name($tzfd_value) {
+        if (!is_string($tzfd_value) || ''===trim($tzfd_value) || strlen($tzfd_value)>160 || !preg_match('//u',$tzfd_value) || preg_match('/[<>\x00-\x1F\x7F]/',$tzfd_value)) {
             throw new InvalidArgumentException('Names must be plain text, 1 to 160 bytes.');
         }
-        return trim($tz_value);
+        return trim($tzfd_value);
     }
 
     /** Optional plain text (tabs and line breaks allowed, no markup). Missing or empty gives ''. */
-    public static function plain_optional($tz_value,$max,$field) {
-        if (null===$tz_value || ''===$tz_value) return '';
-        if (!is_string($tz_value) || strlen($tz_value)>$max || !preg_match('//u',$tz_value) || preg_match('/[<>\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$tz_value)) {
+    public static function plain_optional($tzfd_value,$max,$field) {
+        if (null===$tzfd_value || ''===$tzfd_value) return '';
+        if (!is_string($tzfd_value) || strlen($tzfd_value)>$max || !preg_match('//u',$tzfd_value) || preg_match('/[<>\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/',$tzfd_value)) {
             throw new InvalidArgumentException( esc_html( (string) $field ).' must be plain text, up to '.(int) $max.' bytes.');
         }
-        return trim($tz_value);
+        return trim($tzfd_value);
     }
 
     /** Optional phone number: digits, spaces and + ( ) - . only. */
-    public static function phone_optional($tz_value) {
-        if (null===$tz_value || ''===$tz_value) return '';
-        if (!is_string($tz_value) || !preg_match('/^\+?[0-9 ()\-.]{4,40}$/D',trim($tz_value))) throw new InvalidArgumentException('Phone numbers may contain digits, spaces and + ( ) - . only.');
-        return trim($tz_value);
+    public static function phone_optional($tzfd_value) {
+        if (null===$tzfd_value || ''===$tzfd_value) return '';
+        if (!is_string($tzfd_value) || !preg_match('/^\+?[0-9 ()\-.]{4,40}$/D',trim($tzfd_value))) throw new InvalidArgumentException('Phone numbers may contain digits, spaces and + ( ) - . only.');
+        return trim($tzfd_value);
     }
 
     /** Optional email address. */
-    public static function email_optional($tz_value) {
-        if (null===$tz_value || ''===$tz_value) return '';
-        if (!is_string($tz_value) || strlen($tz_value)>190 || false===filter_var(trim($tz_value),FILTER_VALIDATE_EMAIL)) throw new InvalidArgumentException('Enter a valid email address or leave it empty.');
-        return trim($tz_value);
+    public static function email_optional($tzfd_value) {
+        if (null===$tzfd_value || ''===$tzfd_value) return '';
+        if (!is_string($tzfd_value) || strlen($tzfd_value)>190 || false===filter_var(trim($tzfd_value),FILTER_VALIDATE_EMAIL)) throw new InvalidArgumentException('Enter a valid email address or leave it empty.');
+        return trim($tzfd_value);
     }
 
     private static function enabled($record) {

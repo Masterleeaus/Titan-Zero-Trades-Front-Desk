@@ -78,24 +78,24 @@ if( !class_exists( 'TZFD_AutoCancelStatusManagement' ) )
          */
         public function run_auto_cancel()
         {
-            global $wpdb, $tz_plugin;
-            if ( ! is_object( $wpdb ) || ! is_object( $tz_plugin ) || ! method_exists( $tz_plugin, 'update_status' ) ) {
+            global $wpdb, $tzfd_plugin;
+            if ( ! is_object( $wpdb ) || ! is_object( $tzfd_plugin ) || ! method_exists( $tzfd_plugin, 'update_status' ) ) {
                 return 0;
             }
 
             $tz        = wp_timezone();
             $now       = time();
-            $tz_cancelled = 0;
+            $tzfd_cancelled = 0;
             $forms     = $wpdb->get_results( $wpdb->prepare( 'SELECT id, company_id FROM %i WHERE company_id > 0', $wpdb->prefix . TZFD_Tables::FORMS ) );
-            foreach ( (array) $forms as $tz_form ) {
-                $formid   = (int) $tz_form->id;
-                $company_id = absint( $tz_form->company_id );
+            foreach ( (array) $forms as $tzfd_local_form ) {
+                $formid   = (int) $tzfd_local_form->id;
+                $company_id = absint( $tzfd_local_form->company_id );
                 if ( $formid < 1 || $company_id < 1 ) { continue; }
                 $settings = TZFD_Addon_Support::form_settings_for_job( self::KEY, $formid, $company_id, self::defaults() );
                 $hours    = (int) $settings['hours'];
                 if ( $hours <= 0 ) { continue; }
 
-                $tz_rows = $wpdb->get_results( $wpdb->prepare(
+                $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
                     "SELECT id, time, posted_data FROM %i WHERE formid=%d AND company_id=%d AND posted_data LIKE %s ORDER BY id ASC LIMIT %d",
                     $wpdb->prefix . TZFD_Tables::BOOKINGS,
                     $formid,
@@ -103,17 +103,17 @@ if( !class_exists( 'TZFD_AutoCancelStatusManagement' ) )
                     '%Pending%',
                     self::BATCH
                 ) );
-                foreach ( (array) $tz_rows as $row ) {
+                foreach ( (array) $tzfd_local_rows as $row ) {
                     if ( ! TZFD_Addon_Support::is_older_than( $row->time, $hours, $tz, $now ) ) { continue; }
-                    $tz_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
-                    if ( ! is_array( $tz_data ) || empty( $tz_data['apps'] ) || ! is_array( $tz_data['apps'] ) ) { continue; }
-                    if ( ! TZFD_Addon_Support::all_have_status( $tz_data['apps'], 'Pending' ) ) { continue; }
-                    if ( false !== $tz_plugin->update_status( (int) $row->id, 'Cancelled', '-1', $company_id ) ) {
-                        $tz_cancelled++;
+                    $tzfd_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
+                    if ( ! is_array( $tzfd_data ) || empty( $tzfd_data['apps'] ) || ! is_array( $tzfd_data['apps'] ) ) { continue; }
+                    if ( ! TZFD_Addon_Support::all_have_status( $tzfd_data['apps'], 'Pending' ) ) { continue; }
+                    if ( false !== $tzfd_plugin->update_status( (int) $row->id, 'Cancelled', '-1', $company_id ) ) {
+                        $tzfd_cancelled++;
                     }
                 }
             }
-            return $tz_cancelled;
+            return $tzfd_cancelled;
         }
 
         /************************ ADDON OBJECT *****************************/
@@ -124,6 +124,6 @@ if( !class_exists( 'TZFD_AutoCancelStatusManagement' ) )
     $TZFD_AutoCancelStatusManagement_obj = new TZFD_AutoCancelStatusManagement();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_AutoCancelStatusManagement_obj->get_addon_id() ] = $TZFD_AutoCancelStatusManagement_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_AutoCancelStatusManagement_obj->get_addon_id() ] = $TZFD_AutoCancelStatusManagement_obj;
 }

@@ -51,71 +51,71 @@ final class TZFD_Extension_Core {
     }
 
     /** Uppercase three-letter currency code, or '' when the value is not one. */
-    public static function currency_code( $tz_value ) {
-        if ( ! is_string( $tz_value ) ) { return ''; }
-        $tz_value = strtoupper( trim( $tz_value ) );
-        return 1 === preg_match( '/^[A-Z]{3}$/', $tz_value ) ? $tz_value : '';
+    public static function currency_code( $tzfd_value ) {
+        if ( ! is_string( $tzfd_value ) ) { return ''; }
+        $tzfd_value = strtoupper( trim( $tzfd_value ) );
+        return 1 === preg_match( '/^[A-Z]{3}$/', $tzfd_value ) ? $tzfd_value : '';
     }
 
     /** Positive booking id, or 0. */
-    public static function booking_id( $tz_value ) {
-        if ( ! is_int( $tz_value ) && ( ! is_string( $tz_value ) || ! ctype_digit( $tz_value ) ) ) { return 0; }
-        $id = filter_var( $tz_value, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
+    public static function booking_id( $tzfd_value ) {
+        if ( ! is_int( $tzfd_value ) && ( ! is_string( $tzfd_value ) || ! ctype_digit( $tzfd_value ) ) ) { return 0; }
+        $id = filter_var( $tzfd_value, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
         return false === $id ? 0 : (int) $id;
     }
 
     /** JSON response with a status code. */
-    public static function respond( array $tz_data, $status = 200 ) {
-        return new WP_REST_Response( $tz_data, $status );
+    public static function respond( array $tzfd_data, $status = 200 ) {
+        return new WP_REST_Response( $tzfd_data, $status );
     }
 
     /**
      * Site-wide settings form for an integration add-on. Saves a valid posted
      * form and returns the stored values. Blank secret fields keep their stored value.
      */
-    public static function global_settings( $tz_key, array $defaults, array $secret_keys = array() ) {
-        $request = TZFD_Addon_Support::global_request( $tz_key );
+    public static function global_settings( $tzfd_key, array $defaults, array $secret_keys = array() ) {
+        $request = TZFD_Addon_Support::global_request( $tzfd_key );
         if ( null !== $request ) {
-            $current = TZFD_Addon_Support::global_settings( $tz_key, $defaults );
+            $current = TZFD_Addon_Support::global_settings( $tzfd_key, $defaults );
             foreach ( $secret_keys as $secret ) {
                 if ( ! isset( $request[ $secret ] ) || ! is_string( $request[ $secret ] ) || '' === trim( $request[ $secret ] ) ) {
                     $request[ $secret ] = isset( $current[ $secret ] ) && is_string( $current[ $secret ] ) ? $current[ $secret ] : '';
                 }
             }
-            TZFD_Addon_Support::save_global_settings( $tz_key, $defaults, $request );
+            TZFD_Addon_Support::save_global_settings( $tzfd_key, $defaults, $request );
         }
-        return TZFD_Addon_Support::global_settings( $tz_key, $defaults );
+        return TZFD_Addon_Support::global_settings( $tzfd_key, $defaults );
     }
 
     /** Renders the settings form. $specs and $values follow TZFD_Addon_Support::render_table(). */
-    public static function render_global_form( $name, $tz_key, array $specs, array $values, $status ) {
+    public static function render_global_form( $name, $tzfd_key, array $specs, array $values, $status ) {
         echo '<div class="tzfd-addons-container"><h2>' . esc_html( $name ) . '</h2>';
         echo '<p>' . esc_html( $status ) . '</p>';
         echo '<form method="post">';
-        wp_nonce_field( 'tz_fd_global_' . $tz_key, '_tz_fd_nonce' );
-        echo '<input type="hidden" name="tz_fd_save_' . esc_attr( $tz_key ) . '" value="1" />';
-        TZFD_Addon_Support::render_table( 'tz_fd_global_' . $tz_key . '_', $specs, $values );
+        wp_nonce_field( 'tz_fd_global_' . $tzfd_key, '_tz_fd_nonce' );
+        echo '<input type="hidden" name="tz_fd_save_' . esc_attr( $tzfd_key ) . '" value="1" />';
+        TZFD_Addon_Support::render_table( 'tz_fd_global_' . $tzfd_key . '_', $specs, $values );
         submit_button( __( 'Save settings', 'titan-zero-trades-front-desk' ) );
         echo '</form></div>';
     }
 
     /** Per-calendar settings block, shown in the form editor. Saves a valid posted block first. */
-    public static function form_settings_block( $name, $tz_key, $form_id, array $defaults, array $specs, array $secret_keys = array() ) {
-        $request = TZFD_Addon_Support::form_request( $tz_key, $form_id );
+    public static function form_settings_block( $name, $tzfd_key, $form_id, array $defaults, array $specs, array $secret_keys = array() ) {
+        $request = TZFD_Addon_Support::form_request( $tzfd_key, $form_id );
         if ( null !== $request ) {
-            $current = TZFD_Addon_Support::form_settings( $tz_key, $form_id, $defaults );
+            $current = TZFD_Addon_Support::form_settings( $tzfd_key, $form_id, $defaults );
             foreach ( $secret_keys as $secret ) {
                 if ( ! isset( $request[ $secret ] ) || ! is_string( $request[ $secret ] ) || '' === trim( $request[ $secret ] ) ) {
                     $request[ $secret ] = isset( $current[ $secret ] ) && is_string( $current[ $secret ] ) ? $current[ $secret ] : '';
                 }
             }
-            TZFD_Addon_Support::save_form_settings( $tz_key, $form_id, $defaults, $request );
+            TZFD_Addon_Support::save_form_settings( $tzfd_key, $form_id, $defaults, $request );
         }
-        $values = TZFD_Addon_Support::form_settings( $tz_key, $form_id, $defaults );
+        $values = TZFD_Addon_Support::form_settings( $tzfd_key, $form_id, $defaults );
         foreach ( $secret_keys as $secret ) { $values[ $secret ] = ''; }
         echo '<h3>' . esc_html( $name ) . '</h3>';
-        echo '<input type="hidden" name="TZFD_' . esc_attr( $tz_key ) . '_id" value="' . esc_attr( (string) (int) $form_id ) . '" />';
-        TZFD_Addon_Support::render_table( 'tz_fd_' . $tz_key . '_', $specs, $values );
+        echo '<input type="hidden" name="TZFD_' . esc_attr( $tzfd_key ) . '_id" value="' . esc_attr( (string) (int) $form_id ) . '" />';
+        TZFD_Addon_Support::render_table( 'tz_fd_' . $tzfd_key . '_', $specs, $values );
         return $values;
     }
 

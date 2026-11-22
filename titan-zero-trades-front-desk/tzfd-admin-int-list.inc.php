@@ -15,49 +15,49 @@ require_once __DIR__ . '/includes/class-tzfd-admin-request-ids.php';
 require_once __DIR__ . '/includes/class-tzfd-form-list-input.php';
 require_once __DIR__ . '/includes/class-tzfd-calendar-write-result.php';
 
-$tz_current_user_access = current_user_can('tz_fd_access');
+$tzfd_current_user_access = current_user_can('tz_fd_access');
 // The plugin capability does not grant access to another company's calendars.
-$tz_list_company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
-if ( $tz_list_company <= 0 ) {
+$tzfd_list_company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+if ( $tzfd_list_company <= 0 ) {
     wp_die( esc_html__( 'An active company is required to manage booking calendars.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 // Calendar mutations must be submitted by POST. Reject legacy GET action URLs even
 // when a valid nonce is present: GET requests are safe/read-only by contract.
-foreach ( array( 'a', 'u', 'd', 'c' ) as $tz_list_mutation_key ) {
-    if ( array_key_exists( $tz_list_mutation_key, $_GET ) ) {
+foreach ( array( 'a', 'u', 'd', 'c' ) as $tzfd_list_mutation_key ) {
+    if ( array_key_exists( $tzfd_list_mutation_key, $_GET ) ) {
         wp_die( esc_html__( 'Use the calendar action buttons to make changes.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 405 ) );
     }
 }
-$tz_list_method = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) );
+$tzfd_list_method = sanitize_text_field( wp_unslash( $_SERVER['REQUEST_METHOD'] ?? '' ) );
 // Calendar actions are POST-only: verify the list nonce before any POST field is read.
-if ( 'POST' === $tz_list_method && ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_list' ) ) {
+if ( 'POST' === $tzfd_list_method && ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_list' ) ) {
     wp_die( esc_html__( 'You cannot modify these calendars.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
-$tz_list_payload = 'POST' === $tz_list_method ? $_POST : array();
+$tzfd_list_payload = 'POST' === $tzfd_list_method ? $_POST : array();
 // All mutations must be bound to this company and use validated identifiers.
-$tz_list_action = TZFD_Form_List_Input::validate( $tz_list_payload );
-if ( is_wp_error( $tz_list_action ) ) {
+$tzfd_list_action = TZFD_Form_List_Input::validate( $tzfd_list_payload );
+if ( is_wp_error( $tzfd_list_action ) ) {
     wp_die( esc_html__( 'Invalid calendar action parameters.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) );
 }
-if ( '' !== $tz_list_action['operation'] && ( ! $tz_current_user_access || ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_list' ) ) ) {
+if ( '' !== $tzfd_list_action['operation'] && ( ! $tzfd_current_user_access || ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_list' ) ) ) {
     wp_die( esc_html__( 'You cannot modify these calendars.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 
-global $wpdb, $tz_addons_active_list, $tz_addons_objs_list;
+global $wpdb, $tzfd_addons_active_list, $tzfd_addons_objs_list;
 
-$tz_message = "";
-$tz_list_redirect = '';
+$tzfd_message = "";
+$tzfd_list_redirect = '';
 
 
-if ( 'a' === $tz_list_action['operation'] )
+if ( 'a' === $tzfd_list_action['operation'] )
 {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', "anonce" ), 'tz_fd_actions_list' ) ) { $this->nonce_failed(); }
     define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
     define('TZFD_BOOK_DEFAULT_fp_destination_emails', TZFD_Settings_Extras::default_notify_email( TZFD_BOOK_DEFAULT_fp_from_email ));
 
-    $tz_list_inserted = $wpdb->insert( $wpdb->prefix.TZFD_Tables::FORMS, array(
-                                      'company_id' => $tz_list_company,
-                                      'form_name' => $tz_list_action['name'],
+    $tzfd_list_inserted = $wpdb->insert( $wpdb->prefix.TZFD_Tables::FORMS, array(
+                                      'company_id' => $tzfd_list_company,
+                                      'form_name' => $tzfd_list_action['name'],
 
                                       'form_structure' => TZFD_BOOK_DEFAULT_form_structure,
 
@@ -100,63 +100,63 @@ if ( 'a' === $tz_list_action['operation'] )
                                      )
                       );
 
-    if ( ! TZFD_Calendar_Write_Result::inserted( $tz_list_inserted, $wpdb->insert_id, $wpdb->last_error ) ) {
+    if ( ! TZFD_Calendar_Write_Result::inserted( $tzfd_list_inserted, $wpdb->insert_id, $wpdb->last_error ) ) {
         wp_die( esc_html__( 'Calendar creation failed. No calendar was confirmed.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
     }
-    $tz_list_redirect = '?page=tzfd&cal=' . absint( $wpdb->insert_id );
+    $tzfd_list_redirect = '?page=tzfd&cal=' . absint( $wpdb->insert_id );
 }
-else if ( 'u' === $tz_list_action['operation'] )
+else if ( 'u' === $tzfd_list_action['operation'] )
 {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', "anonce" ), 'tz_fd_actions_list' ) ) { $this->nonce_failed(); }
-    $tz_list_updated = $wpdb->query( $wpdb->prepare('UPDATE %i SET form_name=%s WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $tz_list_action['name'], $tz_list_action['id'], $tz_list_company ) );
-    $tz_list_verified = $wpdb->get_var( $wpdb->prepare( 'SELECT form_name FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix . TZFD_Tables::FORMS, $tz_list_action['id'], $tz_list_company ) );
-    if ( ! TZFD_Calendar_Write_Result::updated( $tz_list_updated, $tz_list_verified, $tz_list_action['name'], $wpdb->last_error ) ) {
+    $tzfd_list_updated = $wpdb->query( $wpdb->prepare('UPDATE %i SET form_name=%s WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $tzfd_list_action['name'], $tzfd_list_action['id'], $tzfd_list_company ) );
+    $tzfd_list_verified = $wpdb->get_var( $wpdb->prepare( 'SELECT form_name FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_list_action['id'], $tzfd_list_company ) );
+    if ( ! TZFD_Calendar_Write_Result::updated( $tzfd_list_updated, $tzfd_list_verified, $tzfd_list_action['name'], $wpdb->last_error ) ) {
         wp_die( esc_html__( 'Calendar rename was not verified.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
     }
-    $tz_message = __( 'Item updated', 'titan-zero-trades-front-desk' );
+    $tzfd_message = __( 'Item updated', 'titan-zero-trades-front-desk' );
 }
-else if ( 'd' === $tz_list_action['operation'] )
+else if ( 'd' === $tzfd_list_action['operation'] )
 {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', "anonce" ), 'tz_fd_actions_list' ) ) { $this->nonce_failed(); }
-    $tz_list_deleted = $wpdb->query( $wpdb->prepare('DELETE FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $tz_list_action['id'], $tz_list_company ) );
-    if ( ! TZFD_Calendar_Write_Result::deleted( $tz_list_deleted, $wpdb->last_error ) ) {
+    $tzfd_list_deleted = $wpdb->query( $wpdb->prepare('DELETE FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $tzfd_list_action['id'], $tzfd_list_company ) );
+    if ( ! TZFD_Calendar_Write_Result::deleted( $tzfd_list_deleted, $wpdb->last_error ) ) {
         wp_die( esc_html__( 'Calendar deletion failed or the calendar no longer exists.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
     }
-    $tz_message = __( 'Item deleted', 'titan-zero-trades-front-desk' );
-} else if ( 'c' === $tz_list_action['operation'] )
+    $tzfd_message = __( 'Item deleted', 'titan-zero-trades-front-desk' );
+} else if ( 'c' === $tzfd_list_action['operation'] )
 {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', "anonce" ), 'tz_fd_actions_list' ) ) { $this->nonce_failed(); }
-    $tz_myrows = $wpdb->get_row( $wpdb->prepare("SELECT * FROM %i WHERE id=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::FORMS, $tz_list_action['id'], $tz_list_company ) , ARRAY_A); 
+    $tzfd_myrows = $wpdb->get_row( $wpdb->prepare("SELECT * FROM %i WHERE id=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::FORMS, $tzfd_list_action['id'], $tzfd_list_company ) , ARRAY_A); 
     // The clone belongs to the current company, never to the company of the row it copies.
-    if ( is_array( $tz_myrows ) && $tz_list_company > 0 ) {
-        unset($tz_myrows["id"]);
-        $tz_myrows["company_id"] = $tz_list_company;
-        $tz_myrows["form_name"] = 'Cloned: '.$tz_myrows["form_name"];
-        $tz_list_cloned = $wpdb->insert( $wpdb->prefix . TZFD_Tables::FORMS, $tz_myrows );
-        if ( ! TZFD_Calendar_Write_Result::inserted( $tz_list_cloned, $wpdb->insert_id, $wpdb->last_error ) ) {
+    if ( is_array( $tzfd_myrows ) && $tzfd_list_company > 0 ) {
+        unset($tzfd_myrows["id"]);
+        $tzfd_myrows["company_id"] = $tzfd_list_company;
+        $tzfd_myrows["form_name"] = 'Cloned: '.$tzfd_myrows["form_name"];
+        $tzfd_list_cloned = $wpdb->insert( $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_myrows );
+        if ( ! TZFD_Calendar_Write_Result::inserted( $tzfd_list_cloned, $wpdb->insert_id, $wpdb->last_error ) ) {
             wp_die( esc_html__( 'Calendar duplication failed.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
         }
     } else {
         wp_die( esc_html__( 'The selected calendar could not be found in this business.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 404 ) );
     }
-    $tz_message = __( 'Item duplicated/cloned', 'titan-zero-trades-front-desk' );
+    $tzfd_message = __( 'Item duplicated/cloned', 'titan-zero-trades-front-desk' );
 }
 
 // Post/Redirect/Get prevents browser refreshes from repeating a mutation.
-if ( '' !== $tz_list_action['operation'] ) {
-    $tz_list_destination = 'admin.php?page=' . rawurlencode( $this->menu_parameter );
-    if ( 'a' === $tz_list_action['operation'] && (int) $wpdb->insert_id > 0 ) {
-        $tz_list_destination .= '&cal=' . (int) $wpdb->insert_id;
+if ( '' !== $tzfd_list_action['operation'] ) {
+    $tzfd_list_destination = 'admin.php?page=' . rawurlencode( $this->menu_parameter );
+    if ( 'a' === $tzfd_list_action['operation'] && (int) $wpdb->insert_id > 0 ) {
+        $tzfd_list_destination .= '&cal=' . (int) $wpdb->insert_id;
     }
-    wp_safe_redirect( admin_url( $tz_list_destination ) );
+    wp_safe_redirect( admin_url( $tzfd_list_destination ) );
     exit;
 }
 
 // Success notices are never inferred from an untrusted query parameter.
 
-if ($tz_message) echo "<div id='setting-error-settings_updated' class='updated'><h2>".esc_html($tz_message)."</h2></div>";
+if ($tzfd_message) echo "<div id='setting-error-settings_updated' class='updated'><h2>".esc_html($tzfd_message)."</h2></div>";
 
-$tz_nonce = wp_create_nonce( 'tz_fd_actions_list' );
+$tzfd_nonce = wp_create_nonce( 'tz_fd_actions_list' );
 
 // Page assets (review R2). Enqueued here because this template renders after admin_enqueue_scripts.
 wp_register_style( 'tzfd-admin-list-inline', false, array(), '2.0.1' );
@@ -165,8 +165,8 @@ wp_add_inline_style( 'tzfd-admin-list-inline', 'input.button.tzfd-cal-row-btn{ma
 wp_enqueue_script( 'tzfd-admin-list', plugins_url( 'js/inline/admina-list.js', __FILE__ ), array(), '2.0.1', true );
 wp_localize_script( 'tzfd-admin-list', 'tzfdListData', array(
     'page'     => $this->menu_parameter,
-    'nonce'    => $tz_nonce,
-    'redirect' => $tz_list_redirect,
+    'nonce'    => $tzfd_nonce,
+    'redirect' => $tzfd_list_redirect,
 ) );
 
 ?>
@@ -174,7 +174,7 @@ wp_localize_script( 'tzfd-admin-list', 'tzfdListData', array(
 <h1><?php echo esc_html($this->plugin_name); ?></h1>
 
 
-<?php if ($tz_current_user_access) { ?>
+<?php if ($tzfd_current_user_access) { ?>
  <div class="tzfd-section-container">
 	<div class="tzfd-section">
 		<label><?php esc_html_e('New Calendar','titan-zero-trades-front-desk'); ?></label>&nbsp;&nbsp;&nbsp;
@@ -196,42 +196,42 @@ wp_localize_script( 'tzfd-admin-list', 'tzfdListData', array(
 <?php
 
   $current_user = wp_get_current_user();
-  $tz_myrows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE company_id = %d', $wpdb->prefix . TZFD_Tables::FORMS, $tz_list_company ) ); 
-  if ( ! is_array( $tz_myrows ) || ! empty( $wpdb->last_error ) ) {
+  $tzfd_myrows = $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE company_id = %d', $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_list_company ) ); 
+  if ( ! is_array( $tzfd_myrows ) || ! empty( $wpdb->last_error ) ) {
       wp_die( esc_html__( 'Unable to load calendars.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 500 ) );
   }
-  foreach ( $tz_myrows as $tz_item )
+  foreach ( $tzfd_myrows as $tzfd_item )
   {
-   $tz_options = TZFD_Access_List::decode($tz_item->tz_fd_user_access);
+   $tzfd_options = TZFD_Access_List::decode($tzfd_item->tz_fd_user_access);
 
-   if ( (int) $tz_item->company_id === $tz_list_company && ( $tz_current_user_access || in_array( (int) $current_user->ID, $tz_options, true ) ) )
+   if ( (int) $tzfd_item->company_id === $tzfd_list_company && ( $tzfd_current_user_access || in_array( (int) $current_user->ID, $tzfd_options, true ) ) )
    {
 ?>
    <tr>
-    <td nowrap class="firstcol"><?php echo intval($tz_item->id); ?></td>
-    <td nowrap><input type="text" name="calname_<?php echo intval($tz_item->id); ?>" id="calname_<?php echo intval($tz_item->id); ?>" value="<?php echo esc_attr($tz_item->form_name); ?>" /></td>
+    <td nowrap class="firstcol"><?php echo intval($tzfd_item->id); ?></td>
+    <td nowrap><input type="text" name="calname_<?php echo intval($tzfd_item->id); ?>" id="calname_<?php echo intval($tzfd_item->id); ?>" value="<?php echo esc_attr($tzfd_item->form_name); ?>" /></td>
 
     <td>
-<?php if ($tz_current_user_access) { ?>
-                             <input class="tzfd-cal-row-btn button" type="button" name="calupdate_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Rename','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_updateItem" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
+<?php if ($tzfd_current_user_access) { ?>
+                             <input class="tzfd-cal-row-btn button" type="button" name="calupdate_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Rename','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_updateItem" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
 <?php } ?>
-<?php if ($tz_current_user_access || (isset($tz_item->tz_fd_user_access_settings) && $tz_item->tz_fd_user_access_settings == 'true')) { ?>
-                             <input class="tzfd-cal-row-btn button-primary button" type="button" name="calmanage_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Edit','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_manageSettings" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
+<?php if ($tzfd_current_user_access || (isset($tzfd_item->tz_fd_user_access_settings) && $tzfd_item->tz_fd_user_access_settings == 'true')) { ?>
+                             <input class="tzfd-cal-row-btn button-primary button" type="button" name="calmanage_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Edit','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_manageSettings" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
 <?php } ?>
-<?php if ($tz_current_user_access) { ?>
-                             <input class="tzfd-cal-row-btn button-primary button" type="button" name="calpublish_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Publish','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_publish" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
+<?php if ($tzfd_current_user_access) { ?>
+                             <input class="tzfd-cal-row-btn button-primary button" type="button" name="calpublish_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Publish','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_publish" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
 <?php } ?>
-                             <input class="tzfd-cal-row-btn button-primary2 button" type="button" name="calmessages_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Booking Orders','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewMessages" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-                             <input class="tzfd-cal-row-btn button-primary2 button" type="button" name="calschedule_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Schedule','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewSchedule" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-                             <input class="tzfd-cal-row-btn button-primary3 button" type="button" name="caladdbk_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Add Booking','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_addbk" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-                             <input class="tzfd-cal-row-btn button-primary3 button" type="button" name="calblocktimes_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Block Times','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_blocktimes" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-                             <input class="tzfd-cal-row-btn button" type="button" name="calreport_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Stats','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewReport" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-<?php if ($tz_current_user_access) { ?>
-                             <input class="tzfd-cal-row-btn button" type="button" name="calclone_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Clone','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_cloneItem" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
-                             <input class="tzfd-cal-row-btn button" type="button" name="caldelete_<?php echo intval($tz_item->id); ?>" value="<?php esc_html_e('Delete','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_deleteItem" data-tzfd-id="<?php echo intval($tz_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button-primary2 button" type="button" name="calmessages_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Booking Orders','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewMessages" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button-primary2 button" type="button" name="calschedule_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Schedule','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewSchedule" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button-primary3 button" type="button" name="caladdbk_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Add Booking','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_addbk" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button-primary3 button" type="button" name="calblocktimes_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Block Times','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_blocktimes" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button" type="button" name="calreport_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Stats','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_viewReport" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+<?php if ($tzfd_current_user_access) { ?>
+                             <input class="tzfd-cal-row-btn button" type="button" name="calclone_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Clone','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_cloneItem" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
+                             <input class="tzfd-cal-row-btn button" type="button" name="caldelete_<?php echo intval($tzfd_item->id); ?>" value="<?php esc_html_e('Delete','titan-zero-trades-front-desk'); ?>" data-tzfd-action="tz_fd_deleteItem" data-tzfd-id="<?php echo intval($tzfd_item->id); ?>" />
 <?php } ?>
     </td>
-    <td class="lastcol"><nobr>[<?php echo esc_html($this->shorttag); ?> id="<?php echo intval($tz_item->id); ?>"]<nobr></td>
+    <td class="lastcol"><nobr>[<?php echo esc_html($this->shorttag); ?> id="<?php echo intval($tzfd_item->id); ?>"]<nobr></td>
    </tr>
 <?php
     }
@@ -250,13 +250,13 @@ wp_localize_script( 'tzfd-admin-list', 'tzfdListData', array(
 
 <div id="normal-sortables" class="meta-box-sortables">
 
-<?php if ($tz_current_user_access) { ?>
+<?php if ($tzfd_current_user_access) { ?>
 
 
 <?php
-	if( count( $tz_addons_active_list ) )
+	if( count( $tzfd_addons_active_list ) )
 	{
-		foreach( $tz_addons_active_list as $tz_addon_id ) if( isset( $tz_addons_objs_list[ $tz_addon_id ] ) ) 
+		foreach( $tzfd_addons_active_list as $tzfd_addon_id ) if( isset( $tzfd_addons_objs_list[ $tzfd_addon_id ] ) ) 
         {
             // Add-on settings are shown on the Add-ons page.
         }

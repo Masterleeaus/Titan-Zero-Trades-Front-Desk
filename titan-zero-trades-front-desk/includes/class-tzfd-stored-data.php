@@ -17,9 +17,9 @@ final class TZFD_Stored_Data {
      * @return array|null
      */
     public static function decode( $serialized ) {
-        $tz_value = self::parse( $serialized );
+        $tzfd_value = self::parse( $serialized );
         $remaining = self::MAX_NODES;
-        return is_array( $tz_value ) && self::safe_value( $tz_value, 0, $remaining ) ? $tz_value : null;
+        return is_array( $tzfd_value ) && self::safe_value( $tzfd_value, 0, $remaining ) ? $tzfd_value : null;
     }
 
     /**
@@ -28,12 +28,12 @@ final class TZFD_Stored_Data {
      * Never use a projection to replace the full persisted booking record.
      */
     public static function project( $serialized, array $keys ) {
-        $tz_value = self::parse( $serialized );
-        if ( ! is_array( $tz_value ) ) { return null; }
+        $tzfd_value = self::parse( $serialized );
+        if ( ! is_array( $tzfd_value ) ) { return null; }
         $result = array();
-        foreach ( $keys as $tz_key ) {
-            if ( ! is_string( $tz_key ) ) { return null; }
-            if ( array_key_exists( $tz_key, $tz_value ) ) { $result[ $tz_key ] = $tz_value[ $tz_key ]; }
+        foreach ( $keys as $tzfd_key ) {
+            if ( ! is_string( $tzfd_key ) ) { return null; }
+            if ( array_key_exists( $tzfd_key, $tzfd_value ) ) { $result[ $tzfd_key ] = $tzfd_value[ $tzfd_key ]; }
         }
         $remaining = self::MAX_NODES;
         return self::safe_value( $result, 0, $remaining ) ? $result : null;
@@ -45,39 +45,39 @@ final class TZFD_Stored_Data {
         }
         if ( 1 !== preg_match( '/^a:[0-9]+:\{/', $serialized ) ) { return null; }
         try {
-            $tz_value = unserialize( $serialized, array( 'allowed_classes' => false, 'max_depth' => self::MAX_DEPTH ) );
+            $tzfd_value = unserialize( $serialized, array( 'allowed_classes' => false, 'max_depth' => self::MAX_DEPTH ) );
         } catch ( Throwable $error ) {
             return null;
         }
-        return is_array( $tz_value ) ? $tz_value : null;
+        return is_array( $tzfd_value ) ? $tzfd_value : null;
     }
 
     /** Validate the common booking envelope without changing valid field values. */
     public static function decode_booking( $serialized ) {
-        $tz_data = self::decode( $serialized );
-        if ( null === $tz_data ) { return null; }
-        if ( array_key_exists( 'apps', $tz_data ) ) {
-            if ( ! is_array( $tz_data['apps'] ) ) { return null; }
-            foreach ( $tz_data['apps'] as $tz_app ) {
-                if ( ! is_array( $tz_app ) ) { return null; }
+        $tzfd_data = self::decode( $serialized );
+        if ( null === $tzfd_data ) { return null; }
+        if ( array_key_exists( 'apps', $tzfd_data ) ) {
+            if ( ! is_array( $tzfd_data['apps'] ) ) { return null; }
+            foreach ( $tzfd_data['apps'] as $tzfd_app ) {
+                if ( ! is_array( $tzfd_app ) ) { return null; }
                 foreach ( array( 'date', 'slot', 'field', 'service', 'cancelled', 'cancelreason' ) as $field ) {
-                    if ( isset( $tz_app[ $field ] ) && ! is_string( $tz_app[ $field ] ) ) { return null; }
+                    if ( isset( $tzfd_app[ $field ] ) && ! is_string( $tzfd_app[ $field ] ) ) { return null; }
                 }
             }
         }
-        return $tz_data;
+        return $tzfd_data;
     }
 
     /** Bound both depth and work, including repeated/cyclic serialized references. */
-    private static function safe_value( $tz_value, $depth, &$remaining ) {
+    private static function safe_value( $tzfd_value, $depth, &$remaining ) {
         if ( $depth > self::MAX_DEPTH || --$remaining < 0 ) { return false; }
-        if ( is_array( $tz_value ) ) {
-            foreach ( $tz_value as $child ) {
+        if ( is_array( $tzfd_value ) ) {
+            foreach ( $tzfd_value as $child ) {
                 if ( ! self::safe_value( $child, $depth + 1, $remaining ) ) { return false; }
             }
             return true;
         }
-        return null === $tz_value || is_string( $tz_value ) || is_int( $tz_value ) || is_bool( $tz_value ) ||
-            ( is_float( $tz_value ) && is_finite( $tz_value ) );
+        return null === $tzfd_value || is_string( $tzfd_value ) || is_int( $tzfd_value ) || is_bool( $tzfd_value ) ||
+            ( is_float( $tzfd_value ) && is_finite( $tzfd_value ) );
     }
 }

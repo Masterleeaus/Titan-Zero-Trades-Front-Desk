@@ -10,8 +10,8 @@ if ( !is_admin() )
     exit;
 }
 
-$tz_is_admin = current_user_can('tz_fd_access');
-if ( ! $tz_is_admin || ! is_user_logged_in() ) {
+$tzfd_is_admin = current_user_can('tz_fd_access');
+if ( ! $tzfd_is_admin || ! is_user_logged_in() ) {
     wp_die( esc_html__( 'You cannot access these settings.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 // Administrative writes are bounded before any option is processed.
@@ -25,50 +25,50 @@ if ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' )
     wp_die( esc_html__( 'Invalid settings nonce.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
 }
 
-$tz_tzfdid = 'TZFD_Scheduling & Enquiries Manager';
+$tzfd_tzfdid = 'TZFD_Scheduling & Enquiries Manager';
 
-$tz_gotab = '';
+$tzfd_gotab = '';
 if ( !empty($_POST["nonce"]) && current_user_can('tz_fd_access') && wp_verify_nonce( tzfd_request_text( 'post', "nonce" ), 'tz_fd_actions_admin') )
 {
     if (isset($_POST["gotab"]))
     {
-        $tz_gotab = tzfd_request_text( 'post', "gotab" );
-        if ($tz_gotab == '')
-            $tz_message = 'Email report settings updated.';
-        else if ($tz_gotab == 'fixarea')
-            $tz_message = 'Troubleshoot settings updated.';
-        else if ($tz_gotab == 'csvarea')
-            $tz_message = 'CSV settings updated.';
-        else if ($tz_gotab == 'schedulecalarea')
-            $tz_message = 'Schedule Calendar View settings updated.';
-        else if ($tz_gotab == 'miscsettings')
-            $tz_message = 'Misc settings updated.';
+        $tzfd_gotab = tzfd_request_text( 'post', "gotab" );
+        if ($tzfd_gotab == '')
+            $tzfd_message = 'Email report settings updated.';
+        else if ($tzfd_gotab == 'fixarea')
+            $tzfd_message = 'Troubleshoot settings updated.';
+        else if ($tzfd_gotab == 'csvarea')
+            $tzfd_message = 'CSV settings updated.';
+        else if ($tzfd_gotab == 'schedulecalarea')
+            $tzfd_message = 'Schedule Calendar View settings updated.';
+        else if ($tzfd_gotab == 'miscsettings')
+            $tzfd_message = 'Misc settings updated.';
 
     }
     else
         if (isset($_GET["gotab"]))
-            $tz_gotab = tzfd_request_text( 'get', "gotab" );
+            $tzfd_gotab = tzfd_request_text( 'get', "gotab" );
 }
 
-$tz_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
+$tzfd_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
 
 ?>
 <?php
 // Settings sections. A form posted from another section keeps its place; a fresh visit opens General.
-$tz_section_for_gotab = array(
+$tzfd_section_for_gotab = array(
 	''                => 'notifications',
 	'fixarea'         => 'advanced',
 	'csvarea'         => 'advanced',
 	'schedulecalarea' => 'advanced',
 	'miscsettings'    => 'booking',
 );
-$tz_active = 'general';
+$tzfd_active = 'general';
 if ( isset( $_POST['gotab'] ) || isset( $_GET['gotab'] ) ) {
-	$tz_active = isset( $tz_section_for_gotab[ $tz_gotab ] ) ? $tz_section_for_gotab[ $tz_gotab ] : 'general';
+	$tzfd_active = isset( $tzfd_section_for_gotab[ $tzfd_gotab ] ) ? $tzfd_section_for_gotab[ $tzfd_gotab ] : 'general';
 }
 // A GET query parameter must not impersonate a successful settings save.
-$tz_can_manage = current_user_can( 'tz_fd_access' );
-$tz_nav = array(
+$tzfd_can_manage = current_user_can( 'tz_fd_access' );
+$tzfd_nav = array(
 	'general'      => __( 'General', 'titan-zero-trades-front-desk' ),
 	'booking'      => __( 'Booking rules', 'titan-zero-trades-front-desk' ),
 	'hours'        => __( 'Business hours', 'titan-zero-trades-front-desk' ),
@@ -78,7 +78,7 @@ $tz_nav = array(
 );
 // The stylesheet is enqueued from admin_enqueue_scripts; the section-tab script prints in the admin footer.
 wp_enqueue_script( 'tzfd-settings-tabs', plugin_dir_url( __FILE__ ) . 'js/inline/settings-tabs.js', array( 'jquery' ), '2.0.2', true );
-wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' => $tz_active ) );
+wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' => $tzfd_active ) );
 ?>
 <div class="tzfd-set-head">
 	<div>
@@ -88,17 +88,17 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<button type="button" class="button button-primary" id="tzfd-settings-save"><?php esc_html_e('Save changes','titan-zero-trades-front-desk'); ?></button>
 </div>
 <?php
-    if (isset($tz_message) && $tz_message != '') echo "<div id='setting-error-settings_updated' class='updated'><h2>".esc_html($tz_message)."</h2></div>";
+    if (isset($tzfd_message) && $tzfd_message != '') echo "<div id='setting-error-settings_updated' class='updated'><h2>".esc_html($tzfd_message)."</h2></div>";
 ?>
 <div class="tzfd-set-layout">
 	<nav class="tzfd-set-nav" aria-label="<?php esc_attr_e('Settings sections','titan-zero-trades-front-desk'); ?>">
-<?php foreach ( $tz_nav as $tz_key => $tz_label ) : ?>
-		<a href="<?php echo esc_url( '#' . sanitize_html_class( $tz_key ) ); ?>" data-tab="<?php echo esc_attr( $tz_key ); ?>"<?php echo $tz_active === $tz_key ? ' class="is-active"' : ''; ?>><?php echo wp_kses( TZFD_UI_Graphics::brand_html( $tz_key, 24 ), TZFD_UI_Graphics::allowed_html() ); ?><?php echo esc_html( $tz_label ); ?></a>
+<?php foreach ( $tzfd_nav as $tzfd_key => $tzfd_label ) : ?>
+		<a href="<?php echo esc_url( '#' . sanitize_html_class( $tzfd_key ) ); ?>" data-tab="<?php echo esc_attr( $tzfd_key ); ?>"<?php echo $tzfd_active === $tzfd_key ? ' class="is-active"' : ''; ?>><?php echo wp_kses( TZFD_UI_Graphics::brand_html( $tzfd_key, 24 ), TZFD_UI_Graphics::allowed_html() ); ?><?php echo esc_html( $tzfd_label ); ?></a>
 <?php endforeach; ?>
 	</nav>
 	<div class="tzfd-set-body">
 <!-- General -->
-<div class="tzfd-tab<?php echo $tz_active === 'general' ? ' tab-active' : ''; ?>" data-tab="general">
+<div class="tzfd-tab<?php echo $tzfd_active === 'general' ? ' tab-active' : ''; ?>" data-tab="general">
 	<h2><?php esc_html_e('General','titan-zero-trades-front-desk'); ?></h2>
 	<p class="tzfd-set-intro"><?php esc_html_e('Front Desk uses its own business settings and currency when operating independently.','titan-zero-trades-front-desk'); ?></p>
 	<div class="tzfd-set-card">
@@ -110,12 +110,12 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 </div>
 
 <!-- booking -->
-<div class="tzfd-tab<?php echo $tz_active === 'booking' ? ' tab-active' : ''; ?>" data-tab="booking">
+<div class="tzfd-tab<?php echo $tzfd_active === 'booking' ? ' tab-active' : ''; ?>" data-tab="booking">
 <div class="tzfd-subpane">
 	<h2><?php esc_html_e('Booking rules and spam protection','titan-zero-trades-front-desk'); ?></h2>
 	<p class="tzfd-set-intro"><?php esc_html_e('How requests are confirmed, how spam is blocked, and what is stored about each customer.','titan-zero-trades-front-desk'); ?></p>
     <form  method="post" action="" name="tzfdformconf7">
-        <input name="nonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+        <input name="nonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
         <input name="TZFD_post_edition" type="hidden" value="1" />
         <input name="gotab" type="hidden" value="miscsettings" />
 	    <table class="form-table">
@@ -160,11 +160,11 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	    	</tbody>
 	    </table>
         <?php if ( current_user_can('tz_fd_access') ) :
-            $tz_intake_forms = array();
-            foreach ( TZFD_Booking_View::calendar_names() as $tz_intake_id => $tz_intake_name ) {
-                $tz_intake_forms[] = (object) array( 'id' => $tz_intake_id, 'form_name' => $tz_intake_name );
+            $tzfd_intake_forms = array();
+            foreach ( TZFD_Booking_View::calendar_names() as $tzfd_intake_id => $tzfd_intake_name ) {
+                $tzfd_intake_forms[] = (object) array( 'id' => $tzfd_intake_id, 'form_name' => $tzfd_intake_name );
             }
-            $tz_intake_default = TZFD_Intake_Mode::default_mode();
+            $tzfd_intake_default = TZFD_Intake_Mode::default_mode();
         ?>
         <h3 id="tzfd-intake"><?php esc_html_e('Booking intake','titan-zero-trades-front-desk'); ?></h3>
         <p class="description"><?php esc_html_e('Instant calendars confirm a booking straight away. Request calendars save each booking as Pending until you approve it; the time stays held while it waits. A calendar with no setting of its own follows the default.','titan-zero-trades-front-desk'); ?></p>
@@ -174,22 +174,22 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
                     <th scope="row"><label for="intake_default"><?php esc_html_e('Default for calendars','titan-zero-trades-front-desk'); ?></label></th>
                     <td>
                         <select id="intake_default" name="intake_default">
-                            <option value="instant" <?php selected( $tz_intake_default, TZFD_Intake_Mode::MODE_INSTANT ); ?>><?php esc_html_e('Instant confirmation','titan-zero-trades-front-desk'); ?></option>
-                            <option value="request" <?php selected( $tz_intake_default, TZFD_Intake_Mode::MODE_REQUEST ); ?>><?php esc_html_e('Request (approve first)','titan-zero-trades-front-desk'); ?></option>
+                            <option value="instant" <?php selected( $tzfd_intake_default, TZFD_Intake_Mode::MODE_INSTANT ); ?>><?php esc_html_e('Instant confirmation','titan-zero-trades-front-desk'); ?></option>
+                            <option value="request" <?php selected( $tzfd_intake_default, TZFD_Intake_Mode::MODE_REQUEST ); ?>><?php esc_html_e('Request (approve first)','titan-zero-trades-front-desk'); ?></option>
                         </select>
                     </td>
                 </tr>
-                <?php foreach ( (array) $tz_intake_forms as $tz_intake_form ) :
-                    $tz_intake_fid   = (int) $tz_intake_form->id;
-                    $tz_intake_label = '' !== (string) $tz_intake_form->form_name ? $tz_intake_form->form_name : sprintf( /* translators: %d: calendar ID. */ __( 'Calendar %d', 'titan-zero-trades-front-desk' ), $tz_intake_fid );
-                    $tz_intake_mode  = TZFD_Intake_Mode::get_for_form( $tz_intake_fid );
+                <?php foreach ( (array) $tzfd_intake_forms as $tzfd_intake_form ) :
+                    $tzfd_intake_fid   = (int) $tzfd_intake_form->id;
+                    $tzfd_intake_label = '' !== (string) $tzfd_intake_form->form_name ? $tzfd_intake_form->form_name : sprintf( /* translators: %d: calendar ID. */ __( 'Calendar %d', 'titan-zero-trades-front-desk' ), $tzfd_intake_fid );
+                    $tzfd_intake_mode  = TZFD_Intake_Mode::get_for_form( $tzfd_intake_fid );
                 ?>
                 <tr valign="top">
-                    <th scope="row"><label for="intake_form_<?php echo esc_attr( (string) $tz_intake_fid ); ?>"><?php echo esc_html( $tz_intake_label ); ?></label></th>
+                    <th scope="row"><label for="intake_form_<?php echo esc_attr( (string) $tzfd_intake_fid ); ?>"><?php echo esc_html( $tzfd_intake_label ); ?></label></th>
                     <td>
-                        <select id="intake_form_<?php echo esc_attr( (string) $tz_intake_fid ); ?>" name="intake_form[<?php echo esc_attr( (string) $tz_intake_fid ); ?>]">
-                            <option value="instant" <?php selected( $tz_intake_mode, TZFD_Intake_Mode::MODE_INSTANT ); ?>><?php esc_html_e('Instant confirmation','titan-zero-trades-front-desk'); ?></option>
-                            <option value="request" <?php selected( $tz_intake_mode, TZFD_Intake_Mode::MODE_REQUEST ); ?>><?php esc_html_e('Request (approve first)','titan-zero-trades-front-desk'); ?></option>
+                        <select id="intake_form_<?php echo esc_attr( (string) $tzfd_intake_fid ); ?>" name="intake_form[<?php echo esc_attr( (string) $tzfd_intake_fid ); ?>]">
+                            <option value="instant" <?php selected( $tzfd_intake_mode, TZFD_Intake_Mode::MODE_INSTANT ); ?>><?php esc_html_e('Instant confirmation','titan-zero-trades-front-desk'); ?></option>
+                            <option value="request" <?php selected( $tzfd_intake_mode, TZFD_Intake_Mode::MODE_REQUEST ); ?>><?php esc_html_e('Request (approve first)','titan-zero-trades-front-desk'); ?></option>
                         </select>
                     </td>
                 </tr>
@@ -204,7 +204,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 </div>
 
 <!-- Business hours -->
-<div class="tzfd-tab<?php echo $tz_active === 'hours' ? ' tab-active' : ''; ?>" data-tab="hours">
+<div class="tzfd-tab<?php echo $tzfd_active === 'hours' ? ' tab-active' : ''; ?>" data-tab="hours">
 	<h2><?php esc_html_e('Business hours','titan-zero-trades-front-desk'); ?></h2>
 	<p class="tzfd-set-intro"><?php esc_html_e('Opening hours are set for each calendar and each worker, so a booking follows the hours of the calendar or worker it is for. There are no site-wide hours yet.','titan-zero-trades-front-desk'); ?></p>
 	<div class="tzfd-set-card tzfd-set-links">
@@ -215,7 +215,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 </div>
 
 <!-- notifications -->
-<div class="tzfd-tab<?php echo $tz_active === 'notifications' ? ' tab-active' : ''; ?>" data-tab="notifications">
+<div class="tzfd-tab<?php echo $tzfd_active === 'notifications' ? ' tab-active' : ''; ?>" data-tab="notifications">
 <div class="tzfd-subpane">
 	<h2><?php esc_html_e('Automatic email reports','titan-zero-trades-front-desk'); ?></h2>
 	<p>
@@ -231,14 +231,14 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<form name="updatereportsettings" action="" method="post">
      <input name="TZFD_post_edition" type="hidden" value="1" />
      <input name="gotab" type="hidden" value="" />
-     <input name="nonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+     <input name="nonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
      <table class="form-table">
         <tr valign="top">
         <td scope="row" colspan="2"><strong><?php esc_html_e('Send reports automatically?','titan-zero-trades-front-desk'); ?></strong>
-          <?php $tz_option = get_option('tz_fd_rep_enable', 'no'); ?>
+          <?php $tzfd_option = get_option('tz_fd_rep_enable', 'no'); ?>
           <select name="tz_fd_rep_enable">
-           <option value="no"<?php if ($tz_option == 'no' || $tz_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
-           <option value="yes"<?php if ($tz_option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+           <option value="no"<?php if ($tzfd_option == 'no' || $tzfd_option == '') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+           <option value="yes"<?php if ($tzfd_option == 'yes') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
           </select>
           &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
           <strong><?php esc_html_e('Send a report every','titan-zero-trades-front-desk'); ?>:</strong> <input type="text" name="tz_fd_rep_days" size="1" value="<?php echo esc_attr(get_option('tz_fd_rep_days', '1')); ?>" /> <?php esc_html_e('days','titan-zero-trades-front-desk'); ?>
@@ -246,9 +246,9 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
           <strong><?php esc_html_e('Hour to send (server time)','titan-zero-trades-front-desk'); ?>:</strong>
           <select name="tz_fd_rep_hour">
            <?php
-             $tz_hour = get_option('tz_fd_rep_hour', '0');
-             for ($tz_k=0;$tz_k<24;$tz_k++)
-                 echo '<option value="'.intval($tz_k).'"'.($tz_hour==$tz_k?' selected':'').'>'.($tz_k<10?'0':'').intval($tz_k).'</option>';
+             $tzfd_hour = get_option('tz_fd_rep_hour', '0');
+             for ($tzfd_k=0;$tzfd_k<24;$tzfd_k++)
+                 echo '<option value="'.intval($tzfd_k).'"'.($tzfd_hour==$tzfd_k?' selected':'').'>'.($tzfd_k<10?'0':'').intval($tzfd_k).'</option>';
            ?>
           </select>
         </td>
@@ -267,10 +267,10 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
         <tr valign="top">
         <th scope="row"><?php esc_html_e('Message format','titan-zero-trades-front-desk'); ?></th>
         <td>
-          <?php $tz_option = get_option('tz_fd_rep_emailformat', 'text'); ?>
+          <?php $tzfd_option = get_option('tz_fd_rep_emailformat', 'text'); ?>
           <select name="tz_fd_rep_emailformat">
-           <option value="text"<?php if ($tz_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain text (default)','titan-zero-trades-front-desk'); ?></option>
-           <option value="html"<?php if ($tz_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (write HTML in the message box below)','titan-zero-trades-front-desk'); ?></option>
+           <option value="text"<?php if ($tzfd_option != 'html') echo ' selected'; ?>><?php esc_html_e('Plain text (default)','titan-zero-trades-front-desk'); ?></option>
+           <option value="html"<?php if ($tzfd_option == 'html') echo ' selected'; ?>><?php esc_html_e('HTML (write HTML in the message box below)','titan-zero-trades-front-desk'); ?></option>
           </select>
         </td>
         </tr>
@@ -297,7 +297,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 </div>
 
 <!-- integrations -->
-<div class="tzfd-tab<?php echo $tz_active === 'integrations' ? ' tab-active' : ''; ?>" data-tab="integrations">
+<div class="tzfd-tab<?php echo $tzfd_active === 'integrations' ? ' tab-active' : ''; ?>" data-tab="integrations">
 <div class="tzfd-subpane">
 
 </div>
@@ -305,20 +305,20 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<h2><?php esc_html_e('Add-on settings','titan-zero-trades-front-desk'); ?></h2>
 	<p class="tzfd-set-intro"><?php esc_html_e('Each add-on keeps its own settings. They open from the add-on on the Add-ons page.','titan-zero-trades-front-desk'); ?></p>
 	<?php
-	global $tz_addons_objs_list;
-	$tz_with_settings = array();
-	foreach ( (array) $tz_addons_objs_list as $tz_obj ) {
-		if ( is_object( $tz_obj ) && method_exists( $tz_obj, 'get_addon_settings' ) && method_exists( $tz_obj, 'addon_is_active' ) && $tz_obj->addon_is_active() ) {
-			$tz_with_settings[] = $tz_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_with_settings = array();
+	foreach ( (array) $tzfd_addons_objs_list as $tzfd_obj ) {
+		if ( is_object( $tzfd_obj ) && method_exists( $tzfd_obj, 'get_addon_settings' ) && method_exists( $tzfd_obj, 'addon_is_active' ) && $tzfd_obj->addon_is_active() ) {
+			$tzfd_with_settings[] = $tzfd_obj;
 		}
 	}
-	if ( empty( $tz_with_settings ) ) :
+	if ( empty( $tzfd_with_settings ) ) :
 		echo '<p>' . esc_html__( 'No add-on with settings is switched on.', 'titan-zero-trades-front-desk' ) . '</p>';
 	else : ?>
 	<table class="widefat striped">
 		<tbody>
-		<?php foreach ( $tz_with_settings as $tz_obj ) : ?>
-			<tr><td><?php echo esc_html( $tz_obj->get_addon_name() ); ?></td><td><?php esc_html_e( 'On', 'titan-zero-trades-front-desk' ); ?></td></tr>
+		<?php foreach ( $tzfd_with_settings as $tzfd_obj ) : ?>
+			<tr><td><?php echo esc_html( $tzfd_obj->get_addon_name() ); ?></td><td><?php esc_html_e( 'On', 'titan-zero-trades-front-desk' ); ?></td></tr>
 		<?php endforeach; ?>
 		</tbody>
 	</table>
@@ -328,13 +328,13 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 </div>
 
 <!-- Advanced -->
-<div class="tzfd-tab<?php echo $tz_active === 'advanced' ? ' tab-active' : ''; ?>" data-tab="advanced">
+<div class="tzfd-tab<?php echo $tzfd_active === 'advanced' ? ' tab-active' : ''; ?>" data-tab="advanced">
 <div class="tzfd-subpane">
 	<h2><?php esc_html_e('Troubleshooting','titan-zero-trades-front-desk'); ?></h2>
 	<p><b><?php esc_html_e('Important!','titan-zero-trades-front-desk'); ?>:</b> <?php esc_html_e('Use this area only if you are experiencing conflicts with third party plugins, with the theme scripts or with the character encoding.','titan-zero-trades-front-desk'); ?></p>
     <form  method="post" action="" name="tzfdformconf2">
         <input name="TZFD_post_edition" type="hidden" value="1" />
-        <input name="nonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+        <input name="nonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
         <input name="gotab" type="hidden" value="fixarea" />
 	    <table class="form-table">
             <tbody>
@@ -397,7 +397,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<h2><?php esc_html_e('CSV export','titan-zero-trades-front-desk'); ?></h2>
     <form  method="post" action="" name="tzfdformconf5">
         <input name="TZFD_post_edition" type="hidden" value="1" />
-        <input name="nonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+        <input name="nonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
         <input name="gotab" type="hidden" value="csvarea" />
 	    <table class="form-table">
             <tbody>
@@ -441,7 +441,7 @@ wp_localize_script( 'tzfd-settings-tabs', 'tzfdSettingsTabs', array( 'active' =>
 	<p><?php esc_html_e( 'For', 'titan-zero-trades-front-desk' ); ?> <strong><?php esc_html_e( 'help and more configuration options', 'titan-zero-trades-front-desk' ); ?></strong> <?php esc_html_e( 'check "Customizing the schedule calendar contents and colors".', 'titan-zero-trades-front-desk' ); ?>
 	
     <form  method="post" action="" name="tzfdformconf6">
-        <input name="nonce" type="hidden" value="<?php echo esc_attr($tz_nonce); ?>" />
+        <input name="nonce" type="hidden" value="<?php echo esc_attr($tzfd_nonce); ?>" />
         <input name="TZFD_post_edition" type="hidden" value="1" />
         <input name="gotab" type="hidden" value="schedulecalarea" />
 	    <table class="form-table">

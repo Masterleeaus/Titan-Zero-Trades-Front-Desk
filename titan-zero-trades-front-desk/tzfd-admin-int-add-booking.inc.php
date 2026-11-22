@@ -20,16 +20,16 @@ require_once __DIR__ . '/includes/class-tzfd-admin-report-scope.php';
 $tzfd_report_company = TZFD_Admin_Report_Scope::enforce( $this->item );
 
 $current_user = wp_get_current_user();
-$tz_current_user_access = current_user_can('tz_fd_access');
-$tz_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
+$tzfd_current_user_access = current_user_can('tz_fd_access');
+$tzfd_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
 
-if ( !is_admin() || (!$tz_current_user_access && !in_array($current_user->ID, $tz_calendar_access_ids, true)))
+if ( !is_admin() || (!$tzfd_current_user_access && !in_array($current_user->ID, $tzfd_calendar_access_ids, true)))
 {
     echo esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' );
     exit;
 }
 
-$tz_message = '';
+$tzfd_message = '';
 
 // A valid form nonce does not establish that a booking was saved. The booking
 // handler is responsible for reporting success after persistence succeeds.
@@ -204,38 +204,38 @@ TZFD_JS
 // Workspace may be installed later, but cannot replace local booking ownership.
 require_once __DIR__ . '/includes/class-tzfd-local-customers.php';
 require_once __DIR__ . '/includes/class-tzfd-admin-request-ids.php';
-$tz_customer_query_id = tzfd_request_text( 'get', 'tz_fd_customer_id' ); // Read-only preselection; never trusted for a write.
-$tz_selected_customer_id = '' !== $tz_customer_query_id ? TZFD_Admin_Request_Ids::positive( $tz_customer_query_id ) : 0;
-if ( null === $tz_selected_customer_id ) { $tz_selected_customer_id = 0; }
-$tz_selected_customer = null;
-$tz_booking_customers = array();
+$tzfd_customer_query_id = tzfd_request_text( 'get', 'tz_fd_customer_id' ); // Read-only preselection; never trusted for a write.
+$tzfd_selected_customer_id = '' !== $tzfd_customer_query_id ? TZFD_Admin_Request_Ids::positive( $tzfd_customer_query_id ) : 0;
+if ( null === $tzfd_selected_customer_id ) { $tzfd_selected_customer_id = 0; }
+$tzfd_selected_customer = null;
+$tzfd_booking_customers = array();
 if ( current_user_can( 'tz_fd_access' ) ) {
-    if ( $tz_selected_customer_id ) {
-        $tz_row = TZFD_Local_Customers::find( $tz_selected_customer_id );
-        $tz_selected_customer = is_array( $tz_row ) ? (object) $tz_row : null;
+    if ( $tzfd_selected_customer_id ) {
+        $tzfd_local_row = TZFD_Local_Customers::find( $tzfd_selected_customer_id );
+        $tzfd_selected_customer = is_array( $tzfd_local_row ) ? (object) $tzfd_local_row : null;
     }
-    $tz_rows = TZFD_Local_Customers::search( '', array( 'limit' => 200 ) );
-    $tz_booking_customers = is_array( $tz_rows ) ? array_map( static function ( $row ) { return (object) $row; }, $tz_rows ) : array();
+    $tzfd_local_rows = TZFD_Local_Customers::search( '', array( 'limit' => 200 ) );
+    $tzfd_booking_customers = is_array( $tzfd_local_rows ) ? array_map( static function ( $row ) { return (object) $row; }, $tzfd_local_rows ) : array();
 }
 // Render customer data once and switch contact fields in place, without reloading
 // or discarding a partially completed appointment.
-$tz_customer_options = array();
-foreach ( $tz_booking_customers as $tz_booking_customer ) {
-    $tz_customer_options[ (string) $tz_booking_customer->id ] = array(
-        'name'  => (string) $tz_booking_customer->name,
-        'email' => (string) $tz_booking_customer->email,
-        'phone' => (string) $tz_booking_customer->phone,
+$tzfd_customer_options = array();
+foreach ( $tzfd_booking_customers as $tzfd_booking_customer ) {
+    $tzfd_customer_options[ (string) $tzfd_booking_customer->id ] = array(
+        'name'  => (string) $tzfd_booking_customer->name,
+        'email' => (string) $tzfd_booking_customer->email,
+        'phone' => (string) $tzfd_booking_customer->phone,
     );
 }
-if ( $tz_selected_customer ) {
-    $tz_customer_options[ (string) $tz_selected_customer_id ] = array(
-        'name'  => (string) $tz_selected_customer->name,
-        'email' => (string) $tz_selected_customer->email,
-        'phone' => (string) $tz_selected_customer->phone,
+if ( $tzfd_selected_customer ) {
+    $tzfd_customer_options[ (string) $tzfd_selected_customer_id ] = array(
+        'name'  => (string) $tzfd_selected_customer->name,
+        'email' => (string) $tzfd_selected_customer->email,
+        'phone' => (string) $tzfd_selected_customer->phone,
     );
 }
 // Only admin users with customer access reach this screen.
-wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingCustomers=' . wp_json_encode( $tz_customer_options ) . ';', 'before' );
+wp_add_inline_script( 'tzfd-add-booking-inline', 'window.tzfdBookingCustomers=' . wp_json_encode( $tzfd_customer_options ) . ';', 'before' );
 // Report renderer failures explicitly rather than displaying an empty booking pane.
 wp_add_inline_script( 'tzfd-add-booking-inline', <<<'TZFD_RENDER_HEALTH_JS'
 (function () {
@@ -361,11 +361,11 @@ TZFD_CUSTOMER_JS
 <div class="tzfd-admin-booking-panel"><label for="tz_fd_booking_customer_select" style="color:#fff;font-weight:600;display:block;margin-bottom:8px"><?php esc_html_e( 'Existing customer (optional)', 'titan-zero-trades-front-desk' ); ?></label>
 <select id="tz_fd_booking_customer_select" style="max-width:100%;min-width:280px">
 <option value=""><?php esc_html_e( 'Enter a new customer below', 'titan-zero-trades-front-desk' ); ?></option>
-<?php foreach ( $tz_booking_customers as $tz_booking_customer ) : ?>
-<option value="<?php echo esc_attr( $tz_booking_customer->id ); ?>" <?php selected( $tz_selected_customer_id, (int) $tz_booking_customer->id ); ?>><?php echo esc_html( $tz_booking_customer->name . ( $tz_booking_customer->email ? ' — ' . $tz_booking_customer->email : '' ) ); ?></option>
+<?php foreach ( $tzfd_booking_customers as $tzfd_booking_customer ) : ?>
+<option value="<?php echo esc_attr( $tzfd_booking_customer->id ); ?>" <?php selected( $tzfd_selected_customer_id, (int) $tzfd_booking_customer->id ); ?>><?php echo esc_html( $tzfd_booking_customer->name . ( $tzfd_booking_customer->email ? ' — ' . $tzfd_booking_customer->email : '' ) ); ?></option>
 <?php endforeach; ?>
-<?php if ( $tz_selected_customer && ! array_filter( $tz_booking_customers, static function( $c ) use ( $tz_selected_customer_id ) { return (int) $c->id === $tz_selected_customer_id; } ) ) : ?>
-<option value="<?php echo esc_attr( $tz_selected_customer_id ); ?>" selected><?php echo esc_html( $tz_selected_customer->name ); ?></option>
+<?php if ( $tzfd_selected_customer && ! array_filter( $tzfd_booking_customers, static function( $c ) use ( $tzfd_selected_customer_id ) { return (int) $c->id === $tzfd_selected_customer_id; } ) ) : ?>
+<option value="<?php echo esc_attr( $tzfd_selected_customer_id ); ?>" selected><?php echo esc_html( $tzfd_selected_customer->name ); ?></option>
 <?php endif; ?>
 </select><p style="margin-top:8px;color:#fff"><?php esc_html_e( 'Selecting a customer fills available contact fields without resetting the booking. Manually edited fields are preserved.', 'titan-zero-trades-front-desk' ); ?></p></div>
 <?php endif; ?>

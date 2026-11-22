@@ -1,6 +1,6 @@
 # Central company pairing (issue #376)
 
-Status: local side implemented and tested (`includes/class-tzfd-central-tenant.php`). The Central #186 contract could not be read from this session, so the pairing wire format is provisional. Hosted pairing is not live.
+Status: local side implemented and tested (`includes/class-tzfd-central-tenant.php`). The owner accepted the wire format `central-pairing/1` as the contract on #451 (decision recorded there). The Central #186 text could not be read from this session, so it is not independently confirmed against Central. Hosted pairing is not live; the endpoint URL is not recorded.
 
 ## 1. Where the local integer `company_id` is used
 
@@ -67,6 +67,22 @@ Disconnecting removes the pairing and credential only. Bookings, customers, sett
 
 ## 6. Open items
 
-- Confirm the Central #186 contract: contract id, field names and signature keys. The current `central-pairing/1` is provisional.
-- Confirm the pairing endpoint URL (owner input, tracked on the open remaining-work issue).
-- Live end-to-end pairing against the hosted service is not run. It needs the hosted service.
+- Central #186 text: not read from this session. The contract id and field names are accepted as `central-pairing/1` by the owner decision on #451. Confirming them against Central #186 needs owner or Central sign-off.
+- Pairing endpoint URL: not recorded. Needs owner sign-off (tracked on #456 and #347).
+- Admin connect screen (enter the pairing code): not built. `TZFD_Central_Tenant::connect()` has no caller yet (tracked on #452).
+- Live end-to-end pairing against the hosted service: not run. It needs the endpoint URL and the hosted side.
+
+## 7. Task breakdown for #451
+
+Each task is independently verifiable. "Done" means evidence on main.
+
+| # | Task | Status | Evidence |
+| --- | --- | --- | --- |
+| 1 | Accept `central-pairing/1` and the seven assertion fields as the plugin contract | Done (owner decision on #451) | This document; `class-tzfd-central-tenant.php` `CONTRACT` and `assertion_fields()` |
+| 2 | Verify assertion signature, timestamp, nonce, site, company UUID, lifetime and replay | Done | `tests/central-tenant/run-central-tenant-tests.php`, run by `.github/workflows/tests.yml` (step "Central company pairing tests") |
+| 3 | Refuse hosted calls on unpaired, expired, mismatched or unsupported pairings, with no budget charge | Done | `class-tzfd-ai-connector.php` (`TZFD_Central_Tenant::resolve()` before transport); `tests/ai-connector/run-ai-connector-tests.php` (`not_configured`, no transport call) |
+| 4 | Keep the local integer `company_id` out of the hosted call and out of company UUID checks | Done | `is_company_uuid()` rejects integers; test "local integer 1 is not a company UUID" in the central tenant runner |
+| 5 | Admin screen to enter a pairing code | Open (#452) | No caller of `connect()` in the admin UI |
+| 6 | Confirm the Central #186 contract text | Open, owner or Central sign-off | Not readable from this session |
+| 7 | Record the hosted pairing endpoint URL | Open, owner sign-off (#456, #347) | No URL in code or docs |
+| 8 | Live pairing end to end against the hosted service | Open, blocked by 6 and 7 | Not run |

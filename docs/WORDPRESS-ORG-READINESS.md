@@ -1,6 +1,6 @@
 # WordPress.org readiness checklist (issues #3, #9, #44)
 
-Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.0.128).
+Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.1.0).
 Recorded 2026-11-16 on branch `packaging-provenance-wporg`. Plugin Check style review (section 6) recorded 2026-11-17 on branch `readiness/plugincheck`.
 
 This checklist records what was checked, what was not, and why. **It does not claim WordPress.org review or approval.** No submission has been made. Status values: **Done** (checked here with evidence), **Partial**, **Not run** (needs a WordPress environment or a human), **Open** (known gap).
@@ -12,7 +12,7 @@ This checklist records what was checked, what was not, and why. **It does not cl
 | Plugin header Name is the official display name | Done | `titan-zero-front-desk.php` line 3: "Scheduling & Enquiries Manager" |
 | Text Domain is `titan-zero-trades-front-desk` and matches the folder | Done | Header line 11 |
 | Requires at least 6.6, Requires PHP 7.4, License GPL-2.0-only | Done | Header lines 6, 7 and 9 |
-| Stable tag equals plugin Version | Done | Both 3.0.128 (readme "Stable tag", header "Version") |
+| Stable tag equals plugin Version | Done | Both 3.1.0 (readme "Stable tag", header "Version") |
 | readme.txt title matches the display name | Done | `readme.txt` line 1 |
 | Contributors, Tags (5 or fewer), Tested up to | Done | `readme.txt` header lines |
 | Standard readme sections (Description, Installation, FAQ, Changelog, Upgrade Notice, License) | Done | Present in readme.txt |

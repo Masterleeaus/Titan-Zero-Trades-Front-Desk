@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-only.
 msgid ""
 msgstr ""
-"Project-Id-Version: Scheduling & Enquiries Manager 3.0.128\n"
+"Project-Id-Version: Scheduling & Enquiries Manager 3.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/titan-zero-trades-front-desk\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

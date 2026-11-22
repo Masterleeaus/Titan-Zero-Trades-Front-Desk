@@ -74,5 +74,5 @@ function tzfd_test_calendar_colours() {
 	/* The hint is printed above both scrolling grids, with its text. */
 	$hint = $V::scroll_hint();
 	tzfd_assert( false !== strpos( $hint, 'class="tzfd-cal-hint"' ) && false !== strpos( $hint, 'Swipe sideways to see every day.' ), 'scroll hint markup and text' );
-	tzfd_assert_same( 2, substr_count( $src, 'echo self::scroll_hint();' ), 'week and month grids both print the scroll hint' );
+	tzfd_assert_same( 2, substr_count( $src, 'echo wp_kses_post( self::scroll_hint() );' ), 'week and month grids both print the scroll hint' );
 }

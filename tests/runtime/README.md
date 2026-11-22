@@ -33,17 +33,26 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
-## Last recorded results (2026-11-16, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11, WP-CLI 2.12.0)
+## Last recorded results (2026-11-23, PHP 8.3.6, WordPress 7.1.5, MariaDB 10.11.14, WP-CLI 2.12.0)
 
-- Single site: 85 passed, 0 failed, 2 gaps, 10 skipped.
-- Multisite: 86 passed, 0 failed, 2 gaps, 8 skipped.
+Only PHP 8.3 is installed on the machine that produced these results. The PHP 7.4, 8.1, 8.2 and 8.4 matrix and other
+WordPress versions have not been run.
+
+- Single site (`PORT=8149`): 372 passed, 0 failed, 0 gaps, 9 skipped.
+- Multisite (`PORT=8149 --multisite`): 373 passed, 0 failed, 0 gaps, 7 skipped.
 - Upgrade from the real v3.0.128 release ZIP (`titan-zero-trades-front-desk-3.0.128-r16.zip`, read from `22dc106^`) to this
   checkout and back: 31 passed, 0 failed, 0 gap(s). Run with `SAME_VERSION_OK=1`, because both sides report 3.0.128, so the
   check asserts which source folder is loaded rather than the version string. Bookings, AI settings and saved chat rows
   survived both directions.
-- Multisite (same date): 346 passed, 1 failed (`ai-answer-box: page_id sent as a hidden field`), 7 skipped. The failure
-  is in the AI answer box form and reproduces on main; it is tracked as open work on #252, not fixed here.
-- Clean install of the built free ZIP (`scripts/build-package.sh`, 782 files): active at 3.0.128 with 15 `tz_` tables.
+- Earlier counts from 2026-11-16 (single site 85 passed with 2 gaps; multisite 346 passed with 1 failure in the AI answer
+  box form, tracked on #252) are superseded by the run above, which includes suites added since then.
+- Clean install of the built free ZIP (`scripts/build-package.sh`, 782 files, recorded 2026-11-16, not re-run today): active
+  at 3.0.128 with 15 `tz_` tables.
+
+Run on a shared machine: use a unique `PORT` and a unique `TZFD_RT_DB_USER` for each run. The provisioning script
+resets the password of the MySQL account it uses, so runs that share one account can fail at random steps with
+"Error establishing a database connection" or "Access denied". `run-wp-runtime.sh` now passes its `PORT` URL to the
+provisioning step; before this, a non-default `PORT` installed the site at port 8080 and logins redirected there.
 
 ## Gaps observed (reported, not fixed here)
 

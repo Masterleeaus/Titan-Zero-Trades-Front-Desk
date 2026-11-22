@@ -37,6 +37,33 @@ function tzfd_test_setup_checklist() {
 	tzfd_assert( $now === $later['services'] && $now + 500 === $later['hours'], 'an earlier completion time is kept; new steps get their own time' );
 	tzfd_assert_same( $first, $C::record( false, $first, $all['steps'], $now + 900 ), 'turning consent off freezes the existing record' );
 	tzfd_assert_same( array( 'services' => $now ), $C::record( true, array( 'services' => $now ), array( 'services' => array( 'done' => true ), 'unknown' => array( 'done' => true ) ), $now + 1 ), 'steps not in the catalogue are never recorded' );
+
+	// Setup measures (issue #367): consent-gated, per site, derived only from the stored record.
+	$off = $C::metrics( array( 'services' => $now ), false );
+	tzfd_assert( false === $off['measured'] && null === $off['completion_percent'] && null === $off['converted'], 'without consent no setup measure is reported' );
+	tzfd_assert_same( array(), array_diff( array( 'steps_done', 'completion_percent', 'first_booking_at', 'seconds_to_first_booking', 'converted' ), array_keys( $off ) ), 'the unmeasured shape keeps every key' );
+
+	$none_m = $C::metrics( array(), true );
+	tzfd_assert( true === $none_m['measured'] && 0 === $none_m['steps_done'] && 0 === $none_m['completion_percent'], 'consent with no record measures zero completion' );
+	tzfd_assert( false === $none_m['complete'] && null === $none_m['first_booking_at'] && false === $none_m['converted'], 'no booking and no completion is not converted' );
+
+	$partial = $C::metrics( array( 'services' => $now, 'calendar' => $now + 10, 'hours' => $now + 20 ), true );
+	tzfd_assert( 3 === $partial['steps_done'] && 43 === $partial['completion_percent'], 'three of seven steps is 43 percent' );
+	tzfd_assert( null === $partial['seconds_to_first_booking'] && false === $partial['converted'], 'no booking seen means no time to first booking' );
+
+	$booked = $C::metrics( array( 'services' => $now, 'calendar' => $now + 10, 'hours' => $now + 20, 'test_booking' => $now + 300 ), true );
+	tzfd_assert( 300 === $booked['seconds_to_first_booking'] && $now + 300 === $booked['first_booking_at'], 'time to first booking runs from the earliest recorded step' );
+	tzfd_assert( false === $booked['converted'], 'a booking before setup is complete does not count as converted' );
+
+	$full = array_fill_keys( array_keys( $C::steps() ), $now );
+	$full['test_booking'] = $now + 60;
+	$conv = $C::metrics( $full, true );
+	tzfd_assert( true === $conv['complete'] && 100 === $conv['completion_percent'] && true === $conv['converted'], 'complete setup with a booking is converted' );
+	tzfd_assert( 60 === $conv['seconds_to_first_booking'], 'full record gives the time to first booking' );
+
+	$skew = $C::metrics( array( 'services' => $now, 'test_booking' => $now - 5 ), true );
+	tzfd_assert( 0 === $skew['seconds_to_first_booking'], 'a booking stamped before the first step is clamped to zero, never negative' );
+	tzfd_assert_same( 1, $C::metrics( array( 'services' => $now, 'bogus' => $now ), true )['steps_done'], 'keys outside the catalogue are not counted as steps' );
 }
 
 // Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).

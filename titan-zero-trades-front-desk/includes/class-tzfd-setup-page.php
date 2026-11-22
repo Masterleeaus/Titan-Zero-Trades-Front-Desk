@@ -20,6 +20,7 @@ final class TZFD_Setup_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 15 );
 		add_action( 'admin_post_tzfd_setup_manual', array( __CLASS__, 'handle_manual' ) );
 		add_action( 'admin_post_tzfd_setup_consent', array( __CLASS__, 'handle_consent' ) );
+		add_action( 'admin_post_tzfd_setup_discovery', array( __CLASS__, 'handle_discovery' ) );
 	}
 
 	public static function menu() {
@@ -65,6 +66,19 @@ final class TZFD_Setup_Page {
 		if ( 'clear' === $action ) {
 			delete_option( TZFD_Setup_Checklist::PROGRESS_OPTION );
 			self::back( 'progress_cleared' );
+		}
+		self::back( 'bad_request' );
+	}
+	public static function handle_discovery() {
+		self::guard( 'tzfd_setup_discovery' );
+		$action = isset( $_POST['discovery'] ) ? sanitize_key( wp_unslash( $_POST['discovery'] ) ) : '';
+		if ( 'on' === $action ) {
+			update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
+			self::back( 'discovery_on' );
+		}
+		if ( 'off' === $action ) {
+			update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
+			self::back( 'discovery_off' );
 		}
 		self::back( 'bad_request' );
 	}
@@ -121,7 +135,17 @@ final class TZFD_Setup_Page {
 			echo '<button class="button" type="submit">' . esc_html__( 'Clear the records', 'titan-zero-trades-front-desk' ) . '</button></form>';
 		}
 
+		$discovery = TZFD_Setup_Checklist::discovery_visible( get_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false ) );
 		echo '<h2>' . esc_html__( 'Optional hosted services', 'titan-zero-trades-front-desk' ) . '</h2>';
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '" style="margin-bottom:12px">';
+		wp_nonce_field( 'tzfd_setup_discovery', '_wpnonce' );
+		echo '<input type="hidden" name="action" value="tzfd_setup_discovery"><input type="hidden" name="discovery" value="' . esc_attr( $discovery ? 'off' : 'on' ) . '">';
+		echo '<button class="button" type="submit">' . esc_html( $discovery ? __( 'Hide optional hosted services', 'titan-zero-trades-front-desk' ) : __( 'Show optional hosted services', 'titan-zero-trades-front-desk' ) ) . '</button></form>';
+		if ( ! $discovery ) {
+			echo '<p class="description">' . esc_html__( 'Hidden until you choose to show them. The plugin does not need them to take bookings.', 'titan-zero-trades-front-desk' ) . '</p>';
+			echo '</div>';
+			return;
+		}
 		echo '<p>' . esc_html__( 'Booking, the calendar, customer records, reports, exports and staff access all work with this plugin alone. Nothing here is needed to take bookings.', 'titan-zero-trades-front-desk' ) . '</p>';
 		echo '<ul>';
 		echo '<li><strong>' . esc_html__( 'Titan Zero AI Assistant (hosted, paid).', 'titan-zero-trades-front-desk' ) . '</strong> '

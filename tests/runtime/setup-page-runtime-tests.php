@@ -35,6 +35,7 @@ wp_set_current_user( 1 );
 delete_option( TZFD_Setup_Checklist::CONSENT_OPTION );
 delete_option( TZFD_Setup_Checklist::PROGRESS_OPTION );
 delete_option( TZFD_Setup_Checklist::MANUAL_OPTION );
+delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
 
 $sp_render = function () {
 	ob_start();
@@ -66,6 +67,16 @@ update_option( TZFD_Setup_Checklist::CONSENT_OPTION, false, false );
 $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: turning records off keeps the stored record', $sp_first === ( get_option( TZFD_Setup_Checklist::PROGRESS_OPTION, array() )['hours'] ?? -1 ) );
 
+// 3b. Optional hosted services: hidden by default (no description text, only the show button), shown after opt-in.
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: hosted-service descriptions are hidden by default', false === strpos( $sp_html, 'Titan Zero AI Assistant (hosted, paid).' ) && false !== strpos( $sp_html, 'Show optional hosted services' ) );
+update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: hosted-service descriptions show after opt-in', false !== strpos( $sp_html, 'Titan Zero AI Assistant (hosted, paid).' ) && false !== strpos( $sp_html, 'Titan Zero AI Agent Team (hosted, paid).' ) && false !== strpos( $sp_html, 'Hide optional hosted services' ) );
+update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: hosted-service descriptions hide again on opt-out', false === strpos( $sp_html, 'Titan Zero AI Agent Team (hosted, paid).' ) );
+
 // 4. No admin notice is registered anywhere by this screen.
 tzfd_sp_ok( 'setup-page: no admin notice is added', false === has_action( 'admin_notices' ) || ! in_array( 'TZFD_Setup_Page', array_map( function ( $cb ) { return is_array( $cb['function'] ?? null ) ? $cb['function'][0] : ''; }, array() ), true ) );
 
@@ -83,6 +94,7 @@ if ( ! empty( $sp_sub ) ) {
 delete_option( TZFD_Setup_Checklist::CONSENT_OPTION );
 delete_option( TZFD_Setup_Checklist::PROGRESS_OPTION );
 delete_option( TZFD_Setup_Checklist::MANUAL_OPTION );
+delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
 
 echo 'Summary (setup-page-runtime): ' . (int) $GLOBALS['tzfd_sp']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_sp']['FAIL'] . " failed\n";
 exit( (int) $GLOBALS['tzfd_sp']['FAIL'] > 0 ? 1 : 0 );

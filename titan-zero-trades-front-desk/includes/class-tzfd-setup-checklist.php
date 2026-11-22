@@ -19,6 +19,7 @@ final class TZFD_Setup_Checklist {
 	const CONSENT_OPTION  = 'tzfd_setup_progress_consent';
 	const PROGRESS_OPTION = 'tzfd_setup_progress';
 	const MANUAL_OPTION   = 'tzfd_setup_manual';
+	const DISCOVERY_OPTION = 'tzfd_setup_discovery_optin';
 
 	/** Step key => label, how it is known, and what it means. Order is the order on screen. */
 	public static function steps() {
@@ -50,6 +51,17 @@ final class TZFD_Setup_Checklist {
 		}
 		$total = count( $out );
 		return array( 'steps' => $out, 'done_count' => $done, 'total' => $total, 'complete' => $done === $total );
+	}
+
+	/**
+	 * Optional hosted-service information is shown only after the administrator opts in. Anything other than
+	 * a stored true (missing, false, or any other value) keeps it hidden.
+	 *
+	 * @param mixed $optin Stored opt-in value.
+	 * @return bool
+	 */
+	public static function discovery_visible( $optin ) {
+		return true === $optin;
 	}
 
 	/**

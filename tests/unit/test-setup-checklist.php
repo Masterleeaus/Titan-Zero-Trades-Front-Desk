@@ -37,6 +37,11 @@ function tzfd_test_setup_checklist() {
 	tzfd_assert( $now === $later['services'] && $now + 500 === $later['hours'], 'an earlier completion time is kept; new steps get their own time' );
 	tzfd_assert_same( $first, $C::record( false, $first, $all['steps'], $now + 900 ), 'turning consent off freezes the existing record' );
 	tzfd_assert_same( array( 'services' => $now ), $C::record( true, array( 'services' => $now ), array( 'services' => array( 'done' => true ), 'unknown' => array( 'done' => true ) ), $now + 1 ), 'steps not in the catalogue are never recorded' );
+
+	// Optional hosted-service information: hidden unless the administrator opts in (issue #366).
+	tzfd_assert( false === $C::discovery_visible( null ) && false === $C::discovery_visible( false ), 'discovery is hidden when never opted in or opted out' );
+	tzfd_assert( false === $C::discovery_visible( 'yes' ) && false === $C::discovery_visible( 1 ), 'only a stored true shows discovery; other values stay hidden' );
+	tzfd_assert( true === $C::discovery_visible( true ), 'discovery is shown after an explicit opt-in' );
 }
 
 // Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).

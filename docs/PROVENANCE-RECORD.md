@@ -87,6 +87,20 @@ Status: steps 1 to 4 are not done. Only the base and ours sides exist in this la
 - `php -l` on every plugin PHP file: no errors. `php tests/unit/run.php`: 213 passed, 0 failed; free AI cases 139 passed, 0 failed.
 - Woo/payment hooks: still not present in the tree (no check possible).
 
+## Static check for generated executable code (2026-11-23, issue #341)
+
+Run on the plugin tree at e352141 (main, after PR #373). No baseline archive was needed for this check.
+
+- `php -l` on all 287 PHP files in the plugin folder: no syntax errors.
+- Dynamic-code calls (`eval`, `create_function`, `assert`, `gzinflate`, `gzuncompress`, `str_rot13`, `shell_exec`, `passthru`, `popen`, `proc_open`, `exec`, `system`, `preg_replace` with the `/e` modifier): none in PHP.
+- `base64_decode` appears in two places, both used on stored or signed data and not on code: `includes/class-tzfd-booking-validation-recovery.php` (token payload) and `includes/class-tzfd-addon-support.php` (stored secret, with prefix).
+- Variable variables: `addons/bookings/dashboard-box.addon.php` (`$$parameter`) loops over a fixed allow-list of shortcode attribute names only.
+- `extract()` is used on `shortcode_atts()` output (fixed keys) and on local template variables in `ui-pack/ui/tz-app-core.php`.
+- JS: no `eval`, `new Function` or `document.write` calls in shipped code. The three hits in `js/inline/` are comments.
+- Long lines and escape-heavy literals in PHP are HTML templates, a timezone list and a default form-structure JSON string. No long base64 or hex blobs were found in PHP or non-minified JS.
+
+Result: no generated or obfuscated executable code was found by these checks. This does not replace the comparison against the v3.0.128 ZIP or the Pass 03 candidate, which are still missing.
+
 ## Gaps (explicit)
 
 - No v3.0.128 ZIP and no Pass 03 candidate were available. The three-way merge has not been run (steps 1 to 3 above need those ZIPs).

@@ -72,11 +72,6 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
   closed: the CREATE statement has no `DEFAULT ''`. Re-checked 2026-11-23 on MariaDB 10.11.14: the slot-holds suite
   passes 5/5 (second run issues no ALTER) and the logs show no `Invalid default` line.
 
-## Results re-run on 2026-11-23 (issue #370, PHP 8.3.6, MariaDB 10.11.14, after merging main at 9643203)
-
-- Single site: 377 passed, 0 failed, 0 gaps, 9 skipped.
-- Multisite: 378 passed, 0 failed, 0 gaps, 7 skipped. The `ai-answer-box: page_id sent as a hidden field` check passes.
-
 ## Skipped, and why
 
 - Oversell through the public form (A18), and customer cancel and reschedule end to end (B13): the full submission

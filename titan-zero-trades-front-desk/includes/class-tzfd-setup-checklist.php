@@ -73,6 +73,42 @@ final class TZFD_Setup_Checklist {
 	}
 
 	/**
+	 * Measures from the stored progress record, for this site only. Nothing is measured without consent, so a
+	 * site that has not turned progress records on gets measured => false and no figures.
+	 *
+	 * completion_percent: recorded steps as a whole percentage of the catalogue.
+	 * first_booking_at:   unix time the test_booking step was first seen done, or null.
+	 * seconds_to_first_booking: from the earliest recorded step to the first booking, never negative; null if unknown.
+	 * converted:          setup is complete and a booking has been seen, i.e. the site reached its first booked job.
+	 *
+	 * @param array $record  step => unix time of first completion (see record()).
+	 * @param bool  $consent Administrator turned progress recording on.
+	 * @return array
+	 */
+	public static function metrics( $record, $consent ) {
+		if ( true !== $consent ) {
+			return array( 'measured' => false, 'steps_done' => null, 'total' => count( self::steps() ), 'completion_percent' => null, 'complete' => null, 'first_booking_at' => null, 'seconds_to_first_booking' => null, 'converted' => null );
+		}
+		$record  = is_array( $record ) ? $record : array();
+		$known   = array_intersect_key( $record, self::steps() );
+		$total   = count( self::steps() );
+		$done    = count( $known );
+		$first   = $done > 0 ? (int) min( $known ) : null;
+		$booking = isset( $known['test_booking'] ) ? (int) $known['test_booking'] : null;
+		$complete = $done === $total;
+		return array(
+			'measured'                  => true,
+			'steps_done'                => $done,
+			'total'                     => $total,
+			'completion_percent'        => (int) round( 100 * $done / $total ),
+			'complete'                  => $complete,
+			'first_booking_at'          => $booking,
+			'seconds_to_first_booking'  => ( null !== $booking && null !== $first ) ? max( 0, $booking - $first ) : null,
+			'converted'                 => $complete && null !== $booking,
+		);
+	}
+
+	/**
 	 * Current company facts for detected steps. Reads only counts, never names, emails or other customer fields.
 	 * Each read is guarded so that a missing table or company returns false for that step, not an error.
 	 *

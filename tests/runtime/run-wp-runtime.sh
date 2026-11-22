@@ -63,6 +63,24 @@ echo "PASS provision -- WordPress $(grep -m1 -o "wp_version = '[^']*'" "$WP_ROOT
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$l = array("tzfd-MissedCall","tzfd-Onboarding","tzfd-DashboardWidget"); TZFD_Scoped_Store::update("tz_fd_addons_active_list", $l); update_option("tz_fd_addons_active_list", $l); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not enable the missed-call add-on"
 $WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_bytes(32)); TZFD_Addon_Support::save_global_settings("missed_call", TZFD_MissedCall::defaults(), array("inbound_secret" => $s)); echo "ok\n";' >/dev/null 2>&1 || echo "FAIL addon setup -- could not store the missed-call secret"
 
+# Contract v1 REST route (#349): a test-only mu-plugin holds the company 7 credentials and a booking.list executor.
+# Nothing here reaches the hosted service. The file lives only in the disposable site.
+CONTRACT_KEY="$(openssl rand -hex 32)"
+mkdir -p "$WP_ROOT/wp-content/mu-plugins"
+cat > "$WP_ROOT/wp-content/mu-plugins/tzfd-test-contract.php" <<PHPEOF
+<?php
+/* TEST ONLY: written by tests/runtime/run-wp-runtime.sh into the disposable site. Never shipped. */
+add_filter( 'tzfd_contract_credentials_v1', function ( \$creds, \$tenant_id ) {
+    if ( 7 !== (int) \$tenant_id ) { return \$creds; }
+    return array( 'secret' => '$CONTRACT_KEY', 'actor' => array( 'type' => 'owner', 'tenant_id' => 7, 'caps' => array( 'tz_fd_access' ) ) );
+}, 10, 2 );
+add_filter( 'tzfd_contract_executor_v1', function ( \$result, \$op, \$tenant_id, \$payload ) {
+    if ( 'booking.list' !== \$op ) { return \$result; }
+    return array( 'stub' => true, 'op' => \$op, 'tenant_id' => \$tenant_id, 'items' => array() );
+}, 10, 4 );
+PHPEOF
+export TZFD_RT_CONTRACT_KEY="$CONTRACT_KEY"
+
 # Several workers so the concurrent replay check can race (PHP's default single worker serialises requests).
 PHP_CLI_SERVER_WORKERS=8 php -S "127.0.0.1:$PORT" -t "$WP_ROOT" >"$WORK/server.log" 2>&1 &
 SERVER_PID=$!
@@ -82,6 +100,11 @@ echo "--- http-auth-tests"
 SECRET="${TZFD_RT_INBOUND_SECRET:-}" TZFD_RT_URL="$URL" "$HERE/http-auth-tests.sh" 2>&1 | tee -a "$LOG"
 HTTP_RC=${PIPESTATUS[0]}
 [ "$HTTP_RC" -eq 0 ] || echo "FAIL http-auth-tests -- exit status $HTTP_RC (aborted or failed; see above)" | tee -a "$LOG"
+
+echo "--- contract v1 REST route (contract-rest-tests.sh, #349)"
+TZFD_RT_URL="$URL" "$HERE/contract-rest-tests.sh" 2>&1 | tee -a "$LOG"
+CONTRACT_RC=${PIPESTATUS[0]}
+[ "$CONTRACT_RC" -eq 0 ] || echo "FAIL contract-rest-tests -- exit status $CONTRACT_RC" | tee -a "$LOG"
 
 echo "--- concurrent replay of a signed missed-call (replay-concurrency-test.sh, issue #52)"
 if [ -n "${TZFD_RT_INBOUND_SECRET:-}" ]; then

@@ -80,6 +80,14 @@ if ( ! empty( $sp_sub ) ) {
 }
 
 // 6. Discovery links (#366): off by default, and no link is shown without opt-in.
+// Earlier suites on this disposable site create services and forms for the same company. The check below is about a
+// site with no service and no calendar, so clear them for this company first (services are archived, forms deleted).
+global $wpdb;
+$sp_company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+if ( $sp_company > 0 ) {
+	$wpdb->query( $wpdb->prepare( 'UPDATE %i SET archived = 1 WHERE company_id = %d', $wpdb->prefix . 'tzfd_local_services', $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id = %d', $wpdb->prefix . TZFD_Tables::FORMS, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+}
 delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
 $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: discovery links are off by default', false !== strpos( $sp_html, 'Links to optional services are off.' ) && false === strpos( $sp_html, 'admin.php?page=tzfd-ai-services' ) );

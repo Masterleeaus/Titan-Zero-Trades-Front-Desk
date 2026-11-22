@@ -43,7 +43,7 @@ final class TZFD_AI_Services {
 
     /**
      * Capability descriptors (levels, what each includes, remote services, disclosure text).
-     * Prices are intentionally null: they come from the verified Titan account, never from this file.
+     * Prices are the owner-approved Standard band (A$ per month, incl. GST): Assistant 29, Agent Team 99. Free stays null.
      *
      * @return array<string,mixed>
      */

@@ -36,6 +36,7 @@ final class TZFD_AI_Connector {
     const SIGNATURE_WINDOW = 300;    // seconds either side of the server clock
     const MAX_REQUEST_BYTES  = 16384;
     const MAX_RESPONSE_BYTES = 65536;
+    const MAX_CONTENT_CHARS  = 2000;  // owner decision #330: longest text value sent to the hosted service
     const MIN_SECRET       = 32;     // characters
     const TIMEOUT          = 8;      // seconds
     const EVENT_OPTION     = 'tzfd_ai_events';  // redacted event log, newest last
@@ -64,9 +65,28 @@ final class TZFD_AI_Connector {
         );
     }
 
-    /** Standing monthly budgets per site (contract figures). The hosted service stays authoritative. */
+    /**
+     * Named monthly budget sets per site (issue #331). 'contract' is live by default (the standing contract
+     * figures). 'pilot' holds the provisional #284 pilot figures and is selected only through the
+     * tzfd_ai_connector_budget_profile filter. The pilot faq_batch (weekly) is approximated as 4 per month.
+     * Per-visitor turn limits from #284 (2 fallback turns, 3 missed-call reply turns) have no counter in code yet.
+     */
+    public static function budget_profiles() {
+        return array(
+            'contract' => array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 ),
+            'pilot'    => array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ),
+        );
+    }
+
+    /** Standing monthly budgets per site. The live set is 'contract' unless the profile filter selects another. */
     public static function budget_limits() {
-        $limits = array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 );
+        $profiles = self::budget_profiles();
+        $profile  = 'contract';
+        if ( function_exists( 'apply_filters' ) ) {
+            $picked = apply_filters( 'tzfd_ai_connector_budget_profile', $profile );
+            if ( is_string( $picked ) && isset( $profiles[ $picked ] ) ) { $profile = $picked; }
+        }
+        $limits = $profiles[ $profile ];
         if ( function_exists( 'apply_filters' ) ) {
             $limits = apply_filters( 'tzfd_ai_connector_budget_limits', $limits );
         }
@@ -94,6 +114,7 @@ final class TZFD_AI_Connector {
         $def = is_string( $feature ) && isset( self::features()[ $feature ] ) ? self::features()[ $feature ] : null;
         if ( null === $def ) { return self::result( 'feature_not_allowed' ); }
         if ( ! is_array( $payload ) ) { return self::result( 'invalid_request' ); }
+        if ( ! self::text_within_limit( $payload ) ) { return self::result( 'invalid_request' ); }
 
         $cfg = self::config();
         if ( ! $cfg['enabled'] ) { return self::result( 'ai_disabled' ); }
@@ -139,7 +160,12 @@ final class TZFD_AI_Connector {
         );
 
         $started = microtime( true );
-        $raw     = self::transport( $request );
+        try {
+            $raw = self::transport( $request );
+        } catch ( Throwable $e ) {
+            // A failing transport must never break the local booking flow: treat it as an outage.
+            $raw = array( 'error' => 'offline' );
+        }
         $latency = (int) round( ( microtime( true ) - $started ) * 1000 );
         $outcome = self::interpret( $raw, $cfg, $secret, $nonce );
 
@@ -280,23 +306,35 @@ final class TZFD_AI_Connector {
     }
 
     /**
-     * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
-     * OWNER REVIEW REQUIRED: the wording is a placeholder until the owner approves it. The default terms link
-     * is a draft page pending legal review.
-     * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
+     * Setup notice shown before the administrator keeps AI on: what leaves the site, the confirmation the
+     * administrator gives when saving consent, and where the terms are.
+     * DEFAULT WORDING PROPOSED BY AN AGENT (issue #343). It has not been signed off by the owner, so
+     * wording_status says so and owner_review stays true. Nothing here claims owner approval.
+     * The default terms link is a draft page pending legal review.
+     * Filters: tzfd_ai_setup_notice( $text, $disclosure ), tzfd_ai_consent_confirmation( $text, $disclosure )
+     * and tzfd_ai_terms_url( $url ).
      */
     public static function setup_notice() {
-        $d    = self::disclosure();
-        $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
-            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
-            . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
+        $d       = self::disclosure();
+        $text    = 'Local AI features run on this site and send nothing away. Hosted AI runs only after you connect an endpoint and agree below: '
+            . 'then the text visitors type and the fields each AI feature needs (' . implode( ', ', $d['data_classes'] ) . ') are sent to '
+            . $d['provider'] . '. Booking, calendar, customer and reminder features work without AI. '
+            . 'You can withdraw consent or turn AI off at any time, and withdrawing stops hosted requests straight away.';
+        $confirm = 'I agree that the data listed above may be sent to the hosted AI endpoint I have connected, and I understand I can withdraw this at any time.';
         // DRAFT: this terms page is pending legal review. Replace or confirm it before AI is offered to real sites.
-        $url  = 'https://titanzero.io/scheduling-enquiries-terms/';
+        $url     = 'https://titanzero.io/scheduling-enquiries-terms/';
         if ( function_exists( 'apply_filters' ) ) {
-            $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
-            $url  = apply_filters( 'tzfd_ai_terms_url', $url );
+            $text    = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
+            $confirm = apply_filters( 'tzfd_ai_consent_confirmation', $confirm, $d );
+            $url     = apply_filters( 'tzfd_ai_terms_url', $url );
         }
-        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => true );
+        return array(
+            'text'           => (string) $text,
+            'confirmation'   => (string) $confirm,
+            'terms_url'      => (string) $url,
+            'owner_review'   => true,
+            'wording_status' => 'agent_proposed_default_pending_owner_signoff',
+        );
     }
 
     /** Turns AI on or off for the free plugin. AI is on until an administrator turns it off. */
@@ -363,6 +401,15 @@ final class TZFD_AI_Connector {
     }
 
     // ---- internals -------------------------------------------------------
+
+    /** True when every string in the payload, at any depth, holds at most MAX_CONTENT_CHARS characters. */
+    private static function text_within_limit( $value ) {
+        if ( is_string( $value ) ) { return mb_strlen( $value, 'UTF-8' ) <= self::MAX_CONTENT_CHARS; }
+        if ( is_array( $value ) ) {
+            foreach ( $value as $item ) { if ( ! self::text_within_limit( $item ) ) { return false; } }
+        }
+        return true;
+    }
 
     private static function result( $status, array $data = array(), array $extra = array() ) {
         return $extra + array(

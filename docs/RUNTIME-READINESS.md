@@ -51,6 +51,6 @@ Verdict: **not verified for production.** The checks above pass on the disposabl
 - Customer-facing acceptance through the public form (A18), customer cancel and reschedule end to end (B13), and reminder dispatch against a real transport (C11).
 - Automated acceptance, regression, malicious-input, tenant and permission, and outage tests for the full runtime surface (#149) and for the legacy AI data (#173).
 - PHP and database coverage: the CI matrix in `.github/workflows/tests.yml` ran the runtime suite green on six entries (PHP 8.1, 8.2, 8.3 and 8.4 on latest WordPress; PHP 8.3 on WordPress 6.6; PHP 8.3 on MySQL 8.0) on commit `50d382d`.
-- Known failure outside this change: the PHP 7.4 standalone unit job fails in `tests/unit/test-retention-downgrade-multisite.php` (`ReflectionMethod::invoke` on a private method without `setAccessible`, PHP below 8.1). The same file is on main.
+- PHP 7.4 unit job: it failed on `tests/unit/test-retention-downgrade-multisite.php` (a private method invoked without `setAccessible`) before main was updated. On the PR #426 merge commit (`d6ccbd7`) the job passed.
 
 Decisions made in this pass are logged in `/home/claude/supercharged-fixes-checklist.md` with the date.

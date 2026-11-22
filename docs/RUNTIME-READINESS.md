@@ -12,7 +12,7 @@ Command: `git diff --numstat 22dc106 origin/main -- titan-zero-trades-front-desk
 - +29,194 / -7,359 lines in total.
 - The largest single line count is the generated translation template `languages/titan-zero-trades-front-desk.pot` (+10,151).
 - Largest new code files: `includes/ai-assist/` (+844), `class-tzfd-ai-connector.php` (+598), `class-tzfd-legacy-ai-data.php` (+550), `class-tzfd-enquiry-triage-rules.php` (+502), `class-tzfd-faq-retrieval.php` (+489).
-- The legacy AI code is still present (removal is not in scope: owner decision on #360).
+- The legacy AI screen and its restore and delete handlers were removed under #360 (PR #467). The privacy exporter and eraser for historic `tz_ai_conversations` rows are kept in `includes/class-tzfd-legacy-privacy.php`.
 
 ## 2. Threat model (surfaces and what tests cover)
 

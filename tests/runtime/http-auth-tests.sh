@@ -161,6 +161,22 @@ else
   c=$(code -b "$JAR_ADMIN" "$ADMIN_PAGE")
   [[ "$c" =~ ^2 ]] && report PASS "FAQ gap screen, admin (positive control)" "HTTP $c" || report FAIL "FAQ gap screen, admin (positive control)" "HTTP $c"
   expect "FAQ gap screen, subscriber (capability refusal)" 403 "$(code -b "$JAR_SUB" "$ADMIN_PAGE")"
+  # FAQ gap filters over HTTP (#354): an unknown coverage value is ignored, a bad min_count is clamped, and the
+  # search text is echoed escaped, never as markup.
+  FILTER_URL="$ADMIN_PAGE&coverage=bogus&min_count=-5&search=%3Cscript%3Ex%3C%2Fscript%3E"
+  FILTER_BODY=$(curl -s --max-time 30 -b "$JAR_ADMIN" "$FILTER_URL" || true)
+  FILTER_CODE=$(code -b "$JAR_ADMIN" "$FILTER_URL")
+  if [[ "$FILTER_CODE" =~ ^2 ]] && ! grep -q '<script>x</script>' <<<"$FILTER_BODY" && grep -q '&lt;script&gt;x' <<<"$FILTER_BODY"; then
+    report PASS "FAQ gap filters, admin: bad coverage/min_count ignored, search escaped" "HTTP $FILTER_CODE"
+  else
+    report FAIL "FAQ gap filters, admin: bad coverage/min_count ignored, search escaped" "HTTP $FILTER_CODE"
+  fi
+  FILTER_OK=$(curl -s --max-time 30 -b "$JAR_ADMIN" "$ADMIN_PAGE&coverage=missing&min_count=2" || true)
+  if grep -q 'name="coverage"' <<<"$FILTER_OK" && grep -q 'value="missing" selected' <<<"$FILTER_OK"; then
+    report PASS "FAQ gap filters, admin: coverage=missing is kept in the form" "selected"
+  else
+    report FAIL "FAQ gap filters, admin: coverage=missing is kept in the form" "option not selected in response"
+  fi
   c=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -d "$POST_BODY" "$ADMIN_POST")
   case "$c" in
     "400 "*|"403 "*|"302 "*wp-login*) report PASS "FAQ gap handler, anonymous" "refused ($c)" ;;

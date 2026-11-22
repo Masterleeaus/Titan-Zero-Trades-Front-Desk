@@ -114,22 +114,28 @@ reset_state(); $with_faq();
 $r = TZFD_AI_Answer_Box::answer( 'zxq wibble frobnicate', 'v1' );
 check( 'unknown question with fallback disabled is refused, handoff true', 'refused' === $r['status'] && true === $r['handoff'] );
 
-// ---- generative fallback budget and offline proxy -------------------------------------------
+// ---- generative fallback budget: two turns per conversation (#353) ----------------------------
 reset_state(); $with_faq();
 $model_calls = 0;
 add_filter( 'tzfd_ai_fallback_enabled', function () { return true; } );
 add_filter( 'tzfd_ai_generative_fallback', function ( $v, $norm ) use ( &$model_calls ) { $model_calls++; return '<b>Sure</b> we can help with that.'; } );
-$a = TZFD_AI_Answer_Box::answer( 'can you help with a leaking roof gutter', 'visitor-A' );
-$b = TZFD_AI_Answer_Box::answer( 'can you help with a broken fence panel', 'visitor-A' );
-for ( $i = 2; $i < 20; $i++ ) { TZFD_AI_Answer_Box::answer( "can you help with fallback job $i", 'visitor-A' ); }
-// Simulate the 10-minute general request window passing, so only the hourly fallback budget is tested here.
-unset( $GLOBALS['wpdb']->rows[ TZFD_Rate_Limit::option_name( TZFD_AI_Answer_Box::RATE_PREFIX . md5( 'visitor-A' ) ) ] );
-$c = TZFD_AI_Answer_Box::answer( 'can you help with a blocked chimney flue', 'visitor-A' );
-check( 'first two generative turns are answered by model', 'model' === $a['source'] && 'model' === $b['source'], json_encode( array( $a, $b ) ) );
-check( 'twenty generative turns per hour allowed for one visitor, twenty-first refused', 'refused' === $c['status'] && 20 === $model_calls, "calls=$model_calls" );
+$conv1 = str_repeat( 'a', 32 );
+$conv2 = str_repeat( 'b', 32 );
+$a = TZFD_AI_Answer_Box::answer( 'can you help with a leaking roof gutter', 'visitor-A', 'en', $conv1 );
+$b = TZFD_AI_Answer_Box::answer( 'can you help with a broken fence panel', 'visitor-A', 'en', $conv1 );
+$c = TZFD_AI_Answer_Box::answer( 'can you help with a blocked chimney flue', 'visitor-A', 'en', $conv1 );
+check( 'first two generative turns in a conversation are answered by model', 'model' === $a['source'] && 'model' === $b['source'], json_encode( array( $a, $b ) ) );
+check( 'third generative turn in the same conversation is refused with handoff', 'refused' === $c['status'] && true === $c['handoff'] && 2 === $model_calls, "calls=$model_calls" );
 check( 'model answer text is stripped of markup', 'Sure we can help with that.' === $a['answer'], $a['answer'] );
-$d = TZFD_AI_Answer_Box::answer( 'can you help with a broken gate latch', 'visitor-B' );
-check( 'fallback budget is per visitor', 'model' === $d['source'] );
+$d = TZFD_AI_Answer_Box::answer( 'can you help with a broken gate latch', 'visitor-A', 'en', $conv2 );
+check( 'a new conversation for the same visitor gets its own two turns', 'model' === $d['source'] && 3 === $model_calls, "calls=$model_calls" );
+$e = TZFD_AI_Answer_Box::answer( 'can you help with a loose tile', 'visitor-B', 'en', $conv1 );
+check( 'a conversation token does not share a budget between visitors', 'model' === $e['source'] );
+$f = TZFD_AI_Answer_Box::answer( 'can you help with a dripping tap', 'visitor-A' );
+$g = TZFD_AI_Answer_Box::answer( 'can you help with a cracked pane', 'visitor-A' );
+$h = TZFD_AI_Answer_Box::answer( 'can you help with a sticky door', 'visitor-A' );
+check( 'without a token the visitor key is the conversation: two turns then handoff', 'model' === $f['source'] && 'model' === $g['source'] && 'refused' === $h['status'] );
+check( 'model turns are not cached, so repeats still count', false === $a['cached'] );
 
 reset_state(); $with_faq();
 $model_calls = 0;
@@ -273,6 +279,17 @@ check( 'widget without a question shows no answer text', false === strpos( $html
 
 check( 'answer_html escapes model-style markup', false !== strpos( TZFD_AI_Widget::answer_html( array( 'status' => 'answered', 'answer' => '<a href="x">hi</a>', 'source' => 'approved_rule' ) ), '&lt;a href=' ) );
 check( 'model answers carry an automated-answer note', false !== strpos( TZFD_AI_Widget::answer_html( array( 'status' => 'answered', 'answer' => 'hi', 'source' => 'model' ) ), 'Automated answer' ) );
+
+// Conversation token: a valid token is carried in the form; a malformed one is replaced (#353).
+reset_state(); $with_faq();
+$_SERVER['REMOTE_ADDR'] = '203.0.113.10';
+$_GET = array( 'tzfd_ai_q' => 'opening hours', 'tzfd_ai_c' => str_repeat( 'c', 32 ) );
+$html = TZFD_AI_Widget::render();
+check( 'widget carries a valid conversation token in a hidden field', false !== strpos( $html, '<input type="hidden" name="tzfd_ai_c" value="' . str_repeat( 'c', 32 ) . '" />' ) );
+$_GET = array( 'tzfd_ai_c' => '<script>x</script>' );
+$html = TZFD_AI_Widget::render();
+check( 'widget replaces a malformed conversation token with a new one', 1 === preg_match( '/name="tzfd_ai_c" value="([a-f0-9]{32})"/', $html ) && false === strpos( $html, '<script>x' ) );
+$_GET = array();
 
 // Plain permalinks: the page query (?page_id=N) must travel as hidden fields, not be dropped by the GET form (#185).
 $GLOBALS['t_permalink'] = 'https://example.test/?page_id=42';

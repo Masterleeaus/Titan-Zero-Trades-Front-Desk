@@ -18,6 +18,7 @@ final class TZFD_AI_Widget {
 
 	const SHORTCODE = 'tzfd_ai_answer_box';
 	const PARAM     = 'tzfd_ai_q';
+	const CONV_PARAM = 'tzfd_ai_c';
 	const STYLE     = 'tzfd-ai-answer-box';
 
 	/** @var int Instance counter so several boxes on one page get unique IDs. */
@@ -44,9 +45,15 @@ final class TZFD_AI_Widget {
 		$raw      = isset( $_GET[ self::PARAM ] ) ? wp_unslash( $_GET[ self::PARAM ] ) : '';
 		$question = is_string( $raw ) ? sanitize_text_field( $raw ) : '';
 
+		// Conversation token: carried in the form so the fallback turn cap applies per conversation (#353).
+		// A missing or malformed token starts a new conversation.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated by the regex below.
+		$conv_raw = isset( $_GET[ self::CONV_PARAM ] ) ? wp_unslash( $_GET[ self::CONV_PARAM ] ) : '';
+		$conv     = is_string( $conv_raw ) && preg_match( '/^[a-f0-9]{32}$/', $conv_raw ) ? $conv_raw : bin2hex( random_bytes( 16 ) );
+
 		$answer_html = '';
 		if ( '' !== trim( $question ) ) {
-			$result      = TZFD_AI_Answer_Box::answer( $question, self::visitor_key() );
+			$result      = TZFD_AI_Answer_Box::answer( $question, self::visitor_key(), 'en', $conv );
 			// Gap detection (#36) listens here. Every outcome counts, including cached answers.
 			do_action( 'tzfd_ai_question_handled', $question, $result );
 			$answer_html = self::answer_html( $result );
@@ -70,6 +77,7 @@ final class TZFD_AI_Widget {
 				$out .= '<input type="hidden" name="' . esc_attr( $page_key ) . '" value="' . esc_attr( $page_value ) . '" />';
 			}
 		}
+		$out .= '<input type="hidden" name="' . esc_attr( self::CONV_PARAM ) . '" value="' . esc_attr( $conv ) . '" />';
 		$out .= '<label for="' . esc_attr( $uid ) . '-q">' . esc_html__( 'Your question', 'titan-zero-trades-front-desk' ) . '</label>';
 		$out .= '<input type="search" id="' . esc_attr( $uid ) . '-q" name="' . esc_attr( self::PARAM ) . '" maxlength="' . (int) TZFD_AI_Answer_Box::MAX_QUESTION_LENGTH . '" value="' . esc_attr( $question ) . '" autocomplete="off" enterkeyhint="search">';
 		$out .= '<button type="submit">' . esc_html__( 'Get answer', 'titan-zero-trades-front-desk' ) . '</button>';

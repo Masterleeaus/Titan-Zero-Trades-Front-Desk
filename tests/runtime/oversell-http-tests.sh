@@ -37,7 +37,9 @@ count() { # prints the occupied count for $1 (slot)
 }
 
 # 2. The form renders with its booking nonce and the submission fields.
-html="$(curl -s --max-time 30 -c "$JAR" -b "$JAR" "$PAGE" || true)"
+# WordPress may redirect ?page_id=N to the page's permalink (canonical redirect); follow it and post to the final URL.
+PAGE="$(curl -s -L -o /dev/null -w '%{url_effective}' --max-time 30 "$PAGE" || true)"
+html="$(curl -s -L --max-time 30 -c "$JAR" -b "$JAR" "$PAGE" || true)"
 nonce="$(printf '%s' "$html" | grep -o '<input name="anonce"[^>]*>' | grep -o 'value="[^"]*"' | head -1 | cut -d'"' -f2)"
 seq="$(printf '%s' "$html" | grep -o 'name="tz_fd_pform_psequence" value="[^"]*"' | head -1 | sed 's/.*value="\([^"]*\)"/\1/')"
 if [ -n "$nonce" ] && [ -n "$seq" ]; then ok "A18 the public form renders with its nonce" "sequence=$seq"; else

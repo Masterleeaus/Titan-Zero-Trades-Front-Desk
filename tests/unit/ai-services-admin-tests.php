@@ -124,6 +124,7 @@ check( 'unpaired screen offers the connect hosted account form (pairing code, is
 check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tzfd_ai_connector_disconnect' ) );
 check( 'pairing code input is a text field with no value attribute and autocomplete off', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code" name="pairing_code"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) && false !== strpos( $m[0], 'autocomplete="off"' ) );
 check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
+check( 'connect control stays disabled until hosted pairing is live', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) );
 
 TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
 $html = render_page();

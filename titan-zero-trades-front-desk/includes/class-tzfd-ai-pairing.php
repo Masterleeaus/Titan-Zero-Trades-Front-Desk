@@ -17,8 +17,8 @@
  * - A successful pairing stores the secret and feature endpoint through TZFD_AI_Connector::configure() and
  *   revokes consent, so data never goes to a new endpoint on old consent.
  *
- * Request (POST, JSON body):    {"contract":"tzfd-pair/1","site":"<site id>","nonce":"<hex>","code":"<pairing code>"}
- * Response (JSON body, 200):    {"contract":"tzfd-pair/1","site":"<site id>","nonce":"<hex>","secret":"<64 hex>","feature_endpoint":"https://..."}
+ * Request (POST, JSON body):    {"contract":"central-pairing/1","site":"<site id>","nonce":"<hex>","code":"<pairing code>"}
+ * Response (JSON body, 200):    {"contract":"central-pairing/1","site":"<site id>","nonce":"<hex>","secret":"<64 hex>","feature_endpoint":"https://..."}
  *
  * See docs/AI-SERVICE-CONNECTOR-CONTRACT.md, section "Pairing".
  */
@@ -27,7 +27,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 final class TZFD_AI_Pairing {
 
-    const CONTRACT        = 'tzfd-pair/1';
+    const CONTRACT        = 'central-pairing/1';
     const ENDPOINT_CONST  = 'TZFD_AI_PAIRING_ENDPOINT';
     const ENDPOINT_FILTER = 'tzfd_ai_pairing_endpoint';
     const TRANSPORT_FILTER = 'tzfd_ai_pairing_transport';

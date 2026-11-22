@@ -94,14 +94,14 @@ Response headers `X-TZFD-Timestamp`, `X-TZFD-Nonce` (must echo the request nonce
 - Transport error or timeout: `offline`, with `use_local => true`.
 - Secret is sent only in the HMAC, never in a result, status, usage record, or log line.
 
-## Pairing (issue #347, contract tzfd-pair/1)
+## Pairing (issue #347, contract central-pairing/1)
 
 The site owner enters a single-use pairing code shown by Supercharged on the AI Services screen (Connect hosted account). The plugin class is `TZFD_AI_Pairing` (`includes/class-tzfd-ai-pairing.php`).
 
 - Endpoint: the constant `TZFD_AI_PAIRING_ENDPOINT` or the filter `tzfd_ai_pairing_endpoint`. Off by default: with neither set, nothing is sent and the screen says pairing is not available. The owner-approved value is `https://central.titanzero.io/api/tzfd/pair` (#347 and #456). Only https, with a host and no userinfo, is accepted.
-- Request: `POST`, `Content-Type: application/json`, JSON body `{"contract":"tzfd-pair/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. Timeout 8 seconds, redirects not followed. The code is sent once and is never stored, logged or echoed.
+- Request: `POST`, `Content-Type: application/json`, JSON body `{"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. Timeout 8 seconds, redirects not followed. The code is sent once and is never stored, logged or echoed.
 - Site id: 32 random hex characters, created on first pairing and kept across re-pairing.
-- Response: HTTP 200 and a JSON body `{"contract":"tzfd-pair/1","site":"<site id>","nonce":"<same nonce>","secret":"<64 lowercase hex>","feature_endpoint":"https://..."}`. The body is at most 16384 bytes. The `feature_endpoint` must be https and on the same host as the pairing endpoint. Any other reply is refused.
+- Response: HTTP 200 and a JSON body `{"contract":"central-pairing/1","site":"<site id>","nonce":"<same nonce>","secret":"<64 lowercase hex>","feature_endpoint":"https://..."}`. The body is at most 16384 bytes. The `feature_endpoint` must be https and on the same host as the pairing endpoint. Any other reply is refused.
 - On success the secret and feature endpoint are stored through `TZFD_AI_Connector::configure()` and consent is revoked. A repeat pairing replaces the secret and needs consent again.
 - On any refusal or transport error the existing connection, consent and secret are left unchanged.
 - Results: `paired`, `pairing_off`, `invalid_code`, `busy`, `offline`, `rejected`, `invalid_response`. Lock: one pairing at a time, a lock older than 30 seconds is taken over.

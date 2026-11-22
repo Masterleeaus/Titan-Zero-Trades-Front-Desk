@@ -70,7 +70,7 @@ function ok_reply( array $o = array() ) {
     return function ( $request ) use ( $o ) {
         $sent = json_decode( $request['body'], true );
         $data = array(
-            'contract'         => 'tzfd-pair/1',
+            'contract'         => 'central-pairing/1',
             'site'             => $sent['site'],
             'nonce'            => $sent['nonce'],
             'secret'           => SECRET_A,
@@ -150,7 +150,8 @@ $req = $GLOBALS['tz_calls'][0];
 check( 'C1 request method is POST', isset( $req['method'] ) && 'POST' === $req['method'] );
 check( 'C2 request goes to the configured endpoint', ENDPOINT === $req['url'] );
 $sent = json_decode( $req['body'], true );
-check( 'C3 request body is JSON with contract tzfd-pair/1', is_array( $sent ) && 'tzfd-pair/1' === $sent['contract'] );
+check( 'C0 the contract constant is central-pairing/1', 'central-pairing/1' === TZFD_AI_Pairing::CONTRACT );
+check( 'C3 request body is JSON with contract central-pairing/1', is_array( $sent ) && 'central-pairing/1' === $sent['contract'] );
 check( 'C4 request body carries the site id and a 32-character hex nonce', is_array( $sent ) && 1 === preg_match( '/^[0-9a-f]{32}$/', $sent['nonce'] ) && 1 === preg_match( '/^[0-9a-f]{32}$/', $sent['site'] ) );
 check( 'C5 request body carries the pairing code', is_array( $sent ) && CODE === $sent['code'] );
 check( 'C6 request body carries no secret', false === strpos( $req['body'], 'secret' ) );
@@ -189,7 +190,7 @@ $keep = function ( $label, $r, $status ) {
 };
 $keep( 'E1 HTTP 500 is rejected, old secret and endpoint kept, lock released, consent kept', pair_with( function () { return array( 'status_code' => 500, 'body' => '' ); } ), 'rejected' );
 $keep( 'E2 a non-JSON body is invalid_response and keeps the old connection', pair_with( function () { return array( 'status_code' => 200, 'body' => 'not json' ); } ), 'invalid_response' );
-$keep( 'E3 a wrong contract is invalid_response', pair_with( ok_reply( array( 'contract' => 'tzfd-pair/0' ) ) ), 'invalid_response' );
+$keep( 'E3 a wrong contract is invalid_response', pair_with( ok_reply( array( 'contract' => 'central-pairing/0' ) ) ), 'invalid_response' );
 $keep( 'E4 a site echo that does not match is invalid_response', pair_with( ok_reply( array( 'site' => 'someone-else' ) ) ), 'invalid_response' );
 $keep( 'E5 a nonce echo that does not match is invalid_response', pair_with( ok_reply( array( 'nonce' => str_repeat( '0', 32 ) ) ) ), 'invalid_response' );
 $keep( 'E6 a 63-character secret is invalid_response', pair_with( ok_reply( array( 'secret' => str_repeat( 'a', 63 ) ) ) ), 'invalid_response' );

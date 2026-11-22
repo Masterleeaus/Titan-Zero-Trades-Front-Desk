@@ -280,23 +280,35 @@ final class TZFD_AI_Connector {
     }
 
     /**
-     * Setup notice shown before the administrator keeps AI on: what leaves the site and where the terms are.
-     * OWNER REVIEW REQUIRED: the wording is a placeholder until the owner approves it. The default terms link
-     * is a draft page pending legal review.
-     * Filters: tzfd_ai_setup_notice( $text, $disclosure ) and tzfd_ai_terms_url( $url ).
+     * Setup notice shown before the administrator keeps AI on: what leaves the site, the confirmation the
+     * administrator gives when saving consent, and where the terms are.
+     * DEFAULT WORDING PROPOSED BY AN AGENT (issue #343). It has not been signed off by the owner, so
+     * wording_status says so and owner_review stays true. Nothing here claims owner approval.
+     * The default terms link is a draft page pending legal review.
+     * Filters: tzfd_ai_setup_notice( $text, $disclosure ), tzfd_ai_consent_confirmation( $text, $disclosure )
+     * and tzfd_ai_terms_url( $url ).
      */
     public static function setup_notice() {
-        $d    = self::disclosure();
-        $text = 'OWNER REVIEW PLACEHOLDER. AI is on by default. When it is on, the text a visitor types and the fields each AI feature needs ('
-            . implode( ', ', $d['data_classes'] ) . ') are sent to ' . $d['provider'] . ' when a hosted AI endpoint is connected and you consent. '
-            . 'Booking, calendar, customer and reminder features work without AI. You can turn AI off at any time.';
+        $d       = self::disclosure();
+        $text    = 'Local AI features run on this site and send nothing away. Hosted AI runs only after you connect an endpoint and agree below: '
+            . 'then the text visitors type and the fields each AI feature needs (' . implode( ', ', $d['data_classes'] ) . ') are sent to '
+            . $d['provider'] . '. Booking, calendar, customer and reminder features work without AI. '
+            . 'You can withdraw consent or turn AI off at any time, and withdrawing stops hosted requests straight away.';
+        $confirm = 'I agree that the data listed above may be sent to the hosted AI endpoint I have connected, and I understand I can withdraw this at any time.';
         // DRAFT: this terms page is pending legal review. Replace or confirm it before AI is offered to real sites.
-        $url  = 'https://titanzero.io/scheduling-enquiries-terms/';
+        $url     = 'https://titanzero.io/scheduling-enquiries-terms/';
         if ( function_exists( 'apply_filters' ) ) {
-            $text = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
-            $url  = apply_filters( 'tzfd_ai_terms_url', $url );
+            $text    = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
+            $confirm = apply_filters( 'tzfd_ai_consent_confirmation', $confirm, $d );
+            $url     = apply_filters( 'tzfd_ai_terms_url', $url );
         }
-        return array( 'text' => (string) $text, 'terms_url' => (string) $url, 'owner_review' => true );
+        return array(
+            'text'           => (string) $text,
+            'confirmation'   => (string) $confirm,
+            'terms_url'      => (string) $url,
+            'owner_review'   => true,
+            'wording_status' => 'agent_proposed_default_pending_owner_signoff',
+        );
     }
 
     /** Turns AI on or off for the free plugin. AI is on until an administrator turns it off. */

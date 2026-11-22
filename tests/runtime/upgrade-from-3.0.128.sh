@@ -14,11 +14,9 @@ set -u
 HERE="$(cd "$(dirname "$0")" && pwd)"
 NEW_PLUGIN="$(cd "$HERE/../../titan-zero-trades-front-desk" && pwd)"
 REPO_DIR="$(git -C "$HERE" rev-parse --show-toplevel 2>/dev/null)"
-# The base is a real earlier release, read from git history. The default is the Front Desk 2.0.1 release ZIP committed
-# at 4e0c3b3 (version 2.0.1, a different version from this checkout). The 3.0.128 extraction commit (22dc106) cannot be
-# the base any more: this checkout is also 3.0.128, so the upgrade would not change the version (issue #194).
-# Issue #349: the default base is now the v3.0.128 release ZIP, read from the commit before its extraction (22dc106^).
-# Same version as this checkout, so SAME_VERSION_OK defaults to 1: the check asserts which source folder is loaded.
+# The base is a real earlier release, read from git history. The default is the v3.0.128 release ZIP, read from the
+# commit before its extraction (22dc106^). This checkout is also 3.0.128, so SAME_VERSION_OK defaults to 1 and the
+# check asserts which source folder is loaded rather than the version string (issue #194, issue #349).
 BASE_SHA="${BASE_SHA:-22dc106^}"
 BASE_ZIP="${BASE_ZIP:-titan-zero-trades-front-desk-3.0.128-r16.zip}"
 SAME_VERSION_OK="${SAME_VERSION_OK:-1}"

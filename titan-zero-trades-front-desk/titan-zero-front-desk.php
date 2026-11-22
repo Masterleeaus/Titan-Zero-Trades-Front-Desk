@@ -78,9 +78,6 @@ TZFD_Smart_Task_Events::register();
 add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-hosted-ai-connector.php';
-// Contract v1 REST route (#349). Fails closed: no server-side credentials or executor means no operation runs.
-require_once dirname( __FILE__ ) . '/includes/class-tzfd-contract-rest.php';
-TZFD_Contract_REST::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-ai-data.php';
 TZFD_Legacy_AI_Data::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway.php';

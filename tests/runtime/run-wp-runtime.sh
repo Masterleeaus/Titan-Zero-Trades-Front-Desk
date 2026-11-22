@@ -117,6 +117,8 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/runtime-tests.php" --use
 echo "--- real WordPress runtime tests (wp-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
+echo "--- oversell through the public form over HTTP (oversell-http-tests.sh, issue #389 A18)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/oversell-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- customer cancel end to end over HTTP (customer-cancel-http-tests.sh, issue #334 B13)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-cancel-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- portal session switching (portal-session-switch-tests.php, issue #334)"

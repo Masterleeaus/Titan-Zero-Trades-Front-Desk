@@ -48,15 +48,15 @@ if( !class_exists( 'TZFD_Cache' ) )
             // Check if the plugin is active
 			if( !$this->addon_is_active() ) return;      
                       
-            add_action( 'tz_fd_cache_check', array( &$this, 'cache_check'), 99, 2 ); // $formid, $dataquery
+            add_action( 'tzfd_cache_check', array( &$this, 'cache_check'), 99, 2 ); // $formid, $dataquery
             
-            add_action( 'tz_fd_cache_store', array( &$this, 'cache_store'), 99, 3 ); // $formid, $dataquery, $dataoutput
+            add_action( 'tzfd_cache_store', array( &$this, 'cache_store'), 99, 3 ); // $formid, $dataquery, $dataoutput
             
-            add_action( 'tz_fd_cache_clean', array( &$this, 'cache_clean'), 99, 1 ); // $formid
+            add_action( 'tzfd_cache_clean', array( &$this, 'cache_clean'), 99, 1 ); // $formid
                         
-            add_action( 'tz_fd_update_status', array( &$this, 'update_status' ), 10, 3 );
+            add_action( 'tzfd_update_status', array( &$this, 'update_status' ), 10, 3 );
             add_action( 'tz_fd_process_data', array( &$this, 'new_submission' ), 10, 2 );
-            add_action( 'tz_fd_item_deleted', array( &$this, 'item_deleted' ), 10, 1 );
+            add_action( 'tzfd_item_deleted', array( &$this, 'item_deleted' ), 10, 1 );
             
             
             // Create or upgrade the table only when the schema version changes, not on every page view.

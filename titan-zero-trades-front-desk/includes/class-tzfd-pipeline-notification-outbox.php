@@ -225,6 +225,10 @@ final class TZFD_Pipeline_Notification_Outbox {
                     // Unknown ownership is retryable; confirmed mismatches are terminal.
                 } else {
                 $hooks = array(
+                    'tzfd_update_status',
+                    'tzfd_booking_status_persisted',
+                    'tzfd_pipeline_moved',
+                    // Legacy names: listeners registered on them still run through the alias calls below.
                     'tz_fd_update_status',
                     'titan_zero_front_desk_booking_status_persisted',
                     'tz_fd_pipeline_moved',
@@ -237,9 +241,12 @@ final class TZFD_Pipeline_Notification_Outbox {
                     $error = 'hook_unavailable';
                 } else {
                     // Acknowledgement means hooks ran without exceptions, not external delivery.
-                    do_action( 'tz_fd_update_status', (int) $row['booking_id'], $row['booking_status'] );
-                    do_action( 'titan_zero_front_desk_booking_status_persisted', (int) $row['booking_id'], $row['booking_status'], '-1' );
-                    do_action( 'tz_fd_pipeline_moved', (int) $row['booking_id'], $row['from_state'], $row['to_state'], $row['stage'], $row['reason'] );
+                    do_action( 'tzfd_update_status', (int) $row['booking_id'], $row['booking_status'] );
+                    do_action( 'tz_fd_update_status', (int) $row['booking_id'], $row['booking_status'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                    do_action( 'tzfd_booking_status_persisted', (int) $row['booking_id'], $row['booking_status'], '-1' );
+                    do_action( 'titan_zero_front_desk_booking_status_persisted', (int) $row['booking_id'], $row['booking_status'], '-1' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                    do_action( 'tzfd_pipeline_moved', (int) $row['booking_id'], $row['from_state'], $row['to_state'], $row['stage'], $row['reason'] );
+                    do_action( 'tz_fd_pipeline_moved', (int) $row['booking_id'], $row['from_state'], $row['to_state'], $row['stage'], $row['reason'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 }
                 }
             } catch ( Throwable $e ) { $error = 'hook_exception'; }

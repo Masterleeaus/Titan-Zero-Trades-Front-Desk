@@ -33,7 +33,7 @@ if( !class_exists( 'TZFD_Reminder' ) )
             add_action( self::HOOK, array( $this, 'send_reminder' ), 10, 3 );
             // A customer reschedule or a status change (approval, cancellation) re-queues the reminders.
             add_action( 'tzfd_booking_time_changed', array( $this, 'refresh_after_move' ), 20, 3 );
-            add_action( 'tz_fd_update_status', array( $this, 'refresh_after_status' ), 60, 2 );
+            add_action( 'tzfd_update_status', array( $this, 'refresh_after_status' ), 60, 2 );
         } // End __construct
 
         /************************ SETTINGS *****************************/

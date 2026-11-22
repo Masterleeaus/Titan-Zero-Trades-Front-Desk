@@ -103,7 +103,7 @@ tzfd_outage_ok( 'outage: repeat attempt after failure still returns no receipt',
 $outage_hook_config = function () {
 	return array( 'url' => 'https://example.com/tzfd-outage', 'secret' => str_repeat( 'w', 40 ) );
 };
-add_filter( 'titan_zero_front_desk_webhook_config', $outage_hook_config );
+add_filter( 'tzfd_webhook_config', $outage_hook_config );
 
 $outage_hook_payload = function ( $booking_id ) {
 	return array( 'schema_version' => 1, 'event' => 'booking.created', 'booking_id' => $booking_id, 'form_id' => 1, 'form_name' => 'Outage check', 'appointments' => array() );
@@ -137,7 +137,7 @@ try {
 	$hook_threw = $e->getMessage();
 }
 tzfd_outage_ok( 'outage: webhook delivery during outage makes one attempt and does not throw', 1 === $outage_calls && '' === $hook_threw, 'calls=' . $outage_calls . ( '' !== $hook_threw ? ' threw: ' . $hook_threw : '' ) );
-remove_filter( 'titan_zero_front_desk_webhook_config', $outage_hook_config );
+remove_filter( 'tzfd_webhook_config', $outage_hook_config );
 
 // The local booking store keeps working while the gateway is down.
 $probe_tag = 'outage-runtime-340';

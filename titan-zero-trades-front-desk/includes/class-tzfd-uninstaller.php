@@ -164,7 +164,7 @@ final class TZFD_Uninstaller {
         require_once __DIR__ . '/tzfd-cron-clear.php';
         $hooks = include __DIR__ . '/tzfd-cron-hooks.php';
         foreach ( (array) $hooks as $hook ) {
-            tz_fd_unschedule_all_events( $hook );
+            tzfd_unschedule_all_events( $hook );
         }
     }
 

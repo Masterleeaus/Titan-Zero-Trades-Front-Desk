@@ -2,7 +2,7 @@
 /**
  * Wires the smart service finder into the booking form (issues #23, #269, owner decision 2026-11-18).
  *
- * Uses the existing tz_fd_the_form filter, the same hook the add-ons use, so the booking engine and
+ * Uses the existing tzfd_the_form filter, the same hook the add-ons use, so the booking engine and
  * the catalogue are not changed. The customer's search runs on the server against the visible,
  * company-scoped service list. A selected service ID is accepted only after validate_selection() and is
  * written into the form as a hidden field named tzfd_service_id. Nothing is written by this class.
@@ -15,7 +15,7 @@ require_once __DIR__ . '/class-tzfd-service-finder.php';
 
 final class TZFD_Service_Finder_Wiring {
 
-	const FILTER_HOOK   = 'tz_fd_the_form';
+	const FILTER_HOOK   = 'tzfd_the_form';
 	const SERVICES_HOOK = 'tzfd_service_finder_services';
 	const PARAM_QUERY   = 'tzfd_svc_q';
 	const PARAM_SERVICE = 'tzfd_service';
@@ -40,7 +40,7 @@ final class TZFD_Service_Finder_Wiring {
 	}
 
 	/**
-	 * tz_fd_the_form callback. Returns the form HTML with the finder panel above it and, when a valid
+	 * tzfd_the_form callback. Returns the form HTML with the finder panel above it and, when a valid
 	 * service was selected, a hidden service field inside each form.
 	 *
 	 * @param string $html    Form markup built by the booking form.

@@ -19,7 +19,7 @@ require_once __DIR__ . '/class-tzfd-customer-rescheduling.php';
  * page layout) and a client portal. Clients sign in with their email address: they get a one-time
  * link that lasts 20 minutes and opens a session for 2 hours. The portal lists their bookings, with
  * the same signed cancel and reschedule links used in booking emails. Quotes are listed by Titan Zero Quotes
- * through the tz_fd_client_portal_sections action (19 Oct split); Front Desk never reads quote tables.
+ * through the tzfd_client_portal_sections action (19 Oct split); Front Desk never reads quote tables.
  *
  * The portal never reveals whether an email address has records: the reply is the same either way.
  */
@@ -555,7 +555,8 @@ final class TZFD_Client_Portal {
         }
 
         // Other Titan Zero plugins add their own portal sections here (Quotes lists the client's quotes).
-        do_action( 'tz_fd_client_portal_sections', $records );
+        do_action( 'tzfd_client_portal_sections', $records );
+        do_action( 'tz_fd_client_portal_sections', $records ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
     }
 
     private static function render_bookings( array $items, $allow_change ) {

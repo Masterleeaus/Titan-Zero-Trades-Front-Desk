@@ -165,7 +165,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 
         // insert initial data
         $tzfd_local_count = $wpdb->get_var( $wpdb->prepare( "SELECT COUNT(id) FROM %i", $wpdb->prefix.TZFD_Tables::FORMS ) );
-        // Seed only for a real company. With no membership the default form waits for tz_fd_seed_form_for_member(), never company 0.
+        // Seed only for a real company. With no membership the default form waits for tzfd_seed_form_for_member(), never company 0.
         if ( !$tzfd_local_count && TZFD_Scoped_Store::company_id() > 0 )
         {
             define('TZFD_BOOK_DEFAULT_fp_from_email', get_the_author_meta('user_email', get_current_user_id()) );
@@ -261,7 +261,7 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 
     /**
      * Tags and attributes of the booking form HTML: the markup in tzfd-public-int.inc.php and what the add-ons add
-     * through the tz_fd_the_form filter (password fields, captcha widget and nonce, SMS and WhatsApp
+     * through the tzfd_the_form filter (password fields, captcha widget and nonce, SMS and WhatsApp
      * buttons, admin status select). Used for deferred script loading, where that HTML has no script or style tags.
      * Anything not listed is dropped. Add-ons that need another tag must enqueue their script and style instead.
      */
@@ -415,9 +415,13 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
                 array( '%d', '%d' )
             );
             if ( false === $update_result ) { return false; }
-            if ( $update_result > 0 ) { do_action( 'tz_fd_update_status', $id, $status ); }
+            if ( $update_result > 0 ) {
+                do_action( 'tzfd_update_status', $id, $status );
+                do_action( 'tz_fd_update_status', $id, $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+            }
             if ( $status_changed && $update_result > 0 ) {
-                do_action( 'titan_zero_front_desk_booking_status_persisted', $id, $status, $indexonly );
+                do_action( 'tzfd_booking_status_persisted', $id, $status, $indexonly );
+                do_action( 'titan_zero_front_desk_booking_status_persisted', $id, $status, $indexonly ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             }
             return $update_result > 0;
         }
@@ -734,7 +738,8 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
     	 * Filters applied before generate the form,
     	 * is passed as parameter an array with the forms attributes, and return the list of attributes
     	 */
-        $atts = apply_filters( 'tz_fd_pre_form',  $atts );
+        $atts = apply_filters( 'tzfd_pre_form',  $atts );
+        $atts = apply_filters( 'tz_fd_pre_form', $atts ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         ob_start();
         $this->insert_public_item();
@@ -744,7 +749,8 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 	    /**
 	     * Filters applied after generating the form. Asset files are enqueued separately through WordPress.
 	     */
-	    $buffered_contents = apply_filters( 'tz_fd_the_form', $buffered_contents,  $this->item );
+	    $buffered_contents = apply_filters( 'tzfd_the_form', $buffered_contents,  $this->item );
+	    $buffered_contents = apply_filters( 'tz_fd_the_form', $buffered_contents, $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         return $buffered_contents;
     }
@@ -867,7 +873,8 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
                                 $object->title = __('Choose service', 'titan-zero-trades-front-desk');
                             }
                         }
-                        $object->csslayout = apply_filters ('tz_fd_csslayout', $object->csslayout, $this->item);
+                        $object->csslayout = apply_filters ('tzfd_csslayout', $object->csslayout, $this->item);
+                        $object->csslayout = apply_filters ('tz_fd_csslayout', $object->csslayout, $this->item); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                         if (!defined('TZFD_HOUR_BLOCK_TIMES')) {
                             try { $object->titan_zero_front_desk_calendar = TZFD_Calendar::site_policy($object,$this->get_option('date_format','mm/dd/yy')); }
                             catch (InvalidArgumentException $error) { $object->titan_zero_front_desk_calendar = array('version'=>0); }
@@ -1008,7 +1015,8 @@ class TZFD_FrontDeskPlugin extends TZFD_BOOK_BaseClass {
 				     * To the function are passed two parameters: the array with submitted data, and the number of form in the page.
 				     */
 
-				    do_action( 'tz_fd_script_after_validation', $this->print_counter, $this->item );
+				    do_action( 'tzfd_script_after_validation', $this->print_counter, $this->item );
+				    do_action( 'tz_fd_script_after_validation', $this->print_counter, $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
 	                ?>
 	        		$dexQuery("#"+form.id).find( '.ignore' ).closest( '.fields' ).remove();
@@ -1411,7 +1419,7 @@ public function render_form_admin( $atts ) {
 
    public function data_management_pluginsloaded() {
        
-       tz_fd_loading_add_ons();
+       tzfd_loading_add_ons();
 
        // Scheduled report sending runs from WP-Cron (see run_scheduled_reports) instead of on every front-end request.
        add_action( 'tz_fd_reports_cron', array( $this, 'run_scheduled_reports' ) );
@@ -1421,7 +1429,7 @@ public function render_form_admin( $atts ) {
        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request value used for display or routing; this code path changes no state.
        if (isset($_GET["tz_fd_resources"]))
        {
-           add_filter( 'trp_allow_tp_to_run', 'tz_fd_hour_tp_disable_filter' );
+           add_filter( 'trp_allow_tp_to_run', 'tzfd_hour_tp_disable_filter' );
        }
    }
 
@@ -1515,7 +1523,7 @@ public function render_form_admin( $atts ) {
         // $tzfd_data[$tzfd_k]["m2"] - minute end
         // $tzfd_data[$tzfd_k]["info"] - description
 
-        function tz_fd_js_to_php_time( $jsdate ) {
+        function tzfd_js_to_php_time( $jsdate ) {
           $ret = null;
           if(preg_match('@(\d+)/(\d+)/(\d+)\s+(\d+):(\d+)((am|pm)*)@', $jsdate, $matches)==1){
             if ($matches[6]=="pm")
@@ -1529,17 +1537,17 @@ public function render_form_admin( $atts ) {
         }
 
 
-        function tz_fd_php_to_mysql_time( $phpDate ) {
+        function tzfd_php_to_mysql_time( $phpDate ) {
             return gmdate("Y-m-d H:i:s", $phpDate);
         }
 
 
-        function tz_fd_php_to_js_time( $phpDate ) {
+        function tzfd_php_to_js_time( $phpDate ) {
             return @gmdate("m/d/Y H:i", $phpDate);
         }
 
 
-        function tz_fd_mysql_to_php_time( $sqlDate ) {
+        function tzfd_mysql_to_php_time( $sqlDate ) {
             $a1 = explode (" ",$sqlDate);
             $a2 = explode ("-",$a1[0]);
             $a3 = explode (":",$a1[1]);
@@ -1564,12 +1572,12 @@ public function render_form_admin( $atts ) {
         $ret['events'] = array();
         $ret["issort"] = true;
         $ret['error'] = null;
-        $d1 = tz_fd_js_to_php_time( $startdate );
-        $d2 = tz_fd_js_to_php_time( $enddate );
+        $d1 = tzfd_js_to_php_time( $startdate );
+        $d2 = tzfd_js_to_php_time( $enddate );
         $d1 = mktime(0, 0, 0,  gmdate("m", $d1), gmdate("d", $d1), gmdate("Y", $d1));
         $d2 = mktime(0, 0, 0, gmdate("m", $d2), gmdate("d", $d2), gmdate("Y", $d2))+24*60*60-1;
-        $ret["start"] = tz_fd_php_to_js_time($d1);
-        $ret["end"] = tz_fd_php_to_js_time($d2);
+        $ret["start"] = tzfd_php_to_js_time($d1);
+        $ret["end"] = tzfd_php_to_js_time($d2);
 
         $aid = 1;
         foreach ($tzfd_data as $tzfd_item)
@@ -1579,8 +1587,8 @@ public function render_form_admin( $atts ) {
             $ev = array(
                 $aid++,//mt_rand(1,9999999), //$row["id"],
                 $tzfd_item["e"],
-                tz_fd_php_to_js_time(tz_fd_mysql_to_php_time($datetime)),
-                tz_fd_php_to_js_time(tz_fd_mysql_to_php_time($datetime2)),
+                tzfd_php_to_js_time(tzfd_mysql_to_php_time($datetime)),
+                tzfd_php_to_js_time(tzfd_mysql_to_php_time($datetime2)),
                 0, // is  all day event?
                 0, // more than one day event
                 '',//Recurring event rule,
@@ -1595,7 +1603,8 @@ public function render_form_admin( $atts ) {
             $ret['events'][] = $ev;
         }
         $dataoutput = wp_json_encode($ret);
-        do_action( 'tz_fd_cache_store', $formid, $dataquery, $dataoutput );
+        do_action( 'tzfd_cache_store', $formid, $dataquery, $dataoutput );
+        do_action( 'tz_fd_cache_store', $formid, $dataquery, $dataoutput ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         echo wp_json_encode( $ret );
         exit;
     }
@@ -1727,10 +1736,14 @@ public function render_form_admin( $atts ) {
                 $t_title_admin = get_option('tz_fd_schcaltitle_admin',TZFD_SCHCALTITLE_ADMIN);
                 $t_content_public = get_option('tz_fd_schcalcontent_public',TZFD_SCHCALCONTENT_PUBLIC);
                 $t_title_public = get_option('tz_fd_schcaltitle_public',TZFD_SCHCALTITLE_PUBLIC);
-                $t_content_admin = apply_filters( 'tz_fd_mv_content_admin_filter', $t_content_admin,  intval($formid) );
-                $t_title_admin = apply_filters( 'tz_fd_mv_title_admin_filter', $t_title_admin,  intval($formid) );
-                $t_content_public = apply_filters( 'tz_fd_mv_content_public_filter', $t_content_public,  intval($formid) );
-                $t_title_public = apply_filters( 'tz_fd_mv_title_public_filter', $t_title_public,  intval($formid) );
+                $t_content_admin = apply_filters( 'tzfd_mv_content_admin_filter', $t_content_admin,  intval($formid) );
+                $t_content_admin = apply_filters( 'tz_fd_mv_content_admin_filter', $t_content_admin, intval($formid) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                $t_title_admin = apply_filters( 'tzfd_mv_title_admin_filter', $t_title_admin,  intval($formid) );
+                $t_title_admin = apply_filters( 'tz_fd_mv_title_admin_filter', $t_title_admin, intval($formid) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                $t_content_public = apply_filters( 'tzfd_mv_content_public_filter', $t_content_public,  intval($formid) );
+                $t_content_public = apply_filters( 'tz_fd_mv_content_public_filter', $t_content_public, intval($formid) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                $t_title_public = apply_filters( 'tzfd_mv_title_public_filter', $t_title_public,  intval($formid) );
+                $t_title_public = apply_filters( 'tz_fd_mv_title_public_filter', $t_title_public, intval($formid) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             }
 
             // Reject malformed/oversized date ranges before querying and decoding bookings.
@@ -1761,7 +1774,8 @@ public function render_form_admin( $atts ) {
 
             // The cached feed depends on the date range, so the range is part of the cache key.
             $dataquery .= '|' . $tzfd_range_start . '|' . $tzfd_range_end;
-            do_action( 'tz_fd_cache_check', $formid, $dataquery );
+            do_action( 'tzfd_cache_check', $formid, $dataquery );
+            do_action( 'tz_fd_cache_check', $formid, $dataquery ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
             // Clear the previous query's error state so the availability response
             // reflects only this database read. A current failure is fail-closed below.
@@ -1850,7 +1864,8 @@ public function render_form_admin( $atts ) {
                 header( 'Content-Type: application/json; charset=UTF-8' );
                 header( 'X-Content-Type-Options: nosniff' );
                 header( 'Cache-Control: no-store, private' );
-                do_action( 'tz_fd_cache_store', $formid, $dataquery, $dataoutput );
+                do_action( 'tzfd_cache_store', $formid, $dataquery, $dataoutput );
+                do_action( 'tz_fd_cache_store', $formid, $dataquery, $dataoutput ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 echo $dataoutput; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON response, never HTML.
                 //{type:"all",d:"",h1:8,m1:0,h2:17,m2:0}                
             }
@@ -1905,7 +1920,7 @@ public function render_form_admin( $atts ) {
                 header( 'X-Content-Type-Options: nosniff' );
                 $this->print_counter = absint( $tzfd_script_counter );
                 $this->item = $tzfd_form_id;                
-                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- This is a JavaScript response (Content-type application/javascript), not an HTML script tag. The body is built per form: it defines the per-form function names that tzfdform-public.js and the form markup call, and it includes the output of the tz_fd_script_after_validation action. Every dynamic value is escaped in getValidateScript() (esc_js, esc_html, intval). Moving it to a static enqueued file would need the per-form values passed another way, so it stays an endpoint for now.
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- This is a JavaScript response (Content-type application/javascript), not an HTML script tag. The body is built per form: it defines the per-form function names that tzfdform-public.js and the form markup call, and it includes the output of the tzfd_script_after_validation action. Every dynamic value is escaped in getValidateScript() (esc_js, esc_html, intval). Moving it to a static enqueued file would need the per-form values passed another way, so it stays an endpoint for now.
                 echo $this->clean_sanitize($this->getValidateScript());
     		}            
     		else if ( 'public' === $tzfd_resource )
@@ -2004,8 +2019,10 @@ public function render_form_admin( $atts ) {
         $captcha_required = (!$titan_zero_front_desk_admin_submission && $this->get_option('cv_enable_captcha', TZFD_BOOK_DEFAULT_cv_enable_captcha) != 'false' && function_exists('imagecreatetruecolor'));
         $captcha_id = !empty($_COOKIE['rand_code'.$sequence]) ? sanitize_key(wp_unslash($_COOKIE['rand_code'.$sequence])) : '';
         $captcha_answer = (string) $this->get_param('hdcaptcha_'.$this->prefix.'_post');
+        $tzfd_submission_ok = apply_filters( 'tzfd_valid_submission', true );
+        $tzfd_submission_ok = apply_filters( 'tz_fd_valid_submission', $tzfd_submission_ok ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         if (
-               !apply_filters( 'tz_fd_valid_submission', true) ||
+               !$tzfd_submission_ok ||
                ( $captcha_required && !TZFD_Captcha::check_answer($captcha_id, $captcha_answer, TZFD_Captcha::client_key()) )
            )
         {
@@ -2133,7 +2150,9 @@ public function render_form_admin( $atts ) {
         $founddata = false;
         $tzfd_local_params = array();
         // Discount hook: Quotes and Invoicing apply their discounts through this filter. Front Desk has no coupons.
-        $tzfd_price = number_format( (float) apply_filters( 'tz_fd_invoice_amount', (float) $tzfd_price, array( 'formid' => (int) $this->item, 'itemnumber' => 0 ) ), 2, '.', '' );
+        $tzfd_price = (float) apply_filters( 'tzfd_invoice_amount', (float) $tzfd_price, array( 'formid' => (int) $this->item, 'itemnumber' => 0 ) );
+        $tzfd_price = (float) apply_filters( 'tz_fd_invoice_amount', $tzfd_price, array( 'formid' => (int) $this->item, 'itemnumber' => 0 ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        $tzfd_price = number_format( $tzfd_price, 2, '.', '' );
         $tzfd_local_params["final_price"] = $tzfd_price;
         $tzfd_local_params["final_price_short"] = number_format($tzfd_price,0);
         $tzfd_local_params["request_timestamp"] = $this->format_date(gmdate("Y-m-d", current_time('timestamp'))). " ". (gmdate("H:i:s", current_time('timestamp')));
@@ -2183,11 +2202,13 @@ public function render_form_admin( $atts ) {
 	     * Action called before insert the data into database.
 	     * To the function is passed an array with submitted data.
 	     */
-	    do_action( 'tz_fd_process_data_before_insert', $tzfd_local_params );
+	    do_action( 'tzfd_process_data_before_insert', $tzfd_local_params );
+	    do_action( 'tz_fd_process_data_before_insert', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         if (!$founddata)
         {
-            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tzfd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             echo esc_html__( 'Empty post! No data received.', 'titan-zero-trades-front-desk' );
             exit;
         }
@@ -2202,7 +2223,8 @@ public function render_form_admin( $atts ) {
             $tzfd_customer_raw = $posted_items['tz_fd_customer_id'] ?? '';
             $tzfd_crm_id = '' === $tzfd_customer_raw ? 0 : TZFD_Admin_Request_Ids::positive( $tzfd_customer_raw );
             if ( null === $tzfd_crm_id ) {
-                do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params );
+                do_action( 'tzfd_process_data_insert_failed', $tzfd_local_params );
+                do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 echo esc_html__( 'Invalid customer selection. Refresh the booking form and choose a customer.', 'titan-zero-trades-front-desk' );
                 exit;
             }
@@ -2221,7 +2243,8 @@ public function render_form_admin( $atts ) {
                     $tzfd_local_params['customer_source'] = 'frontdesk_local';
                 } else {
                     // An invalid/foreign customer selection cannot be silently bound.
-                    do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params );
+                    do_action( 'tzfd_process_data_insert_failed', $tzfd_local_params );
+                    do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                     echo esc_html__( 'The selected customer no longer exists. Refresh the booking form and select a valid customer.', 'titan-zero-trades-front-desk' );
                     exit;
                 }
@@ -2241,7 +2264,8 @@ public function render_form_admin( $atts ) {
 
         if (!$this->performAdvancedDoubleBookingVerification($tzfd_local_params, $sequence))
         {
-            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tzfd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             $this->endSubmission();
             return; // in the case it shouldn't break the whole process
         }
@@ -2267,7 +2291,8 @@ public function render_form_admin( $atts ) {
             $titan_zero_front_desk_intake_mode
         );
         if ( 'success' !== $tzfd_create_result['status'] ) {
-            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tzfd_process_data_insert_failed', $tzfd_local_params );
+            do_action( 'tz_fd_process_data_insert_failed', $tzfd_local_params ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             if ( 'unknown' === $tzfd_create_result['status'] ) {
                 echo esc_html__( 'The booking outcome could not be confirmed. Contact the administrator before trying again to avoid a duplicate.', 'titan-zero-trades-front-desk' );
             } else {
@@ -2303,7 +2328,7 @@ public function render_form_admin( $atts ) {
             return $payload;
         };
         if ( TZFD_Intake_Mode::MODE_REQUEST === $titan_zero_front_desk_intake_mode ) {
-            add_filter( 'titan_zero_front_desk_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
+            add_filter( 'tzfd_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
         }
         require_once __DIR__ . '/includes/class-tzfd-post-commit-dispatch.php';
         // Notifications and optional integrations are secondary to a committed
@@ -2314,7 +2339,7 @@ public function render_form_admin( $atts ) {
                 'tz_fd_process_data', array( &$tzfd_local_params ), (int) $item_number
             );
         } finally {
-            remove_filter( 'titan_zero_front_desk_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
+            remove_filter( 'tzfd_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );
         }
 
 
@@ -2330,7 +2355,8 @@ public function render_form_admin( $atts ) {
 		 * pass a boolean as parameter and returns a boolean
 		 */
 		$redirect = true;
-        $redirect = apply_filters( 'tz_fd_redirect', $redirect );
+        $redirect = apply_filters( 'tzfd_redirect', $redirect );
+        $redirect = apply_filters( 'tz_fd_redirect', $redirect ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         if ( TZFD_Intake_Mode::MODE_REQUEST === $titan_zero_front_desk_intake_mode ) {
             // The instant-confirm return page may promise approval. Requests stay on a neutral acknowledgment.
@@ -2700,7 +2726,8 @@ public function replace_tags ( $tzfd_message, $tzfd_local_params, $urlencode = f
 		     *	Includes additional information to the email's message,
 		     *  are passed two parameters: the basic information, and the IP address
 		     */
-		    $basic_data = apply_filters( 'tz_fd_additional_information',  $basic_data, $tzfd_myrows[0]->ipaddr );
+		    $basic_data = apply_filters( 'tzfd_additional_information',  $basic_data, $tzfd_myrows[0]->ipaddr );
+		    $basic_data = apply_filters( 'tz_fd_additional_information', $basic_data, $tzfd_myrows[0]->ipaddr ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 		    $tzfd_local_params["additional"] = $basic_data;
             $tzfd_local_params["server_time"] = gmdate("Y-m-d H:i:s", current_time('timestamp'));
 		    $buffer .= $basic_data;
@@ -2724,7 +2751,8 @@ public function replace_tags ( $tzfd_message, $tzfd_local_params, $urlencode = f
 		 *	Attach or modify attached files,
 		 *  Example for adding ical or PDF attachments
 		 */
-		$attachments = apply_filters( 'tz_fd_email_attachments',  $attachments, $tzfd_local_params, $this->item);
+		$attachments = apply_filters( 'tzfd_email_attachments',  $attachments, $tzfd_local_params, $this->item);
+		$attachments = apply_filters( 'tz_fd_email_attachments', $attachments, $tzfd_local_params, $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         $tzfd_local_params["apps"] = $this->get_appointments_text($tzfd_local_params["apps"]);
         foreach ($tzfd_local_params as $tzfd_item => $tzfd_value)
@@ -2732,7 +2760,7 @@ public function replace_tags ( $tzfd_message, $tzfd_local_params, $urlencode = f
             $tzfd_message = str_replace('%'.$tzfd_item.'%',(is_array($tzfd_value)?($this->recursive_implode(", ",$tzfd_value)):($tzfd_value)),$tzfd_message);
             $subject = str_replace('%'.$tzfd_item.'%',(is_array($tzfd_value)?($this->recursive_implode(", ",$tzfd_value)):($tzfd_value)),$subject);
             // Visitor-posted "_link" values are never used as attachment paths. Only server-generated files
-            // supplied through the tz_fd_email_attachments filter (for example the iCal invitations) are attached.
+            // supplied through the tzfd_email_attachments filter (for example the iCal invitations) are attached.
         }
 
         $tzfd_message = str_replace('%itemnumber%',$itemnumber,$tzfd_message);
@@ -2851,7 +2879,8 @@ public function replace_tags ( $tzfd_message, $tzfd_local_params, $urlencode = f
 
             if ($destination_to != '') {
                 // Customer-only boundary: management links must never reach admin or payer copies.
-                $customer_message = apply_filters('titan_zero_front_desk_customer_copy_message', $tzfd_message, $tzfd_myrows[0], $headers_cu, $this);
+                $customer_message = apply_filters('tzfd_customer_copy_message', $tzfd_message, $tzfd_myrows[0], $headers_cu, $this);
+                $customer_message = apply_filters( 'titan_zero_front_desk_customer_copy_message', $customer_message, $tzfd_myrows[0], $headers_cu, $this ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 wp_mail($destination_to, $subject, $customer_message, $headers_cu, $customer_attachments);
             }
             if ($destination_to != $payer_email && $payer_email != '')
@@ -3437,8 +3466,10 @@ public function replace_tags ( $tzfd_message, $tzfd_local_params, $urlencode = f
          * Allows modify the query of messages, passing the query as parameter
          * returns the new query
          */
+        $tzfd_events_query = apply_filters( 'tzfd_csv_query', $tzfd_events_query );
+        $tzfd_events_query = apply_filters( 'tz_fd_csv_query', $tzfd_events_query ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Developer-only filter, kept with its existing contract. The query passed in is built by $wpdb->prepare() above, with every request value (search, dfrom, dto, form id) as a placeholder. No request input is concatenated into it. Filter callbacks are registered by code, never from request data. The sniff cannot see through apply_filters(), so the annotation stays.
-        $tzfd_events = $wpdb->get_results( apply_filters( 'tz_fd_csv_query', $tzfd_events_query ) );
+        $tzfd_events = $wpdb->get_results( $tzfd_events_query );
         require_once __DIR__ . '/includes/class-tzfd-csv-booking-fields.php';
         if ( ! TZFD_CSV_Booking_Fields::valid_query_result( $tzfd_events ) ) {
             wp_die( esc_html__( 'Booking export could not be completed. Please retry.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) );

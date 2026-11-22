@@ -308,7 +308,12 @@ check( 'disclosure never includes the secret', false === strpos( json_encode( $d
 reset_state();
 check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
 $n = TZFD_AI_Connector::setup_notice();
-check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) && false !== strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice is marked for owner review and names the data classes', true === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) );
+check( 'setup notice records the wording as a proposed default pending owner sign-off', 'agent_proposed_default_pending_owner_signoff' === $n['wording_status'] && false === strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice carries a consent confirmation that names the withdrawal right', false !== strpos( $n['confirmation'], 'agree' ) && false !== strpos( $n['confirmation'], 'withdraw' ) );
+$GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { return 'Filtered test confirmation.'; } );
+check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] );
 check( 'setup notice never includes the secret', false === strpos( json_encode( $n ), SECRET ) );
 check( 'default terms link is the draft terms page', 'https://titanzero.io/scheduling-enquiries-terms/' === $n['terms_url'] );
 $GLOBALS['tz_filters']['tzfd_ai_terms_url'] = array( function () { return 'https://owner.example.test/terms'; } );

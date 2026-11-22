@@ -55,11 +55,15 @@ foreach ( $removed as $rel ) {
 	$check( isset( $baseline[ 'titan-zero-trades-front-desk/' . $rel ] ) || isset( $baseline[ $rel ] ), 'baseline manifest records: ' . $rel );
 }
 
-// 3. No shipped plugin file loads or names a removed file (scan by basename, which is how PHP and JS reference them).
+// 3. No shipped plugin code file loads or names a removed file (scan by basename, which is how PHP and JS reference them).
+// readme.txt and changelog.txt are release notes: they name the removed files on purpose (the 15 "Removed files" entries,
+// issue #434), so they are excluded from this code check.
+$release_notes = array( 'readme.txt', 'changelog.txt' );
 $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $plugin, FilesystemIterator::SKIP_DOTS ) );
 $hits  = array();
 foreach ( $files as $file ) {
 	if ( ! preg_match( '/\.(php|js|html|txt|json)$/i', $file->getFilename() ) ) { continue; }
+	if ( in_array( $file->getFilename(), $release_notes, true ) ) { continue; }
 	$body = (string) file_get_contents( $file->getPathname() );
 	foreach ( $removed as $rel ) {
 		if ( strpos( $body, basename( $rel ) ) !== false ) {

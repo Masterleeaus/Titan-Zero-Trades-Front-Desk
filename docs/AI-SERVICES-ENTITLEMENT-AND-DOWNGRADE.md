@@ -144,6 +144,6 @@ Evidenced: pure-logic resolution, downgrade preservation, outage and malformed-i
 
 Not evidenced: signed payload verification and the connector transport (#16, #4, #43); a live WordPress run of the AI Services admin page; consent records and the downgrade audit entry.
 
-Owner decisions recorded (issue #371, 2026-11-23): the public wording for the Free, Titan Zero AI Assistant and Titan Zero AI Agent Team plan descriptions and the setup consent notice (`wording_status` `owner_approved` in `includes/class-tzfd-ai-connector.php`); the usage and fair-use text ("fair use with published hosted budgets; not unlimited", from `data/ai-services/capabilities-v1.json`). The consent terms link is still a draft pending legal review and is not covered by this sign-off.
+Owner decisions recorded (issue #371, 2026-11-23): the public wording for the Free, Titan Zero AI Assistant and Titan Zero AI Agent Team plan descriptions and the setup consent notice (`wording_status` `owner_approved_issue_348` in `includes/class-tzfd-ai-connector.php`, already on main from #348); the usage and fair-use text ("fair use with published hosted budgets; not unlimited", from `data/ai-services/capabilities-v1.json`). The consent terms link is still a draft pending legal review and is not covered by this sign-off.
 
 Owner decisions still needed (not made here): production readiness sign-off, the release decision, the retention for the hosted data categories, and the live Titan account and billing go-live (depends on the connector being live).

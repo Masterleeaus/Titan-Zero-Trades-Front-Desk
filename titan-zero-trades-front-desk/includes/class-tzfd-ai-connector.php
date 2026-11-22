@@ -313,9 +313,9 @@ final class TZFD_AI_Connector {
     /**
      * Setup notice shown before the administrator keeps AI on: what leaves the site, the confirmation the
      * administrator gives when saving consent, and where the terms are.
-     * Wording approved by the plugin owner for issue #371 on 2026-11-23 (first proposed in #343).
-     * wording_status and signoff record that approval, and owner_review is false. The default terms link is
-     * a draft page pending legal review and is not covered by this sign-off.
+     * Consent wording and the 30-day retention default were approved by the owner on issue #348 (decision
+     * recorded 2026-11-23). wording_status records that approval. The terms link is NOT covered by that
+     * decision: it is still a draft page pending legal review.
      * Filters: tzfd_ai_setup_notice( $text, $disclosure ), tzfd_ai_consent_confirmation( $text, $disclosure )
      * and tzfd_ai_terms_url( $url ).
      */
@@ -338,12 +338,7 @@ final class TZFD_AI_Connector {
             'confirmation'   => (string) $confirm,
             'terms_url'      => (string) $url,
             'owner_review'   => false,
-            'wording_status' => 'owner_approved',
-            'signoff'        => array(
-                'issue'    => '#371',
-                'decision' => 'Public wording approved by the plugin owner',
-                'date'     => '2026-11-23',
-            ),
+            'wording_status' => 'owner_approved_issue_348',
         );
     }
 

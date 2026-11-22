@@ -326,8 +326,8 @@ check( 'disclosure never includes the secret', false === strpos( json_encode( $d
 reset_state();
 check( 'AI is enabled by default', true === TZFD_AI_Connector::status()['enabled'] );
 $n = TZFD_AI_Connector::setup_notice();
-check( 'setup notice names the data classes and is not pending owner review', false === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) );
-check( 'setup notice records the owner sign-off for issue #371', 'owner_approved' === $n['wording_status'] && '#371' === $n['signoff']['issue'] && false === strpos( $n['text'], 'OWNER REVIEW' ) );
+check( 'setup notice is approved by the owner (no review flag) and names the data classes', false === $n['owner_review'] && false !== strpos( $n['text'], 'customer.read' ) );
+check( 'setup notice records the owner approval of issue #348', 'owner_approved_issue_348' === $n['wording_status'] && false === strpos( $n['text'], 'OWNER REVIEW' ) );
 check( 'setup notice carries a consent confirmation that names the withdrawal right', false !== strpos( $n['confirmation'], 'agree' ) && false !== strpos( $n['confirmation'], 'withdraw' ) );
 $GLOBALS['tz_filters']['tzfd_ai_consent_confirmation'] = array( function () { return 'Filtered test confirmation.'; } );
 check( 'consent confirmation comes from the tzfd_ai_consent_confirmation filter', 'Filtered test confirmation.' === TZFD_AI_Connector::setup_notice()['confirmation'] );

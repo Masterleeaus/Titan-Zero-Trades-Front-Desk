@@ -155,8 +155,9 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/uninstall-wipe-check.php
 
 {
   echo "--- coverage not executed here"
-  echo "SKIP php-matrix -- only PHP $PHP_VER is available locally; PHP 8.1, 8.2 and 8.4 are not provisioned"
-  echo "SKIP wp-matrix -- only one WordPress core version was provisioned"
+  # Issue #389: the CI workflow provisions this network on PHP 8.1 to 8.4 and on WordPress latest and 6.6, so the
+  # matrix is no longer a SKIP. This line only records what this one run executed.
+  echo "INFO matrix -- this run: PHP $PHP_VER, WordPress ${TZFD_RT_WP_VERSION:-latest}; CI covers PHP 8.1, 8.2, 8.3, 8.4 and WordPress latest and 6.6 (tests.yml, wordpress-multisite)"
   [ -n "$MULTISITE_FLAG" ] || echo "SKIP multisite -- run with --multisite to provision and test a network"
   echo "SKIP live-provider -- SMS, e-mail transport, telephony and hosted AI are not called by design"
 } | tee -a "$LOG"

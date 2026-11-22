@@ -101,5 +101,13 @@ check( 'after revocation the screen shows no consent', false !== strpos( $html, 
 // Connector-side retention accepts the page's values.
 check( 'connector accepts retention set by the page', $P::normalise_retention( '45' ) === 45 && TZFD_AI_Connector::set_retention_days( 45 ) && 45 === TZFD_AI_Connector::retention_days() );
 
+// Usage and passthrough terms (#372 item 3): every usage model in the descriptor is rendered on the page.
+$desc_levels = TZFD_AI_Services::descriptors()['levels'];
+$html        = render_page();
+check( 'usage section heading renders', false !== strpos( $html, 'Usage and passthrough terms' ) );
+check( 'assistant usage model renders', false !== strpos( $html, htmlspecialchars( $desc_levels['assistant']['usage_model'], ENT_QUOTES ) ) );
+check( 'agent team usage model renders SMS and voice passthrough', false !== strpos( $html, htmlspecialchars( $desc_levels['agent_team']['usage_model'], ENT_QUOTES ) ) && false !== strpos( $html, 'SMS and voice are passed through' ) );
+check( 'free level shows no hosted usage model', false !== strpos( $html, 'No hosted usage model for this level.' ) );
+
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

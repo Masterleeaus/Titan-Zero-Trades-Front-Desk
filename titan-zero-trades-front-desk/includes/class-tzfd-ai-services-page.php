@@ -153,6 +153,28 @@ final class TZFD_AI_Services_Page {
                 </tbody>
             </table>
 
+            <h2><?php esc_html_e( 'Usage and passthrough terms', 'titan-zero-trades-front-desk' ); ?></h2>
+            <table class="widefat striped" style="max-width:52em">
+                <thead><tr>
+                    <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage model, SMS and voice passthrough, fair use', 'titan-zero-trades-front-desk' ); ?></th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ( $levels as $key => $level ) : ?>
+                    <tr>
+                        <td><?php echo esc_html( (string) $level['label'] ); ?></td>
+                        <td><?php
+                            if ( isset( $level['usage_model'] ) && '' !== (string) $level['usage_model'] ) {
+                                echo esc_html( (string) $level['usage_model'] );
+                            } else {
+                                esc_html_e( 'No hosted usage model for this level.', 'titan-zero-trades-front-desk' );
+                            }
+                        ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+
             <h2><?php esc_html_e( 'Hosted AI consent', 'titan-zero-trades-front-desk' ); ?></h2>
             <p class="description"><?php echo esc_html( $setup['text'] ); ?>
                 <a href="<?php echo esc_url( $setup['terms_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Terms', 'titan-zero-trades-front-desk' ); ?></a>

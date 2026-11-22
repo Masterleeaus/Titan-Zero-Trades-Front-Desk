@@ -203,12 +203,14 @@ final class TZFD_AI_Services_Page {
                 <thead><tr>
                     <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
                     <th scope="col"><?php esc_html_e( 'What it adds', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage and fair use', 'titan-zero-trades-front-desk' ); ?></th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ( $levels as $key => $level ) : ?>
                     <tr>
                         <td><?php echo esc_html( (string) $level['label'] ); ?></td>
                         <td><?php echo esc_html( (string) $level['disclosure'] ); ?></td>
+                        <td><?php echo esc_html( self::usage_text( $level ) ); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -298,6 +300,21 @@ final class TZFD_AI_Services_Page {
             <?php endif; ?>
         </div>
         <?php
+    }
+
+    /**
+     * Plain-words usage line for one level: the descriptor's usage model, including SMS and voice
+     * pass-through and fair use. A level without a usage model gets a plain Free line. Pure function.
+     *
+     * @param array $level One level from data/ai-services/capabilities-v1.json.
+     * @return string
+     */
+    public static function usage_text( array $level ) {
+        $model = isset( $level['usage_model'] ) && is_string( $level['usage_model'] ) ? trim( $level['usage_model'] ) : '';
+        if ( '' === $model ) {
+            return __( 'No hosted usage. Hosted AI stays off until you opt in.', 'titan-zero-trades-front-desk' );
+        }
+        return ucfirst( $model ) . '.';
     }
 
     /**

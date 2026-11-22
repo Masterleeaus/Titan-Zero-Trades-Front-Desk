@@ -224,7 +224,7 @@ ok( 'setup: enabling AI lists missing configuration', $enable_blocked['ok'] === 
 
 $fresh = array( 'business_name' => 'Harbour Plumbing', 'greeting' => '', 'services' => array( 'Boiler repair', 'Drain unblocking' ), 'hours_configured' => true, 'faq_questions' => array(), 'tags' => array(), 'connector_available' => true );
 $sgs = TZFD_Ai_Setup_Check::suggestions( $fresh );
-ok( 'setup: fresh site gets greeting, service FAQs and tags', count( array_filter( $sgs, static function ( $s ) { return 'greeting' === $s['type']; } ) ) === 1 && count( array_filter( $sgs, static function ( $s ) { return 'faq' === $s['type']; } ) ) === 2 && count( array_filter( $sgs, static function ( $s ) { return 'tags' === $s['type']; } ) ) === 1 );
+ok( 'setup: fresh site gets service FAQs and tags, and no greeting suggestion (#400)', count( array_filter( $sgs, static function ( $s ) { return 'greeting' === $s['type']; } ) ) === 0 && count( array_filter( $sgs, static function ( $s ) { return 'faq' === $s['type']; } ) ) === 2 && count( array_filter( $sgs, static function ( $s ) { return 'tags' === $s['type']; } ) ) === 1 );
 ok( 'setup: suggestion values contain no invented hours or prices', preg_match( '/\d|\$|\b(am|pm)\b/i', json_encode( array_column( $sgs, 'value' ) ) ) === 0 );
 ok( 'setup: every suggestion needs confirmation', array_reduce( $sgs, static function ( $c, $s ) { return $c && $s['needs_confirmation'] === true; }, true ) );
 $upgraded = $fresh;
@@ -232,7 +232,7 @@ $upgraded['greeting'] = 'Welcome to Harbour';
 $upgraded['faq_questions'] = array( 'Do you offer boiler repair?' );
 $upgraded['tags'] = array( 'boiler-repair' );
 $up = TZFD_Ai_Setup_Check::suggestions( $upgraded );
-ok( 'setup: upgraded site keeps existing greeting, FAQ and tag', ! in_array( 'greeting', array_column( $up, 'type' ), true ) && count( array_filter( $up, static function ( $s ) { return 'faq' === $s['type'] && 'do you offer boiler repair?' === strtolower( $s['value']['question'] ); } ) ) === 0 && count( array_filter( $up, static function ( $s ) { return 'tags' === $s['type'] && in_array( 'boiler-repair', $s['value'], true ); } ) ) === 0 );
+ok( 'setup: upgraded site keeps existing FAQ and tag', ! in_array( 'greeting', array_column( $up, 'type' ), true ) && count( array_filter( $up, static function ( $s ) { return 'faq' === $s['type'] && 'do you offer boiler repair?' === strtolower( $s['value']['question'] ); } ) ) === 0 && count( array_filter( $up, static function ( $s ) { return 'tags' === $s['type'] && in_array( 'boiler-repair', $s['value'], true ); } ) ) === 0 );
 ok( 'setup: AI gate passes once required items exist', TZFD_Ai_Setup_Check::ai_gate( $fresh )['allowed'] === true );
 ok( 'setup: enabling AI needs admin confirmation', TZFD_Ai_Setup_Check::enable_ai( $fresh, false, $NOW )['error'] === 'admin_confirmation_required' && TZFD_Ai_Free_Core::consent_granted() === false );
 ok( 'setup: confirmed enable records consent', TZFD_Ai_Setup_Check::enable_ai( $fresh, true, $NOW )['ok'] === true && TZFD_Ai_Free_Core::consent_granted() === true );

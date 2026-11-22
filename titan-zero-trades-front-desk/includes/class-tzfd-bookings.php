@@ -12,16 +12,16 @@ require_once __DIR__ . '/class-tzfd-stored-data.php';
 final class TZFD_Bookings {
     const TABLE = TZFD_Tables::BOOKINGS;
 
-    public static function valid_date( $tz_date ) {
-        if ( ! is_string( $tz_date ) || 1 !== preg_match( '/^\d{4}-\d{2}-\d{2}$/', $tz_date ) ) { return false; }
-        $parts = explode( '-', $tz_date );
+    public static function valid_date( $tzfd_date ) {
+        if ( ! is_string( $tzfd_date ) || 1 !== preg_match( '/^\d{4}-\d{2}-\d{2}$/', $tzfd_date ) ) { return false; }
+        $parts = explode( '-', $tzfd_date );
         return checkdate( (int) $parts[1], (int) $parts[2], (int) $parts[0] );
     }
 
     /** Active (not cancelled) appointments of one calendar on one date: booking_id, email, date, slot. */
-    public static function appointments_on( $formid, $tz_date, $limit = 5000 ) {
+    public static function appointments_on( $formid, $tzfd_date, $limit = 5000 ) {
         global $wpdb;
-        if ( ! self::valid_date( $tz_date ) || ! self::positive_id( $formid ) ) { return array(); }
+        if ( ! self::valid_date( $tzfd_date ) || ! self::positive_id( $formid ) ) { return array(); }
         $form_id = (int) $formid;
         $limit   = is_int( $limit ) && $limit > 0 ? min( 20000, $limit ) : 5000;
 
@@ -48,21 +48,21 @@ final class TZFD_Bookings {
         do {
             $wpdb->last_error = '';
             if ( null === $before_id ) {
-                $tz_rows = $wpdb->get_results( $wpdb->prepare(
+                $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
                     'SELECT id, notifyto, posted_data FROM %i WHERE formid = %d AND company_id = %d ORDER BY id DESC LIMIT %d',
                     $wpdb->prefix . self::TABLE, $form_id, $company_id, $limit
                 ) );
             } else {
-                $tz_rows = $wpdb->get_results( $wpdb->prepare(
+                $tzfd_local_rows = $wpdb->get_results( $wpdb->prepare(
                     'SELECT id, notifyto, posted_data FROM %i WHERE formid = %d AND company_id = %d AND id < %d ORDER BY id DESC LIMIT %d',
                     $wpdb->prefix . self::TABLE, $form_id, $company_id, $before_id, $limit
                 ) );
             }
-            if ( ! is_array( $tz_rows ) || ! empty( $wpdb->last_error ) ) {
+            if ( ! is_array( $tzfd_local_rows ) || ! empty( $wpdb->last_error ) ) {
                 throw new RuntimeException( 'Booking availability could not be verified.' );
             }
             $next_before = null;
-            foreach ( $tz_rows as $row ) {
+            foreach ( $tzfd_local_rows as $row ) {
                 $row_id = isset( $row->id ) && self::positive_id( $row->id ) ? (int) $row->id : 0;
                 // Refuse malformed or non-descending cursors rather than returning
                 // partial availability counts as if the scan were complete.
@@ -70,17 +70,17 @@ final class TZFD_Bookings {
                     ( null !== $next_before && $row_id >= $next_before ) ) { throw new RuntimeException( 'Booking availability scan was invalid.' ); }
                 $next_before = $row_id;
                 if ( ! isset( $row->posted_data ) || ! is_string( $row->posted_data ) ) { continue; }
-                $tz_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
-                if ( ! is_array( $tz_data ) || empty( $tz_data['apps'] ) || ! is_array( $tz_data['apps'] ) ) { continue; }
-                foreach ( $tz_data['apps'] as $tz_app ) {
-                    if ( ! is_array( $tz_app ) || ! empty( $tz_app['cancelled'] ) ) { continue; }
-                    if ( ( $tz_app['date'] ?? '' ) !== $tz_date ) { continue; }
-                    $slot = $tz_app['slot'] ?? '';
+                $tzfd_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
+                if ( ! is_array( $tzfd_data ) || empty( $tzfd_data['apps'] ) || ! is_array( $tzfd_data['apps'] ) ) { continue; }
+                foreach ( $tzfd_data['apps'] as $tzfd_app ) {
+                    if ( ! is_array( $tzfd_app ) || ! empty( $tzfd_app['cancelled'] ) ) { continue; }
+                    if ( ( $tzfd_app['date'] ?? '' ) !== $tzfd_date ) { continue; }
+                    $slot = $tzfd_app['slot'] ?? '';
                     if ( ! is_string( $slot ) ) { continue; }
-                    $found[] = array( 'booking_id' => $row_id, 'email' => is_string( $row->notifyto ?? null ) ? $row->notifyto : '', 'date' => $tz_date, 'slot' => $slot );
+                    $found[] = array( 'booking_id' => $row_id, 'email' => is_string( $row->notifyto ?? null ) ? $row->notifyto : '', 'date' => $tzfd_date, 'slot' => $slot );
                 }
             }
-            if ( count( $tz_rows ) < $limit ) { break; }
+            if ( count( $tzfd_local_rows ) < $limit ) { break; }
             if ( null === $next_before || ( null !== $before_id && $next_before >= $before_id ) ) { throw new RuntimeException( 'Booking availability pagination failed.' ); }
             $before_id = $next_before;
         } while ( true );
@@ -95,19 +95,19 @@ final class TZFD_Bookings {
     }
 
     /** Number of active appointments on a date, optionally for one slot. */
-    public static function count_on( $formid, $tz_date, $slot = null ) {
-        $tz_count = 0;
-        foreach ( self::appointments_on( $formid, $tz_date ) as $tz_app ) {
-            if ( null === $slot || $tz_app['slot'] === $slot ) { $tz_count++; }
+    public static function count_on( $formid, $tzfd_date, $slot = null ) {
+        $tzfd_local_count = 0;
+        foreach ( self::appointments_on( $formid, $tzfd_date ) as $tzfd_app ) {
+            if ( null === $slot || $tzfd_app['slot'] === $slot ) { $tzfd_local_count++; }
         }
-        return $tz_count;
+        return $tzfd_local_count;
     }
 
     /** Sorted unique slots that have at least one active appointment on a date. */
-    public static function booked_slots( $formid, $tz_date ) {
+    public static function booked_slots( $formid, $tzfd_date ) {
         $slots = array();
-        foreach ( self::appointments_on( $formid, $tz_date ) as $tz_app ) {
-            if ( '' !== $tz_app['slot'] ) { $slots[ $tz_app['slot'] ] = true; }
+        foreach ( self::appointments_on( $formid, $tzfd_date ) as $tzfd_app ) {
+            if ( '' !== $tzfd_app['slot'] ) { $slots[ $tzfd_app['slot'] ] = true; }
         }
         $slots = array_keys( $slots );
         sort( $slots );
@@ -115,14 +115,14 @@ final class TZFD_Bookings {
     }
 
     /** The date and slot pairs a submission would book, from its apps. */
-    public static function submission_slots( $tz_params ) {
+    public static function submission_slots( $tzfd_local_params ) {
         $out = array();
-        if ( ! is_array( $tz_params ) || ! isset( $tz_params['apps'] ) || ! is_array( $tz_params['apps'] ) ) { return $out; }
-        foreach ( $tz_params['apps'] as $tz_app ) {
-            if ( ! is_array( $tz_app ) ) { continue; }
-            $tz_date = $tz_app['date'] ?? null;
-            $tz_slot = $tz_app['slot'] ?? '';
-            if ( self::valid_date( $tz_date ) && is_string( $tz_slot ) ) { $out[] = array( 'date' => $tz_date, 'slot' => $tz_slot ); }
+        if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['apps'] ) || ! is_array( $tzfd_local_params['apps'] ) ) { return $out; }
+        foreach ( $tzfd_local_params['apps'] as $tzfd_app ) {
+            if ( ! is_array( $tzfd_app ) ) { continue; }
+            $tzfd_date = $tzfd_app['date'] ?? null;
+            $tzfd_slot = $tzfd_app['slot'] ?? '';
+            if ( self::valid_date( $tzfd_date ) && is_string( $tzfd_slot ) ) { $out[] = array( 'date' => $tzfd_date, 'slot' => $tzfd_slot ); }
         }
         return $out;
     }

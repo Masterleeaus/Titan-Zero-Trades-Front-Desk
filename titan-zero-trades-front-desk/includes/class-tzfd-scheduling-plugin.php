@@ -21,9 +21,9 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
     }
 
     /** Acquire before the registered engine's final occupancy read. */
-    public function begin_capacity_reservation($tz_params) {
+    public function begin_capacity_reservation($tzfd_local_params) {
         global $wpdb;
-        $has_apps = is_array($tz_params) && isset($tz_params['apps']) && is_array($tz_params['apps']) && count($tz_params['apps']) > 0;
+        $has_apps = is_array($tzfd_local_params) && isset($tzfd_local_params['apps']) && is_array($tzfd_local_params['apps']) && count($tzfd_local_params['apps']) > 0;
         $company_id = $this->capacity_company_id();
         $nested_capacity_write = false;
         foreach ($this->titan_zero_front_desk_capacity_submissions as $frame) {
@@ -54,7 +54,7 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
     }
 
     /** The donor calls this after the inserted row is visible to later capacity reads. */
-    public function finish_capacity_reservation($tz_params = array()) {
+    public function finish_capacity_reservation($tzfd_local_params = array()) {
         $this->pop_capacity_submission();
     }
 
@@ -68,13 +68,13 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
     }
 
     /** Normalise before the parent calculates price; never silently accept a partial bad cart. */
-    public function extract_appointments($tz_form, $tz_data, $sequence) {
+    public function extract_appointments($tzfd_local_form, $tzfd_data, $sequence) {
         $this->titan_zero_front_desk_invalid_selection = false;
         try {
-            if (!is_array($tz_data) || !is_string($sequence)) { throw new InvalidArgumentException('invalid_submission'); }
-            $config=TZFD_Scheduling::configuration($tz_form);
+            if (!is_array($tzfd_data) || !is_string($sequence)) { throw new InvalidArgumentException('invalid_submission'); }
+            $config=TZFD_Scheduling::configuration($tzfd_local_form);
             $safe_form=array(); $selected_count=0;
-            foreach ($tz_form as $field) {
+            foreach ($tzfd_local_form as $field) {
                 if (!is_object($field)) { throw new InvalidArgumentException('invalid_configuration'); }
                 $copy=clone $field;
                 if (!isset($field->ftype) || $field->ftype !== 'fapp') { $safe_form[]=$copy; continue; }
@@ -82,14 +82,14 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
                 foreach($field->services as $index=>$service){
                     $safe=clone $service;$safe->capacity=$config[$field->name]['services'][$index]['capacity'];$copy->services[$index]=$safe;
                 }
-                $tz_key=$field->name.$sequence;
-                if (!isset($tz_data[$tz_key]) || $tz_data[$tz_key]==='') { $safe_form[]=$copy; continue; }
-                if (!is_string($tz_data[$tz_key]) || strlen($tz_data[$tz_key])>32768) { throw new InvalidArgumentException('invalid_selection'); }
+                $tzfd_key=$field->name.$sequence;
+                if (!isset($tzfd_data[$tzfd_key]) || $tzfd_data[$tzfd_key]==='') { $safe_form[]=$copy; continue; }
+                if (!is_string($tzfd_data[$tzfd_key]) || strlen($tzfd_data[$tzfd_key])>32768) { throw new InvalidArgumentException('invalid_selection'); }
                 $clean=array();
-                foreach(explode(';',$tz_data[$tz_key]) as $tz_selection){
-                    if(trim($tz_selection)===''){continue;}
+                foreach(explode(';',$tzfd_data[$tzfd_key]) as $tzfd_selection){
+                    if(trim($tzfd_selection)===''){continue;}
                     if(++$selected_count>TZFD_Scheduling::MAX_OCCURRENCES){throw new InvalidArgumentException('selection_limit');}
-                    $parts=preg_split('/\s+/',trim($tz_selection));
+                    $parts=preg_split('/\s+/',trim($tzfd_selection));
                     if(count($parts)<3 || count($parts)>4){throw new InvalidArgumentException('invalid_selection');}
                     $index=TZFD_Scheduling::integer($parts[2],0);
                     if($index===null || !isset($config[$field->name]['services'][$index])){throw new InvalidArgumentException('unknown_service');}
@@ -100,9 +100,9 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
                     $clean[]=$parts[0].' '.$parts[1].' '.$index.' '.$quantity;
                 }
                 if(count($clean)===0){throw new InvalidArgumentException('empty_selection');}
-                $tz_data[$tz_key]=implode(';',$clean);$safe_form[]=$copy;
+                $tzfd_data[$tzfd_key]=implode(';',$clean);$safe_form[]=$copy;
             }
-            return parent::extract_appointments($safe_form,$tz_data,$sequence);
+            return parent::extract_appointments($safe_form,$tzfd_data,$sequence);
         } catch(InvalidArgumentException $error) {
             $this->titan_zero_front_desk_invalid_selection=true;
             return array();
@@ -129,35 +129,35 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
         $company_id = $this->capacity_company_id();
         if ( $company_id < 1 ) { throw new InvalidArgumentException('unknown_calendar_owner'); }
         $dates=array();
-        foreach($apps as $tz_app){
-            $day=TZFD_Scheduling::date($tz_app['date']);
+        foreach($apps as $tzfd_app){
+            $day=TZFD_Scheduling::date($tzfd_app['date']);
             // One-day visits and up to one-day buffers can touch three adjacent dates.
-            for($tz_offset=-3;$tz_offset<=3;$tz_offset++){$dates[$day->modify(($tz_offset>=0?'+':'').$tz_offset.' days')->format('Y-m-d')]=true;}
+            for($tzfd_offset=-3;$tzfd_offset<=3;$tzfd_offset++){$dates[$day->modify(($tzfd_offset>=0?'+':'').$tzfd_offset.' days')->format('Y-m-d')]=true;}
         }
         $stored=array();$seen=array();
         // One literal prepared query per date; results are de-duplicated by id below.
-        foreach(array_keys($dates)as$tz_date){
-            $tz_rows=$wpdb->get_results($wpdb->prepare(
+        foreach(array_keys($dates)as$tzfd_date){
+            $tzfd_local_rows=$wpdb->get_results($wpdb->prepare(
                 'SELECT id, notifyto, posted_data FROM %i WHERE formid=%d AND company_id=%d AND posted_data LIKE %s',
-                $wpdb->prefix.TZFD_Tables::BOOKINGS,(int)$this->item,$company_id,'%'.$wpdb->esc_like($tz_date).'%'
+                $wpdb->prefix.TZFD_Tables::BOOKINGS,(int)$this->item,$company_id,'%'.$wpdb->esc_like($tzfd_date).'%'
             ));
-            if(!is_array($tz_rows) || !empty($wpdb->last_error)){throw new InvalidArgumentException('booking_storage_unavailable');}
-            foreach($tz_rows as$row){
+            if(!is_array($tzfd_local_rows) || !empty($wpdb->last_error)){throw new InvalidArgumentException('booking_storage_unavailable');}
+            foreach($tzfd_local_rows as$row){
                 $id=isset($row->id)?(int)$row->id:0;
                 if($id===$skip_id || isset($seen[$id])){continue;}$seen[$id]=true;
                 if(!isset($row->posted_data) || !is_string($row->posted_data)){throw new InvalidArgumentException('invalid_stored_payload');}
                 // Never instantiate objects from the serialized legacy storage envelope.
-                $tz_data=TZFD_Stored_Data::project( $row->posted_data, array( 'apps', 'lock' ) );
-                if(!is_array($tz_data)){throw new InvalidArgumentException('invalid_stored_payload');}
-                if(!isset($tz_data['apps'])){continue;}
-                if(!is_array($tz_data['apps'])){throw new InvalidArgumentException('invalid_stored_payload');}
-                foreach($tz_data['apps']as$tz_app){
-                    if(!is_array($tz_app)){throw new InvalidArgumentException('invalid_stored_appointment');}
-                    if(isset($tz_data['lock'])){$tz_app['_locked']=true;}
+                $tzfd_data=TZFD_Stored_Data::project( $row->posted_data, array( 'apps', 'lock' ) );
+                if(!is_array($tzfd_data)){throw new InvalidArgumentException('invalid_stored_payload');}
+                if(!isset($tzfd_data['apps'])){continue;}
+                if(!is_array($tzfd_data['apps'])){throw new InvalidArgumentException('invalid_stored_payload');}
+                foreach($tzfd_data['apps']as$tzfd_app){
+                    if(!is_array($tzfd_app)){throw new InvalidArgumentException('invalid_stored_appointment');}
+                    if(isset($tzfd_data['lock'])){$tzfd_app['_locked']=true;}
                     // Single-slot admin blocks reserve their selected service/quantity.
                     // Bulk blocks already carry empty field/-1 service identity and
                     // are conservatively expanded across fields by assess().
-                    $stored[]=$tz_app;
+                    $stored[]=$tzfd_app;
                 }
             }
         }
@@ -187,28 +187,28 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
     }
 
     /** Serialize supported booking checks through the matching database write. */
-    public function performAdvancedDoubleBookingVerification($tz_params, $sequence='_1', $is_double_check=false) {
+    public function performAdvancedDoubleBookingVerification($tzfd_local_params, $sequence='_1', $is_double_check=false) {
         global $wpdb;
         $submission = !empty($this->titan_zero_front_desk_capacity_submissions);
         $lock = false;
         $standalone = false;
 
-        if ($this->capacity_company_id() < 1 || $this->titan_zero_front_desk_invalid_selection || !is_array($tz_params)) {
+        if ($this->capacity_company_id() < 1 || $this->titan_zero_front_desk_invalid_selection || !is_array($tzfd_local_params)) {
             $this->rollback_failed_capacity_check($is_double_check);
             if ($submission) { $this->pop_capacity_submission(); }
             return false;
         }
-        if (!isset($tz_params['apps'])) {
+        if (!isset($tzfd_local_params['apps'])) {
             $this->rollback_failed_capacity_check($is_double_check);
             if ($submission) { $this->pop_capacity_submission(); }
             return false;
         }
-        if (!is_array($tz_params['apps'])) {
+        if (!is_array($tzfd_local_params['apps'])) {
             $this->rollback_failed_capacity_check($is_double_check);
             if ($submission) { $this->pop_capacity_submission(); }
             return false;
         }
-        if (count($tz_params['apps']) === 0) {
+        if (count($tzfd_local_params['apps']) === 0) {
             $this->rollback_failed_capacity_check($is_double_check);
             if ($submission) { $this->pop_capacity_submission(); }
             return false;
@@ -237,14 +237,14 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
             $fields = $this->scheduling_fields();
             $custom_duration = defined('TZFD_HOUR_BLOCK_TIMES_PROCESS');
             $baseline = $custom_duration ? array('ok'=>true) :
-                TZFD_Calendar::assess($tz_params['apps'], $fields, $this->get_option('date_format','mm/dd/yy'));
+                TZFD_Calendar::assess($tzfd_local_params['apps'], $fields, $this->get_option('date_format','mm/dd/yy'));
             if ($baseline['ok']) {
-                $baseline = TZFD_Scheduling::assess($tz_params['apps'], array(), $fields, $custom_duration);
+                $baseline = TZFD_Scheduling::assess($tzfd_local_params['apps'], array(), $fields, $custom_duration);
             }
             if ($baseline['ok']) {
                 $skip = TZFD_Scheduling::integer($is_double_check, 1, PHP_INT_MAX);
-                $stored = $this->stored_appointments($tz_params['apps'], $skip === null ? 0 : $skip);
-                $result = TZFD_Scheduling::assess($tz_params['apps'], $stored, $fields, $custom_duration);
+                $stored = $this->stored_appointments($tzfd_local_params['apps'], $skip === null ? 0 : $skip);
+                $result = TZFD_Scheduling::assess($tzfd_local_params['apps'], $stored, $fields, $custom_duration);
                 $ok = $result['ok'];
             }
         } catch (InvalidArgumentException $error) {
@@ -278,7 +278,7 @@ class TZFD_Scheduling_Plugin extends TZFD_FrontDeskPlugin {
         $service=$map[$field_name]['services'][$index];
         $slot=TZFD_Scheduling::slot($start_time,$service['duration']);
         $dates=TZFD_Scheduling::expand_dates($start_date,$rule);$apps=array();
-        foreach($dates as$tz_date){$apps[]=array('field'=>$field_name,'serviceindex'=>$index,'date'=>$tz_date,'slot'=>$slot,
+        foreach($dates as$tzfd_date){$apps[]=array('field'=>$field_name,'serviceindex'=>$index,'date'=>$tzfd_date,'slot'=>$slot,
             'quant'=>TZFD_Scheduling::quantity($quantity,$service['capacity']),'cancelled'=>'');}
         $stored=$this->stored_appointments($apps);
         $result=TZFD_Calendar::assess($apps,$fields,$this->get_option('date_format','mm/dd/yy'));

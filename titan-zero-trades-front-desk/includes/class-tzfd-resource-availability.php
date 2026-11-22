@@ -34,7 +34,7 @@ final class TZFD_Resource_Availability {
             if ('' !== $resources[$id]['location_id']) $required_locations[$resources[$id]['location_id']]=true;
         }
         if (count($required_locations)>1) throw new InvalidArgumentException('Required resources must share one location.');
-        $tz_rows=self::reservations($reservations,$resources);
+        $tzfd_local_rows=self::reservations($reservations,$resources);
         $result=array('schema_version'=>1,'reservation_committed'=>false,'reservation_source'=>'caller_supplied',
             'start'=>gmdate('Y-m-d\TH:i:s\Z',$start),'end'=>gmdate('Y-m-d\TH:i:s\Z',$end),
             'required_resource_ids'=>$required_ids,'selection_available'=>$required_ids?true:null,'resources'=>array());
@@ -50,7 +50,7 @@ final class TZFD_Resource_Availability {
             $zone=$place ? new DateTimeZone($place['timezone']) : (function_exists('wp_timezone') ? wp_timezone() : new DateTimeZone('UTC'));
             if (self::blackout($from,$until,$zone,$resource['blackouts'])) $reasons[]='blackout';
             if (!self::within_hours($from,$until,$zone,$resource['weekly'])) $reasons[]='outside_working_hours';
-            $peak=self::peak(isset($tz_rows[$resource['id']])?$tz_rows[$resource['id']]:array(),$from,$until,$resource);
+            $peak=self::peak(isset($tzfd_local_rows[$resource['id']])?$tzfd_local_rows[$resource['id']]:array(),$from,$until,$resource);
             $remaining=max(0,$resource['capacity']-$peak);
             if ($quantity>$remaining) $reasons[]='insufficient_capacity';
             $available=!$reasons;
@@ -63,16 +63,16 @@ final class TZFD_Resource_Availability {
     }
 
     /** Exact seconds plus explicit timezone offset: no parser-relative or ambiguous local input. */
-    public static function instant($tz_value) {
-        if (!is_string($tz_value) || !preg_match('/^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(Z|[+-](?:0\d|1[0-4]):[0-5]\d)$/D',$tz_value,$m)) {
+    public static function instant($tzfd_value) {
+        if (!is_string($tzfd_value) || !preg_match('/^(\d{4}-\d{2}-\d{2})T([01]\d|2[0-3]):([0-5]\d):([0-5]\d)(Z|[+-](?:0\d|1[0-4]):[0-5]\d)$/D',$tzfd_value,$m)) {
             throw new InvalidArgumentException('Use YYYY-MM-DDTHH:MM:SSZ or an explicit timezone offset.');
         }
         TZFD_Resource_Catalog::date($m[1]);
         if ('Z'!==$m[5] && '14'===substr($m[5],1,2) && '00'!==substr($m[5],4,2)) throw new InvalidArgumentException('Invalid UTC offset.');
-        $normalized='Z'===$m[5]?substr($tz_value,0,-1).'+00:00':$tz_value;
-        $tz_date=DateTimeImmutable::createFromFormat('!Y-m-d\TH:i:sP',$normalized);
-        if (!$tz_date || $tz_date->format('Y-m-d\TH:i:sP')!==$normalized) throw new InvalidArgumentException('Invalid timestamp.');
-        return $tz_date->getTimestamp();
+        $normalized='Z'===$m[5]?substr($tzfd_value,0,-1).'+00:00':$tzfd_value;
+        $tzfd_date=DateTimeImmutable::createFromFormat('!Y-m-d\TH:i:sP',$normalized);
+        if (!$tzfd_date || $tzfd_date->format('Y-m-d\TH:i:sP')!==$normalized) throw new InvalidArgumentException('Invalid timestamp.');
+        return $tzfd_date->getTimestamp();
     }
 
     private static function reservations($input,$resources) {
@@ -83,9 +83,9 @@ final class TZFD_Resource_Availability {
             $id=TZFD_Resource_Catalog::identifier(isset($row['id'])?$row['id']:null);
             $resource=TZFD_Resource_Catalog::identifier(isset($row['resource_id'])?$row['resource_id']:null);
             if (!isset($resources[$resource])) throw new InvalidArgumentException('Unknown reservation resource.');
-            $tz_key=$resource.'|'.$id;
-            if (isset($seen[$tz_key])) throw new InvalidArgumentException('Duplicate resource reservation.');
-            $seen[$tz_key]=true;
+            $tzfd_key=$resource.'|'.$id;
+            if (isset($seen[$tzfd_key])) throw new InvalidArgumentException('Duplicate resource reservation.');
+            $seen[$tzfd_key]=true;
             $quantity=TZFD_Resource_Catalog::integer(isset($row['quantity'])?$row['quantity']:null,1,10000,'reservation quantity');
             $status=isset($row['status'])?$row['status']:null;
             if (!in_array($status,array('confirmed','pending','held','cancelled','rejected'),true)) throw new InvalidArgumentException('Unknown reservation status.');
@@ -97,18 +97,18 @@ final class TZFD_Resource_Availability {
         return $groups;
     }
 
-    private static function peak($tz_rows,$from,$until,$resource) {
-        $tz_events=array();
-        foreach($tz_rows as $row) {
+    private static function peak($tzfd_local_rows,$from,$until,$resource) {
+        $tzfd_events=array();
+        foreach($tzfd_local_rows as $row) {
             $start=max($from,$row['start']-$resource['buffer_before']*60);
             $end=min($until,$row['end']+$resource['buffer_after']*60);
             if ($end<=$start) continue;
-            if (!isset($tz_events[$start])) $tz_events[$start]=0;
-            if (!isset($tz_events[$end])) $tz_events[$end]=0;
-            $tz_events[$start]+=$row['quantity']; $tz_events[$end]-=$row['quantity'];
+            if (!isset($tzfd_events[$start])) $tzfd_events[$start]=0;
+            if (!isset($tzfd_events[$end])) $tzfd_events[$end]=0;
+            $tzfd_events[$start]+=$row['quantity']; $tzfd_events[$end]-=$row['quantity'];
         }
-        ksort($tz_events,SORT_NUMERIC); $used=0; $peak=0;
-        foreach($tz_events as $delta) { $used+=$delta; $peak=max($peak,$used); }
+        ksort($tzfd_events,SORT_NUMERIC); $used=0; $peak=0;
+        foreach($tzfd_events as $delta) { $used+=$delta; $peak=max($peak,$used); }
         return $peak;
     }
 
@@ -120,7 +120,7 @@ final class TZFD_Resource_Availability {
         if (!$dates) return false;
         $day=self::local($from,$zone)->setTime(0,0);
         $last=self::local($until-1,$zone)->format('Y-m-d');
-        for($tz_i=0;$tz_i<12 && $day->format('Y-m-d')<=$last;$tz_i++,$day=$day->modify('+1 day')) {
+        for($tzfd_i=0;$tzfd_i<12 && $day->format('Y-m-d')<=$last;$tzfd_i++,$day=$day->modify('+1 day')) {
             if (in_array($day->format('Y-m-d'),$dates,true)) return true;
         }
         return false;
@@ -139,19 +139,19 @@ final class TZFD_Resource_Availability {
             foreach($transitions as $transition) $offsets[$transition['offset']]=true;
         }
         $candidates=array();
-        foreach(array_keys($offsets) as $tz_offset) {
-            $candidate=$naive-$tz_offset;
+        foreach(array_keys($offsets) as $tzfd_offset) {
+            $candidate=$naive-$tzfd_offset;
             if (self::local($candidate,$zone)->format('Y-m-d H:i')===$wall) $candidates[]=$candidate;
         }
         if (!$candidates) return null;
         return $opening?max($candidates):min($candidates);
     }
 
-    private static function within_hours($from,$until,$zone,$tz_weekly) {
+    private static function within_hours($from,$until,$zone,$tzfd_weekly) {
         $day=self::local($from,$zone)->setTime(0,0)->modify('-1 day');
         $last=self::local($until-1,$zone)->format('Y-m-d'); $windows=array();
-        for($tz_i=0;$tz_i<13 && $day->format('Y-m-d')<=$last;$tz_i++,$day=$day->modify('+1 day')) {
-            foreach($tz_weekly as $window) {
+        for($tzfd_i=0;$tzfd_i<13 && $day->format('Y-m-d')<=$last;$tzfd_i++,$day=$day->modify('+1 day')) {
+            foreach($tzfd_weekly as $window) {
                 if ((int)$day->format('N')!==$window['day']) continue;
                 $start=TZFD_Resource_Catalog::clock($window['start']);
                 $end=TZFD_Resource_Catalog::clock($window['end'],true);

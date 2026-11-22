@@ -29,6 +29,25 @@ sfr_check( 'calendar 1 has an owning company', $owner1 > 0, 'owner=' . $owner1 )
 $row = $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT form_structure FROM ' . $GLOBALS['wpdb']->prefix . TZFD_Tables::FORMS . ' WHERE id = %d', 1 ) );
 $services = TZFD_Service_Finder_Core::visible_services( 1, (string) $row );
 sfr_check( 'live structure of calendar 1 parses to a service list', is_array( $services ) );
+// The default form ships with no services (issue #300), so seed one test service for these checks and restore the row after.
+$original_row = (string) $row;
+$seeded = false;
+if ( is_array( $services ) && empty( $services ) ) {
+    $decoded = json_decode( $original_row );
+    if ( is_array( $decoded ) && isset( $decoded[0] ) && is_array( $decoded[0] ) ) {
+        foreach ( $decoded[0] as $field ) {
+            if ( is_object( $field ) && isset( $field->ftype ) && 'fapp' === $field->ftype ) {
+                $field->services = array( (object) array( 'name' => 'Test service', 'price' => 50, 'duration' => 60, 'capacity' => 1, 'pb' => 0, 'pa' => 0, 'ohindex' => 0 ) );
+                $seeded = true;
+            }
+        }
+    }
+    if ( $seeded ) {
+        $GLOBALS['wpdb']->update( $GLOBALS['wpdb']->prefix . TZFD_Tables::FORMS, array( 'form_structure' => wp_json_encode( $decoded ) ), array( 'id' => 1 ) );
+        $row      = $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( 'SELECT form_structure FROM ' . $GLOBALS['wpdb']->prefix . TZFD_Tables::FORMS . ' WHERE id = %d', 1 ) );
+        $services = TZFD_Service_Finder_Core::visible_services( 1, (string) $row );
+    }
+}
 $by_cal = array( 1 => $services );
 if ( ! empty( $services ) ) {
     $sel = $services[0]['id'];
@@ -39,4 +58,7 @@ if ( ! empty( $services ) ) {
 }
 sfr_check( 'malformed identifier is refused on live site', null === TZFD_Service_Finder_Core::validate_selection( '1:0:0 OR 1=1', $owner1, $by_cal, $owner_of ) );
 
+if ( $seeded ) {
+    $GLOBALS['wpdb']->update( $GLOBALS['wpdb']->prefix . TZFD_Tables::FORMS, array( 'form_structure' => $original_row ), array( 'id' => 1 ) );
+}
 echo "\nSummary: {$GLOBALS['sfr_pass']} passed, {$GLOBALS['sfr_fail']} failed\n";

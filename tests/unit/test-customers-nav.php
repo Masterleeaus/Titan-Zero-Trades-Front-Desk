@@ -1,7 +1,7 @@
 <?php
 /**
  * Issue #179 (owner decision): Customers is in the shared Front Desk navigation, after Enquiries, gated by tz_fd_access.
- * Reads the nav definition from source because the UI shell needs the TZ_UI_Core base class, which these tests do not load.
+ * Reads the nav definition from source because the UI shell needs the TZFD_UI_Core base class, which these tests do not load.
  */
 function tzfd_test_customers_nav() {
 	$path = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/ui-pack/ui/tz-app-front-desk.php';

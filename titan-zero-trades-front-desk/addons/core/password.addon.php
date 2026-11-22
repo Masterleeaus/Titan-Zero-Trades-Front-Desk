@@ -100,13 +100,13 @@ if( !class_exists( 'TZFD_Passwordaddon' ) )
         }
 
         /** Runs before insert. Refuses the booking when the password is wrong or missing. */
-        public function check_submission( $tz_params )
+        public function check_submission( $tzfd_local_params )
         {
             if ( defined( 'TZFD_HOUR_BLOCK_TIMES_PROCESS' ) ) { return; }
             if ( is_admin() && current_user_can( 'tz_fd_access' ) ) { return; }
-            if ( ! is_array( $tz_params ) || ! isset( $tz_params['formid'] ) ) { return; }
+            if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['formid'] ) ) { return; }
 
-            $settings = TZFD_Addon_Support::form_settings( self::KEY, (int) $tz_params['formid'], self::defaults() );
+            $settings = TZFD_Addon_Support::form_settings( self::KEY, (int) $tzfd_local_params['formid'], self::defaults() );
             if ( '' === $settings['password'] ) { return; }
 
             // The nonce is checked before the password is read. A stale or missing nonce refuses the booking.
@@ -122,7 +122,7 @@ if( !class_exists( 'TZFD_Passwordaddon' ) )
                 exit;
             }
             if ( ! TZFD_Addon_Support::is_password_hash( $settings['password'] ) ) {
-                TZFD_Addon_Support::upgrade_plain_password( self::KEY, (int) $tz_params['formid'], $settings['password'] );
+                TZFD_Addon_Support::upgrade_plain_password( self::KEY, (int) $tzfd_local_params['formid'], $settings['password'] );
             }
         }
 
@@ -134,6 +134,6 @@ if( !class_exists( 'TZFD_Passwordaddon' ) )
     $TZFD_Passwordaddon_obj = new TZFD_Passwordaddon();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_Passwordaddon_obj->get_addon_id() ] = $TZFD_Passwordaddon_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_Passwordaddon_obj->get_addon_id() ] = $TZFD_Passwordaddon_obj;
 }

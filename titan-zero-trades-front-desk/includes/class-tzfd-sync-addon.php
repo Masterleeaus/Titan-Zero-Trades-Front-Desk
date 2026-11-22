@@ -63,60 +63,60 @@ abstract class TZFD_Sync_Addon extends TZFD_BaseAddon
     }
 
     /** Queues one sync job for a new booking, when the add-on is enabled and its conditions are met. */
-    public function queue_booking( $tz_params )
+    public function queue_booking( $tzfd_local_params )
     {
-        if ( ! $this->addon_is_active() || ! is_array( $tz_params ) ) { return; }
+        if ( ! $this->addon_is_active() || ! is_array( $tzfd_local_params ) ) { return; }
         $settings = $this->settings();
         if ( '1' !== (string) $settings['enabled'] ) { return; }
-        $booking_id = (int) ( $tz_params['itemnumber'] ?? 0 );
+        $booking_id = (int) ( $tzfd_local_params['itemnumber'] ?? 0 );
         if ( $booking_id <= 0 ) { return; }
-        if ( $this->needs_consent() && ! self::is_consent_given( $tz_params, $settings['consent_field'] ) ) { return; }
-        $email = sanitize_email( self::field( $tz_params, $settings['email_field'] ) );
+        if ( $this->needs_consent() && ! self::is_consent_given( $tzfd_local_params, $settings['consent_field'] ) ) { return; }
+        $email = sanitize_email( self::field( $tzfd_local_params, $settings['email_field'] ) );
         if ( $this->needs_email() && '' === $email ) { return; }
-        $payload = $this->build_payload( $tz_params, $settings, $email );
+        $payload = $this->build_payload( $tzfd_local_params, $settings, $email );
         if ( ! is_array( $payload ) ) { return; } // the add-on is missing a setting it needs, so nothing is queued
         TZFD_Sync_Queue::enqueue( static::SLUG, $booking_id, $payload );
     }
 
     /** The data a job carries. Add-ons override this to send only what their service needs. */
-    protected function build_payload( $tz_params, array $settings, $email )
+    protected function build_payload( $tzfd_local_params, array $settings, $email )
     {
-        return array( 'email' => $email, 'fields' => self::mapped_fields( $tz_params, $settings['field_map'] ) );
+        return array( 'email' => $email, 'fields' => self::mapped_fields( $tzfd_local_params, $settings['field_map'] ) );
     }
 
     /** A submitted value by field name, or '' when missing. Only letters, digits, - and _ are accepted in the name. */
-    public static function field( $tz_params, $name )
+    public static function field( $tzfd_local_params, $name )
     {
         $name = preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $name );
-        return ( '' !== $name && isset( $tz_params[ $name ] ) && is_scalar( $tz_params[ $name ] ) ) ? (string) $tz_params[ $name ] : '';
+        return ( '' !== $name && isset( $tzfd_local_params[ $name ] ) && is_scalar( $tzfd_local_params[ $name ] ) ) ? (string) $tzfd_local_params[ $name ] : '';
     }
 
-    public static function is_consent_given( $tz_params, $field )
+    public static function is_consent_given( $tzfd_local_params, $field )
     {
-        return in_array( strtolower( trim( self::field( $tz_params, $field ) ) ), array( '1', 'yes', 'on', 'true' ), true );
+        return in_array( strtolower( trim( self::field( $tzfd_local_params, $field ) ) ), array( '1', 'yes', 'on', 'true' ), true );
     }
 
     /** Parses "remote_field,form_field" lines into remote_field => submitted value. */
-    public static function mapped_fields( $tz_params, $text )
+    public static function mapped_fields( $tzfd_local_params, $text )
     {
         $out = array();
         foreach ( preg_split( '/\r\n|\r|\n/', (string) $text ) as $line ) {
             if ( count( $out ) >= self::MAX_MAPPINGS ) { break; }
             $pair = array_map( 'trim', explode( ',', $line, 2 ) );
             if ( count( $pair ) < 2 || '' === $pair[0] || '' === $pair[1] ) { continue; }
-            $tz_key = preg_replace( '/[^A-Za-z0-9_\-]/', '', $pair[0] );
-            if ( '' === $tz_key ) { continue; }
-            $out[ $tz_key ] = sanitize_text_field( self::field( $tz_params, $pair[1] ) );
+            $tzfd_key = preg_replace( '/[^A-Za-z0-9_\-]/', '', $pair[0] );
+            if ( '' === $tzfd_key ) { continue; }
+            $out[ $tzfd_key ] = sanitize_text_field( self::field( $tzfd_local_params, $pair[1] ) );
         }
         return $out;
     }
 
     /** First appointment of a submission: date (Y-m-d), start and end (HH:MM). Empty strings when there is none. */
-    public static function first_slot( $tz_params )
+    public static function first_slot( $tzfd_local_params )
     {
-        foreach ( TZFD_Bookings::submission_slots( $tz_params ) as $tz_app ) {
-            $times = explode( '/', $tz_app['slot'] );
-            return array( 'date' => $tz_app['date'], 'start' => $times[0] ?? '', 'end' => $times[1] ?? '' );
+        foreach ( TZFD_Bookings::submission_slots( $tzfd_local_params ) as $tzfd_app ) {
+            $times = explode( '/', $tzfd_app['slot'] );
+            return array( 'date' => $tzfd_app['date'], 'start' => $times[0] ?? '', 'end' => $times[1] ?? '' );
         }
         return array( 'date' => '', 'start' => '', 'end' => '' );
     }

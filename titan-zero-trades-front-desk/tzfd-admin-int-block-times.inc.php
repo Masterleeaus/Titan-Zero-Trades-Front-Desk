@@ -18,14 +18,14 @@ require_once __DIR__ . '/includes/class-tzfd-admin-report-scope.php';
 $tzfd_report_company = TZFD_Admin_Report_Scope::enforce( $this->item );
 
 $current_user        = wp_get_current_user();
-$tz_current_user_access = current_user_can( 'tz_fd_access' );
+$tzfd_current_user_access = current_user_can( 'tz_fd_access' );
 
-$tz_access_option = $this->get_option( 'tz_fd_user_access', '' );
-$tz_allowed_users = TZFD_Access_List::decode( $tz_access_option );
+$tzfd_access_option = $this->get_option( 'tz_fd_user_access', '' );
+$tzfd_allowed_users = TZFD_Access_List::decode( $tzfd_access_option );
 
-$tz_has_custom_access = is_array( $tz_allowed_users ) && in_array( $current_user->ID, $tz_allowed_users, true );
+$tzfd_has_custom_access = is_array( $tzfd_allowed_users ) && in_array( $current_user->ID, $tzfd_allowed_users, true );
 
-if ( ! is_admin() || ( ! $tz_current_user_access && ! $tz_has_custom_access ) ) {
+if ( ! is_admin() || ( ! $tzfd_current_user_access && ! $tzfd_has_custom_access ) ) {
     wp_die( 
         esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' ), 
         '', 
@@ -35,8 +35,8 @@ if ( ! is_admin() || ( ! $tz_current_user_access && ! $tz_has_custom_access ) ) 
 
 define('TZFD_HOUR_BLOCK_TIMES', true);
 
-$tz_message = '';
-$tz_opensecond = false;
+$tzfd_message = '';
+$tzfd_opensecond = false;
 
 
 
@@ -49,7 +49,7 @@ if ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST
     echo '</a>. </strong></p></div>';
 } else if ($this->get_param($this->prefix.'_blockmultiple') == '1' && is_admin() )
 {
-    $tz_opensecond = true;
+    $tzfd_opensecond = true;
     echo '<div id="setting-error-settings_updated" class="updated settings-error"><p><strong>';
     esc_html_e('Blocked time added. It appears listed in the','titan-zero-trades-front-desk');
     echo ' <a href="'.esc_url( add_query_arg( array( 'page' => sanitize_key( $this->menu_parameter ), 'cal' => absint( $this->item ), 'list' => 1 ), admin_url( 'admin.php' ) ) ).'">';
@@ -62,34 +62,34 @@ if ( 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST
 }
 
 
-$tz_selected = array();
+$tzfd_local_selected = array();
 // Selected calendars are sanitized before use. The POST is accepted only with a valid tz_fd_actions_admin anonce.
-$tz_posted_calendars = array();
-$tz_is_calendar_selection = 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST['selectedcalendar'] );
-if ( $tz_is_calendar_selection ) {
+$tzfd_posted_calendars = array();
+$tzfd_is_calendar_selection = 'POST' === tzfd_request_text( 'server', 'REQUEST_METHOD' ) && isset( $_POST['selectedcalendar'] );
+if ( $tzfd_is_calendar_selection ) {
     if ( ! wp_verify_nonce( tzfd_request_text( 'post', 'anonce' ), 'tz_fd_actions_admin' ) ) {
         wp_die( esc_html__( 'Invalid blocked-time security token.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
     }
-    $tz_posted_calendars_input = isset( $_POST['selectedcalendar'] ) && is_array( $_POST['selectedcalendar'] )
+    $tzfd_posted_calendars_input = isset( $_POST['selectedcalendar'] ) && is_array( $_POST['selectedcalendar'] )
         ? array_map( 'sanitize_text_field', wp_unslash( $_POST['selectedcalendar'] ) )
         : null;
-    if ( ! is_array( $tz_posted_calendars_input ) || count( $tz_posted_calendars_input ) < 1 || count( $tz_posted_calendars_input ) > 100 ) {
+    if ( ! is_array( $tzfd_posted_calendars_input ) || count( $tzfd_posted_calendars_input ) < 1 || count( $tzfd_posted_calendars_input ) > 100 ) {
         wp_die( esc_html__( 'Invalid calendar selection.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) );
     }
-    foreach ( $tz_posted_calendars_input as $tz_calendar_raw ) {
-        $tz_calendar_id = TZFD_Admin_Request_Ids::positive( $tz_calendar_raw );
-        if ( null === $tz_calendar_id || ! TZFD_Admin_Report_Scope::authorized( $tz_calendar_id ) ) {
+    foreach ( $tzfd_posted_calendars_input as $tzfd_calendar_raw ) {
+        $tzfd_local_calendar_id = TZFD_Admin_Request_Ids::positive( $tzfd_calendar_raw );
+        if ( null === $tzfd_local_calendar_id || ! TZFD_Admin_Report_Scope::authorized( $tzfd_local_calendar_id ) ) {
             wp_die( esc_html__( 'Calendar access denied.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) );
         }
-        $tz_posted_calendars[] = $tz_calendar_id;
+        $tzfd_posted_calendars[] = $tzfd_local_calendar_id;
     }
-    $tz_selected = array_values( array_unique( $tz_posted_calendars ) );
+    $tzfd_local_selected = array_values( array_unique( $tzfd_posted_calendars ) );
 } else {
-    $tz_selected = array( $this->item );
+    $tzfd_local_selected = array( $this->item );
 }
 
 
-$tz_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
+$tzfd_nonce = wp_create_nonce( 'tz_fd_actions_admin' );
 
 // Page assets (review R2). Enqueued here because this template renders after admin_enqueue_scripts.
 wp_register_style( 'tzfd-block-times-inline', false, array(), '2.0.1' );
@@ -120,17 +120,17 @@ wp_localize_script( 'tzfd-block-times', 'tzfdBlockTimesData', array(
 
 <div class="tzfd-adintsection-container">
 	<div class="tzfd-breadcrumb">
-		<div class="tzfd-step<?php if (!$tz_opensecond) { ?> tzfd-step-active<?php } ?>" data-step="1">
+		<div class="tzfd-step<?php if (!$tzfd_opensecond) { ?> tzfd-step-active<?php } ?>" data-step="1">
 			<i>A</i>
 			<label><?php esc_html_e('Single - Block Existing Time-slot','titan-zero-trades-front-desk'); ?></label>
 		</div>
-		<div class="tzfd-step<?php if ($tz_opensecond) { ?> tzfd-step-active<?php } ?>" data-step="2">
+		<div class="tzfd-step<?php if ($tzfd_opensecond) { ?> tzfd-step-active<?php } ?>" data-step="2">
 			<i>B</i>
 			<label><?php esc_html_e('Multiple - Block time range','titan-zero-trades-front-desk'); ?></label>
 		</div>
 	</div>
 
-    <div class="tzfd-adintsection<?php if (!$tz_opensecond) { ?> tzfd-adintsection-active"<?php } ?> data-step="1">
+    <div class="tzfd-adintsection<?php if (!$tzfd_opensecond) { ?> tzfd-adintsection-active"<?php } ?> data-step="1">
        <div class="inside"> 
 	   
             <p><?php echo wp_kses( 
@@ -158,7 +158,7 @@ wp_localize_script( 'tzfd-block-times', 'tzfdBlockTimesData', array(
      </div>
      
 
-    <div class="tzfd-adintsection<?php if ($tz_opensecond) { ?> tzfd-adintsection-active"<?php } ?>" data-step="2">
+    <div class="tzfd-adintsection<?php if ($tzfd_opensecond) { ?> tzfd-adintsection-active"<?php } ?>" data-step="2">
       <div class="inside" id="tzfdform">   
 
         <p>
@@ -187,22 +187,22 @@ wp_localize_script( 'tzfd-block-times', 'tzfdBlockTimesData', array(
         </p>
          
         <form class="tz_fd_p_form" name="tz_fd_frontdesk_pform_2" id="tz_fd_frontdesk_pform_2" action="" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="anonce" value="<?php echo esc_attr($tz_nonce); ?>" />
+        <input type="hidden" name="anonce" value="<?php echo esc_attr($tzfd_nonce); ?>" />
         <input type="hidden" name="<?php echo esc_attr($this->prefix); ?>_blockmultiple" value="1" />
         <strong><?php esc_html_e('Booking Form','titan-zero-trades-front-desk'); ?>:</strong><br />
         <select name="selectedcalendar[]" id="selectedcalendar" multiple required>         
               <?php
                     
-                $tz_myrows     = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE company_id=%d", $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_report_company ) );                                                                     
-                foreach ( $tz_myrows as $tz_item ) {
-                    $tz_allowed_users = TZFD_Access_List::decode( $tz_item->tz_fd_user_access );
-                    $tz_has_user_access = is_array( $tz_allowed_users ) && in_array( $current_user->ID, $tz_allowed_users, true );
+                $tzfd_myrows     = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE company_id=%d", $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_report_company ) );                                                                     
+                foreach ( $tzfd_myrows as $tzfd_item ) {
+                    $tzfd_allowed_users = TZFD_Access_List::decode( $tzfd_item->tz_fd_user_access );
+                    $tzfd_has_user_access = is_array( $tzfd_allowed_users ) && in_array( $current_user->ID, $tzfd_allowed_users, true );
 
-                    if ( $tz_current_user_access || $tz_has_user_access ) {
-                       $tz_is_selected = ( ! empty( $tz_selected ) && is_array( $tz_selected ) && in_array( $tz_item->id, $tz_selected  ) ) ? ' selected' : '';
+                    if ( $tzfd_current_user_access || $tzfd_has_user_access ) {
+                       $tzfd_is_selected = ( ! empty( $tzfd_local_selected ) && is_array( $tzfd_local_selected ) && in_array( $tzfd_item->id, $tzfd_local_selected  ) ) ? ' selected' : '';
                         
-                        echo '<option value="' . intval( $tz_item->id ) . '"' . esc_html($tz_is_selected) . '>';
-                        echo esc_html( $tz_item->form_name );
+                        echo '<option value="' . intval( $tzfd_item->id ) . '"' . esc_html($tzfd_is_selected) . '>';
+                        echo esc_html( $tzfd_item->form_name );
                         echo '</option>';
                     }
                 }                    
@@ -216,28 +216,28 @@ wp_localize_script( 'tzfd-block-times', 'tzfdBlockTimesData', array(
         
         <strong><?php esc_html_e('Start time','titan-zero-trades-front-desk'); ?>:</strong><br />
         <select name="h1"><?php
-            for ($tz_i=0;$tz_i<24;$tz_i++)
+            for ($tzfd_i=0;$tzfd_i<24;$tzfd_i++)
             {
-                echo '<option value="'.intval($tz_i).'" '.(($tz_i==8)?"selected":"").'>'.intval($tz_i).'</option>';
+                echo '<option value="'.intval($tzfd_i).'" '.(($tzfd_i==8)?"selected":"").'>'.intval($tzfd_i).'</option>';
             }
             ?></select> : <select name="m1"><?php
-            for ($tz_i=0;$tz_i<60;$tz_i=$tz_i+5)
+            for ($tzfd_i=0;$tzfd_i<60;$tzfd_i=$tzfd_i+5)
             {
-                echo '<option value="'.intval($tz_i).'" '.(($tz_i==0)?"selected":"").'>'.($tz_i<10?"0":"").intval($tz_i).'</option>';
+                echo '<option value="'.intval($tzfd_i).'" '.(($tzfd_i==0)?"selected":"").'>'.($tzfd_i<10?"0":"").intval($tzfd_i).'</option>';
             }
             ?></select>
         <!--<input type="text" name="starttime" value="08:00" required>--><br /><br />
         
         <strong><?php esc_html_e('End time','titan-zero-trades-front-desk'); ?>:</strong><br />
         <select name="h2"><?php
-            for ($tz_i=0;$tz_i<24;$tz_i++)
+            for ($tzfd_i=0;$tzfd_i<24;$tzfd_i++)
             {
-                echo '<option value="'.intval($tz_i).'" '.(($tz_i==17)?"selected":"").'>'.intval($tz_i).'</option>';
+                echo '<option value="'.intval($tzfd_i).'" '.(($tzfd_i==17)?"selected":"").'>'.intval($tzfd_i).'</option>';
             }
             ?></select> : <select name="m2"><?php
-            for ($tz_i=0;$tz_i<60;$tz_i=$tz_i+5)
+            for ($tzfd_i=0;$tzfd_i<60;$tzfd_i=$tzfd_i+5)
             {
-                echo '<option value="'.intval($tz_i).'" '.(($tz_i==0)?"selected":"").'>'.($tz_i<10?"0":"").intval($tz_i).'</option>';
+                echo '<option value="'.intval($tzfd_i).'" '.(($tzfd_i==0)?"selected":"").'>'.($tzfd_i<10?"0":"").intval($tzfd_i).'</option>';
             }
             ?></select><br /><br />
         

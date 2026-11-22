@@ -51,18 +51,18 @@ class TZFD_BOOK_BaseClass {
      * routes or displays. The admin screens sit behind the edit_pages gate in route_front_desk() and the per-calendar
      * access checks in their own files.
      */
-    public function get_param( $tz_key ) {
-        if ( ! is_string( $tz_key ) || '' === $tz_key || strlen( $tz_key ) > 120 ) {
+    public function get_param( $tzfd_key ) {
+        if ( ! is_string( $tzfd_key ) || '' === $tzfd_key || strlen( $tzfd_key ) > 120 ) {
             return '';
         }
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Reads a request value for routing, display or a read-only lookup. Changes no data here; a data-changing caller verifies its own nonce first.
-        if (isset($_GET[$tz_key]) && tzfd_request_text( 'get', $tz_key ) != '')
+        if (isset($_GET[$tzfd_key]) && tzfd_request_text( 'get', $tzfd_key ) != '')
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Same reason as above; the value is sanitised before it is returned.
-            return $this->sanitize(tzfd_request_text( 'get', $tz_key ));
+            return $this->sanitize(tzfd_request_text( 'get', $tzfd_key ));
         // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Reads a request value for routing, display or a read-only lookup. Changes no data here; a data-changing caller verifies its own nonce first.
-        else if (isset($_POST[$tz_key]) && tzfd_request_text( 'post', $tz_key ) != '')
+        else if (isset($_POST[$tzfd_key]) && tzfd_request_text( 'post', $tzfd_key ) != '')
             // phpcs:ignore WordPress.Security.NonceVerification.Missing,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Same reason as above; the value is sanitised before it is returned.
-            return $this->sanitize(tzfd_request_text( 'post', $tz_key ));
+            return $this->sanitize(tzfd_request_text( 'post', $tzfd_key ));
         else
             return '';
     }
@@ -104,27 +104,27 @@ class TZFD_BOOK_BaseClass {
     }
 
     /** Preserve input keys and cap recursion; never grow sparse arrays while iterating. */
-    public function sanitize ( $tz_v, $depth = 0 ) {
+    public function sanitize ( $tzfd_local_v, $depth = 0 ) {
         if ( $depth >= 32 ) { return ''; }
-        if ( is_array( $tz_v ) ) {
+        if ( is_array( $tzfd_local_v ) ) {
             $clean = array();
-            foreach ( $tz_v as $tz_key => $tz_value ) {
-                $clean[$tz_key] = $this->sanitize( $tz_value, $depth + 1 );
+            foreach ( $tzfd_local_v as $tzfd_key => $tzfd_value ) {
+                $clean[$tzfd_key] = $this->sanitize( $tzfd_value, $depth + 1 );
             }
             return $clean;
         }
-        if ( ! is_scalar( $tz_v ) && null !== $tz_v ) { return ''; }
+        if ( ! is_scalar( $tzfd_local_v ) && null !== $tzfd_local_v ) { return ''; }
         $allowed_tags = wp_kses_allowed_html( 'post' );
         unset( $allowed_tags['script'], $allowed_tags['iframe'] );
-        return $this->clean_sanitize( wp_kses( (string) $tz_v, $allowed_tags ) );
+        return $this->clean_sanitize( wp_kses( (string) $tzfd_local_v, $allowed_tags ) );
     }
 
     public function clean_sanitize ( $str, $depth = 0 ) {
         if ( $depth >= 32 ) { return ''; }
         if ( is_array( $str ) ) {
             $clean = array();
-            foreach ( $str as $tz_key => $tz_value ) {
-                $clean[$tz_key] = $this->clean_sanitize( $tz_value, $depth + 1 );
+            foreach ( $str as $tzfd_key => $tzfd_value ) {
+                $clean[$tzfd_key] = $this->clean_sanitize( $tzfd_value, $depth + 1 );
             }
             return $clean;
         }
@@ -133,13 +133,13 @@ class TZFD_BOOK_BaseClass {
     }
 
 
-    public function sanitizeTableName ( $tz_v ) {
-        $tz_v = $this->sanitize( $tz_v );
-        $tz_v = str_replace( '"', '', $tz_v );
-        $tz_v = str_replace( "'", "", $tz_v );
-        $tz_v = str_replace( '`', '', $tz_v );
-        $tz_v = str_replace( ' ', '', $tz_v );
-		return $tz_v;
+    public function sanitizeTableName ( $tzfd_local_v ) {
+        $tzfd_local_v = $this->sanitize( $tzfd_local_v );
+        $tzfd_local_v = str_replace( '"', '', $tzfd_local_v );
+        $tzfd_local_v = str_replace( "'", "", $tzfd_local_v );
+        $tzfd_local_v = str_replace( '`', '', $tzfd_local_v );
+        $tzfd_local_v = str_replace( ' ', '', $tzfd_local_v );
+		return $tzfd_local_v;
 	}
 
 
@@ -147,10 +147,10 @@ class TZFD_BOOK_BaseClass {
     	$glued_string = '';
 
     	// Recursively iterates array and adds key/value to glued string
-    	array_walk_recursive($array, function($tz_value, $tz_key) use ($glue, $include_keys, &$glued_string)
+    	array_walk_recursive($array, function($tzfd_value, $tzfd_key) use ($glue, $include_keys, &$glued_string)
     	{
-    		$include_keys and $glued_string .= $tz_key.$glue;
-    		$glued_string .= $tz_value.$glue;
+    		$include_keys and $glued_string .= $tzfd_key.$glue;
+    		$glued_string .= $tzfd_value.$glue;
     	});
 
     	// Removes last $glue from string
@@ -181,9 +181,9 @@ class TZFD_BOOK_BaseClass {
         }
     }
 
-    function verify_nonce ( $tz_nonce, $action ) {
-        $tz_nonce = is_string( $tz_nonce ) ? sanitize_text_field( wp_unslash( $tz_nonce ) ) : '';
-        if ( ! wp_verify_nonce( $tz_nonce, $action ) ) { $this->nonce_failed(); }
+    function verify_nonce ( $tzfd_nonce, $action ) {
+        $tzfd_nonce = is_string( $tzfd_nonce ) ? sanitize_text_field( wp_unslash( $tzfd_nonce ) ) : '';
+        if ( ! wp_verify_nonce( $tzfd_nonce, $action ) ) { $this->nonce_failed(); }
     }
 
     /** Stops the request with the standard message when a nonce check fails. */
@@ -200,32 +200,32 @@ class TZFD_BOOK_BaseClass {
     public function get_option ( $field, $default_value = '' ) {
         global $wpdb;
         if ($this->option_buffered_id == $this->item)
-            $tz_value = (property_exists($this->option_buffered_item, $field) && isset($this->option_buffered_item->$field) ? $this->option_buffered_item->$field : $default_value);
+            $tzfd_value = (property_exists($this->option_buffered_item, $field) && isset($this->option_buffered_item->$field) ? $this->option_buffered_item->$field : $default_value);
         else
         {
-           $tz_row = TZFD_Form_Access::row( $this->item );
-           $tz_myrows = $tz_row ? array( $tz_row ) : array(); 
-           if (count($tz_myrows))
+           $tzfd_local_row = TZFD_Form_Access::row( $this->item );
+           $tzfd_myrows = $tzfd_local_row ? array( $tzfd_local_row ) : array(); 
+           if (count($tzfd_myrows))
            {
-               $tz_value = isset($tz_myrows[0]->$field) ? $tz_myrows[0]->$field : $default_value;
-               $this->option_buffered_item = $tz_myrows[0];
+               $tzfd_value = isset($tzfd_myrows[0]->$field) ? $tzfd_myrows[0]->$field : $default_value;
+               $this->option_buffered_item = $tzfd_myrows[0];
                $this->option_buffered_id  = $this->item;
            }
            else
-               $tz_value =  $default_value;
+               $tzfd_value =  $default_value;
         }
-        if ( $tz_value == '' && is_object( $this->option_buffered_item ) && $this->option_buffered_item->form_structure == '' )
-            $tz_value = $default_value;
+        if ( $tzfd_value == '' && is_object( $this->option_buffered_item ) && $this->option_buffered_item->form_structure == '' )
+            $tzfd_value = $default_value;
 
-        $tz_value = apply_filters( 'tz_fd_get_option', $tz_value, $field, $this->item );
+        $tzfd_value = apply_filters( 'tz_fd_get_option', $tzfd_value, $field, $this->item );
 
-        return $tz_value;
+        return $tzfd_value;
     }
 
     public function get_option_not_empty( $field, $default_value = '' )
     {
-        $tz_value = $this->get_option( $field, $default_value );
-        return ( $tz_value ? $tz_value : $default_value );
+        $tzfd_value = $this->get_option( $field, $default_value );
+        return ( $tzfd_value ? $tzfd_value : $default_value );
     }
 
 

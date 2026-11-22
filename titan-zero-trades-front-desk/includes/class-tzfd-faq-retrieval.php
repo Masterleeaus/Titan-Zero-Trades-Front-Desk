@@ -90,7 +90,7 @@ final class TZFD_FAQ_Retrieval {
     public static function normalize( $text ) {
         if ( ! is_string( $text ) ) { return ''; }
         $text = str_replace( array( "\0", "\r", "\n", "\t" ), ' ', $text );
-        $text = wp_strip_tags_compat( $text );
+        $text = tzfd_strip_tags_compat( $text );
         if ( mb_strlen( $text, 'UTF-8' ) > self::MAX_QUERY_CHARS ) {
             $text = mb_substr( $text, 0, self::MAX_QUERY_CHARS, 'UTF-8' );
         }
@@ -469,7 +469,7 @@ final class TZFD_FAQ_Retrieval {
 
     private static function plain_text( $value, $max ) {
         if ( ! is_string( $value ) ) { return ''; }
-        $value = trim( preg_replace( '/\s+/u', ' ', wp_strip_tags_compat( str_replace( "\0", '', $value ) ) ) );
+        $value = trim( preg_replace( '/\s+/u', ' ', tzfd_strip_tags_compat( str_replace( "\0", '', $value ) ) ) );
         return mb_strlen( $value, 'UTF-8' ) > $max ? mb_substr( $value, 0, $max, 'UTF-8' ) : $value;
     }
 
@@ -481,8 +481,8 @@ final class TZFD_FAQ_Retrieval {
 /**
  * Tag stripper that works without WordPress loaded (tests). Uses wp_strip_all_tags when present.
  */
-if ( ! function_exists( 'wp_strip_tags_compat' ) ) {
-    function wp_strip_tags_compat( $text ) {
+if ( ! function_exists( 'tzfd_strip_tags_compat' ) ) {
+    function tzfd_strip_tags_compat( $text ) {
         // phpcs:ignore WordPress.WP.AlternativeFunctions.strip_tags_strip_tags -- fallback only when WordPress is not loaded (unit tests).
         return function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( $text ) : strip_tags( $text );
     }

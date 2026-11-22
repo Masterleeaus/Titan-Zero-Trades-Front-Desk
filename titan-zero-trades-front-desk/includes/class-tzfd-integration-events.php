@@ -12,49 +12,49 @@ class TZFD_Integration_Events {
     }
 
     /** Normalize scalar text without allowing markup or array/object coercion. */
-    private static function text_value( $tz_value ) {
-        if ( ! is_string( $tz_value ) && ! is_int( $tz_value ) && ! is_float( $tz_value ) ) { return ''; }
-        if ( is_float( $tz_value ) && ! is_finite( $tz_value ) ) { return ''; }
-        $tz_value = (string) $tz_value;
-        if ( function_exists( 'sanitize_text_field' ) ) { return sanitize_text_field( $tz_value ); }
+    private static function text_value( $tzfd_value ) {
+        if ( ! is_string( $tzfd_value ) && ! is_int( $tzfd_value ) && ! is_float( $tzfd_value ) ) { return ''; }
+        if ( is_float( $tzfd_value ) && ! is_finite( $tzfd_value ) ) { return ''; }
+        $tzfd_value = (string) $tzfd_value;
+        if ( function_exists( 'sanitize_text_field' ) ) { return sanitize_text_field( $tzfd_value ); }
         // Standalone consumers/tests have no WordPress bootstrap. Never emit invalid UTF-8.
-        return preg_match( '//u', $tz_value ) ? trim( preg_replace( '/<[^>]*>/', '', $tz_value ) ) : '';
+        return preg_match( '//u', $tzfd_value ) ? trim( preg_replace( '/<[^>]*>/', '', $tzfd_value ) ) : '';
     }
 
-    private static function integer_value( $tz_value, $fallback = 0 ) {
-        if ( is_int( $tz_value ) ) { return $tz_value >= 0 ? $tz_value : $fallback; }
-        if ( is_float( $tz_value ) ) {
-            return is_finite( $tz_value ) && $tz_value >= 0 && $tz_value < (float) PHP_INT_MAX && floor( $tz_value ) === $tz_value ? (int) $tz_value : $fallback;
+    private static function integer_value( $tzfd_value, $fallback = 0 ) {
+        if ( is_int( $tzfd_value ) ) { return $tzfd_value >= 0 ? $tzfd_value : $fallback; }
+        if ( is_float( $tzfd_value ) ) {
+            return is_finite( $tzfd_value ) && $tzfd_value >= 0 && $tzfd_value < (float) PHP_INT_MAX && floor( $tzfd_value ) === $tzfd_value ? (int) $tzfd_value : $fallback;
         }
-        if ( ! is_string( $tz_value ) || ! preg_match( '/^[0-9]+$/D', $tz_value ) ) { return $fallback; }
-        $tz_value = ltrim( $tz_value, '0' );
-        if ( '' === $tz_value ) { return 0; }
-        $integer = filter_var( $tz_value, FILTER_VALIDATE_INT );
+        if ( ! is_string( $tzfd_value ) || ! preg_match( '/^[0-9]+$/D', $tzfd_value ) ) { return $fallback; }
+        $tzfd_value = ltrim( $tzfd_value, '0' );
+        if ( '' === $tzfd_value ) { return 0; }
+        $integer = filter_var( $tzfd_value, FILTER_VALIDATE_INT );
         return false === $integer ? $fallback : $integer;
     }
 
-    private static function price_value( $tz_value ) {
-        if ( ! is_int( $tz_value ) && ! is_float( $tz_value ) && ! is_string( $tz_value ) ) { return 0.0; }
-        if ( ! is_numeric( $tz_value ) ) { return 0.0; }
-        $tz_value = (float) $tz_value;
-        return is_finite( $tz_value ) && $tz_value >= 0 ? $tz_value : 0.0;
+    private static function price_value( $tzfd_value ) {
+        if ( ! is_int( $tzfd_value ) && ! is_float( $tzfd_value ) && ! is_string( $tzfd_value ) ) { return 0.0; }
+        if ( ! is_numeric( $tzfd_value ) ) { return 0.0; }
+        $tzfd_value = (float) $tzfd_value;
+        return is_finite( $tzfd_value ) && $tzfd_value >= 0 ? $tzfd_value : 0.0;
     }
 
-    public static function normalize_created_payload( $tz_params ) {
-        if ( ! is_array( $tz_params ) ) { $tz_params = array(); }
+    public static function normalize_created_payload( $tzfd_local_params ) {
+        if ( ! is_array( $tzfd_local_params ) ) { $tzfd_local_params = array(); }
 
         $payload = array(
             'schema_version' => self::SCHEMA_VERSION,
             'event' => 'booking.created',
-            'booking_id' => isset( $tz_params['itemnumber'] ) ? self::integer_value( $tz_params['itemnumber'] ) : 0,
-            'form_id' => isset( $tz_params['formid'] ) ? self::integer_value( $tz_params['formid'] ) : 0,
-            'form_name' => isset( $tz_params['formname'] ) ? self::text_value( $tz_params['formname'] ) : '',
+            'booking_id' => isset( $tzfd_local_params['itemnumber'] ) ? self::integer_value( $tzfd_local_params['itemnumber'] ) : 0,
+            'form_id' => isset( $tzfd_local_params['formid'] ) ? self::integer_value( $tzfd_local_params['formid'] ) : 0,
+            'form_name' => isset( $tzfd_local_params['formname'] ) ? self::text_value( $tzfd_local_params['formname'] ) : '',
             'appointments' => array(),
         );
 
-        if ( empty( $tz_params['apps'] ) || ! is_array( $tz_params['apps'] ) ) { return $payload; }
+        if ( empty( $tzfd_local_params['apps'] ) || ! is_array( $tzfd_local_params['apps'] ) ) { return $payload; }
 
-        foreach ( $tz_params['apps'] as $appointment ) {
+        foreach ( $tzfd_local_params['apps'] as $appointment ) {
             if ( ! is_array( $appointment ) ) { continue; }
 
             $quantity = isset( $appointment['quant'] ) ? self::integer_value( $appointment['quant'], 1 ) : 1;
@@ -96,11 +96,11 @@ class TZFD_Integration_Events {
         );
     }
 
-    public static function dispatch_created( $tz_params ) {
-        $payload = self::normalize_created_payload( $tz_params );
+    public static function dispatch_created( $tzfd_local_params ) {
+        $payload = self::normalize_created_payload( $tzfd_local_params );
 
         if ( function_exists( 'apply_filters' ) ) {
-            $filtered = apply_filters( 'titan_zero_front_desk_booking_created_payload', $payload, $tz_params );
+            $filtered = apply_filters( 'titan_zero_front_desk_booking_created_payload', $payload, $tzfd_local_params );
             if ( is_array( $filtered ) ) { $payload = $filtered; }
         }
 

@@ -2029,8 +2029,6 @@ msgstr ""
 #: includes/class-tzfd-booking-view.php:306
 #: includes/class-tzfd-client-portal.php:662
 #: includes/class-tzfd-enquiry-review.php:161
-#: includes/class-tzfd-legacy-ai-data.php:395
-#: includes/class-tzfd-legacy-ai-data.php:456
 #: tzfd-main-class.inc.php:2952
 #: tzfd-main-class.inc.php:3083
 #: tzfd-main-class.inc.php:3187
@@ -2176,7 +2174,6 @@ msgstr ""
 #: includes/class-tzfd-booking-view.php:415
 #: includes/class-tzfd-enquiry-review.php:187
 #: includes/class-tzfd-enquiry-review.php:192
-#: includes/class-tzfd-legacy-ai-data.php:473
 #: includes/class-tzfd-privacy-exporter.php:181
 #: includes/class-tzfd-resource-admin.php:485
 #: includes/class-tzfd-resource-admin.php:513
@@ -4608,176 +4605,9 @@ msgstr ""
 msgid "Qualified Leads form conversion (group %1$d, form %2$d)."
 msgstr ""
 
-#: includes/class-tzfd-legacy-ai-data.php:306
-#: includes/class-tzfd-legacy-ai-data.php:314
-msgid "Booking assistant chats from earlier Front Desk versions"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:351
-msgid "Booking assistant chats (earlier versions)"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:373
-msgid "Booking assistant chats from an earlier version could not be erased. Please retry."
-msgstr ""
-
-#. translators: %d: number of deleted chat records.
-#: includes/class-tzfd-legacy-ai-data.php:380
-#, php-format
-msgid "%d booking assistant chat from an earlier version deleted."
-msgid_plural "%d booking assistant chats from an earlier version deleted."
-msgstr[0] ""
-msgstr[1] ""
-
-#: includes/class-tzfd-legacy-ai-data.php:391
-#: includes/class-tzfd-legacy-ai-data.php:465
-msgid "Legacy AI data"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:441
-msgid "Stored keys and provider settings were deleted. Chats and configuration were not changed."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:442
-msgid "Saved legacy chats were deleted. Your bookings, customers and settings were not changed."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:443
-msgid "The export was restored. Existing values were not overwritten. Keys must be entered again."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:444
-msgid "Export a backup first. The backup must match the current data before anything is deleted."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:445
-msgid "The confirmation phrase did not match. Nothing was deleted."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:446
-msgid "The file could not be read. Upload the export file as it was downloaded (JSON, 5 MB at most)."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:447
-msgid "This file is not a Front Desk legacy AI export."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:448
-msgid "The export could not be created."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:449
-msgid "The chat table is missing, so chats cannot be restored."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:450
-msgid "The file has too many chat rows to restore in one step."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:466
-msgid "Keys, provider settings and chats saved by earlier versions are listed here. Nothing on this screen runs AI, and nothing is deleted automatically. Values are never shown."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:471
-msgid "Audit"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:473
-msgid "Setting"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:473
-msgid "Kind"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:480
-msgid "Not set"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:482
-msgid "Set"
-msgstr ""
-
-#. translators: %d: number of saved chat rows.
-#: includes/class-tzfd-legacy-ai-data.php:491
-#, php-format
-msgid "Saved chats from earlier versions: %d."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:493
-msgid "No chat table from earlier versions is present."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:497
-msgid "Backup"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:500
-msgid "No export has been made yet."
-msgstr ""
-
-#. translators: 1: date and time of the last export, 2: yes or no.
-#: includes/class-tzfd-legacy-ai-data.php:503
-#, php-format
-msgid "Last export: %1$s. Matches current data: %2$s."
-msgstr ""
-
-#. translators: 1: date and time of the last export, 2: yes or no.
-#: includes/class-tzfd-legacy-ai-data.php:503
-msgid "yes"
-msgstr ""
-
-#. translators: 1: date and time of the last export, 2: yes or no.
-#: includes/class-tzfd-legacy-ai-data.php:503
-msgid "no"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:509
-msgid "Download export"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:511
-msgid "The export holds settings and chats, with keys and tokens replaced by a marker. Keep it somewhere safe."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:513
-msgid "Delete after backup"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:514
-msgid "Each delete needs a current export and the phrase exactly as shown. Keys are not in the export, so deleted keys must be entered again."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:515
-msgid "Delete stored keys and provider settings"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:515
-msgid "Delete saved chats"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:524
 #: tzfd-admin-int-list.inc.php:231
 #: tzfd-admin-int-message-list.inc.php:443
 msgid "Delete"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:528
-msgid "Restore from an export"
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:529
-msgid "Adds missing chats and settings. Existing values are never overwritten, and keys are not restored."
-msgstr ""
-
-#: includes/class-tzfd-legacy-ai-data.php:534
-msgid "Restore"
-msgstr ""
-
-#. translators: 1: chats added, 2: settings added, 3: settings skipped, 4: keys to re-enter.
-#: includes/class-tzfd-legacy-ai-data.php:539
-#, php-format
-msgid "Last restore: %1$d chats added, %2$d settings added, %3$d settings skipped, %4$d keys to enter again."
 msgstr ""
 
 #: includes/class-tzfd-local-brand.php:22

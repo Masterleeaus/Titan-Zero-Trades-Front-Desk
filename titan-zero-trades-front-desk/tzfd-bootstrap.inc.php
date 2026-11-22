@@ -21,6 +21,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-builtin-verticals.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-automation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-status-api.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-business-knowledge.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-service-contract-rest.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-loader.php';
 
 // loading add-ons

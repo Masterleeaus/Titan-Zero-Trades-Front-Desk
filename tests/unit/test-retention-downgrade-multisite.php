@@ -163,7 +163,7 @@ function tzfd_test_retention_window_and_pruning() {
 
 	// Pruning on write: events older than the window are removed, newer ones kept, the new one appended.
 	$log = new ReflectionMethod( $C, 'log_event' );
-	$log->setAccessible( true ); // PHP 7.4 needs this to invoke a private method; a no-op on 8.1+.
+	$log->setAccessible( true ); // PHP 7.4 needs this to call a private method; a no-op on 8.1 and later.
 	$now = time();
 	$GLOBALS['tzfd_test_options'] = array(
 		$C::OPTION       => array( 'retention_days' => 30 ),

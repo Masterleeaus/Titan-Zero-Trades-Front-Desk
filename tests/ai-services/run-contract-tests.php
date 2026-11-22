@@ -103,18 +103,16 @@ foreach ( $journey_downs as $label => $down ) {
 }
 tzfd_ai_check( 'journey: agent to assistant stops agent work only', S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_ASSISTANT )['stopped_remote'] === array( 'agent_schedules_and_queued_agent_tasks' ) );
 
-// 4. Descriptors: single plugin, no price in file, Agent Team includes Assistant without its own billing line.
+// 4. Descriptors: single plugin, approved prices only (Free null), Agent Team includes Assistant without its own billing line.
 $desc   = S::descriptors();
 $levels = isset( $desc['levels'] ) ? $desc['levels'] : array();
 tzfd_ai_check( 'descriptor: three levels', count( $levels ) === 3, 'count=' . count( $levels ) );
 tzfd_ai_check( 'descriptor: single plugin, no separate licence', ( $desc['single_plugin'] ?? false ) === true && ( $desc['separate_plugin_or_licence'] ?? true ) === false );
 tzfd_ai_check( 'descriptor: agent team includes assistant', in_array( 'assistant', $levels['agent_team']['includes'] ?? array(), true ) );
 tzfd_ai_check( 'descriptor: agent team is the only billing entitlement', ( $levels['agent_team']['billing_entitlement'] ?? '' ) === 'agent_team' && ! isset( $levels['assistant']['billing_entitlement'] ) );
-$prices_null = true;
-foreach ( $levels as $lvl ) {
-    $prices_null = $prices_null && array_key_exists( 'price', $lvl ) && null === $lvl['price'];
-}
-tzfd_ai_check( 'descriptor: no hard-coded prices', $prices_null );
+$prices_ok = array_key_exists( 'price', $levels['free_ai'] ?? array() ) && null === $levels['free_ai']['price'];
+$prices_ok = $prices_ok && 29 === ( $levels['assistant']['price'] ?? null ) && 99 === ( $levels['agent_team']['price'] ?? null );
+tzfd_ai_check( 'descriptor: approved prices only (Assistant 29, Agent Team 99, Free null)', $prices_ok );
 tzfd_ai_check( 'descriptor: local features always enabled', count( array_filter( $levels, static function ( $lvl ) { return ( $lvl['local_features'] ?? '' ) !== 'always_enabled'; } ) ) === 0 );
 
 echo "\nPASS {$GLOBALS['tzfd_ai_pass']}  FAIL {$GLOBALS['tzfd_ai_fail']}\n";

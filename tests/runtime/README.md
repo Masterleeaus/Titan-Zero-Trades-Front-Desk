@@ -66,8 +66,14 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
 
 ## Gaps observed (reported, not fixed here)
 
-- **dbDelta on MariaDB 10.11.** Installing the slot-hold table printed `Invalid default value for 'id'` from
-  `ALTER TABLE ... SET DEFAULT ''`. The schema check still passed.
+- None open on MariaDB 10.11. The dbDelta gap (`Invalid default value for 'id'` on the slot-hold table, issue #186) is
+  closed: the CREATE statement has no `DEFAULT ''`. Re-checked 2026-11-23 on MariaDB 10.11.14: the slot-holds suite
+  passes 5/5 (second run issues no ALTER) and the logs show no `Invalid default` line.
+
+## Results re-run on 2026-11-23 (issue #370, PHP 8.3.6, WordPress 7.1.5 single and multisite)
+
+- Single site: 362 passed, 0 failed, 0 gaps, 9 skipped.
+- Multisite: 363 passed, 0 failed, 0 gaps, 7 skipped. The `ai-answer-box: page_id sent as a hidden field` check passes.
 
 ## Skipped, and why
 

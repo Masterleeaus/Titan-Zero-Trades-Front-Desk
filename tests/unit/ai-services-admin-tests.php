@@ -78,6 +78,7 @@ $html = render_page();
 check( 'page shows no consent by default', false !== strpos( $html, 'None recorded' ) );
 check( 'page shows no hosted event rows by default', false !== strpos( $html, 'No hosted AI events recorded' ) );
 check( 'consent boxes are unticked by default', false === strpos( $html, "checked='checked'" ) );
+check( 'pairing form is shown and disabled while no pairing endpoint is configured (#347)', false !== strpos( $html, 'name="pairing_code"' ) && false !== strpos( $html, 'disabled="disabled"' ) && false !== strpos( $html, 'Hosted pairing stays off' ) );
 
 // Pair the site with a secret, grant one scope, log an event, then render again.
 $secret = 'S3CRET-' . str_repeat( 'k', 40 );

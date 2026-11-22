@@ -96,10 +96,23 @@ Response headers `X-TZFD-Timestamp`, `X-TZFD-Nonce` (must echo the request nonce
 
 ## Server obligations (not in this plugin)
 
-The hosted service must check the nonce for replay within the signature window, check tenant scope from `X-TZFD-Site`, enforce its own budgets before provider calls, and sign every response. Endpoints, secrets, pairing tokens and checkout are out of scope for this contract.
+The hosted service must check the nonce for replay within the signature window, check tenant scope from `X-TZFD-Site`, enforce its own budgets before provider calls, and sign every response. Endpoints, secrets, pairing tokens and checkout are out of scope for this contract; the pairing handshake is specified separately below.
+
+## Pairing handshake: tzfd-pair/1 (issue #347)
+
+Implemented in `includes/class-tzfd-ai-pairing.php`. Offline tests: `tests/ai-connector/run-pairing-tests.php`. These are the proposed defaults for the owner decision in #347. The owner has not yet confirmed the production endpoint.
+
+- **Endpoint.** Not built into the code. It comes from the constant `TZFD_AI_PAIRING_ENDPOINT` or the filter `tzfd_ai_pairing_endpoint`. Only an `https` URL with a host and no userinfo is used. With neither set, pairing is off and nothing is sent. Proposed production value, not active until confirmed: `https://central.titanzero.io/api/tzfd/pair`.
+- **Code.** The hosted service mints a single-use pairing code tied to the business account. The administrator pastes it under AI Services, Connect hosted account. The format is 16 to 64 characters from `A-Z a-z 0-9 _ -`. The code travels once, in the JSON body over HTTPS. It is never stored, logged or echoed.
+- **Site id.** Created locally once (`site-` plus 24 hex characters) and kept across pairings. It contains no URL, user or business detail.
+- **Request.** `POST` with `X-TZFD-Contract: tzfd-pair/1`, `X-TZFD-Site`, `X-TZFD-Timestamp` and a fresh 32-hex `X-TZFD-Nonce`. Body: `{"contract":"tzfd-pair/1","site":"<site id>","pairing_code":"<code>"}`.
+- **Response.** HTTP 200, JSON, at most 8 KB. It must echo `X-TZFD-Nonce` and carry a timestamp within 300 seconds. The body must have `contract` `tzfd-pair/1`, the same `site`, `status` `paired`, `secret` as 64 lowercase hex characters, and `feature_endpoint`. The feature endpoint must be `https` and on the same host as the pairing endpoint.
+- **Secret.** Issued once per pairing and stored through `TZFD_AI_Connector::configure()`. A new pairing rotates it and revokes consent, so scopes must be granted again. A failed exchange leaves the previous connection unchanged.
+- **Statuses.** `ok`, `invalid_code`, `code_rejected` (any 4xx, or `status: code_rejected`), `not_configured`, `busy` (a lock held for up to 30 seconds), `offline`, `service_error` (other non-200), `invalid_response`.
+- **Not in this step.** Entitlement fetch, a disconnect control on the screen, and signed pairing responses. These stay in the remaining work for #285. The hosted service must enforce single use of the code, rate limits and the consent record.
 
 ## Known gaps
 
-- No admin screen yet. Connect, disconnect and consent controls belong to the AI Services view (#46).
+- Connect, disconnect and consent controls are on the AI Services view (#46). Disconnect has no screen control yet.
 - No approved-answer cache or cost report yet (#43 acceptance). Usage records token counts only; no cost calculation.
-- Entitlement fetch and pairing handshake are not implemented.
+- Entitlement fetch is not implemented (remaining work from #285).

@@ -5,13 +5,15 @@
  * Shows status, the descriptor comparison, the local downgrade and the hosted connector controls:
  * consent (grant and revoke), event retention and the redacted event log (#4, #261).
  * It does not take payment, card details or account credentials, and it makes no network calls.
- * The "Connect account" control stays disabled until the verified pairing (#46) is live.
- * The connector secret is never rendered here; only its stored/not-stored flag is shown.
+ * "Connect account" takes a one-time pairing code and exchanges it for the per-site secret (#347, see TZFD_AI_Pairing).
+ * It stays disabled until a pairing endpoint is configured. The connector secret is never rendered here;
+ * only its stored/not-stored flag is shown.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 require_once __DIR__ . '/class-tzfd-ai-services.php';
 require_once __DIR__ . '/class-tzfd-ai-connector.php';
+require_once __DIR__ . '/class-tzfd-ai-pairing.php';
 
 final class TZFD_AI_Services_Page {
     const SLUG   = 'tzfd-ai-services';
@@ -22,6 +24,7 @@ final class TZFD_AI_Services_Page {
     const ACTION_REVOKE     = 'tzfd_ai_connector_revoke';
     const ACTION_RETENTION  = 'tzfd_ai_connector_retention';
     const ACTION_CLEAR      = 'tzfd_ai_connector_clear_events';
+    const ACTION_PAIR       = 'tzfd_ai_connector_pair';
     const CONNECTOR_NONCE   = 'tzfd_ai_connector_admin';
 
     public static function register() {
@@ -31,6 +34,7 @@ final class TZFD_AI_Services_Page {
         add_action( 'admin_post_' . self::ACTION_REVOKE, array( __CLASS__, 'handle_revoke' ) );
         add_action( 'admin_post_' . self::ACTION_RETENTION, array( __CLASS__, 'handle_retention' ) );
         add_action( 'admin_post_' . self::ACTION_CLEAR, array( __CLASS__, 'handle_clear_events' ) );
+        add_action( 'admin_post_' . self::ACTION_PAIR, array( __CLASS__, 'handle_pair' ) );
     }
 
     public static function add_page() {
@@ -84,6 +88,22 @@ final class TZFD_AI_Services_Page {
         self::redirect_notice( 'retention_saved' );
     }
 
+    /** Exchanges the pasted one-time code for the per-site secret. The code is never echoed or stored. */
+    public static function handle_pair() {
+        self::guard_connector_request();
+        $raw    = isset( $_POST['pairing_code'] ) ? wp_unslash( $_POST['pairing_code'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        $code   = is_string( $raw ) ? trim( $raw ) : '';
+        $result = TZFD_AI_Pairing::pair( $code );
+        $map    = array(
+            'ok'               => 'pair_ok',
+            'invalid_code'     => 'pair_code_invalid',
+            'code_rejected'    => 'pair_code_rejected',
+            'not_configured'   => 'pair_not_configured',
+            'busy'             => 'pair_busy',
+        );
+        self::redirect_notice( isset( $map[ $result['status'] ] ) ? $map[ $result['status'] ] : 'pair_failed' );
+    }
+
     public static function handle_clear_events() {
         self::guard_connector_request();
         TZFD_AI_Connector::clear_events();
@@ -133,7 +153,7 @@ final class TZFD_AI_Services_Page {
                             }
                         ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted AI endpoint', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Pairing is not available yet.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Hosted pairing stays off until a pairing endpoint is configured.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
 
@@ -152,6 +172,18 @@ final class TZFD_AI_Services_Page {
                 <?php endforeach; ?>
                 </tbody>
             </table>
+
+            <h2><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></h2>
+            <p class="description"><?php esc_html_e( 'Paste the one-time pairing code from your Titan Zero account. The code is used once and is not stored. A new pairing replaces the previous connection and asks for consent again.', 'titan-zero-trades-front-desk' ); ?></p>
+            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_PAIR ); ?>" />
+                <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                <p>
+                    <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label>
+                    <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" autocomplete="off" spellcheck="false" maxlength="64" class="regular-text" <?php echo TZFD_AI_Pairing::endpoint_configured() ? '' : 'disabled="disabled"'; ?> />
+                    <button type="submit" class="button button-secondary" <?php echo TZFD_AI_Pairing::endpoint_configured() ? '' : 'disabled="disabled"'; ?>><?php esc_html_e( 'Connect account', 'titan-zero-trades-front-desk' ); ?></button>
+                </p>
+            </form>
 
             <h2><?php esc_html_e( 'Hosted AI consent', 'titan-zero-trades-front-desk' ); ?></h2>
             <p class="description"><?php echo esc_html( $setup['text'] ); ?>
@@ -310,6 +342,12 @@ final class TZFD_AI_Services_Page {
             'retention_saved'   => __( 'Event log retention saved.', 'titan-zero-trades-front-desk' ),
             'retention_invalid' => __( 'Retention must be a whole number of days from 1 to 365.', 'titan-zero-trades-front-desk' ),
             'events_cleared'    => __( 'Hosted AI event log cleared.', 'titan-zero-trades-front-desk' ),
+            'pair_ok'           => __( 'Account connected. Grant consent below before any hosted request is sent.', 'titan-zero-trades-front-desk' ),
+            'pair_code_invalid' => __( 'The pairing code is not in the expected format. Copy it again from your Titan Zero account.', 'titan-zero-trades-front-desk' ),
+            'pair_code_rejected' => __( 'The pairing code was rejected. It may be expired or already used. Create a new code and try again.', 'titan-zero-trades-front-desk' ),
+            'pair_not_configured' => __( 'Hosted pairing is not available on this site yet. Nothing was sent.', 'titan-zero-trades-front-desk' ),
+            'pair_busy'         => __( 'Another pairing is in progress. Wait a minute and try again.', 'titan-zero-trades-front-desk' ),
+            'pair_failed'       => __( 'The account could not be connected. The previous connection, if any, is unchanged. Try again later.', 'titan-zero-trades-front-desk' ),
         );
     }
 

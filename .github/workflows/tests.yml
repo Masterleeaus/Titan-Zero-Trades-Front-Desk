@@ -47,6 +47,8 @@ jobs:
         run: php -d error_reporting=-1 tests/runtime/quote-request-classifier-tests.php
       - name: AI connector offline and consent tests
         run: php -d error_reporting=-1 tests/ai-connector/run-ai-connector-tests.php
+      - name: AI connector pairing handshake tests (issue #347, offline)
+        run: php -d error_reporting=-1 tests/ai-connector/run-pairing-tests.php
       - name: AI connector 100 / 1k / 10k tenant cost simulation (issue #43, offline, about 70 s)
         run: php -d error_reporting=-1 tests/ai-connector/cost-simulation-test.php
       - name: Reproducible package and no development files (issue #3)

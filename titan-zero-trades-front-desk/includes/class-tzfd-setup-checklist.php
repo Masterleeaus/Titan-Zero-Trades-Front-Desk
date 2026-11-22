@@ -19,6 +19,34 @@ final class TZFD_Setup_Checklist {
 	const CONSENT_OPTION  = 'tzfd_setup_progress_consent';
 	const PROGRESS_OPTION = 'tzfd_setup_progress';
 	const MANUAL_OPTION   = 'tzfd_setup_manual';
+	const DISCOVERY_OPTION = 'tzfd_setup_discovery';
+
+	/**
+	 * Discovery links to optional services. Off by default, and shown only after the administrator opts in AND the
+	 * plugin is in use (see discovery_visible()). Each link opens an admin screen; none asks for registration.
+	 * There is no separate Pro plugin, so the "pro" link points to local features that are included in this plugin.
+	 *
+	 * @return array key => label, hint, page (admin.php?page= slug).
+	 */
+	public static function discovery_links() {
+		return array(
+			'pro'       => array( 'label' => __( 'Local reports and staff access', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Included in this plugin at no extra cost. There is no separate Pro plugin.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-booking-report' ),
+			'ai'        => array( 'label' => __( 'Titan Zero AI Assistant (optional, hosted, paid)', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Off until you connect it and record consent. Booking works without it.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-ai-services' ),
+			'agent'     => array( 'label' => __( 'Titan Zero AI Agent Team (optional, hosted, paid)', 'titan-zero-trades-front-desk' ), 'hint' => __( 'Acts only through the tools you grant. Review its receipts before you grant more.', 'titan-zero-trades-front-desk' ), 'page' => 'tzfd-agent-receipts' ),
+		);
+	}
+
+	/**
+	 * Links show only when the administrator has opted in (default off, so a null or missing option is off) and the
+	 * plugin is activated in use: at least one service or calendar exists. Nothing is shown before that.
+	 *
+	 * @param mixed $opt_in   Stored discovery option; only a literal true counts.
+	 * @param array $detected step => bool from facts().
+	 */
+	public static function discovery_visible( $opt_in, $detected ) {
+		$detected = is_array( $detected ) ? $detected : array();
+		return true === $opt_in && ( ! empty( $detected['services'] ) || ! empty( $detected['calendar'] ) );
+	}
 
 	/** Step key => label, how it is known, and what it means. Order is the order on screen. */
 	public static function steps() {
@@ -70,6 +98,42 @@ final class TZFD_Setup_Checklist {
 			}
 		}
 		return $existing;
+	}
+
+	/**
+	 * Measures from the stored progress record, for this site only. Nothing is measured without consent, so a
+	 * site that has not turned progress records on gets measured => false and no figures.
+	 *
+	 * completion_percent: recorded steps as a whole percentage of the catalogue.
+	 * first_booking_at:   unix time the test_booking step was first seen done, or null.
+	 * seconds_to_first_booking: from the earliest recorded step to the first booking, never negative; null if unknown.
+	 * converted:          setup is complete and a booking has been seen, i.e. the site reached its first booked job.
+	 *
+	 * @param array $record  step => unix time of first completion (see record()).
+	 * @param bool  $consent Administrator turned progress recording on.
+	 * @return array
+	 */
+	public static function metrics( $record, $consent ) {
+		if ( true !== $consent ) {
+			return array( 'measured' => false, 'steps_done' => null, 'total' => count( self::steps() ), 'completion_percent' => null, 'complete' => null, 'first_booking_at' => null, 'seconds_to_first_booking' => null, 'converted' => null );
+		}
+		$record  = is_array( $record ) ? $record : array();
+		$known   = array_intersect_key( $record, self::steps() );
+		$total   = count( self::steps() );
+		$done    = count( $known );
+		$first   = $done > 0 ? (int) min( $known ) : null;
+		$booking = isset( $known['test_booking'] ) ? (int) $known['test_booking'] : null;
+		$complete = $done === $total;
+		return array(
+			'measured'                  => true,
+			'steps_done'                => $done,
+			'total'                     => $total,
+			'completion_percent'        => (int) round( 100 * $done / $total ),
+			'complete'                  => $complete,
+			'first_booking_at'          => $booking,
+			'seconds_to_first_booking'  => ( null !== $booking && null !== $first ) ? max( 0, $booking - $first ) : null,
+			'converted'                 => $complete && null !== $booking,
+		);
 	}
 
 	/**

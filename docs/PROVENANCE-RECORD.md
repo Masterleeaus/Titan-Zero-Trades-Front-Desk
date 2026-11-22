@@ -55,6 +55,10 @@ The upstream author credit remains in readme.txt (Credits), THIRD-PARTY-NOTICES.
 
 - `scripts/package-excludes.txt`: one list of exclusions, shared by the manifest and the build.
 - `scripts/source-manifest.sh <plugin-dir>`: SHA-256 for each shipped file, sorted with `LC_ALL=C`. The committed copy is `docs/provenance/SHA256SUMS.txt`.
+- Baseline manifests (generated 2026-11-18 with `scripts/source-manifest.sh`):
+  - `docs/provenance/SHA256SUMS-v3.0.128.txt`: 720 files, source at commit `22dc106` (plugin header 3.0.128, "Extract Trades Front Desk 3.0.128 r16").
+  - `docs/provenance/SHA256SUMS-main-eb7b8bd.txt`: 782 files, `main` at commit `eb7b8bd`.
+  - `docs/provenance/SHA256SUMS.txt` predates both and matches neither; it is kept unchanged.
 - `scripts/build-package.sh [out-dir]`: stages the plugin, runs `php -l` on every PHP file, sets mtimes to `SOURCE_DATE_EPOCH` (default: HEAD commit time), and writes `titan-zero-trades-front-desk-<version>.zip`, its `.sha256`, and `SHA256SUMS.txt`. Output goes to `dist/`, which is git-ignored.
 
 Reproducibility check on 2026-11-16: two consecutive builds produced byte-identical ZIPs (`cmp` passed). The build result is recorded in the PR.
@@ -86,6 +90,20 @@ Status: steps 1 to 4 are not done. Only the base and ours sides exist in this la
 - Build determinism: two `build-zip.sh` runs with the default `SOURCE_DATE_EPOCH` gave the same SHA-256 (`fb918334ac269ca1995060d4ba0a32f38cda58eebe9ddc4cf9b5e963c004cfe0`).
 - `php -l` on every plugin PHP file: no errors. `php tests/unit/run.php`: 213 passed, 0 failed; free AI cases 139 passed, 0 failed.
 - Woo/payment hooks: still not present in the tree (no check possible).
+
+## Static check for generated executable code (2026-11-23, issue #341)
+
+Run on the plugin tree at e352141 (main, after PR #373). No baseline archive was needed for this check.
+
+- `php -l` on all 287 PHP files in the plugin folder: no syntax errors.
+- Dynamic-code calls (`eval`, `create_function`, `assert`, `gzinflate`, `gzuncompress`, `str_rot13`, `shell_exec`, `passthru`, `popen`, `proc_open`, `exec`, `system`, `preg_replace` with the `/e` modifier): none in PHP.
+- `base64_decode` appears in two places, both used on stored or signed data and not on code: `includes/class-tzfd-booking-validation-recovery.php` (token payload) and `includes/class-tzfd-addon-support.php` (stored secret, with prefix).
+- Variable variables: `addons/bookings/dashboard-box.addon.php` (`$$parameter`) loops over a fixed allow-list of shortcode attribute names only.
+- `extract()` is used on `shortcode_atts()` output (fixed keys) and on local template variables in `ui-pack/ui/tz-app-core.php`.
+- JS: no `eval`, `new Function` or `document.write` calls in shipped code. The three hits in `js/inline/` are comments.
+- Long lines and escape-heavy literals in PHP are HTML templates, a timezone list and a default form-structure JSON string. No long base64 or hex blobs were found in PHP or non-minified JS.
+
+Result: no generated or obfuscated executable code was found by these checks. This does not replace the comparison against the v3.0.128 ZIP or the Pass 03 candidate, which are still missing.
 
 ## Gaps (explicit)
 

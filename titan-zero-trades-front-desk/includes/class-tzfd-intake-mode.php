@@ -13,12 +13,12 @@ final class TZFD_Intake_Mode {
     const MODE_INSTANT = 'instant';
     const MODE_REQUEST = 'request';
 
-    public static function normalize( $tz_value ) {
-        return self::MODE_REQUEST === $tz_value ? self::MODE_REQUEST : self::MODE_INSTANT;
+    public static function normalize( $tzfd_value ) {
+        return self::MODE_REQUEST === $tzfd_value ? self::MODE_REQUEST : self::MODE_INSTANT;
     }
 
-    public static function is_valid( $tz_value ) {
-        return in_array( $tz_value, array( self::MODE_INSTANT, self::MODE_REQUEST ), true );
+    public static function is_valid( $tzfd_value ) {
+        return in_array( $tzfd_value, array( self::MODE_INSTANT, self::MODE_REQUEST ), true );
     }
 
     /** Internal trusted-PHP configuration API; no public write endpoint. */
@@ -33,9 +33,9 @@ final class TZFD_Intake_Mode {
         if ( ! $wpdb->get_var( $wpdb->prepare( 'SELECT id FROM ' . $wpdb->prefix . 'tz_forms WHERE id=%d AND company_id=%d', $form_id, TZFD_Scoped_Store::company_id() ) ) ) {
             return new WP_Error( 'intake_missing_form', __( 'Booking form not found.', 'titan-zero-trades-front-desk' ) );
         }
-        $tz_key = 'titan_zero_front_desk_intake_mode_' . $form_id;
-        update_option( $tz_key, $mode, false );
-        if ( get_option( $tz_key ) !== $mode ) {
+        $tzfd_key = 'titan_zero_front_desk_intake_mode_' . $form_id;
+        update_option( $tzfd_key, $mode, false );
+        if ( get_option( $tzfd_key ) !== $mode ) {
             return new WP_Error( 'intake_save_failed', __( 'The intake mode could not be saved.', 'titan-zero-trades-front-desk' ) );
         }
         return true;
@@ -78,27 +78,27 @@ final class TZFD_Intake_Mode {
     }
 
     /** Apply the intake invariant again after legacy processing extensions run. */
-    public static function request_payload( $tz_params ) {
-        $tz_params['titan_zero_front_desk_intake_mode'] = self::MODE_REQUEST;
-        $tz_params['apps'] = self::apply_to_appointments( $tz_params['apps'], self::MODE_REQUEST );
-        foreach ( $tz_params['apps'] as $appointment ) {
+    public static function request_payload( $tzfd_local_params ) {
+        $tzfd_local_params['titan_zero_front_desk_intake_mode'] = self::MODE_REQUEST;
+        $tzfd_local_params['apps'] = self::apply_to_appointments( $tzfd_local_params['apps'], self::MODE_REQUEST );
+        foreach ( $tzfd_local_params['apps'] as $appointment ) {
             if ( is_array( $appointment ) && isset( $appointment['id'] ) ) {
-                $tz_params['app_status_' . $appointment['id']] = 'Pending';
+                $tzfd_local_params['app_status_' . $appointment['id']] = 'Pending';
             }
         }
-        return $tz_params;
+        return $tzfd_local_params;
     }
 
-    public static function is_pending_request( $tz_params ) {
-        if ( ! is_array( $tz_params ) || ! isset( $tz_params['titan_zero_front_desk_intake_mode'], $tz_params['apps'] ) ||
-             self::MODE_REQUEST !== $tz_params['titan_zero_front_desk_intake_mode'] || ! is_array( $tz_params['apps'] ) ) {
+    public static function is_pending_request( $tzfd_local_params ) {
+        if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['titan_zero_front_desk_intake_mode'], $tzfd_local_params['apps'] ) ||
+             self::MODE_REQUEST !== $tzfd_local_params['titan_zero_front_desk_intake_mode'] || ! is_array( $tzfd_local_params['apps'] ) ) {
             return false;
         }
         // Conditional/optional appointment fields may all be omitted in a valid intake.
-        if ( empty( $tz_params['apps'] ) ) {
+        if ( empty( $tzfd_local_params['apps'] ) ) {
             return true;
         }
-        foreach ( $tz_params['apps'] as $appointment ) {
+        foreach ( $tzfd_local_params['apps'] as $appointment ) {
             if ( isset( $appointment['cancelled'] ) && 'Pending' === $appointment['cancelled'] ) {
                 return true;
             }
@@ -107,15 +107,15 @@ final class TZFD_Intake_Mode {
     }
 
     /** A completed but not wholly approved request must not reuse confirmation copy. */
-    public static function settled_request_summary( $tz_params ) {
-        if ( ! is_array( $tz_params ) || ! isset( $tz_params['titan_zero_front_desk_intake_mode'], $tz_params['apps'] ) ||
-             self::MODE_REQUEST !== $tz_params['titan_zero_front_desk_intake_mode'] || ! is_array( $tz_params['apps'] ) ||
-             self::is_pending_request( $tz_params ) ) {
+    public static function settled_request_summary( $tzfd_local_params ) {
+        if ( ! is_array( $tzfd_local_params ) || ! isset( $tzfd_local_params['titan_zero_front_desk_intake_mode'], $tzfd_local_params['apps'] ) ||
+             self::MODE_REQUEST !== $tzfd_local_params['titan_zero_front_desk_intake_mode'] || ! is_array( $tzfd_local_params['apps'] ) ||
+             self::is_pending_request( $tzfd_local_params ) ) {
             return null;
         }
         $lines = array();
         $all_approved = true;
-        foreach ( $tz_params['apps'] as $appointment ) {
+        foreach ( $tzfd_local_params['apps'] as $appointment ) {
             $status = is_array( $appointment ) && isset( $appointment['cancelled'] ) && is_string( $appointment['cancelled'] )
                 ? $appointment['cancelled'] : 'Unknown';
             if ( '' !== $status ) {

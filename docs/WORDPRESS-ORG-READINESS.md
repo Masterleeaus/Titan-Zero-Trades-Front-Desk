@@ -167,6 +167,34 @@ Checked by grep and by reading the files named. No WordPress site was available,
 4. **Installation wording.** "This is a new plugin, not an upgrade" is kept. Decide whether it stays before submission (see section 1).
 5. **Banned-function fixes** (`extract`, `base64_decode`, `error_log`) are not edited here. They change code, so they belong to a code lane with tests.
 
+## 7. Remaining work from #282 (issue #329, checked 2026-11-23)
+
+Each row is one checklist item from #329. Status values: **Verified** (run here, result recorded), **Blocked** (the tool or site it needs is not installed in this sandbox: no `wp`, no MySQL/MariaDB), **Owner** (needs a decision), **In flight** (an open PR owns it, so this lane did not duplicate it), **Open** (not started).
+
+| #329 item | Status | Evidence or reason |
+|---|---|---|
+| Free build has no bundled AI execution (clean-install check and code map) | Partial | `php tests/runtime/ai-free-edition-unit-tests.php`: 14 passed, 0 failed. Its checks include "only the Twilio SMS transport and the gated AI connector make outbound HTTP calls" and "no AI provider host or endpoint in plugin PHP". `tests/runtime/clean-install-ai-check.php` needs WP-CLI: **Blocked**. The code map is not written here. Dormant connector: see 6f and decision 3 |
+| Legacy AI removal decision | Owner | Decision 3 in 6i. Removing `includes/class-tzfd-ai-connector.php` needs the owner |
+| Old installs keep data access and the legacy AI data migration on a pre-AI site | Blocked | Needs a WordPress site. `tests/runtime/upgrade-from-3.0.128.sh` needs WP-CLI and a database. Not run |
+| Acceptance and cross-app compatibility for the AI removal | Owner | Needs the owner's acceptance decision and the Supercharged and Central contract owners. Not verified |
+| 17 Plugin Check ERRORs on main | In flight | Open PR #356 (`fix(plugin-check): clear the last three Plugin Check ERROR rows`). On main, `parse_url()` still appears at `titan-zero-trades-front-desk/tzfd-public-int.inc.php:11` and `includes/class-tzfd-ai-connector.php:316, 409`. Plugin Check itself is **Blocked** (needs WordPress) |
+| 672 Plugin Check WARNINGs | Blocked / Owner | Plugin Check cannot run here. Known code items are listed in 6d (`extract()`, `base64_decode()`, `error_log()`, temp-file writes). PR #313 covers global prefixing. Those fixes change code and need a code lane with tests |
+| Licence and provenance records match the release | Partial | `tests/release/check-release-metadata.php`: 16 checks passed (version 3.0.128). Byte-for-byte check of `LICENSE.txt` against gnu.org is **Blocked** (agent proxy). Licence wording is decision 1 |
+| SHA-256 manifests for v3.0.128 (ca912ee) and main | In flight | Open PR #361 (`docs(provenance): commit SHA-256 baselines`). Not duplicated here |
+| Three-way merge plan and regression diff against the v3.0.128 ZIP and the Pass 03 candidate | Blocked | The Pass 03 candidate is not in the repo. Needs the candidate source from the owner |
+| No loss of booking, cancellation, reminders, telephony logs, customer data, Woo/payment hooks, privacy exporter, credits | Blocked | `tests/runtime/wp-runtime-tests.php`, `runtime-tests.php` and `uninstall-wipe-check.php` need WordPress and a database. Not run |
+| Booking create, cancel and reschedule on a fresh install from the built ZIP; WordPress and PHP matrix; multisite | Blocked | Needs WP-CLI, MariaDB, and multiple WordPress and PHP versions. Not run |
+| Readme, screenshots, WCAG review of mobile booking forms, performance | Open / Owner | No screenshot set exists (section 1). WCAG and performance not measured |
+| Final readiness report listing every gap, with a tested downgrade | Partial | This section is the gap list. Tested downgrade is covered only by `upgrade-from-3.0.128.sh`, which is Blocked here |
+
+Evidence run on 2026-11-23 (PHP 8.3.6, no WordPress, no database):
+
+- `php -l` on every `.php` file under `titan-zero-trades-front-desk/`: no errors.
+- `php tests/unit/run.php`: local-free suite passed 572, failed 0; Free AI cases: assertions passed 177, failed 0.
+- `php tests/release/check-release-metadata.php`: 16 checks passed.
+- `php tests/runtime/ai-free-edition-unit-tests.php`: 14 passed, 0 failed.
+- Not run for lack of WordPress or a database: `clean-install-ai-check.php`, `uninstall-wipe-check.php` (both report FAIL "not running inside WordPress" when run standalone).
+
 ## Summary
 
 Done: header, readme structure, reproducible build, source manifest, provenance corrections, PHP lint, text-domain check, external-service inventory by inspection.

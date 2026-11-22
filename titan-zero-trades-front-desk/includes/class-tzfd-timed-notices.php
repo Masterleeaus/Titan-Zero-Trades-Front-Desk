@@ -18,8 +18,8 @@ final class TZFD_Timed_Notices {
     /**
      * Schedule one event per appointment in a freshly saved booking.
      *
-     * @param array  $tz_params     Pre-insert/process parameters (itemnumber, formid, apps).
-     * @param string $tz_key        Add-on key, used for settings lookup.
+     * @param array  $tzfd_local_params     Pre-insert/process parameters (itemnumber, formid, apps).
+     * @param string $tzfd_key        Add-on key, used for settings lookup.
      * @param string $hook       Cron hook to fire.
      * @param string $anchor     'start' or 'end' of the appointment.
      * @param int    $direction  -1 for before the anchor, +1 for after it.
@@ -27,11 +27,11 @@ final class TZFD_Timed_Notices {
      * @param int    $company_id 0 uses the request's company. Pass the booking's company when no request context exists.
      * @return int Number of events scheduled. Event args: booking id, appointment index, company id.
      */
-    public static function schedule_booking( array $tz_params, $tz_key, $hook, $anchor, $direction, array $defaults, $company_id = 0 ) {
+    public static function schedule_booking( array $tzfd_local_params, $tzfd_key, $hook, $anchor, $direction, array $defaults, $company_id = 0 ) {
         if ( defined( 'TZFD_HOUR_BLOCK_TIMES_PROCESS' ) ) { return 0; }
-        $booking_id = isset( $tz_params['itemnumber'] ) ? (int) $tz_params['itemnumber'] : 0;
-        $formid     = isset( $tz_params['formid'] ) ? (int) $tz_params['formid'] : 0;
-        if ( $booking_id < 1 || ! isset( $tz_params['apps'] ) || ! is_array( $tz_params['apps'] ) ) { return 0; }
+        $booking_id = isset( $tzfd_local_params['itemnumber'] ) ? (int) $tzfd_local_params['itemnumber'] : 0;
+        $formid     = isset( $tzfd_local_params['formid'] ) ? (int) $tzfd_local_params['formid'] : 0;
+        if ( $booking_id < 1 || ! isset( $tzfd_local_params['apps'] ) || ! is_array( $tzfd_local_params['apps'] ) ) { return 0; }
         // Cron runs later with no user or company, so the company is written into each event now.
         $company = (int) $company_id > 0 ? (int) $company_id : ( class_exists( 'TZFD_Scoped_Store' ) ? TZFD_Scoped_Store::company_id() : 0 );
         if ( $company < 1 || $formid < 1 ||
@@ -39,17 +39,17 @@ final class TZFD_Timed_Notices {
 
         // A caller that passes the company has no request context (for example a customer's reschedule), so read that company's scoped settings.
         $settings = (int) $company_id > 0
-            ? self::settings_for_company( $tz_key, $formid, $company, $defaults )
-            : TZFD_Addon_Support::form_settings( $tz_key, $formid, $defaults );
+            ? self::settings_for_company( $tzfd_key, $formid, $company, $defaults )
+            : TZFD_Addon_Support::form_settings( $tzfd_key, $formid, $defaults );
         $hours    = (int) $settings['hours'];
         if ( $hours <= 0 ) { return 0; }
 
         $tz        = wp_timezone();
         $now       = time();
         $scheduled = 0;
-        foreach ( array_values( $tz_params['apps'] ) as $index => $tz_app ) {
-            if ( ! is_array( $tz_app ) ) { continue; }
-            $point = TZFD_Addon_Support::slot_boundary( isset( $tz_app['date'] ) ? $tz_app['date'] : '', isset( $tz_app['slot'] ) ? $tz_app['slot'] : '', $anchor, $tz );
+        foreach ( array_values( $tzfd_local_params['apps'] ) as $index => $tzfd_app ) {
+            if ( ! is_array( $tzfd_app ) ) { continue; }
+            $point = TZFD_Addon_Support::slot_boundary( isset( $tzfd_app['date'] ) ? $tzfd_app['date'] : '', isset( $tzfd_app['slot'] ) ? $tzfd_app['slot'] : '', $anchor, $tz );
             if ( false === $point ) { continue; }
             $when = $point->getTimestamp() + (int) $direction * $hours * HOUR_IN_SECONDS;
             if ( $when <= $now + 60 ) { continue; } // Never send a notice whose moment has already passed.
@@ -61,10 +61,10 @@ final class TZFD_Timed_Notices {
     }
 
     /** Form settings merged over site settings for one verified company, without relying on request context. */
-    private static function settings_for_company( $tz_key, $formid, $company_id, array $defaults ) {
+    private static function settings_for_company( $tzfd_key, $formid, $company_id, array $defaults ) {
         // Same legacy fallback as TZFD_Addon_Support::form_settings_for_job(), without its logged-in guard:
         // status changes from an admin request also rebuild the queue, and must not fall back to defaults.
-        $legacy        = TZFD_Addon_Support::OPTION_PREFIX . sanitize_key( $tz_key );
+        $legacy        = TZFD_Addon_Support::OPTION_PREFIX . sanitize_key( $tzfd_key );
         $form_name     = $legacy . '_form_' . (int) $formid;
         $global_name   = $legacy . '_global';
         $form_option   = TZFD_Scoped_Store::option_name( $form_name, (int) $company_id );
@@ -108,7 +108,7 @@ final class TZFD_Timed_Notices {
     /**
      * Send the notice for one appointment if it is still due.
      *
-     * @param string $tz_key             Add-on key.
+     * @param string $tzfd_key             Add-on key.
      * @param int    $booking_id      Booking row ID.
      * @param int    $index           Appointment index within the booking.
      * @param array  $allowed_status  Statuses that may receive this notice ('' = Approved).
@@ -116,7 +116,7 @@ final class TZFD_Timed_Notices {
      * @param int    $company_id      Company the booking belongs to, from the cron event args. Required.
      * @return bool True when an email was handed to wp_mail.
      */
-    public static function deliver( $tz_key, $booking_id, $index, array $allowed_status, array $defaults, $company_id = 0 ) {
+    public static function deliver( $tzfd_key, $booking_id, $index, array $allowed_status, array $defaults, $company_id = 0 ) {
         global $wpdb;
         $booking_id = (int) $booking_id;
         $index      = (int) $index;
@@ -138,28 +138,28 @@ final class TZFD_Timed_Notices {
         // Never fall back to a site's or another company's settings.
         if ( ! class_exists( 'TZFD_Scoped_Store' ) ||
              TZFD_Scoped_Store::company_for_form( (int) $row->formid ) !== $company_id ) { return false; }
-        $settings = TZFD_Addon_Support::form_settings_for_job( $tz_key, (int) $row->formid, $company_id, $defaults );
+        $settings = TZFD_Addon_Support::form_settings_for_job( $tzfd_key, (int) $row->formid, $company_id, $defaults );
         if ( ! isset( $settings['hours'] ) || ! is_numeric( $settings['hours'] ) || (int) $settings['hours'] <= 0 ) { return false; }
 
-        $tz_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
-        if ( ! is_array( $tz_data ) || ! isset( $tz_data['apps'] ) || ! is_array( $tz_data['apps'] ) || ! isset( $tz_data['apps'][ $index ] ) || ! is_array( $tz_data['apps'][ $index ] ) ) { return false; }
-        $tz_app = $tz_data['apps'][ $index ];
+        $tzfd_data = TZFD_Stored_Data::decode_booking( $row->posted_data );
+        if ( ! is_array( $tzfd_data ) || ! isset( $tzfd_data['apps'] ) || ! is_array( $tzfd_data['apps'] ) || ! isset( $tzfd_data['apps'][ $index ] ) || ! is_array( $tzfd_data['apps'][ $index ] ) ) { return false; }
+        $tzfd_app = $tzfd_data['apps'][ $index ];
 
-        if ( ! in_array( TZFD_Addon_Support::appointment_status( $tz_app ), $allowed_status, true ) ) { return false; }
+        if ( ! in_array( TZFD_Addon_Support::appointment_status( $tzfd_app ), $allowed_status, true ) ) { return false; }
 
         if ( ! isset( $row->notifyto ) || ! is_string( $row->notifyto ) ) { return false; }
         $email = sanitize_email( $row->notifyto );
         if ( ! is_email( $email ) || 'BLOCKED@BY.ADMIN' === strtoupper( $email ) ) { return false; }
 
         $tz    = wp_timezone();
-        $start = TZFD_Addon_Support::slot_boundary( isset( $tz_app['date'] ) ? $tz_app['date'] : '', isset( $tz_app['slot'] ) ? $tz_app['slot'] : '', 'start', $tz );
-        $end   = TZFD_Addon_Support::slot_boundary( isset( $tz_app['date'] ) ? $tz_app['date'] : '', isset( $tz_app['slot'] ) ? $tz_app['slot'] : '', 'end', $tz );
+        $start = TZFD_Addon_Support::slot_boundary( isset( $tzfd_app['date'] ) ? $tzfd_app['date'] : '', isset( $tzfd_app['slot'] ) ? $tzfd_app['slot'] : '', 'start', $tz );
+        $end   = TZFD_Addon_Support::slot_boundary( isset( $tzfd_app['date'] ) ? $tzfd_app['date'] : '', isset( $tzfd_app['slot'] ) ? $tzfd_app['slot'] : '', 'end', $tz );
         if ( false === $start || false === $end ) { return false; }
 
         $values = array(
             'booking_id' => $booking_id,
-            'formname'   => isset( $tz_data['formname'] ) && is_string( $tz_data['formname'] ) ? $tz_data['formname'] : '',
-            'service'    => isset( $tz_app['service'] ) && is_string( $tz_app['service'] ) ? $tz_app['service'] : '',
+            'formname'   => isset( $tzfd_data['formname'] ) && is_string( $tzfd_data['formname'] ) ? $tzfd_data['formname'] : '',
+            'service'    => isset( $tzfd_app['service'] ) && is_string( $tzfd_app['service'] ) ? $tzfd_app['service'] : '',
             'date'       => wp_date( get_option( 'date_format' ), $start->getTimestamp(), $tz ),
             'start'      => wp_date( get_option( 'time_format' ), $start->getTimestamp(), $tz ),
             'end'        => wp_date( get_option( 'time_format' ), $end->getTimestamp(), $tz ),

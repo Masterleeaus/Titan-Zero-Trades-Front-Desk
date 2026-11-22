@@ -21,8 +21,8 @@ require_once __DIR__ . '/class-tzfd-workspace-customer-owner.php';
  * set_booking_status and default_paid_status (Invoicing). Invoices and payments are not here. They belong to Titan Zero Invoicing (19 Oct split),
  * which exposes its own read API. Front Desk does not read those tables.
  */
-if ( ! class_exists( 'TZ_FrontDesk' ) ) {
-final class TZ_FrontDesk {
+if ( ! class_exists( 'TZFD_FrontDesk' ) ) {
+final class TZFD_FrontDesk {
 
     const LIMIT_BOOKINGS = 100;
     /** Maximum booking rows read per customer lookup (the CRM scan limit, now owned here). */
@@ -419,4 +419,8 @@ final class TZ_FrontDesk {
         return false;
     }
 }
+}
+// Public name kept for integrations: Invoicing and others check class_exists( 'TZ_FrontDesk' ).
+if ( ! class_exists( 'TZ_FrontDesk', false ) ) {
+    class_alias( 'TZFD_FrontDesk', 'TZ_FrontDesk' );
 }

@@ -81,9 +81,9 @@ if( !class_exists( 'TZFD_FollowUp' ) )
 
         /************************ HOOKS *****************************/
 
-        public function schedule_followups( $tz_params )
+        public function schedule_followups( $tzfd_local_params )
         {
-            TZFD_Timed_Notices::schedule_booking( (array) $tz_params, self::KEY, self::HOOK, 'end', 1, self::defaults() );
+            TZFD_Timed_Notices::schedule_booking( (array) $tzfd_local_params, self::KEY, self::HOOK, 'end', 1, self::defaults() );
         }
 
         /** Cron callback. Approved and attended appointments only. */
@@ -97,9 +97,9 @@ if( !class_exists( 'TZFD_FollowUp' ) )
     } // End Class
 
     // Main add-on code
-    $tz_FollowUp_obj = new TZFD_FollowUp();
+    $tzfd_FollowUp_obj = new TZFD_FollowUp();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_FollowUp_obj->get_addon_id() ] = $tz_FollowUp_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_FollowUp_obj->get_addon_id() ] = $tzfd_FollowUp_obj;
 }

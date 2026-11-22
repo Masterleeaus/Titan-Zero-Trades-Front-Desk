@@ -40,8 +40,8 @@ class TZFD_Booking_Status_API {
             class_exists( 'TZFD_Scoped_Store' ) && TZFD_Scoped_Store::company_id() > 0;
     }
 
-    public static function validate_booking_id( $tz_value ) {
-        return self::normalize_booking_id( $tz_value ) > 0;
+    public static function validate_booking_id( $tzfd_value ) {
+        return self::normalize_booking_id( $tzfd_value ) > 0;
     }
 
     /** Return a minimized read of the state currently stored for one booking. */
@@ -68,15 +68,15 @@ class TZFD_Booking_Status_API {
             return self::error( 'titan_zero_front_desk_unavailable', __( 'Booking data is unavailable.', 'titan-zero-trades-front-desk' ), 503 );
         }
 
-        $tz_table_name = $wpdb->prefix . TZFD_Tables::BOOKINGS;
-        $tz_table_name = esc_sql( $tz_table_name );
+        $tzfd_table_name = $wpdb->prefix . TZFD_Tables::BOOKINGS;
+        $tzfd_table_name = esc_sql( $tzfd_table_name );
         // Company isolation: a booking outside the request's company reads as not found.
         $company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
         if ( $company < 1 ) {
             return self::error( 'titan_zero_front_desk_booking_not_found', __( 'Booking not found.', 'titan-zero-trades-front-desk' ), 404 );
         }
         $row = $wpdb->get_row(
-            $wpdb->prepare("SELECT id, formid, time, posted_data FROM %i WHERE id = %d AND company_id = %d LIMIT 1", $tz_table_name, $booking_id, $company)
+            $wpdb->prepare("SELECT id, formid, time, posted_data FROM %i WHERE id = %d AND company_id = %d LIMIT 1", $tzfd_table_name, $booking_id, $company)
         );
         if ( isset( $wpdb->last_error ) && '' !== $wpdb->last_error ) {
             return self::error( 'titan_zero_front_desk_unavailable', __( 'Booking data is unavailable.', 'titan-zero-trades-front-desk' ), 503 );
@@ -137,18 +137,18 @@ class TZFD_Booking_Status_API {
         return $statuses;
     }
 
-    private static function normalize_booking_id( $tz_value ) {
-        if ( is_int( $tz_value ) ) { return $tz_value > 0 ? $tz_value : 0; }
-        if ( ! is_string( $tz_value ) || 1 !== preg_match( '/^[0-9]+$/D', $tz_value ) ) { return 0; }
+    private static function normalize_booking_id( $tzfd_value ) {
+        if ( is_int( $tzfd_value ) ) { return $tzfd_value > 0 ? $tzfd_value : 0; }
+        if ( ! is_string( $tzfd_value ) || 1 !== preg_match( '/^[0-9]+$/D', $tzfd_value ) ) { return 0; }
 
-        $digits = ltrim( $tz_value, '0' );
+        $digits = ltrim( $tzfd_value, '0' );
         if ( '' === $digits ) { return 0; }
         $validated = filter_var( $digits, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
         return false === $validated ? 0 : (int) $validated;
     }
 
-    private static function error( $code, $tz_message, $status ) {
-        return new WP_Error( $code, $tz_message, array( 'status' => $status ) );
+    private static function error( $code, $tzfd_message, $status ) {
+        return new WP_Error( $code, $tzfd_message, array( 'status' => $status ) );
     }
 }
 

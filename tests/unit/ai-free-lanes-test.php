@@ -411,6 +411,32 @@ $GLOBALS['tzfd_test_caps'] = false;
 ok( 'kb permissions: rollback refused without edit capability', TZFD_Ai_Knowledge_Builder::rollback( $KB_CO, $kb_draft['id'], 1, $KB_NOW, 1 )['error'] === 'forbidden' );
 $GLOBALS['tzfd_test_caps'] = true;
 
+/* ---------- #36 outdated approved content (age since last edit) ---------- */
+$OD_NOW = 1767225600;
+$OD_DAY = DAY_IN_SECONDS;
+$od_entries = array(
+	array( 'id' => 'faq-old', 'question' => 'Old price?', 'answer' => 'SECRET ANSWER TEXT', 'updated' => $OD_NOW - 200 * $OD_DAY ),
+	array( 'id' => 'faq-fresh', 'question' => 'Fresh?', 'answer' => 'x', 'updated' => $OD_NOW - 10 * $OD_DAY ),
+	array( 'id' => 'faq-edge', 'question' => 'Edge?', 'answer' => 'x', 'updated' => $OD_NOW - 180 * $OD_DAY ),
+	array( 'id' => 'faq-nodate', 'question' => 'No date?', 'answer' => 'x', 'updated' => 0 ),
+	array( 'id' => 'faq-future', 'question' => 'Future?', 'answer' => 'x', 'updated' => $OD_NOW + $OD_DAY ),
+	array( 'id' => 'faq-older', 'question' => 'Older?', 'answer' => 'x', 'updated' => $OD_NOW - 400 * $OD_DAY ),
+);
+$od = TZFD_Ai_Gap_Detection::outdated( $od_entries, $OD_NOW, 180 );
+ok( 'outdated: default threshold is 180 days', TZFD_Ai_Gap_Detection::OUTDATED_DAYS === 180 && TZFD_Ai_Gap_Detection::outdated_days() === 180 );
+ok( 'outdated: entries older than the threshold are listed, oldest first', array_column( $od, 'id' ) === array( 'faq-older', 'faq-old', 'faq-edge' ) );
+ok( 'outdated: age in days is counted from last edit', $od[0]['age_days'] === 400 && $od[1]['age_days'] === 200 && $od[2]['age_days'] === 180 );
+ok( 'outdated: fresh, undated and future-dated entries are not reported', ! in_array( 'faq-fresh', array_column( $od, 'id' ), true ) && ! in_array( 'faq-nodate', array_column( $od, 'id' ), true ) && ! in_array( 'faq-future', array_column( $od, 'id' ), true ) );
+ok( 'outdated: rows carry no answer text', false === strpos( json_encode( $od ), 'SECRET ANSWER TEXT' ) && array_keys( $od[0] ) === array( 'id', 'question', 'updated', 'age_days' ) );
+ok( 'outdated: a shorter threshold widens the list', count( TZFD_Ai_Gap_Detection::outdated( $od_entries, $OD_NOW, 30 ) ) === 3 );
+$GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] = static function () { return 0; };
+ok( 'outdated: filter below 1 is clamped to 1 day', TZFD_Ai_Gap_Detection::outdated_days() === 1 );
+$GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] = static function () { return 99999; };
+ok( 'outdated: filter above 3650 is clamped', TZFD_Ai_Gap_Detection::outdated_days() === 3650 );
+unset( $GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] );
+ok( 'outdated: published entries expose their last-edit time', TZFD_Ai_Knowledge_Builder::published( $KB_CO )[0]['updated'] === $KB_NOW + 20 );
+ok( 'outdated: a company with no published entries has nothing outdated', TZFD_Ai_Gap_Detection::outdated( TZFD_Ai_Knowledge_Builder::published( 8 ), $OD_NOW, 180 ) === array() );
+
 /* ---------- result ---------- */
 echo "Passed: {$GLOBALS['tzfd_pass']}  Failed: {$GLOBALS['tzfd_fail']}\n";
 exit( $GLOBALS['tzfd_fail'] > 0 ? 1 : 0 );

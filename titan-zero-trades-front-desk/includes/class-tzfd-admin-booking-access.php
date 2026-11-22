@@ -14,10 +14,10 @@ final class TZFD_Admin_Booking_Access {
     public static function authorize_request( $request, $selected_calendar ) {
         if ( ! is_array( $request ) ) { return false; }
         $action = '';
-        foreach ( array( 'statusmark', 'resend', 'delmark', 'del', 'lu', 'ld', 'ud' ) as $tz_key ) {
-            if ( ! isset( $request[ $tz_key ] ) || '' === $request[ $tz_key ] ) { continue; }
-            if ( 'del' === $tz_key && 'all' !== $request[ $tz_key ] ) { continue; }
-            $action = $tz_key;
+        foreach ( array( 'statusmark', 'resend', 'delmark', 'del', 'lu', 'ld', 'ud' ) as $tzfd_key ) {
+            if ( ! isset( $request[ $tzfd_key ] ) || '' === $request[ $tzfd_key ] ) { continue; }
+            if ( 'del' === $tzfd_key && 'all' !== $request[ $tzfd_key ] ) { continue; }
+            $action = $tzfd_key;
             break;
         }
         if ( '' === $action ) { return true; } // Plain list rendering does not need record lookups.
@@ -53,9 +53,9 @@ final class TZFD_Admin_Booking_Access {
 
         $ids = array();
         if ( in_array( $action, array( 'statusmark', 'delmark' ), true ) ) {
-            for ( $tz_i = 0; $tz_i <= 50; $tz_i++ ) {
-                if ( isset( $request[ 'c' . $tz_i ] ) && '' !== $request[ 'c' . $tz_i ] ) {
-                    $ids[] = $request[ 'c' . $tz_i ];
+            for ( $tzfd_i = 0; $tzfd_i <= 50; $tzfd_i++ ) {
+                if ( isset( $request[ 'c' . $tzfd_i ] ) && '' !== $request[ 'c' . $tzfd_i ] ) {
+                    $ids[] = $request[ 'c' . $tzfd_i ];
                 }
             }
         } else { $ids[] = $request[ $action ]; }
@@ -80,10 +80,10 @@ final class TZFD_Admin_Booking_Access {
     }
 
     /** Reject PHP's permissive coercion of partial strings, booleans and arrays. */
-    private static function positive_id( $tz_value ) {
-        if ( is_int( $tz_value ) ) { return $tz_value > 0 ? $tz_value : 0; }
-        if ( ! is_string( $tz_value ) || 1 !== preg_match( '/^[0-9]+$/D', $tz_value ) ) { return 0; }
-        $digits = ltrim( $tz_value, '0' );
+    private static function positive_id( $tzfd_value ) {
+        if ( is_int( $tzfd_value ) ) { return $tzfd_value > 0 ? $tzfd_value : 0; }
+        if ( ! is_string( $tzfd_value ) || 1 !== preg_match( '/^[0-9]+$/D', $tzfd_value ) ) { return 0; }
+        $digits = ltrim( $tzfd_value, '0' );
         $id = filter_var( $digits, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
         return false === $id ? 0 : $id;
     }

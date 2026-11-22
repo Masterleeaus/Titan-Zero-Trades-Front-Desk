@@ -26,6 +26,8 @@ if ( ! defined( 'TZFD_VERSION' ) ) {
 }
 
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-tables.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-placeholder-service-cleanup.php';
+TZFD_Placeholder_Service_Cleanup::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-ai-free-services.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-history-reconciliation.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-migration-handoff.php';
@@ -83,6 +85,10 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-agent-gateway-admin.php
 TZFD_Agent_Gateway_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-report-admin.php';
 TZFD_Booking_Report_Admin::register();
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-registry.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-store.php';
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-location-admin.php';
+TZFD_Location_Admin::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-staff-access-admin.php';
 TZFD_Staff_Access_Admin::register();
@@ -98,16 +104,16 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-human-handoff.php';
  * Translate persisted values without passing dynamic data to the
  * literal-string translation helpers.
  */
-if ( ! function_exists( 'titan_zero_front_desk_translate_legacy_value' ) ) {
-    function titan_zero_front_desk_translate_legacy_value( $tz_value ) {
-        if ( ! is_string( $tz_value ) && ! is_int( $tz_value ) && ! is_float( $tz_value ) ) {
+if ( ! function_exists( 'tzfd_translate_legacy_value' ) ) {
+    function tzfd_translate_legacy_value( $tzfd_value ) {
+        if ( ! is_string( $tzfd_value ) && ! is_int( $tzfd_value ) && ! is_float( $tzfd_value ) ) {
             return '';
         }
-        $tz_value = (string) $tz_value;
+        $tzfd_value = (string) $tzfd_value;
         if ( function_exists( 'get_translations_for_domain' ) ) {
-            return get_translations_for_domain( 'titan-zero-trades-front-desk' )->translate( $tz_value );
+            return get_translations_for_domain( 'titan-zero-trades-front-desk' )->translate( $tzfd_value );
         }
-        return $tz_value;
+        return $tzfd_value;
     }
 }
 
@@ -127,7 +133,7 @@ if ( ! defined( 'TZFD_BOOK_DEFER_SCRIPTS_LOADING' ) ) {
 }
 
 if ( ! defined( 'TZFD_BOOK_DEFAULT_form_structure' ) ) {
-    define('TZFD_BOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fapp","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Appointment","services":[{"name":"Service 1","price":1,"duration":60}],"openhours":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"allOH":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"dateFormat":"mm/dd/yy","showDropdown":false,"dropdownRange":"-10:+10","working_dates":[true,true,true,true,true,true,true],"numberOfMonths":1,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","required":true,"fBuild":{}},{"form_identifier":"","name":"email","shortlabel":"","index":1,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"tz_fd_m5","evalequations":1,"autocomplete":1}]]');
+    define('TZFD_BOOK_DEFAULT_form_structure', '[[{"form_identifier":"","name":"fieldname1","shortlabel":"","index":0,"ftype":"fapp","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Appointment","services":[],"openhours":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"allOH":[{"name":"Default","openhours":[{"type":"all","d":"","h1":8,"m1":0,"h2":17,"m2":0}]}],"dateFormat":"mm/dd/yy","showDropdown":false,"dropdownRange":"-10:+10","working_dates":[true,true,true,true,true,true,true],"numberOfMonths":1,"firstDay":0,"minDate":"0","maxDate":"","defaultDate":"","invalidDates":"","required":true,"fBuild":{}},{"form_identifier":"","name":"name","shortlabel":"","index":1,"ftype":"ftext","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Name","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}},{"form_identifier":"","name":"phone","shortlabel":"","index":2,"ftype":"ftext","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Phone","predefined":"","predefinedClick":false,"required":false,"size":"medium","equalTo":"","fBuild":{}},{"form_identifier":"","name":"email","shortlabel":"","index":3,"ftype":"femail","userhelp":"","userhelpTooltip":false,"csslayout":"","title":"Email","predefined":"","predefinedClick":false,"required":true,"size":"medium","equalTo":"","fBuild":{}}],[{"title":"","description":"","formlayout":"top_aligned","formtemplate":"tz_fd_m5","evalequations":1,"autocomplete":1}]]');
 }
 
 
@@ -263,12 +269,12 @@ require_once __DIR__ . '/includes/class-tzfd-standalone-runtime.php';
 /** Seed the default calendar only after the standalone schema is available. */
 if ( ! function_exists( 'tz_fd_seed_form_for_member' ) ) {
     function tz_fd_seed_form_for_member() {
-        global $wpdb, $tz_plugin;
-        if ( ! is_admin() || ! class_exists( 'TZFD_Scoped_Store' ) || TZFD_Scoped_Store::company_id() < 1 || ! is_object( $tz_plugin ) || ! method_exists( $tz_plugin, 'install' ) ) { return; }
+        global $wpdb, $tzfd_plugin;
+        if ( ! is_admin() || ! class_exists( 'TZFD_Scoped_Store' ) || TZFD_Scoped_Store::company_id() < 1 || ! is_object( $tzfd_plugin ) || ! method_exists( $tzfd_plugin, 'install' ) ) { return; }
         $table = $wpdb->prefix . TZFD_Tables::FORMS;
         $count = $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(id) FROM %i', $table ) );
         if ( null === $count || (int) $count > 0 ) { return; }
-        $tz_plugin->install( false );
+        $tzfd_plugin->install( false );
     }
 }
 
@@ -291,7 +297,7 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
         TZFD_Connect_Bridge::register();
         require_once dirname( __FILE__ ) . '/includes/class-tzfd-leads-bridge.php';
         TZFD_Leads_Bridge::register();
-        global $tz_plugin;
+        global $tzfd_plugin;
         require_once dirname( __FILE__ ) . '/tzfd-bootstrap.inc.php';
     }
 }
@@ -313,8 +319,8 @@ if ( ! function_exists( 'tz_fd_activate' ) ) {
         delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
         TZFD_Call_Lifecycle::run_install();
         if ( class_exists( 'TZFD_Business_Schema' ) ) { TZFD_Business_Schema::run(); }
-        global $tz_plugin;
-        if ( is_object( $tz_plugin ) && method_exists( $tz_plugin, 'install' ) ) { $tz_plugin->install( false ); }
+        global $tzfd_plugin;
+        if ( is_object( $tzfd_plugin ) && method_exists( $tzfd_plugin, 'install' ) ) { $tzfd_plugin->install( false ); }
     }
 }
 

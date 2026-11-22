@@ -7,7 +7,7 @@
 # WordPress does not run the activation hook on a file-replacement update; deactivate and reactivate is the
 # closest reproducible equivalent, and it is what the plugin's install routines run on.
 #
-# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: BASE_SHA (default 4e0c3b3), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN
+# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: SAME_VERSION_OK=1 (same-version release ZIP), BASE_SHA (default 4e0c3b3), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN
 # Exit:  0 all upgrade checks passed; 1 a check failed; 3 prerequisites missing.
 set -u
 
@@ -55,7 +55,12 @@ OLD_VER="$(sed -n 's/^.*Version: *//p' "$OLD_MAIN" | head -1)"
 NEW_VER="$(sed -n 's/^.*Version: *//p' "$NEW_PLUGIN/titan-zero-front-desk.php" | head -1)"
 say "Baseline $BASE_SHA${BASE_ZIP:+ ($BASE_ZIP)} reports version $OLD_VER; this checkout reports $NEW_VER"
 # Safety: the base must be a different version, otherwise the check does not exercise an upgrade.
-[ -n "$OLD_VER" ] && [ "$OLD_VER" != "$NEW_VER" ] || { say "FAIL upgrade -- base version '$OLD_VER' must differ from this checkout '$NEW_VER'"; exit 1; }
+# SAME_VERSION_OK=1 allows a same-version base (the 3.0.128 release ZIP against a 3.0.128 checkout). The folder swap is
+# still checked by the schema step, which asserts the loaded source folder (CURRENT_SRC), not the version string.
+[ -n "$OLD_VER" ] || { say "FAIL upgrade -- base version is empty"; exit 1; }
+if [ "$OLD_VER" = "$NEW_VER" ] && [ "${SAME_VERSION_OK:-0}" != 1 ]; then
+  say "FAIL upgrade -- base version '$OLD_VER' must differ from this checkout '$NEW_VER' (set SAME_VERSION_OK=1 for a same-version release ZIP)"; exit 1
+fi
 
 # 2. Site on the old plugin.
 PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }

@@ -120,6 +120,10 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/calendar-add-runtime-tes
 echo "--- booking confirmation (booking-confirmation-runtime-tests.php, issue #184)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-confirmation-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 
+echo "--- placeholder service (placeholder-service-runtime-tests.php, issue #300)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/placeholder-service-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- default booking form name (booking-default-form-name-runtime-tests.php, issue #299)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-default-form-name-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- get started (setup-page-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 

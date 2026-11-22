@@ -88,9 +88,9 @@ if( !class_exists( 'TZFD_WhatsappButton' ) )
     } // End Class
 
     // Main add-on code
-    $tz_WhatsappButton_obj = new TZFD_WhatsappButton();
+    $tzfd_WhatsappButton_obj = new TZFD_WhatsappButton();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_WhatsappButton_obj->get_addon_id() ] = $tz_WhatsappButton_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_WhatsappButton_obj->get_addon_id() ] = $tzfd_WhatsappButton_obj;
 }

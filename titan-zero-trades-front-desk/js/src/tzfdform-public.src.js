@@ -80,7 +80,7 @@ tzfdformjQuery(function () {
  * Released under the MIT license
  */
 /*
- * Local changes for Titan Zero Trades: Front Desk (see THIRD-PARTY-NOTICES.txt):
+ * Local changes for Titan Zero Workspace (see THIRD-PARTY-NOTICES.txt):
  * the global tzfdformjQuery is used instead of jQuery; the default errorClass is tz_fd_efb_error;
  * error text is not cleared in hideThese(); an empty value is not converted to 0 in normalizeAttributeRule().
  */
@@ -3348,15 +3348,7 @@ tzfdformjQuery(function () {
       {
         title: "Number",
         ftype: "fapp",
-        services: new Array({
-          name: "Service 1",
-          price: 1,
-          capacity: 1,
-          duration: 60,
-          pb: 0,
-          pa: 0,
-          ohindex: 0,
-        }),
+        services: new Array(),
         /*openhours:new Array({type:"all",d:"",h1:8,m1:0,h2:17,m2:0}),new Array({name:"Default",openhours:new Array({type:"all",d:"",h1:8,m1:0,h2:17,m2:0})})*/
         openhours: new Array(),
         allOH: new Array({
@@ -4535,6 +4527,16 @@ tzfdformjQuery(function () {
             ),
             str = "",
             op = "";
+          if (!me.services.length) {
+            // No services on this calendar: show a message instead of an empty or placeholder select.
+            var noServicesText =
+              typeof tz_fd_hour_in_admin !== "undefined"
+                ? "Add a service first. This booking form cannot take appointments until a service is set up."
+                : "No services are available to book yet. Please contact us.";
+            d.html('<p class="tz_fd_no_services" role="status"></p>');
+            d.find(".tz_fd_no_services").text(noServicesText);
+            return;
+          }
           var keyboardRoot = e.closest(".dfield")[0];
           if (keyboardRoot && typeof tz_fd_hour_in_admin === "undefined") {
             keyboardRoot.tzfdFrontDeskAllowRepeat = me.allowSelectSameSlot;

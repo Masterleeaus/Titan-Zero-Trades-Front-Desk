@@ -63,6 +63,46 @@ $step = S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_ASSISTANT );
 tzfd_ai_check( 'agent to assistant keeps assistant work', ! in_array( 'assistant_conversations_and_drafts_requests', $step['stopped_remote'], true ) );
 tzfd_ai_check( 'assistant to free stops assistant work', in_array( 'assistant_conversations_and_drafts_requests', S::downgrade_actions( S::LEVEL_ASSISTANT, S::LEVEL_FREE )['stopped_remote'], true ) );
 
+// 3b. In-place journey, decision logic only: Free -> Assistant -> Agent Team -> paused -> Assistant -> Free,
+// plus cancellation and company switch. Each step checks the level, local features, and that a downgrade keeps local data.
+$journey_now  = 1900000000;
+$journey_cid  = 1;
+$journey_step = function ( $state, array $entitlements, $company = 1, $expires = 1900003600 ) {
+    return array( 'schema_version' => 1, 'company_id' => $company, 'state' => $state, 'entitlements' => $entitlements, 'expires_at' => $expires );
+};
+$j_free      = S::resolve( null, $journey_cid, $journey_now );
+$j_assist    = S::resolve( $journey_step( 'active', array( 'assistant' ) ), $journey_cid, $journey_now );
+$j_agent     = S::resolve( $journey_step( 'active', array( 'agent_team', 'assistant' ) ), $journey_cid, $journey_now );
+$j_paused    = S::resolve( $journey_step( 'paused_agents', array( 'agent_team', 'assistant' ) ), $journey_cid, $journey_now );
+$j_back_asst = S::resolve( $journey_step( 'active', array( 'assistant' ) ), $journey_cid, $journey_now );
+$j_cancelled = S::resolve( $journey_step( 'cancelled', array( 'assistant' ) ), $journey_cid, $journey_now );
+$j_switch    = S::resolve( $journey_step( 'active', array( 'agent_team' ), 2 ), $journey_cid, $journey_now );
+
+$journey_expect = array(
+    'free'              => array( $j_free, S::LEVEL_FREE, 'no_entitlement' ),
+    'assistant'         => array( $j_assist, S::LEVEL_ASSISTANT, 'active' ),
+    'agent team'        => array( $j_agent, S::LEVEL_AGENT_TEAM, 'active' ),
+    'paused agents'     => array( $j_paused, S::LEVEL_ASSISTANT, 'paused_agents' ),
+    'back to assistant' => array( $j_back_asst, S::LEVEL_ASSISTANT, 'active' ),
+    'cancelled to free' => array( $j_cancelled, S::LEVEL_FREE, 'cancelled' ),
+    'company switch'    => array( $j_switch, S::LEVEL_FREE, 'company_mismatch' ),
+);
+foreach ( $journey_expect as $label => $row ) {
+    tzfd_ai_check( 'journey: ' . $label . ' resolves', $row[0]['level'] === $row[1] && $row[0]['reason'] === $row[2], 'got ' . $row[0]['level'] . '/' . $row[0]['reason'] );
+    tzfd_ai_check( 'journey: ' . $label . ' keeps local features', S::local_features_enabled( $row[0] ) === true );
+}
+
+$journey_downs = array(
+    'agent to assistant' => S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_ASSISTANT ),
+    'assistant to free'  => S::downgrade_actions( S::LEVEL_ASSISTANT, S::LEVEL_FREE ),
+    'agent to free'      => S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_FREE ),
+);
+foreach ( $journey_downs as $label => $down ) {
+    tzfd_ai_check( 'journey: ' . $label . ' keeps all local data', array_diff( array( 'bookings', 'customers', 'services', 'calendars', 'reminders', 'faq_knowledge', 'privacy_exports' ), $down['preserved'] ) === array() );
+    tzfd_ai_check( 'journey: ' . $label . ' disables no local feature', $down['disabled_local'] === array() );
+}
+tzfd_ai_check( 'journey: agent to assistant stops agent work only', S::downgrade_actions( S::LEVEL_AGENT_TEAM, S::LEVEL_ASSISTANT )['stopped_remote'] === array( 'agent_schedules_and_queued_agent_tasks' ) );
+
 // 4. Descriptors: single plugin, no price in file, Agent Team includes Assistant without its own billing line.
 $desc   = S::descriptors();
 $levels = isset( $desc['levels'] ) ? $desc['levels'] : array();

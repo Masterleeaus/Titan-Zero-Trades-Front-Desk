@@ -234,6 +234,7 @@ final class TZFD_Enquiry_Triage {
         self::ensure_table();
         $placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
         // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders holds only '%d' tokens, one per id, so the IN list stays prepared.
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- the sniff cannot see the array_merge() replacement list; %i (table) and one %d per id match the arguments exactly.
         $rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM %i WHERE company_id = %d AND enquiry_id IN ({$placeholders})",
             array_merge( array( self::table(), $company_id ), $ids )

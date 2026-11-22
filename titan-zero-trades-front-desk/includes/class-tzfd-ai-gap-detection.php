@@ -25,7 +25,7 @@ final class TZFD_Ai_Gap_Detection {
 	const ANSWERED_CONFIDENCE = 0.6;
 	const HANDLED_ACTION      = 'tzfd_ai_question_handled';
 	const VOCAB_FILTER        = 'tzfd_ai_gap_vocabulary';
-	/** Approved entries not edited for this many days are reported as outdated (issue #36, owner decision: age since last edit). */
+	/** Approved entries not edited or reviewed for this many days are reported as outdated (issue #36; issue #436 owner decision: 180 days without review). */
 	const OUTDATED_DAYS       = 180;
 	const OUTDATED_FILTER     = 'tzfd_ai_outdated_days';
 
@@ -208,8 +208,10 @@ final class TZFD_Ai_Gap_Detection {
 	}
 
 	/**
-	 * Approved entries whose last edit is older than $max_age_days, oldest first.
-	 * Each entry is array( 'id', 'question', 'updated' ) where 'updated' is the last-edit unix time.
+	 * Approved entries whose last check is older than $max_age_days, oldest first (issue #436).
+	 * The last check is the later of the last edit and the last administrator review. A review newer than $now is ignored.
+	 * Each row is array( 'id', 'question', 'updated', 'reviewed', 'age_days' ). 'updated' is the last-edit unix time and
+	 * 'reviewed' the last-review unix time (0 if never reviewed). 'age_days' counts from the last check.
 	 * Entries with no usable edit time are skipped rather than guessed at. Entries edited after $now are skipped.
 	 * Only the admin-written question and id are returned: no answer text.
 	 */
@@ -218,15 +220,22 @@ final class TZFD_Ai_Gap_Detection {
 		$cutoff = $now - max( 1, (int) $max_age_days ) * DAY_IN_SECONDS;
 		$rows   = array();
 		foreach ( $entries as $e ) {
-			$updated = (int) ( $e['updated'] ?? 0 );
-			if ( $updated < 1 || $updated > $now || $updated > $cutoff ) {
+			$updated  = (int) ( $e['updated'] ?? 0 );
+			$reviewed = (int) ( $e['reviewed'] ?? 0 );
+			if ( $updated < 1 || $updated > $now ) {
+				continue;
+			}
+			$reviewed = ( $reviewed >= 1 && $reviewed <= $now ) ? $reviewed : 0;
+			$checked  = max( $updated, $reviewed );
+			if ( $checked > $cutoff ) {
 				continue;
 			}
 			$rows[] = array(
 				'id'       => (string) ( $e['id'] ?? '' ),
 				'question' => (string) ( $e['question'] ?? '' ),
 				'updated'  => $updated,
-				'age_days' => (int) floor( ( $now - $updated ) / DAY_IN_SECONDS ),
+				'reviewed' => $reviewed,
+				'age_days' => (int) floor( ( $now - $checked ) / DAY_IN_SECONDS ),
 			);
 		}
 		usort( $rows, static function ( $a, $b ) { return $b['age_days'] <=> $a['age_days'] ?: strcmp( $a['id'], $b['id'] ); } );

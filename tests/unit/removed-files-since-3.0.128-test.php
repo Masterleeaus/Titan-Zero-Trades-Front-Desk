@@ -60,8 +60,8 @@ $files = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( $plugin,
 $hits  = array();
 foreach ( $files as $file ) {
 	if ( ! preg_match( '/\.(php|js|html|txt|json)$/i', $file->getFilename() ) ) { continue; }
-	// Owner decision (#357): changelog.txt may list the removed names (issue #434); readme.txt may not.
-	if ( 'changelog.txt' === $file->getFilename() ) { continue; }
+	// Owner decision (#357): changelog.txt and readme.txt may list the removed names (issue #434 requires them).
+	if ( in_array( $file->getFilename(), array( 'changelog.txt', 'readme.txt' ), true ) ) { continue; }
 	$body = (string) file_get_contents( $file->getPathname() );
 	foreach ( $removed as $rel ) {
 		if ( strpos( $body, basename( $rel ) ) !== false ) {

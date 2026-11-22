@@ -38,8 +38,8 @@ not counted as a pass).
 Only PHP 8.3 is installed on the machine that produced these results. The PHP 7.4, 8.1, 8.2 and 8.4 matrix and other
 WordPress versions have not been run.
 
-- Single site (`PORT=8149`): 372 passed, 0 failed, 0 gaps, 9 skipped.
-- Multisite (`PORT=8149 --multisite`): 373 passed, 0 failed, 0 gaps, 7 skipped.
+- Single site (`PORT=8149`): 377 passed, 0 failed, 0 gaps, 9 skipped.
+- Multisite (`PORT=8149 --multisite`): 378 passed, 0 failed, 0 gaps, 7 skipped.
 - Upgrade from the real v3.0.128 release ZIP (`titan-zero-trades-front-desk-3.0.128-r16.zip`, read from `22dc106^`) to this
   checkout and back: 31 passed, 0 failed, 0 gap(s). Run with `SAME_VERSION_OK=1`, because both sides report 3.0.128, so the
   check asserts which source folder is loaded rather than the version string. Bookings, AI settings and saved chat rows

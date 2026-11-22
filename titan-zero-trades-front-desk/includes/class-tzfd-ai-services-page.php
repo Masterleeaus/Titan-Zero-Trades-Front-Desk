@@ -222,6 +222,8 @@ final class TZFD_AI_Services_Page {
                 </form>
             <?php endif; ?>
 
+            <?php self::render_agent_team_panel(); ?>
+
             <h2><?php esc_html_e( 'Hosted AI changes', 'titan-zero-trades-front-desk' ); ?></h2>
             <?php if ( TZFD_AI_Services::LEVEL_FREE !== $resolved['level'] || null !== $payload ) : ?>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -322,6 +324,52 @@ final class TZFD_AI_Services_Page {
     private static function redirect_notice( $code ) {
         wp_safe_redirect( add_query_arg( array( 'page' => self::SLUG, 'tzfd_ai' => $code ), admin_url( 'admin.php' ) ) );
         exit;
+    }
+
+    /**
+     * Read-only summary of the agent gateway for this business: state, grant version, granted tools, dry run,
+     * and receipts waiting on a human approval. Pause, resume and stop stay on the Agent permissions screen.
+     * Nothing here changes a grant, so the panel adds no new write path.
+     */
+    private static function render_agent_team_panel() {
+        echo '<h2>' . esc_html__( 'Agent Team controls', 'titan-zero-trades-front-desk' ) . '</h2>';
+        if ( ! class_exists( 'TZFD_Agent_Gateway_Option_Store' ) || ! class_exists( 'TZFD_Scoped_Store' ) ) {
+            echo '<p class="description">' . esc_html__( 'Agent permissions are not available on this build.', 'titan-zero-trades-front-desk' ) . '</p>';
+            return;
+        }
+        $company = (string) TZFD_Scoped_Store::company_id();
+        if ( '0' === $company ) {
+            echo '<p class="description">' . esc_html__( 'Set up your business first. Agent permissions apply to one business at a time.', 'titan-zero-trades-front-desk' ) . '</p>';
+            return;
+        }
+        $store    = new TZFD_Agent_Gateway_Option_Store();
+        $grant    = $store->get_grant( $company );
+        $state    = is_array( $grant ) && isset( $grant['state'] ) ? (string) $grant['state'] : 'none';
+        $tools    = is_array( $grant ) && isset( $grant['tools'] ) && is_array( $grant['tools'] ) ? $grant['tools'] : array();
+        $pending  = 0;
+        foreach ( $store->receipts_for_company( $company ) as $receipt ) {
+            if ( is_array( $receipt ) && 'needs_approval' === ( $receipt['outcome'] ?? '' ) ) {
+                $pending++;
+            }
+        }
+        $manage = add_query_arg( array( 'page' => 'tzfd-agent-receipts' ), admin_url( 'admin.php' ) );
+        ?>
+        <table class="widefat striped" style="max-width:52em">
+            <tbody>
+                <tr><th scope="row"><?php esc_html_e( 'Agent state', 'titan-zero-trades-front-desk' ); ?></th>
+                    <td><strong><?php echo esc_html( $state ); ?></strong><?php if ( is_array( $grant ) ) : ?>
+                        &middot; <?php esc_html_e( 'grant version', 'titan-zero-trades-front-desk' ); ?> <?php echo esc_html( (string) ( $grant['version'] ?? 1 ) ); ?>
+                    <?php endif; ?></td></tr>
+                <tr><th scope="row"><?php esc_html_e( 'Tools granted', 'titan-zero-trades-front-desk' ); ?></th>
+                    <td><?php echo esc_html( (string) count( $tools ) ); ?></td></tr>
+                <tr><th scope="row"><?php esc_html_e( 'Dry run', 'titan-zero-trades-front-desk' ); ?></th>
+                    <td><?php echo is_array( $grant ) && ! empty( $grant['dry_run'] ) ?esc_html__( 'On. Changes are recorded, not made.', 'titan-zero-trades-front-desk' ) : esc_html__( 'Off', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                <tr><th scope="row"><?php esc_html_e( 'Waiting for your approval', 'titan-zero-trades-front-desk' ); ?></th>
+                    <td><?php echo esc_html( (string) $pending ); ?></td></tr>
+            </tbody>
+        </table>
+        <p><a class="button button-secondary" href="<?php echo esc_url( $manage ); ?>"><?php esc_html_e( 'Manage agent permissions, approvals and pause or stop', 'titan-zero-trades-front-desk' ); ?></a></p>
+        <?php
     }
 
     /** @return string */

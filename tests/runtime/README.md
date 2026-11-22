@@ -35,10 +35,12 @@ not counted as a pass).
 
 ## Last recorded results (2026-11-18, PHP 8.3.6, WordPress 7.1.4, MariaDB 10.11.14, WP-CLI 2.12.0)
 
-Run on this branch on 2026-11-23, after merging `main` (run with `PORT=8093` under `runtime.lock`):
+Run on this branch on 2026-11-23, after merging `main` at c68f795 (run with `PORT=8093` under `runtime.lock`):
 
-- Single site: 362 passed, 0 failed, 0 gaps, 9 skipped.
-- Multisite: 363 passed, 0 failed, 0 gaps, 7 skipped. Includes `placeholder: upgrade clears placeholder on calendar with no bookings`.
+- Single site: 391 passed, 0 failed, 0 gaps, 9 skipped.
+- Multisite: 392 passed, 0 failed, 0 gaps, 7 skipped. Includes `placeholder: upgrade clears placeholder on calendar with no bookings`.
+- Unit harness (`tests/unit/run.php`): 854 passed, 0 failed.
+- The answer-box permalink change that this branch first carried is not needed on current `main`, so it was dropped; the multisite run passes without it.
 - Upgrade from the real v3.0.128 release ZIP to this checkout and back, with seeded bookings and AI settings and chat rows:
   31 passed, 0 failed, 0 gaps, no SKIP. Command:
   `BASE_SHA='22dc106^' BASE_ZIP=titan-zero-trades-front-desk-3.0.128-r16.zip SAME_VERSION_OK=1 PORT=8093 tests/runtime/upgrade-from-3.0.128.sh`.

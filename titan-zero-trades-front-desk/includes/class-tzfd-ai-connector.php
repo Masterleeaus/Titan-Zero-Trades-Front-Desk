@@ -64,9 +64,28 @@ final class TZFD_AI_Connector {
         );
     }
 
-    /** Standing monthly budgets per site (contract figures). The hosted service stays authoritative. */
+    /**
+     * Named monthly budget sets per site (issue #331). 'contract' is live by default (the standing contract
+     * figures). 'pilot' holds the provisional #284 pilot figures and is selected only through the
+     * tzfd_ai_connector_budget_profile filter. The pilot faq_batch (weekly) is approximated as 4 per month.
+     * Per-visitor turn limits from #284 (2 fallback turns, 3 missed-call reply turns) have no counter in code yet.
+     */
+    public static function budget_profiles() {
+        return array(
+            'contract' => array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 ),
+            'pilot'    => array( 'model_fallback' => 50, 'embedding' => 200, 'faq_batch' => 4, 'insight' => 1 ),
+        );
+    }
+
+    /** Standing monthly budgets per site. The live set is 'contract' unless the profile filter selects another. */
     public static function budget_limits() {
-        $limits = array( 'model_fallback' => 200, 'embedding' => 800, 'faq_batch' => 16, 'insight' => 4 );
+        $profiles = self::budget_profiles();
+        $profile  = 'contract';
+        if ( function_exists( 'apply_filters' ) ) {
+            $picked = apply_filters( 'tzfd_ai_connector_budget_profile', $profile );
+            if ( is_string( $picked ) && isset( $profiles[ $picked ] ) ) { $profile = $picked; }
+        }
+        $limits = $profiles[ $profile ];
         if ( function_exists( 'apply_filters' ) ) {
             $limits = apply_filters( 'tzfd_ai_connector_budget_limits', $limits );
         }

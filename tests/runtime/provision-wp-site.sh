@@ -8,6 +8,7 @@
 #        TZFD_RT_DB_ADMIN (default: root) MySQL/MariaDB user that may create databases (socket auth)
 #        TZFD_RT_DB_NAME  (default: tzfd_rt_$$)  disposable database name
 #        TZFD_RT_URL      (default: http://127.0.0.1:8080)
+#        TZFD_RT_WP_VERSION (optional: WordPress core version to install, default: latest)
 #        TZFD_RT_ADMIN_PASS, TZFD_RT_SUB_PASS      passwords for the disposable admin and subscriber
 # Exit:  0 provisioned; 2 provisioning failed.
 set -u
@@ -37,7 +38,7 @@ mysql -u"$DB_ADMIN" -e "DROP DATABASE IF EXISTS \`$DB_NAME\`; CREATE DATABASE \`
   ALTER USER '$DB_USER'@'$DB_GRANT_HOST' IDENTIFIED BY '$DB_PASS';
   GRANT ALL ON \`$DB_NAME\`.* TO '$DB_USER'@'$DB_GRANT_HOST'; FLUSH PRIVILEGES;" || fail "cannot create database (is MySQL/MariaDB running and $DB_ADMIN allowed?)"
 
-$WP_CLI --allow-root --path="$WP_ROOT" core download --quiet || fail "wp core download failed"
+$WP_CLI --allow-root --path="$WP_ROOT" core download ${TZFD_RT_WP_VERSION:+--version="$TZFD_RT_WP_VERSION"} --quiet || fail "wp core download failed"
 $WP_CLI --allow-root --path="$WP_ROOT" config create --dbname="$DB_NAME" --dbuser="$DB_USER" --dbpass="$DB_PASS" --dbhost=$DB_HOST --skip-check --quiet || fail "config create failed"
 $WP_CLI --allow-root --path="$WP_ROOT" core install --url="$URL" --title="Runtime test site" --admin_user=rtadmin \
   --admin_password="$ADMIN_PASS" --admin_email=rt-admin@example.test --skip-email --quiet || fail "core install failed"

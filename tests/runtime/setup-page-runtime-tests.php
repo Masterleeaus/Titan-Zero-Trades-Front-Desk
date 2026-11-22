@@ -85,7 +85,11 @@ $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: discovery links are off by default', false !== strpos( $sp_html, 'Links to optional services are off.' ) && false === strpos( $sp_html, 'admin.php?page=tzfd-ai-services' ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
 $sp_html = $sp_render();
-tzfd_sp_ok( 'setup-page: opt-in without any service or calendar shows no links yet', false === strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) );
+// The harness has already created a calendar and bookings by this point, so the expectation follows the stored facts.
+// The rule is checked both ways: no link without a service or calendar, and the link once one exists.
+$sp_facts = TZFD_Setup_Checklist::facts();
+tzfd_sp_ok( 'setup-page: discovery is not visible without a service or calendar', false === TZFD_Setup_Checklist::discovery_visible( true, array( 'services' => false, 'calendar' => false ) ) );
+tzfd_sp_ok( 'setup-page: opt-in shows receipt links only when a service or calendar exists', ( ! empty( $sp_facts['services'] ) || ! empty( $sp_facts['calendar'] ) ) === ( false !== strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) ), 'services=' . wp_json_encode( $sp_facts['services'] ) . ' calendar=' . wp_json_encode( $sp_facts['calendar'] ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
 
 // Clean up.

@@ -49,7 +49,7 @@ cleanup() {
 trap cleanup EXIT
 
 export TZFD_RT_DB_NAME="tzfd_rt_$$"  # chosen here so cleanup can drop it even if provisioning fails
-PROVISION_OUT="$("$HERE/provision-wp-site.sh" "$WP_ROOT" "$PLUGIN_DIR" $MULTISITE_FLAG 2>"$WORK/provision.err")"
+PROVISION_OUT="$(TZFD_RT_URL="$URL" "$HERE/provision-wp-site.sh" "$WP_ROOT" "$PLUGIN_DIR" $MULTISITE_FLAG 2>"$WORK/provision.err")"
 if [ $? -ne 0 ]; then
   echo "FAIL provision -- $(cat "$WORK/provision.err")"
   echo "Summary: provisioning failed; nothing executed"

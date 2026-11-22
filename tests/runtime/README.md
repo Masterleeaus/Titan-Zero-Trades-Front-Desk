@@ -52,9 +52,9 @@ not counted as a pass).
 
 ## Skipped, and why
 
-- Oversell through the public form (A18), and customer cancel and reschedule end to end (B13): the full submission
-  pipeline and the mail capture are not driven. The primitives (capacity lock, hold validation, tokens, compare-and-swap)
-  are tested.
+- Customer reschedule end to end (B13e): the engine needs a single-appointment record in its own shape; a booking made
+  through the submit path is refused with `unsupported_booking`. Cancel end to end is covered by B13a to B13d.
+  Oversell is covered through the booking submit path (A18), not the public enquiry form, which stores enquiries only.
 - Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.
 - Uninstall with opt-in (F4): covered by `uninstall-wipe-check.php`, which runs as a separate process.
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.

@@ -172,10 +172,11 @@ else
     report FAIL "FAQ gap filters, admin: bad coverage/min_count ignored, search escaped" "HTTP $FILTER_CODE"
   fi
   FILTER_OK=$(curl -s --max-time 30 -b "$JAR_ADMIN" "$ADMIN_PAGE&coverage=missing&min_count=2" || true)
-  if grep -q 'name="coverage"' <<<"$FILTER_OK" && grep -q 'value="missing" selected' <<<"$FILTER_OK"; then
+  OPT_LINE=$(grep -o '<option value="missing"[^>]*>' <<<"$FILTER_OK" | head -1)
+  if grep -q 'name="coverage"' <<<"$FILTER_OK" && grep -q "selected='selected'\|selected=\"selected\"" <<<"$OPT_LINE"; then
     report PASS "FAQ gap filters, admin: coverage=missing is kept in the form" "selected"
   else
-    report FAIL "FAQ gap filters, admin: coverage=missing is kept in the form" "option not selected in response"
+    report FAIL "FAQ gap filters, admin: coverage=missing is kept in the form" "option line: ${OPT_LINE:-none}"
   fi
   c=$(curl -s -o /dev/null -w '%{http_code} %{redirect_url}' -d "$POST_BODY" "$ADMIN_POST")
   case "$c" in

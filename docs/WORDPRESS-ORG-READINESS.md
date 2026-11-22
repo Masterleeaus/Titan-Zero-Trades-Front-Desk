@@ -125,7 +125,7 @@ Checked by grep and by reading the files named. No WordPress site was available,
 | `base64_decode()` | Open | `includes/class-tzfd-booking-validation-recovery.php:50` and `includes/class-tzfd-addon-support.php:591`. Used to decode stored tokens and secrets, not code. Still a discouraged function |
 | `error_log()` | Open (low) | Four calls in `includes/class-tzfd-post-commit-dispatch.php:14` and `tzfd-main-class.inc.php:3992, 4016, 4078` |
 | `tempnam()` and `file_put_contents()` | Open | Scheduled CSV reports, `tzfd-main-class.inc.php:4030-4032` and `:4098-4100`. Uses a private temp directory; review with the security lane |
-| `file_get_contents()` | Partial | Four calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-legacy-ai-data.php:412` (uploaded temp file, size-checked), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887` |
+| `file_get_contents()` | Partial | Three calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887`. The fourth, in the legacy AI restore upload, was removed with the legacy screen under #360 (PR #467). |
 | `eval`, `exec`, `shell_exec`, `system`, `curl_*`, `ini_set`, `set_time_limit`, `create_function`, `unlink` | Done | No calls found in plugin code |
 | Superglobal access (`$_GET`, `$_POST`, `$_REQUEST`, `$_FILES`, `$_COOKIE`, `$_SERVER`) | Not run | About 376 references. Sanitising and nonce checks were not audited in this lane. Route to the security lane |
 

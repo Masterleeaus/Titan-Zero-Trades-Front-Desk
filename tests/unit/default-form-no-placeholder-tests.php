@@ -44,4 +44,18 @@ tzfd_300_ok( 'default form: new calendar starts with no services', is_array( $se
 $names = is_array( $services ) ? array_map( function ( $s ) { return is_array( $s ) ? ( $s['name'] ?? '' ) : ''; }, $services ) : array();
 tzfd_300_ok( 'default form: no "Service 1" placeholder listed', ! in_array( 'Service 1', $names, true ) );
 
+// Owner decision on #375: the empty-calendar wording is kept as shipped. Pin it in every shipped copy of the text.
+$tzfd_wording_public = 'No services are available to book yet. Please contact us.';
+$tzfd_wording_admin  = 'Add a service first. This booking form cannot take appointments until a service is set up.';
+$tzfd_wording_files  = array(
+	'js/src/tzfdform-public.src.js',
+	'js/tzfdform-public-fields/35_tzfdform.fapp.js',
+	'js/tzfdform-public.js',
+);
+foreach ( $tzfd_wording_files as $tzfd_rel ) {
+	$tzfd_text = (string) file_get_contents( $tzfd_root . '/' . $tzfd_rel );
+	tzfd_300_ok( 'empty calendar wording (public) in ' . $tzfd_rel, false !== strpos( $tzfd_text, $tzfd_wording_public ) );
+	tzfd_300_ok( 'empty calendar wording (admin) in ' . $tzfd_rel, false !== strpos( $tzfd_text, $tzfd_wording_admin ) );
+}
+
 exit( $tzfd_failed ? 1 : 0 );

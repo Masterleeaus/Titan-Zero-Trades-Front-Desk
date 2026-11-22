@@ -68,5 +68,16 @@ Disconnecting removes the pairing and credential only. Bookings, customers, sett
 ## 6. Open items
 
 - Confirm the Central #186 contract: contract id, field names and signature keys. The current `central-pairing/1` is provisional.
-- Confirm the pairing endpoint URL (owner input, tracked on the open remaining-work issue).
+- Pairing endpoint URL: decided by the owner (issue #456) as `https://central.titanzero.io/api/tzfd/pair`. The URL is not yet in code on main. It is proposed in PR #427, which is open and not merged, and must be wired as the default there. Until then, nothing is sent to it.
 - Live end-to-end pairing against the hosted service is not run. It needs the hosted service.
+
+## 7. Task breakdown and status (issue #456)
+
+| Task | Status on main |
+| --- | --- |
+| Baseline: no endpoint constant, filter or default on main (`grep -rn TZFD_AI_PAIRING_ENDPOINT` and `grep -rn central.titanzero.io` return nothing) | Recorded here |
+| Endpoint URL decision recorded | Done (section 6) |
+| Pairing endpoint constant or filter with https-only validation, off by default | Open in PR #427 (not merged) |
+| Pairing handshake and entitlement fetch, admin connect and disconnect | Open in PR #427 and issue #458 |
+| Hosted Central contract (#186), signing keys, per-site secret issuance | Needs owner sign-off; not ticked |
+| Live end-to-end test against the hosted service | Needs the hosted service; issue #458 |

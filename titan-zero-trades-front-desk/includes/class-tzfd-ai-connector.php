@@ -313,9 +313,9 @@ final class TZFD_AI_Connector {
     /**
      * Setup notice shown before the administrator keeps AI on: what leaves the site, the confirmation the
      * administrator gives when saving consent, and where the terms are.
-     * DEFAULT WORDING PROPOSED BY AN AGENT (issue #343). It has not been signed off by the owner, so
-     * wording_status says so and owner_review stays true. Nothing here claims owner approval.
-     * The default terms link is a draft page pending legal review.
+     * Consent wording and the 30-day retention default were approved by the owner on issue #348 (decision
+     * recorded 2026-11-23). wording_status records that approval. The terms link is NOT covered by that
+     * decision: it is still a draft page pending legal review.
      * Filters: tzfd_ai_setup_notice( $text, $disclosure ), tzfd_ai_consent_confirmation( $text, $disclosure )
      * and tzfd_ai_terms_url( $url ).
      */
@@ -337,8 +337,8 @@ final class TZFD_AI_Connector {
             'text'           => (string) $text,
             'confirmation'   => (string) $confirm,
             'terms_url'      => (string) $url,
-            'owner_review'   => true,
-            'wording_status' => 'agent_proposed_default_pending_owner_signoff',
+            'owner_review'   => false,
+            'wording_status' => 'owner_approved_issue_348',
         );
     }
 

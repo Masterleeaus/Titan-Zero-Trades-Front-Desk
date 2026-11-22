@@ -338,12 +338,12 @@ delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
 wp_set_current_user( 0 );
 $tzfd_act_error = '';
 try {
-	if ( function_exists( 'tz_fd_activate' ) ) {
+	if ( function_exists( 'tzfd_activate' ) ) {
 		ob_start();
-		tz_fd_activate();
+		tzfd_activate();
 		ob_end_clean();
 	} else {
-		$tzfd_act_error = 'tz_fd_activate is not defined';
+		$tzfd_act_error = 'tzfd_activate is not defined';
 	}
 } catch ( Throwable $e ) {
 	if ( ob_get_level() > 0 ) { ob_end_clean(); }

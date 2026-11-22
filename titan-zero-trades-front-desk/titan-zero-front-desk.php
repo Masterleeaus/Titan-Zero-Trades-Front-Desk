@@ -265,8 +265,8 @@ if ( ! defined( 'TZFD_SCHCALCONTENT_PUBLIC' ) ) {
 }
 
 /* Standalone services load on plugins_loaded after optional integrations register. */
-if ( ! function_exists( 'tz_fd_workspace_ready' ) ) {
-    function tz_fd_workspace_ready() {
+if ( ! function_exists( 'tzfd_workspace_ready' ) ) {
+    function tzfd_workspace_ready() {
         // Compatibility probe only. A missing Workspace is never an activation blocker.
         return class_exists( 'TZFD_Local_Business', false ) && class_exists( 'TZFD_Local_Customers', false );
     }
@@ -274,8 +274,8 @@ if ( ! function_exists( 'tz_fd_workspace_ready' ) ) {
 require_once __DIR__ . '/includes/class-tzfd-standalone-runtime.php';
 
 /** Seed the default calendar only after the standalone schema is available. */
-if ( ! function_exists( 'tz_fd_seed_form_for_member' ) ) {
-    function tz_fd_seed_form_for_member() {
+if ( ! function_exists( 'tzfd_seed_form_for_member' ) ) {
+    function tzfd_seed_form_for_member() {
         global $wpdb, $tzfd_plugin;
         if ( ! is_admin() || ! class_exists( 'TZFD_Scoped_Store' ) || TZFD_Scoped_Store::company_id() < 1 || ! is_object( $tzfd_plugin ) || ! method_exists( $tzfd_plugin, 'install' ) ) { return; }
         $table = $wpdb->prefix . TZFD_Tables::FORMS;
@@ -286,8 +286,8 @@ if ( ! function_exists( 'tz_fd_seed_form_for_member' ) ) {
 }
 
 /** Boots Front Desk once, after Workspace. */
-if ( ! function_exists( 'tz_fd_boot' ) ) {
-    function tz_fd_boot() {
+if ( ! function_exists( 'tzfd_boot' ) ) {
+    function tzfd_boot() {
         static $booted = false;
         if ( $booted ) { return; }
         TZFD_Standalone_Runtime::boot();
@@ -299,7 +299,7 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
         TZFD_Access::register();
     TZFD_Lead_Intake::register();
     TZFD_Human_Handoff::register();
-        add_action( 'admin_init', 'tz_fd_seed_form_for_member', 30 );
+        add_action( 'admin_init', 'tzfd_seed_form_for_member', 30 );
         require_once dirname( __FILE__ ) . '/includes/class-tzfd-connect-bridge.php';
         TZFD_Connect_Bridge::register();
         require_once dirname( __FILE__ ) . '/includes/class-tzfd-leads-bridge.php';
@@ -310,11 +310,11 @@ if ( ! function_exists( 'tz_fd_boot' ) ) {
 }
 
 /** Activation must fail before WordPress records the plugin as active without Workspace. */
-if ( ! function_exists( 'tz_fd_activate' ) ) {
-    function tz_fd_activate() {
+if ( ! function_exists( 'tzfd_activate' ) ) {
+    function tzfd_activate() {
         TZFD_Standalone_Runtime::boot();
         TZFD_Standalone_Runtime::install();
-        tz_fd_boot();
+        tzfd_boot();
         // Activation (and the reactivation that upgrades from 3.0.128) creates every plugin table without
         // requiring a logged-in administrator, so a WP-CLI or unattended activation still gets the schema.
         // Each step is idempotent (dbDelta or a checked CREATE), so running it again on reactivation is safe.
@@ -333,19 +333,19 @@ if ( ! function_exists( 'tz_fd_activate' ) ) {
 
 // Scheduled events stop when the plugin is deactivated, so nothing keeps running without it.
 // uninstall.php clears the same list when the plugin is deleted; keep the two lists in step.
-if ( ! function_exists( 'tz_fd_clear_scheduled_events' ) ) {
-    function tz_fd_clear_scheduled_events() {
+if ( ! function_exists( 'tzfd_clear_scheduled_events' ) ) {
+    function tzfd_clear_scheduled_events() {
         $hooks = include dirname( __FILE__ ) . '/includes/tzfd-cron-hooks.php';
         require_once dirname( __FILE__ ) . '/includes/tzfd-cron-clear.php';
         foreach ( $hooks as $hook ) {
-            tz_fd_unschedule_all_events( $hook );
+            tzfd_unschedule_all_events( $hook );
         }
     }
 }
 
-register_activation_hook( __FILE__, 'tz_fd_activate' );
-register_deactivation_hook( __FILE__, 'tz_fd_clear_scheduled_events' );
-add_action( 'plugins_loaded', 'tz_fd_boot', 20 );
+register_activation_hook( __FILE__, 'tzfd_activate' );
+register_deactivation_hook( __FILE__, 'tzfd_clear_scheduled_events' );
+add_action( 'plugins_loaded', 'tzfd_boot', 20 );
 
 // Titan Zero UI pack (optional). The plugin works without the ui-pack folder.
 if ( file_exists( __DIR__ . '/ui-pack/ui/tz-app-pack.php' ) ) { require_once __DIR__ . '/ui-pack/ui/tz-app-pack.php'; }

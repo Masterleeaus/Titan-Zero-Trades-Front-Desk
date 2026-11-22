@@ -31,8 +31,8 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
             if ( ! $this->addon_is_active() ) return;
 
             add_action( 'tz_fd_process_data', array( $this, 'log_created' ), 40, 1 );
-            add_action( 'tz_fd_update_status', array( $this, 'log_status' ), 40, 2 );
-            add_action( 'tz_fd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
+            add_action( 'tzfd_update_status', array( $this, 'log_status' ), 40, 2 );
+            add_action( 'tzfd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
         } // End __construct
 
         /************************ LOG STORAGE *****************************/

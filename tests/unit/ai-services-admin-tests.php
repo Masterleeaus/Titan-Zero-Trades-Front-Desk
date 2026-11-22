@@ -101,5 +101,11 @@ check( 'after revocation the screen shows no consent', false !== strpos( $html, 
 // Connector-side retention accepts the page's values.
 check( 'connector accepts retention set by the page', $P::normalise_retention( '45' ) === 45 && TZFD_AI_Connector::set_retention_days( 45 ) && 45 === TZFD_AI_Connector::retention_days() );
 
+// Agent Team panel: this standalone run does not load the gateway, so the panel must degrade, not fatal.
+$html = render_page();
+check( 'agent panel heading renders', false !== strpos( $html, 'Agent Team controls' ) );
+check( 'agent panel says unavailable when the gateway is not loaded', false !== strpos( $html, 'Agent permissions are not available on this build.' ) );
+check( 'agent panel adds no write form', false === strpos( $html, 'tzfd_agent_state' ) && false === strpos( $html, 'tzfd_agent_grant' ) );
+
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

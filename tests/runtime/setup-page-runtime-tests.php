@@ -85,7 +85,13 @@ $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: discovery links are off by default', false !== strpos( $sp_html, 'Links to optional services are off.' ) && false === strpos( $sp_html, 'admin.php?page=tzfd-ai-services' ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
 $sp_html = $sp_render();
-tzfd_sp_ok( 'setup-page: opt-in without any service or calendar shows no links yet', false === strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) );
+// The rule itself, for a site with no service and no calendar: opt-in alone shows nothing.
+tzfd_sp_ok( 'setup-page: opt-in alone does not show links (rule)', false === TZFD_Setup_Checklist::discovery_visible( true, array( 'services' => false, 'calendar' => false ) ) );
+// The page must follow the rule for whatever this site holds. Earlier checks in the same run may have created
+// services or forms, so the expected result is read from the live facts instead of assuming an empty site.
+$sp_facts    = TZFD_Setup_Checklist::facts();
+$sp_expected = TZFD_Setup_Checklist::discovery_visible( true, $sp_facts );
+tzfd_sp_ok( 'setup-page: opt-in shows links only when a service or calendar exists', $sp_expected === ( false !== strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) ), 'expected=' . ( $sp_expected ? 'shown' : 'hidden' ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
 
 // Clean up.

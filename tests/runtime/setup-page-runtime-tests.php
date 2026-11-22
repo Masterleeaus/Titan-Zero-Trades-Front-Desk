@@ -85,7 +85,14 @@ $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: discovery links are off by default', false !== strpos( $sp_html, 'Links to optional services are off.' ) && false === strpos( $sp_html, 'admin.php?page=tzfd-ai-services' ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
 $sp_html = $sp_render();
-tzfd_sp_ok( 'setup-page: opt-in without any service or calendar shows no links yet', false === strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) );
+// The suites that run before this one create a service and a booking form on the same site, so "no service or
+// calendar" cannot be assumed here. Check the gate against the real detected state instead: a link shows exactly
+// when the gate allows it, and the gate itself refuses links when nothing is detected or the administrator has not opted in.
+$sp_detected = TZFD_Setup_Checklist::facts();
+$sp_gate_open = TZFD_Setup_Checklist::discovery_visible( true, $sp_detected );
+tzfd_sp_ok( 'setup-page: opt-in shows links only when a service or calendar is detected', ( false !== strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) ) === $sp_gate_open, 'detected services=' . ( $sp_detected['services'] ? 'yes' : 'no' ) . ' calendar=' . ( $sp_detected['calendar'] ? 'yes' : 'no' ) );
+tzfd_sp_ok( 'setup-page: gate refuses links with no service or calendar', false === TZFD_Setup_Checklist::discovery_visible( true, array( 'services' => false, 'calendar' => false ) ) );
+tzfd_sp_ok( 'setup-page: gate refuses links without opt-in', false === TZFD_Setup_Checklist::discovery_visible( false, array( 'services' => true, 'calendar' => true ) ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
 
 // Clean up.

@@ -33,11 +33,11 @@ not counted as a pass).
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
-## Results on main, 2026-11-23 (issue #370; PHP 8.3.6, MariaDB 10.11.14, WP-CLI 2.12.0)
+## Results on main with the #370 harness, 2026-11-23 (issue #370; PHP 8.3.6, MariaDB 10.11.14, WP-CLI 2.12.0)
 
-- Single site, WordPress 7.1.4: 362 passed, 0 failed, 0 gap(s), 9 skipped.
-- Single site, WordPress 6.6 (`TZFD_RT_WP_VERSION=6.6`, the plugin's minimum): 362 passed, 0 failed, 0 gap(s), 9 skipped.
-- Multisite, WordPress 7.1.4: 363 passed, 0 failed, 0 gap(s), 7 skipped. The `ai-answer-box: page_id sent as a hidden
+- Single site, WordPress 7.1.4: 377 passed, 0 failed, 0 gap(s), 9 skipped.
+- Single site, WordPress 6.6 (`TZFD_RT_WP_VERSION=6.6`, the plugin's minimum): 377 passed, 0 failed, 0 gap(s), 9 skipped.
+- Multisite, WordPress 7.1.4: 378 passed, 0 failed, 0 gap(s), 7 skipped. The `ai-answer-box: page_id sent as a hidden
   field` check passes here on main, so the multisite failure recorded on 2026-11-16 does not reproduce on this checkout.
 - Upgrade from the v3.0.128 release ZIP, single site: 31 passed, 0 failed, 0 gap(s).
 - Upgrade from the v3.0.128 release ZIP, network (`UPGRADE_MULTISITE=1`): 31 passed, 0 failed, 0 gap(s).

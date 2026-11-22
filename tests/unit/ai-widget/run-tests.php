@@ -114,7 +114,12 @@ reset_state(); $with_faq();
 $r = TZFD_AI_Answer_Box::answer( 'zxq wibble frobnicate', 'v1' );
 check( 'unknown question with fallback disabled is refused, handoff true', 'refused' === $r['status'] && true === $r['handoff'] );
 
-// ---- generative fallback budget: two turns per conversation (#353) ----------------------------
+// ---- generative fallback budget: 200 turns per visitor (#353) --------------------------------
+// The per-visitor turn cap is independent of the conversation token. The 20-per-10-minute visitor rate limit
+// sits in front of it, so this block clears only that rate-limit row between calls to reach the turn cap.
+function clear_visitor_rate( $visitor ) {
+	TZFD_Rate_Limit::release( TZFD_AI_Answer_Box::RATE_PREFIX . md5( $visitor ) );
+}
 reset_state(); $with_faq();
 $model_calls = 0;
 add_filter( 'tzfd_ai_fallback_enabled', function () { return true; } );
@@ -122,20 +127,33 @@ add_filter( 'tzfd_ai_generative_fallback', function ( $v, $norm ) use ( &$model_
 $conv1 = str_repeat( 'a', 32 );
 $conv2 = str_repeat( 'b', 32 );
 $a = TZFD_AI_Answer_Box::answer( 'can you help with a leaking roof gutter', 'visitor-A', 'en', $conv1 );
+clear_visitor_rate( 'visitor-A' );
 $b = TZFD_AI_Answer_Box::answer( 'can you help with a broken fence panel', 'visitor-A', 'en', $conv1 );
-$c = TZFD_AI_Answer_Box::answer( 'can you help with a blocked chimney flue', 'visitor-A', 'en', $conv1 );
-check( 'first two generative turns in a conversation are answered by model', 'model' === $a['source'] && 'model' === $b['source'], json_encode( array( $a, $b ) ) );
-check( 'third generative turn in the same conversation is refused with handoff', 'refused' === $c['status'] && true === $c['handoff'] && 2 === $model_calls, "calls=$model_calls" );
+clear_visitor_rate( 'visitor-A' );
+check( 'first two generative turns are answered by model', 'model' === $a['source'] && 'model' === $b['source'], json_encode( array( $a, $b ) ) );
 check( 'model answer text is stripped of markup', 'Sure we can help with that.' === $a['answer'], $a['answer'] );
-$d = TZFD_AI_Answer_Box::answer( 'can you help with a broken gate latch', 'visitor-A', 'en', $conv2 );
-check( 'a new conversation for the same visitor gets its own two turns', 'model' === $d['source'] && 3 === $model_calls, "calls=$model_calls" );
-$e = TZFD_AI_Answer_Box::answer( 'can you help with a loose tile', 'visitor-B', 'en', $conv1 );
-check( 'a conversation token does not share a budget between visitors', 'model' === $e['source'] );
-$f = TZFD_AI_Answer_Box::answer( 'can you help with a dripping tap', 'visitor-A' );
-$g = TZFD_AI_Answer_Box::answer( 'can you help with a cracked pane', 'visitor-A' );
-$h = TZFD_AI_Answer_Box::answer( 'can you help with a sticky door', 'visitor-A' );
-check( 'without a token the visitor key is the conversation: two turns then handoff', 'model' === $f['source'] && 'model' === $g['source'] && 'refused' === $h['status'] );
 check( 'model turns are not cached, so repeats still count', false === $a['cached'] );
+
+// Per-visitor cap: 200 turns. Turns 3..200 across two conversations are answered; the 201st is refused.
+reset_state(); $with_faq();
+$model_calls = 0;
+add_filter( 'tzfd_ai_fallback_enabled', function () { return true; } );
+add_filter( 'tzfd_ai_generative_fallback', function ( $v, $norm ) use ( &$model_calls ) { $model_calls++; return 'Model answer.'; } );
+$answered = 0;
+for ( $i = 1; $i <= 200; $i++ ) {
+	$conv = 0 === $i % 2 ? str_repeat( 'c', 32 ) : str_repeat( 'd', 32 );
+	$r    = TZFD_AI_Answer_Box::answer( 'can you help with job number ' . $i . ' gutter', 'visitor-P', 'en', $conv );
+	clear_visitor_rate( 'visitor-P' );
+	if ( 'model' === $r['source'] ) { $answered++; }
+}
+check( 'visitor receives exactly 200 model turns across conversations', 200 === $answered && 200 === $model_calls, "answered=$answered calls=$model_calls" );
+$over = TZFD_AI_Answer_Box::answer( 'can you help with job number 201 gutter', 'visitor-P', 'en', str_repeat( 'e', 32 ) );
+clear_visitor_rate( 'visitor-P' );
+check( 'turn 201 in a brand-new conversation is refused with handoff', 'refused' === $over['status'] && true === $over['handoff'] && 200 === $model_calls, "calls=$model_calls" );
+$other = TZFD_AI_Answer_Box::answer( 'can you help with a loose tile', 'visitor-Q', 'en', str_repeat( 'd', 32 ) );
+check( 'a different visitor keeps a full allowance, even with the same conversation token', 'model' === $other['source'] && 201 === $model_calls );
+$noTok = TZFD_AI_Answer_Box::answer( 'can you help with a sticky door', 'visitor-P' );
+check( 'without a conversation token the visitor cap still applies', 'refused' === $noTok['status'] && 201 === $model_calls );
 
 reset_state(); $with_faq();
 $model_calls = 0;

@@ -26,6 +26,8 @@ final class TZFD_AI_Widget {
 
 	public static function boot() {
 		add_shortcode( self::SHORTCODE, array( __CLASS__, 'render' ) );
+		// Hosted model fallback (#353): routes through the connector's model_fallback budget.
+		add_filter( 'tzfd_ai_generative_fallback', array( 'TZFD_AI_Answer_Box', 'hosted_fallback' ), 10, 3 );
 	}
 
 	/**
@@ -45,7 +47,7 @@ final class TZFD_AI_Widget {
 		$raw      = isset( $_GET[ self::PARAM ] ) ? wp_unslash( $_GET[ self::PARAM ] ) : '';
 		$question = is_string( $raw ) ? sanitize_text_field( $raw ) : '';
 
-		// Conversation token: carried in the form so the fallback turn cap applies per conversation (#353).
+		// Conversation token: carried in the form for conversation tracking. The fallback turn cap is per visitor (#353).
 		// A missing or malformed token starts a new conversation.
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended,WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Validated by the regex below.
 		$conv_raw = isset( $_GET[ self::CONV_PARAM ] ) ? wp_unslash( $_GET[ self::CONV_PARAM ] ) : '';

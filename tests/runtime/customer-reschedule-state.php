@@ -68,7 +68,16 @@ if ( 'setup' === $mode ) {
 		exit( 1 );
 	}
 	$original_reminder = class_exists( 'TZFD_Addon_Support' ) ? TZFD_Addon_Support::form_settings( TZFD_Reminder::KEY, 1, TZFD_Reminder::defaults() ) : null;
-	update_option( $backup, array( 'form' => $form, 'reminder' => $original_reminder ), false );
+	// The reminder add-on re-queues reminders on a reschedule only while it is active. The CI add-on list does not
+	// include it, so enable it for this run (the list is restored by the restore mode).
+	$addons_scoped = class_exists( 'TZFD_Scoped_Store' ) ? TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() ) : array();
+	$addons_legacy = get_option( 'tz_fd_addons_active_list', null );
+	update_option( $backup, array( 'form' => $form, 'reminder' => $original_reminder, 'addons_scoped' => $addons_scoped, 'addons_legacy' => $addons_legacy ), false );
+	if ( class_exists( 'TZFD_Scoped_Store' ) && class_exists( 'TZFD_Reminder' ) ) {
+		$addons_on = array_values( array_unique( array_merge( (array) $addons_scoped, array( 'tzfd-Reminder' ) ) ) );
+		TZFD_Scoped_Store::update( 'tz_fd_addons_active_list', $addons_on );
+		update_option( 'tz_fd_addons_active_list', $addons_on );
+	}
 
 	$decoded = json_decode( (string) $form['form_structure'] );
 	$fname   = '';
@@ -114,7 +123,7 @@ if ( 'setup' === $mode ) {
 
 	$wpdb->insert( $bookings, array( // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- test fixture row
 		'formid' => $form_id, 'time' => current_time( 'mysql' ), 'ipaddr' => '127.0.0.1', 'notifyto' => $email,
-		'posted_data' => serialize( $data ), 'data' => "Appointments:\n" . $old_text . "\n", 'whoadded' => '1', // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- the plugin's own stored format
+		'posted_data' => serialize( $data ), 'data' => "Appointments:\n" . $old_text . "\n", 'whoadded' => '1', 'company_id' => $company, // phpcs:ignore WordPress.PHP.DiscouragedPHPFunctions.serialize_serialize -- the plugin's own stored format
 	) );
 	$id  = (int) $wpdb->insert_id;
 	$row = $id > 0 ? $wpdb->get_row( $wpdb->prepare( 'SELECT id, formid, notifyto, posted_data, data FROM %i WHERE id=%d', $bookings, $id ) ) : null; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- test fixture read
@@ -205,6 +214,10 @@ if ( 'restore' === $mode ) {
 	}
 	if ( is_array( $saved ) && is_array( $saved['reminder'] ?? null ) && class_exists( 'TZFD_Addon_Support' ) && class_exists( 'TZFD_Reminder' ) ) {
 		TZFD_Addon_Support::save_form_settings( TZFD_Reminder::KEY, $form_id, TZFD_Reminder::defaults(), $saved['reminder'] );
+	}
+	if ( is_array( $saved ) && array_key_exists( 'addons_scoped', $saved ) && class_exists( 'TZFD_Scoped_Store' ) ) {
+		TZFD_Scoped_Store::update( 'tz_fd_addons_active_list', (array) $saved['addons_scoped'] );
+		if ( null === $saved['addons_legacy'] ) { delete_option( 'tz_fd_addons_active_list' ); } else { update_option( 'tz_fd_addons_active_list', $saved['addons_legacy'] ); }
 	}
 	delete_option( $backup );
 	delete_option( $backup . '_fixture' );

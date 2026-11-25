@@ -50,6 +50,15 @@ function tzfd_ais_render( array $draft ) {
 	return (string) ob_get_clean();
 }
 
+// The FAQ retrieval class is loaded by its own suite and by the knowledge add-on, not at boot. Load it the same way
+// faq-retrieval-wp-tests.php does, so this check does not depend on which suite ran before it.
+if ( ! class_exists( 'TZFD_FAQ_Retrieval' ) ) {
+	$tzfd_ais_inc = ( defined( 'WP_PLUGIN_DIR' ) ? WP_PLUGIN_DIR . '/titan-zero-trades-front-desk' : dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk' ) . '/includes/';
+	require_once $tzfd_ais_inc . 'class-tzfd-scoped-store.php';
+	require_once $tzfd_ais_inc . 'class-tzfd-ai-connector.php';
+	require_once $tzfd_ais_inc . 'class-tzfd-faq-retrieval.php';
+}
+
 if ( ! class_exists( 'TZFD_Onboarding' ) || ! class_exists( 'TZFD_Ai_Setup_Check' ) || ! class_exists( 'TZFD_Faq_Retrieval' ) || ! class_exists( 'TZFD_Scoped_Store' ) ) {
 	tzfd_ais_ok( 'ai-setup: wizard classes are loaded', false, 'TZFD_Onboarding, TZFD_Ai_Setup_Check, TZFD_Faq_Retrieval or TZFD_Scoped_Store is missing' );
 	exit( 1 );
@@ -99,7 +108,9 @@ $ais_html = tzfd_ais_render( $ais_draft );
 tzfd_ais_ok( 'ai-setup: review lists the suggestions', false !== strpos( $ais_html, 'Suggestions for you to review:' ) );
 tzfd_ais_ok( 'ai-setup: each FAQ suggestion has its question text', false !== strpos( $ais_html, 'FAQ: Do you offer Gutter cleaning?' ) && false !== strpos( $ais_html, 'FAQ: Do you offer Pipe relining?' ) );
 tzfd_ais_ok( 'ai-setup: the review posts the ai_setup action and the nonce', false !== strpos( $ais_html, 'name="tz_fd_setup_action" value="ai_setup"' ) && false !== strpos( $ais_html, 'name="tz_fd_setup_nonce"' ) );
-tzfd_ais_ok( 'ai-setup: the review form posts back to the setup review step', false !== strpos( $ais_html, 'page=tzfd-setup&amp;step=9' ) );
+// The action is escaped by esc_url() and then by wp_kses(), and the entity for "&" differs between WordPress versions
+// ("&#038;" or "&amp;"). Accept either spelling; the page and the step are what the check is about.
+tzfd_ais_ok( 'ai-setup: the review form posts back to the setup review step', 1 === preg_match( '/action="[^"]*admin\.php\?page=tzfd-setup(?:&amp;|&#038;|&)step=9"/', $ais_html ) );
 
 // 2. The tick boxes: one per FAQ, none for the tag, none for the greeting.
 tzfd_ais_ok( 'ai-setup: exactly two tick boxes, one per FAQ', 2 === substr_count( $ais_html, 'name="ai_pick[]"' ) );

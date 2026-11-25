@@ -151,6 +151,16 @@ tzfd_rt_ok( 'A17 capacity reader returns every reservation for the calendar, not
 
 // A18 (oversell through the public form, end to end) runs over HTTP in oversell-http-tests.sh, which CI runs
 // after this file. It is not a SKIP here any more (issue #389).
+// A18: oversell through the booking submit path. Calendar capacity is 1 by default, so a second customer asking for
+// the same slot must be refused and no second row may be written. The public enquiry form stores enquiries only; the
+// booking submit path (pipeline intake, then the slot check) is the path that holds the capacity lock.
+$tzfd_os_date  = gmdate( 'Y-m-d', time() + 10 * DAY_IN_SECONDS );
+$tzfd_os_draft = array( 'slot' => $tzfd_os_date . ' 10:00', 'name' => 'RT Oversell A', 'email' => 'rt-oversell-a@example.test', 'service_type' => 'rt-oversell', 'description' => 'runtime oversell check' );
+$tzfd_os_first  = TZFD_Pipeline::submit( $tzfd_form, $tzfd_os_draft, 'front-desk' );
+$tzfd_os_second = TZFD_Pipeline::submit( $tzfd_form, array_merge( $tzfd_os_draft, array( 'name' => 'RT Oversell B', 'email' => 'rt-oversell-b@example.test' ) ), 'front-desk' );
+$tzfd_os_rows   = (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE formid=%d AND notifyto IN (%s, %s)', $tzfd_bookings, $tzfd_form, 'rt-oversell-a@example.test', 'rt-oversell-b@example.test' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw count, bypasses the object cache
+tzfd_rt_ok( 'A18 end-to-end oversell prevention through the booking submit path', true === ( $tzfd_os_first['ok'] ?? false ) && 'slot_taken' === ( $tzfd_os_second['error'] ?? '' ) && 1 === $tzfd_os_rows,
+	'first=' . wp_json_encode( $tzfd_os_first ) . ' second=' . wp_json_encode( $tzfd_os_second ) . ' rows=' . $tzfd_os_rows );
 
 /* ------------------------------------------------------------------ B. Reschedule and cancel tokens */
 
@@ -176,8 +186,46 @@ $tzfd_after  = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE
 tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . wp_json_encode( $tzfd_cas ) );
 
 // B13 cancel end to end over HTTP (with the customer outbox) runs in customer-cancel-http-tests.sh, which CI runs
-// after this file (issue #389). Reschedule end to end over HTTP runs in customer-reschedule-http-tests.sh (issue #428).
-tzfd_rt_skip( 'B13 customer reschedule end to end', 'driven over HTTP by customer-reschedule-http-tests.sh (issue #428); this in-process check is not run' );
+// after this file (issue #389). Reschedule end to end is not driven over HTTP yet, so it stays a SKIP.
+// B13: customer cancel through the public link, over HTTP. A booking is made through the booking submit path, then the
+// link is previewed (GET), confirmed (POST with the nonce from the preview), and replayed. The cancelled row and the
+// staged customer event must each appear once. Reschedule end to end is not covered here (see the report on #334).
+$tzfd_cx_email = 'rt-cancel-' . substr( md5( uniqid( '', true ) ), 0, 10 ) . '@example.test';
+$tzfd_cx_sub   = TZFD_Pipeline::submit( $tzfd_form, array( 'slot' => gmdate( 'Y-m-d', time() + 12 * DAY_IN_SECONDS ) . ' 11:00', 'name' => 'RT Cancel', 'email' => $tzfd_cx_email, 'service_type' => 'rt-cancel', 'description' => 'runtime cancel check' ), 'front-desk' );
+$tzfd_cx_id    = (int) ( $tzfd_cx_sub['booking_id'] ?? 0 );
+$tzfd_cx_row   = $tzfd_cx_id ? $wpdb->get_row( $wpdb->prepare( 'SELECT id, formid, notifyto, posted_data, data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_cx_id ) ) : null; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read for the token version
+// The CI workflow does not set TZFD_RT_URL. Without the fallback the request URL is relative, wp_remote_get fails
+// before any request is sent, and the preview reports code 0. The site's own home URL is the server the CI step runs.
+$tzfd_cx_root  = (string) getenv( 'TZFD_RT_URL' );
+if ( '' === $tzfd_cx_root ) { $tzfd_cx_root = home_url(); }
+$tzfd_cx_base  = rtrim( $tzfd_cx_root, '/' ) . '/wp-admin/admin-post.php';
+$tzfd_cx_exp   = TZFD_Customer_Cancellation::new_expiry();
+$tzfd_cx_tok   = is_object( $tzfd_cx_row ) ? TZFD_Customer_Cancellation::create_token( $tzfd_cx_id, $tzfd_cx_email, wp_salt( 'auth' ), TZFD_Customer_Cancellation::row_version( $tzfd_cx_row ), $tzfd_cx_exp ) : '';
+$tzfd_cx_args  = array( 'action' => TZFD_Customer_Cancellation::ACTION, 'booking_id' => $tzfd_cx_id, 'token' => $tzfd_cx_tok, 'expires' => $tzfd_cx_exp );
+$tzfd_cx_get   = wp_remote_get( add_query_arg( $tzfd_cx_args, $tzfd_cx_base ), array( 'timeout' => 20 ) );
+$tzfd_cx_html  = is_wp_error( $tzfd_cx_get ) ? '' : (string) wp_remote_retrieve_body( $tzfd_cx_get );
+$tzfd_cx_nonce = preg_match( '/name="_wpnonce" value="([^"]+)"/', $tzfd_cx_html, $tzfd_cx_m ) ? $tzfd_cx_m[1] : '';
+tzfd_rt_ok( 'B13a cancel preview shows the confirm form with a booking nonce', 200 === (int) wp_remote_retrieve_response_code( $tzfd_cx_get ) && '' !== $tzfd_cx_nonce && false !== strpos( $tzfd_cx_html, 'confirm_cancel' ),
+	'code=' . (int) wp_remote_retrieve_response_code( $tzfd_cx_get ) . ' booking=' . $tzfd_cx_id . ' submitted=' . wp_json_encode( $tzfd_cx_sub ) );
+
+$tzfd_cx_post_args = array_merge( $tzfd_cx_args, array( '_wpnonce' => $tzfd_cx_nonce, 'confirm_cancel' => '1' ) );
+$tzfd_cx_post      = wp_remote_post( $tzfd_cx_base, array( 'timeout' => 20, 'body' => $tzfd_cx_post_args ) );
+$tzfd_cx_text      = is_wp_error( $tzfd_cx_post ) ? '' : (string) wp_remote_retrieve_body( $tzfd_cx_post );
+$tzfd_cx_events    = static function () use ( $wpdb, $tzfd_cx_id ) {
+	return (int) $wpdb->get_var( $wpdb->prepare( 'SELECT COUNT(*) FROM %i WHERE booking_id=%d AND event_type=%s', $wpdb->prefix . TZFD_Customer_Event_Outbox::TABLE, $tzfd_cx_id, 'cancelled' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw count of the staged customer events
+};
+$tzfd_cx_after = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_cx_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw column read, bypasses the object cache
+tzfd_rt_ok( 'B13b confirmed cancel is accepted and the booking is no longer cancellable', 200 === (int) wp_remote_retrieve_response_code( $tzfd_cx_post ) && false !== strpos( $tzfd_cx_text, 'has been cancelled' ) && false === TZFD_Customer_Cancellation::is_cancelable_data( maybe_unserialize( $tzfd_cx_after ) ),
+	'code=' . (int) wp_remote_retrieve_response_code( $tzfd_cx_post ) );
+tzfd_rt_ok( 'B13c the cancel stages exactly one customer event in the outbox', 1 === $tzfd_cx_events(), 'events=' . $tzfd_cx_events() );
+
+$tzfd_cx_replay = wp_remote_post( $tzfd_cx_base, array( 'timeout' => 20, 'body' => $tzfd_cx_post_args ) );
+tzfd_rt_ok( 'B13d a replayed cancel is refused and stages no second event', 200 !== (int) wp_remote_retrieve_response_code( $tzfd_cx_replay ) && 1 === $tzfd_cx_events(), 'code=' . (int) wp_remote_retrieve_response_code( $tzfd_cx_replay ) . ' events=' . $tzfd_cx_events() );
+
+// B13e: customer reschedule end to end is not driven. A booking made through the booking submit path is refused by the
+// reschedule engine (unsupported_booking): it needs the single-appointment record shape, with the flat app_* keys and a
+// service map from the form. A fixture in that shape is still to be written. Reschedule token rules are tested above.
+tzfd_rt_skip( 'B13e customer reschedule end to end', 'in-process: needs a stored single-appointment record in the engine shape (unsupported_booking for submit-path rows); driven over HTTP by customer-reschedule-http-tests.sh (issue #463); token rules are tested above' );
 
 /* ------------------------------------------------------------------ C. Reminders and the outbox */
 

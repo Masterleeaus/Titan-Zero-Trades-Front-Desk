@@ -91,17 +91,12 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
 
 ## Skipped, and why
 
-- Customer reschedule end to end (B13, the reschedule half): driven over HTTP in `customer-reschedule-http-tests.sh`
-  (issue #428; written, not yet run on a site). Its booking is made through the public form, which uses the calendar
-  fixture in `oversell-state.php`, so it inherits that fixture's CAPTCHA-off setting. The customer copy e-mail is not
-  enabled, so reschedule mail capture is not asserted. Cancel end to end over HTTP, with the customer outbox, is driven in
-  `customer-cancel-http-tests.sh`. Oversell through the public form (A18) is driven over HTTP in
-  (issue #463: preview, nonce refusals, confirm, replay, outbox dispatch with mail capture, reminder queue). Written
-  on 2026-11-25 without a database or WP-CLI, so it has not been executed yet. The `wp-runtime-tests.php` SKIP line
-  for B13 reschedule remains until a run of that script passes. Cancel end to end over HTTP, with the customer outbox,
-  is driven in `customer-cancel-http-tests.sh`. Oversell through the public form (A18) is driven over HTTP in
-  `oversell-http-tests.sh` (issue #389). The primitives (capacity lock, hold validation, tokens, compare-and-swap)
-  are also tested in `wp-runtime-tests.php`.
+- Customer reschedule end to end (B13e): the engine needs a single-appointment record in its own shape; a booking made
+  through the submit path is refused with `unsupported_booking`. The reschedule half is driven over HTTP in
+  `customer-reschedule-http-tests.sh` (issue #463). Cancel end to end is covered by B13a to B13d in
+  `wp-runtime-tests.php`, and over HTTP with the customer outbox in `customer-cancel-http-tests.sh` (issue #389).
+  Oversell through the public booking form (A18) is driven over HTTP in `oversell-http-tests.sh` (issue #389). The
+  in-process A18 check goes through the booking submit path; the public enquiry form stores enquiries only.
 - Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.
 - Uninstall with opt-in (F4): covered by `uninstall-wipe-check.php`, which runs as a separate process.
 - Bad nonce on a logged-in request (E6): covered over HTTP in `http-auth-tests.sh`.

@@ -47,8 +47,10 @@ PAGE="$(curl -s -L -o /dev/null -w '%{url_effective}' --max-time 30 "$PAGE" || t
 html="$(curl -s -L --max-time 30 -c "$JAR" -b "$JAR" "$PAGE" || true)"
 nonce="$(printf '%s' "$html" | grep -o '<input name="anonce"[^>]*>' | grep -o 'value="[^"]*"' | head -1 | cut -d'"' -f2)"
 seq="$(printf '%s' "$html" | grep -o 'name="tz_fd_pform_psequence" value="[^"]*"' | head -1 | sed 's/.*value="\([^"]*\)"/\1/')"
-# The security code image URL, as the page prints it (HTML-escaped ampersands turned back into &).
-captcha_src="$(printf '%s' "$html" | grep -o 'src="[^"]*tz_fd_frontdesk_captcha=captcha[^"]*"' | head -1 | sed 's/^src="//; s/"$//; s/&amp;/\&/g')"
+# The security code image URL, as the page prints it. esc_url() writes "&" as "&#038;" (and some output as "&amp;"),
+# so both forms are turned back into "&". Without this, "ps" is not sent, the cookie is named rand_code, and the
+# booking is refused as captchafailed.
+captcha_src="$(printf '%s' "$html" | grep -o 'src="[^"]*tz_fd_frontdesk_captcha=captcha[^"]*"' | head -1 | sed 's/^src="//; s/"$//; s/&#038;/\&/g; s/&amp;/\&/g')"
 if [ -n "$nonce" ] && [ -n "$seq" ] && [ -n "$captcha_src" ]; then ok "A18 the public form renders with its nonce and security code" "sequence=$seq"; else
   # Diagnostics for the log: what the page returned, without any page content.
   diag="$(curl -s --max-time 30 -o /dev/null -w '%{http_code} %{redirect_url}' "$PAGE" || true)"

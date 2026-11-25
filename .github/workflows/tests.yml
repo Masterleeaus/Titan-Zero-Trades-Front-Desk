@@ -224,7 +224,7 @@ jobs:
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-cancel-http-tests.sh 2>&1 | tee -a "$LOG"
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-reschedule-http-tests.sh 2>&1 | tee -a "$LOG"
           if grep -q '^FAIL ' "$LOG"; then echo "Checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
-          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused' 'B13R the reschedule event is dispatched from the outbox' 'B13R replayed confirmation is reported as already saved'; do
+          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused' 'R7 both reschedule events are dispatched' 'R6 completed view shows the change is saved'; do
             grep -q "^PASS $check" "$LOG" || { echo "Did not pass or did not run: $check"; exit 1; }
           done
       - name: Extra WordPress test files (if any)

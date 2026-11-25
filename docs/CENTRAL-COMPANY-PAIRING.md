@@ -47,7 +47,7 @@ The pairing assertion itself is checked for: signature (HMAC-SHA256 over timesta
 ## 3a. Pairing handshake and per-site secret (issue #347, owner decision)
 
 - Request: `POST` JSON `{"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. The pairing code is single use and is sent once.
-- Response: HTTP 200 with a JSON body that carries exactly the seven assertion fields (`contract`, `site`, `company_uuid`, `operations`, `nonce`, `issued_at`, `expires_at`). The response carries no other field: a missing field, an extra field or a `secret` field is refused. The response is signed in the `X-TZFD-Timestamp`, `X-TZFD-Nonce` and `X-TZFD-Signature` headers. The `X-TZFD-Nonce` must echo the request nonce.
+- Response: HTTP 200 with a JSON body that carries exactly eight signed fields: the seven assertion fields (`contract`, `site`, `company_uuid`, `operations`, `nonce`, `issued_at`, `expires_at`) and `feature_endpoint`, the AI endpoint. The response carries no other field: a missing field, an extra field or a `secret` field is refused. `feature_endpoint` must be https on the host of the pairing endpoint. After a verified pairing it sets the AI connector endpoint. The response is signed in the `X-TZFD-Timestamp`, `X-TZFD-Nonce` and `X-TZFD-Signature` headers. The `X-TZFD-Nonce` must echo the request nonce.
 - The fields and the signature are checked by `TZFD_Central_Tenant::connect()`. Only a verified assertion is stored. A refused exchange leaves the existing pairing and credential unchanged.
 - Per-site secret: delivered out of band through the secret store, provisioned by the Central operator. It is not in the pairing response body, not in any header and not in the request. The plugin reads it with `TZFD_Central_Tenant::provisioned_secret()` from the constant `TZFD_CENTRAL_SITE_SECRET` or the filter `tzfd_central_site_secret`. It must be at least 32 characters. Without it, pairing sends nothing and returns `secret_missing`.
 - The secret value must never appear in code, tests, docs, PR text or comments. Tests generate it at run time.
@@ -98,7 +98,7 @@ Each task is independently verifiable. "Done" means evidence on main.
 
 | # | Task | Status | Evidence |
 | --- | --- | --- | --- |
-| 1 | Accept `central-pairing/1` and the seven assertion fields as the plugin contract | Done (owner decision on #451) | This document; `class-tzfd-central-tenant.php` `CONTRACT` and `assertion_fields()` |
+| 1 | Accept `central-pairing/1` and the seven assertion fields (plus `feature_endpoint`, the eighth field decided on #347) as the plugin contract | Done (owner decision on #451) | This document; `class-tzfd-central-tenant.php` `CONTRACT` and `assertion_fields()` |
 | 2 | Verify assertion signature, timestamp, nonce, site, company UUID, lifetime and replay | Done | `tests/central-tenant/run-central-tenant-tests.php`, run by `.github/workflows/tests.yml` (step "Central company pairing tests") |
 | 3 | Refuse hosted calls on unpaired, expired, mismatched or unsupported pairings, with no budget charge | Done | `class-tzfd-ai-connector.php` (`TZFD_Central_Tenant::resolve()` before transport); `tests/ai-connector/run-ai-connector-tests.php` (`not_configured`, no transport call) |
 | 4 | Keep the local integer `company_id` out of the hosted call and out of company UUID checks | Done | `is_company_uuid()` rejects integers; test "local integer 1 is not a company UUID" in the central tenant runner |

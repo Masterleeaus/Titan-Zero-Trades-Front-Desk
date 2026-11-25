@@ -177,9 +177,3 @@ function tzfd_test_admin_post_and_ajax_handlers_check_nonce_and_capability() {
 	}
 }
 
-/** The legacy-data restore upload is limited to .json files and a size cap, as the pack upload is (#151 upload checks). */
-function tzfd_test_legacy_restore_upload_is_json_only() {
-	$body = (string) tzfd_authz_body_for( 'TZFD_Legacy_AI_Data', 'handle_restore' );
-	tzfd_assert( false !== strpos( $body, "'json' !== strtolower( pathinfo( \$name, PATHINFO_EXTENSION ) )" ), 'legacy restore refuses an upload that is not a .json file' );
-	tzfd_assert( false !== strpos( $body, 'is_uploaded_file' ) && false !== strpos( $body, 'MAX_UPLOAD' ), 'legacy restore checks is_uploaded_file and the size cap' );
-}

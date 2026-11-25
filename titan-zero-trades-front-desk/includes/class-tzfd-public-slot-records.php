@@ -82,6 +82,8 @@ final class TZFD_Public_Slot_Records {
     /** Admin notice: lists every skipped row, so the problem stays visible until the row is fixed or removed. */
     public static function admin_notice() {
         if ( ! current_user_can( 'tz_fd_access' ) ) { return; }
+        // The Get started screen shows no admin notice (issue #366).
+        if ( class_exists( 'TZFD_Setup_Page' ) && TZFD_Setup_Page::is_current_screen() ) { return; }
         $all = get_option( self::SKIPPED_OPTION, array() );
         if ( ! is_array( $all ) || ! $all ) { return; }
         $items = array();

@@ -123,6 +123,12 @@ $d->set_company_state( 7, 'cancelled' );
 $r14 = $d->handle( TZFD_Hosted_Double::envelope( 'booking.list', 7, array(), $HD_KEY, $NOW, 'nonce-cancelled-000001' ), $owner, $NOW );
 hd_check( 'cancelled company refused with 402 entitlement_inactive', 402 === $r14['status'] && 'entitlement_inactive' === $r14['body']['reason'] );
 $d->set_company_state( 7, 'active' );
+// A chargeback is handled as an inactive entitlement: signed calls are refused before any executor runs.
+$d->set_company_state( 7, 'chargeback' );
+$calls_before = count( $d->calls );
+$r14b = $d->handle( TZFD_Hosted_Double::envelope( 'booking.list', 7, array(), $HD_KEY, $NOW, 'nonce-chargeback-00001' ), $owner, $NOW );
+hd_check( 'chargeback refused with 402 entitlement_inactive and no executor', 402 === $r14b['status'] && 'entitlement_inactive' === $r14b['body']['reason'] && count( $d->calls ) === $calls_before );
+$d->set_company_state( 7, 'active' );
 
 // 8. Malformed bodies.
 hd_check( 'malformed JSON refused with 400', 400 === hd_new( $HD_KEY )->handle( '{"v":', $owner, $NOW )['status'] );

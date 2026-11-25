@@ -45,9 +45,10 @@ rv_ok( 'complete site gets one FAQ per service', 2 === count( array_keys( $types
 rv_ok( 'complete site gets a tag suggestion', in_array( 'tags', $types, true ) );
 rv_ok( 'every suggestion needs confirmation', array_reduce( $ready['suggestions'], static function ( $c, $s ) { return $c && true === $s['needs_confirmation']; }, true ) );
 
-// Absent provider: the hosted connector is listed and blocks AI, but setup items are unaffected.
+// Absent provider: the hosted connector is listed as optional and does not close the AI gate (owner decision, #400).
 $no_connector = $S::review( array_merge( $full, array( 'connector_available' => false ) ) );
-rv_ok( 'no connector keeps the gate closed and names the connector', false === $no_connector['gate']['allowed'] && in_array( 'hosted_connector', $no_connector['gate']['missing'], true ) );
+rv_ok( 'no connector still opens the AI gate (connector is not required before the gate opens)', true === $no_connector['gate']['allowed'] && array() === $no_connector['gate']['missing'] );
+rv_ok( 'no connector is listed as an optional item', in_array( 'hosted_connector', rv_keys( $no_connector['missing'] ), true ) );
 $connector_item = array_values( array_filter( $no_connector['missing'], static function ( $i ) { return 'hosted_connector' === $i['key']; } ) );
 rv_ok( 'no connector is not a required setup item', 1 === count( $connector_item ) && false === $connector_item[0]['required'] );
 rv_ok( 'no connector still gives suggestions for the rest of setup', ! empty( $no_connector['suggestions'] ) );

@@ -47,7 +47,7 @@ abstract class TZFD_Sync_Addon extends TZFD_BaseAddon
     {
         if ( ! $this->addon_is_active() ) { return; }
         TZFD_Addon_Records::ensure_schema();
-        add_action( 'tz_fd_process_data', array( $this, 'queue_booking' ), 45, 1 );
+        add_action( 'tzfd_process_data', array( $this, 'queue_booking' ), 45, 1 );
         add_action( self::CRON, array( $this, 'run_queue' ) );
         if ( ! wp_next_scheduled( self::CRON ) ) { wp_schedule_event( time() + 600, 'hourly', self::CRON ); }
     }

@@ -65,6 +65,14 @@ $sp_first = $sp_rec['hours'] ?? 0;
 update_option( TZFD_Setup_Checklist::CONSENT_OPTION, false, false );
 $sp_html = $sp_render();
 tzfd_sp_ok( 'setup-page: turning records off keeps the stored record', $sp_first === ( get_option( TZFD_Setup_Checklist::PROGRESS_OPTION, array() )['hours'] ?? -1 ) );
+// 3b. Setup measures (issue #367) show only with consent and a progress record present. The record survives
+// turning records off (checked above), so the measures are hidden by consent alone, not by an empty record.
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: measures are hidden while progress records are off', false === strpos( $sp_html, 'Setup measures for this site' ) );
+update_option( TZFD_Setup_Checklist::CONSENT_OPTION, true, false );
+$sp_html = $sp_render();
+tzfd_sp_ok( 'setup-page: measures show with consent and a record', false !== strpos( $sp_html, 'Setup measures for this site' ) && false !== strpos( $sp_html, 'Setup completion:' ) );
+update_option( TZFD_Setup_Checklist::CONSENT_OPTION, false, false );
 
 // 4. No admin notice is added by this screen's own source (static check of the plugin file).
 tzfd_sp_ok( 'setup-page: class adds no admin notice', false === strpos( (string) file_get_contents( $tzfd_inc . 'class-tzfd-setup-page.php' ), 'admin_notices' ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- reads the plugin's own source.

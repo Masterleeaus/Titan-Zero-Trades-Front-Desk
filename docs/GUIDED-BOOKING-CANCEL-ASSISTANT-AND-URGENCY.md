@@ -9,6 +9,7 @@ Scope: issue #336 (remaining work from #287). All three features are determinist
 - Behaviour: detects intent with fixed rules. Cancel, reschedule and rebook wording is checked before booking wording, so "reschedule my appointment" never starts a new booking. Returns one of `handoff`, `fallback`, `choose_service`, `confirm_service` or `show_availability`. Service IDs come only from the owner's list.
 - Service list: supplied by the `tzfd_guided_booking_services` filter, records of `id`, `name`, `duration_minutes`. The default is empty. With no list, a booking request gets the fallback message and no service is invented. The resource catalogue stores service IDs only, with no names or durations, so the filter is the current source.
 - Not yet wired: the step does not drive the booking form. Availability (`TZFD_Guided_Booking::propose()`), the confirmation summary and the submit gate (`TZFD_Guided_Booking::submit()`) exist as pure functions but no front-end or persistence path calls them yet.
+- Open decision before wiring (#441): the service finder (`TZFD_Service_Finder`, `tzfd_service_id`) uses integer database IDs, while the guided flow and the resource catalogue use string IDs (`TZFD_Resource_Catalog::identifier`). The two ID spaces do not match, so the finder's `tzfd_service_id` cannot be checked against the confirmation token until an owner decides how they map. Also open: the source of the complete company-scoped reservation snapshot, and the hook into the legacy booking submit handler (`tzfd-main-class.inc.php`, which runs captcha and double-booking checks).
 
 ## Cancel/reschedule assistant
 
@@ -42,6 +43,8 @@ Scope: issue #336 (remaining work from #287). All three features are determinist
 ## Tests
 
 - `tests/unit/guided-booking-flow-test.php`: intent, step logic, runtime routes (functional, negative, tenant and injection, privacy, nonce permission), cancel assistant entry point.
-- `tests/unit/cancel-reschedule-assistant-tests.php` and `tests/unit/guided-booking-test.php`: existing coverage.
+- `tests/unit/cancel-reschedule-assistant-tests.php` and `tests/unit/guided-booking-test.php`: existing coverage. The submit gate checks cover tampering, missing token, slot taken, unavailable snapshot, tenant mismatch, a token replayed from another company, an off-grid slot, a service swap and a malformed company scope (31 checks).
+- Runtime (WordPress) checks for the submit gate: `tests/runtime/guided-booking-runtime-tests.php`. Not run in the #441 round.
+- Privacy wording for this flow still needs owner sign-off before the documentation item on #441 can close.
 - `tests/unit/enquiry-triage-rules-test.php`: negation, throttle, alert consent and priority override precedence.
 - CI: `.github/workflows/tests.yml` runs every `tests/unit/*.php` file. The WordPress runtime job does not yet include the new routes.

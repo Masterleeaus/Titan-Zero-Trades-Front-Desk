@@ -472,8 +472,104 @@ check( 'audit trail is pruned to the limit', TZFD_AI_Connector::AUDIT_LIMIT === 
 reset_state();
 check( 'rejected connection writes no audit entry', false === $C::configure( 'http://ai.example.test/x', SITE, SECRET ) && array() === $C::audit_log() );
 
+// 15. No credential or customer-context leak on revoke, outage, failed pairing, service error or downgrade (issue #423).
+// The marker stands for customer text that must never reach a result, status, event, usage or audit surface.
+const LEAK_MARK = 'PRIVATE-CUSTOMER-CONTEXT-423';
+$leak_surfaces  = static function ( $r ) use ( $C ) {
+    return json_encode( array( $r, $C::status(), $C::usage(), $C::events(), $C::audit_log() ) );
+};
+$leak_clean     = static function ( $blob ) {
+    return false === strpos( $blob, LEAK_MARK ) && false === strpos( $blob, SECRET ) && false === strpos( $blob, 'ai.example.test' );
+};
+$leak_seen      = array();
+
+// 15a. Revoke: refused before transport, nothing leaks.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$C::revoke_consent();
+$before = calls();
+$r      = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob   = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'revoke: request refused with no transport call', 'consent_required' === $r['status'] && $before === calls() );
+check( 'revoke: customer text, secret and endpoint absent from every surface', $leak_clean( $blob ) );
+
+// 15b. Outage: transport reports offline; the result is local fallback with no data.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = null;
+$r    = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'outage: offline, local fallback, empty data', 'offline' === $r['status'] && true === $r['use_local'] && array() === $r['data'] );
+check( 'outage: customer text, secret and endpoint absent from every surface', $leak_clean( $blob ) );
+
+// 15c. Outage by exception: an exception carrying customer text is treated as offline and not stored.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) { throw new RuntimeException( 'network down ' . LEAK_MARK ); };
+$r    = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'transport exception: treated as offline, no crash', 'offline' === $r['status'] && true === $r['use_local'] );
+check( 'transport exception: exception text and customer text absent from every surface', $leak_clean( $blob ) );
+
+// 15d. Service error: a 500 that echoes the customer text is not surfaced.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) {
+    return fake_reply( $req, array( 'code' => 500, 'body' => json_encode( array( 'contract' => 'tzfd-ai/1', 'site' => SITE, 'echo' => LEAK_MARK ) ) ) );
+};
+$r    = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'service error: status service_error with empty data', 'service_error' === $r['status'] && array() === $r['data'] );
+check( 'service error: echoed customer text absent from every surface', $leak_clean( $blob ) );
+
+// 15e. Invalid response: a correctly signed body without a status field is refused; its echo is not kept.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) {
+    return fake_reply( $req, array( 'json' => array( 'contract' => 'tzfd-ai/1', 'site' => SITE, 'echo' => LEAK_MARK ) ) );
+};
+$r    = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'invalid response: refused as invalid_response with empty data', 'invalid_response' === $r['status'] && array() === $r['data'] );
+check( 'invalid response: echoed customer text absent from every surface', $leak_clean( $blob ) );
+
+// 15f. Failed pairing or checkout: consent and endpoint exist but the site is not paired, so nothing is sent.
+reset_state();
+$C::configure( 'https://ai.example.test/v1/request', SITE, SECRET );
+$C::grant_consent( array( 'faq.read' ) );
+$C::set_entitlements( array( 'assistant' ) );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+$r    = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'failed pairing: not_configured with no transport call', 'not_configured' === $r['status'] && 0 === calls() );
+check( 'failed pairing: customer text, secret and endpoint absent from every surface', $leak_clean( $blob ) );
+
+// 15g. Downgrade: the admin page now revokes consent on a local downgrade. Hosted calls stop; the history keeps the revoke.
+reset_state();
+connect_all();
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_reply( $req ); };
+check( 'downgrade: a call succeeds before the downgrade', 'ok' === $C::request( 'faq.answer' )['status'] );
+$C::revoke_consent(); // what handle_local_downgrade() does when consent is granted
+$before = calls();
+$r      = $C::request( 'faq.answer', array( 'q' => LEAK_MARK ) );
+$blob   = $leak_surfaces( $r );
+$leak_seen[] = $blob;
+check( 'downgrade: hosted request stops with no transport call', 'consent_required' === $r['status'] && $before === calls() );
+check( 'downgrade: revoke is recorded in the connection history', in_array( 'consent_revoked', array_column( $C::audit_log(), 'action' ), true ) );
+check( 'downgrade: customer text, secret and endpoint absent from every surface', $leak_clean( $blob ) );
+
+// 15h. Across the whole section, no surface ever held the customer text, the secret or the endpoint.
+check( 'section 15: no leak in any recorded surface', $leak_clean( implode( "\n", $leak_seen ) ) );
+
 require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
-$rows = TZFD_AI_Services_Page::audit_rows( array( array( 'at' => 5, 'action' => 'connect' ), array( 'at' => 6, 'action' => 'bogus' ), array( 'at' => 7, 'action' => 'consent_granted', 'scopes' => array( 'faq.read', 'booking.write' ) ) ) );
+$rows =TZFD_AI_Services_Page::audit_rows( array( array( 'at' => 5, 'action' => 'connect' ), array( 'at' => 6, 'action' => 'bogus' ), array( 'at' => 7, 'action' => 'consent_granted', 'scopes' => array( 'faq.read', 'booking.write' ) ) ) );
 check( 'audit page rows map known actions only, with scope detail', 2 === count( $rows ) && '' === $rows[0]['detail'] && 'faq.read, booking.write' === $rows[1]['detail'] );
 check( 'audit page rows carry no secret text', false === strpos( json_encode( $rows ), SECRET ) );
 

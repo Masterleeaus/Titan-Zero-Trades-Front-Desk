@@ -57,6 +57,12 @@ final class TZFD_AI_Services_Page {
         }
         check_admin_referer( self::NONCE );
         delete_option( TZFD_AI_Services::OPTION );
+        // Hosted use stops at once on a local downgrade (docs/AI-SERVICES-ENTITLEMENT-AND-DOWNGRADE.md, decision 5).
+        // Revoking the connector consent means no hosted request is sent, even if the Titan account still shows a plan.
+        // Local data and the pairing record are not touched; the revocation is written to the connection history.
+        if ( TZFD_AI_Connector::status()['consent'] ) {
+            TZFD_AI_Connector::revoke_consent();
+        }
         wp_safe_redirect( add_query_arg( array( 'page' => self::SLUG, 'tzfd_ai' => 'local_free' ), admin_url( 'admin.php' ) ) );
         exit;
     }

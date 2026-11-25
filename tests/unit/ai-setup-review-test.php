@@ -36,11 +36,11 @@ rv_ok( 'empty site lists business name, services and hours', in_array( 'business
 rv_ok( 'empty site keeps AI gate closed', false === $empty['gate']['allowed'] );
 rv_ok( 'empty site suggests nothing and does not fail', array() === $empty['suggestions'] );
 
-// Complete site: gate open, greeting, FAQs and tags offered.
+// Complete site: gate open, FAQs and tags offered. The greeting is not a suggestion (written at first contact, #400).
 $ready = $S::review( $full );
 rv_ok( 'complete site opens the AI gate', true === $ready['gate']['allowed'] && array() === $ready['gate']['missing'] );
 $types = array_column( $ready['suggestions'], 'type' );
-rv_ok( 'complete site gets a greeting suggestion', in_array( 'greeting', $types, true ) );
+rv_ok( 'greeting is not offered as a confirm-first suggestion', ! in_array( 'greeting', $types, true ) );
 rv_ok( 'complete site gets one FAQ per service', 2 === count( array_keys( $types, 'faq', true ) ) );
 rv_ok( 'complete site gets a tag suggestion', in_array( 'tags', $types, true ) );
 rv_ok( 'every suggestion needs confirmation', array_reduce( $ready['suggestions'], static function ( $c, $s ) { return $c && true === $s['needs_confirmation']; }, true ) );
@@ -59,7 +59,7 @@ $upgraded = $S::review( array_merge( $full, array(
 	'faq_questions' => array( 'Do you offer Drain unblocking?' ),
 ) ) );
 $up_types = array_column( $upgraded['suggestions'], 'type' );
-rv_ok( 'upgraded site keeps the existing greeting', ! in_array( 'greeting', $up_types, true ) );
+rv_ok( 'upgraded site has no greeting suggestion', ! in_array( 'greeting', $up_types, true ) );
 $up_faq = array_values( array_filter( $upgraded['suggestions'], static function ( $s ) { return 'faq' === $s['type']; } ) );
 rv_ok( 'upgraded site is not offered the same FAQ again', 1 === count( $up_faq ) && false !== strpos( $up_faq[0]['value']['question'], 'Hot water' ) );
 
@@ -68,7 +68,7 @@ $texts = array();
 foreach ( $ready['suggestions'] as $s ) { $texts[] = $S::describe( $s ); }
 $joined = implode( ' | ', $texts );
 rv_ok( 'suggestion text has no figures, prices or times', 0 === preg_match( '/\d|\$|\b(am|pm)\b/i', $joined ) );
-rv_ok( 'describe returns the greeting, FAQ and tag lines', 0 === strpos( $joined, 'Greeting: ' ) && false !== strpos( $joined, 'FAQ: Do you offer Drain unblocking?' ) && false !== strpos( $joined, 'Tags: drain-unblocking' ) );
+rv_ok( 'describe returns the FAQ and tag lines', false !== strpos( $joined, 'FAQ: Do you offer Drain unblocking?' ) && false !== strpos( $joined, 'Tags: drain-unblocking' ) && false === strpos( $joined, 'Greeting: ' ) );
 
 // Hostile service names are plain text, with markup removed.
 $hostile = $S::review( array_merge( $full, array( 'services' => array( '<script>alert(1)</script>Drain' ) ) ) );
@@ -124,7 +124,7 @@ $no_key_required = array_filter( $S::missing( array_merge( $full, array( 'connec
 rv_ok( 'no AI connector adds no required setup item (no AI needed to configure or book)', array() === $no_key_required );
 rv_ok( 'confirm refused without administrator confirmation', false === $S::confirm( array( 'type' => 'greeting', 'value' => 'Hi there.', 'source' => 'template' ), array() )['ok'] );
 $confirmed_greeting = $S::confirm( array( 'type' => 'greeting', 'value' => 'Hi there.', 'source' => 'template' ), array( 'confirmed' => true ) );
-rv_ok( 'confirmed greeting is saved only after confirm', true === $confirmed_greeting['ok'] && 'Hi there.' === $confirmed_greeting['value'] );
+rv_ok( 'confirm still validates a greeting when one is passed in directly', true === $confirmed_greeting['ok'] && 'Hi there.' === $confirmed_greeting['value'] );
 $enable_ok = $S::enable_ai( $full, true, 1700000000 );
 rv_ok( 'complete site with confirmation enables AI', true === $enable_ok['ok'] && true === TZFD_Ai_Free_Core::consent_granted() );
 

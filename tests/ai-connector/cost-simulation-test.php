@@ -110,6 +110,7 @@ function sim_run_tenant( $tenant_index ) {
         'contract' => 'central-pairing/1', 'site' => $site,
         'company_uuid' => sprintf( '00000000-0000-4000-8000-%012d', $tenant_index + 1 ),
         'operations' => array( 'hosted.request' ), 'nonce' => $nonce, 'issued_at' => $now, 'expires_at' => $now + 600,
+        'feature_endpoint' => 'https://central.titanzero.io/api/tzfd/ai',
     ) );
     TZFD_Central_Tenant::connect( $pbody, array(
         'X-TZFD-Timestamp' => (string) $now, 'X-TZFD-Nonce' => $nonce,

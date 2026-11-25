@@ -13,7 +13,7 @@ function update_option( $k, $v, $autoload = null ) { $GLOBALS['tz_opts'][ $k ] =
 function delete_option( $k ) { unset( $GLOBALS['tz_opts'][ $k ] ); return true; }
 function apply_filters( $tag, $value, ...$args ) {
     if ( isset( $GLOBALS['tz_filters'][ $tag ] ) ) { return call_user_func( $GLOBALS['tz_filters'][ $tag ], $value, ...$args ); }
-    return $value;
+    return array_key_exists( $tag, $GLOBALS['tz_filter_values'] ?? array() ) ? $GLOBALS['tz_filter_values'][ $tag ] : $value;
 }
 function add_action( $hook, $cb, $prio = 10, $args = 1 ) { return true; }
 function add_submenu_page( ...$args ) { return 'hook'; }
@@ -36,6 +36,8 @@ function checked( $c, $cur = true, $echo = true ) { $r = $c ? " checked='checked
 
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
+require_once __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
+$GLOBALS['tz_filter_values'] = array();
 
 $GLOBALS['tz_fail'] = 0;
 $GLOBALS['tz_pass'] = 0;
@@ -136,11 +138,11 @@ check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tz
 check( 'pairing code input is a text field with no value attribute and autocomplete off', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code" name="pairing_code"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) && false !== strpos( $m[0], 'autocomplete="off"' ) );
 check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
 check( 'connect control stays disabled until hosted pairing is live', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) );
-// #452: the connect control is enabled only when a pairing endpoint is configured (constant or filter).
+// #452 reconciled with #504: an endpoint alone is not enough. Without a provisioned site credential the control stays disabled.
 $GLOBALS['tz_filters']['tzfd_ai_pairing_endpoint'] = function () { return 'https://pair.example.test/api/tzfd/pair'; };
 $html = render_page();
-check( 'connect control is enabled when a pairing endpoint is configured', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"([^>]*)>/', $html, $m ) && false === strpos( $m[1], 'disabled' ) && 1 === preg_match( '/<button type="submit" class="button button-secondary"([^>]*)>/', $html, $b ) && false === strpos( $b[1], 'disabled' ) );
-check( 'enabled connect control shows no "not live" note', false === strpos( $html, 'not live yet' ) );
+check( 'endpoint without a site credential keeps the connect control disabled', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \\/>/', $html ) );
+check( 'endpoint without a site credential explains the missing credential', false !== strpos( $html, 'no site credential yet' ) );
 unset( $GLOBALS['tz_filters']['tzfd_ai_pairing_endpoint'] );
 $html = render_page();
 check( 'connect control returns to disabled when the endpoint is unset again', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) );
@@ -178,6 +180,53 @@ $_GET['tzfd_ai'] = 'disconnected';
 $html = render_page();
 check( 'disconnect notice is shown', false !== strpos( $html, 'Hosted AI disconnected' ) );
 unset( $_GET['tzfd_ai'] );
+
+// Login step states (issue #504, local part): the connect control follows real configuration, never UI state.
+$GLOBALS['tz_opts'] = array();
+$_GET['tzfd_ai'] = 'connect_saved';
+check( 'pairing_ready is off with no endpoint (the default)', 'off' === TZFD_AI_Services_Page::pairing_ready() );
+$html = render_page();
+check( 'off state: connect control is disabled and says pairing is not available', 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) && false !== strpos( $html, 'not available on this site yet' ) );
+check( 'off state: a next-step line asks the owner to connect', false !== strpos( $html, 'Next step: connect the hosted account below.' ) );
+unset( $_GET['tzfd_ai'] );
+
+$GLOBALS['tz_filter_values']['tzfd_ai_pairing_endpoint'] = 'https://central.titanzero.io/api/tzfd/pair';
+check( 'pairing_ready is no_secret when an endpoint is set but no credential is provisioned', 'no_secret' === TZFD_AI_Services_Page::pairing_ready() );
+$html = render_page();
+check( 'no_secret state: control stays disabled and says a site credential is needed', 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) && false !== strpos( $html, 'no site credential yet' ) );
+
+$GLOBALS['tz_filter_values']['tzfd_central_site_secret'] = str_repeat( 'a', 64 );
+check( 'pairing_ready is ready with an endpoint and a provisioned credential', 'ready' === TZFD_AI_Services_Page::pairing_ready() );
+$html = render_page();
+check( 'ready state: connect input and button are enabled', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* required \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary">/', $html ) );
+check( 'ready state: the secret is never rendered', false === strpos( $html, str_repeat( 'a', 64 ) ) );
+check( 'ready state: no disabled-reason sentence is shown', false === strpos( $html, 'stays disabled' ) );
+unset( $GLOBALS['tz_filter_values']['tzfd_ai_pairing_endpoint'], $GLOBALS['tz_filter_values']['tzfd_central_site_secret'] );
+
+// Pairing status to notice mapping (handle_connect redirects after this mapping, so the mapping is tested directly).
+check( 'paired maps to connect_saved', 'connect_saved' === TZFD_AI_Services_Page::pairing_notice( 'paired' ) );
+check( 'pairing_off maps to pair_off', 'pair_off' === TZFD_AI_Services_Page::pairing_notice( 'pairing_off' ) );
+check( 'busy and offline map to pair_offline', 'pair_offline' === TZFD_AI_Services_Page::pairing_notice( 'busy' ) && 'pair_offline' === TZFD_AI_Services_Page::pairing_notice( 'offline' ) );
+check( 'secret_missing maps to pair_not_provisioned', 'pair_not_provisioned' === TZFD_AI_Services_Page::pairing_notice( 'secret_missing' ) );
+check( 'rejected maps to pair_rejected', 'pair_rejected' === TZFD_AI_Services_Page::pairing_notice( 'rejected' ) );
+check( 'invalid_response, invalid_code and unknown statuses map to connect_invalid', 'connect_invalid' === TZFD_AI_Services_Page::pairing_notice( 'invalid_response' ) && 'connect_invalid' === TZFD_AI_Services_Page::pairing_notice( 'invalid_code' ) && 'connect_invalid' === TZFD_AI_Services_Page::pairing_notice( 'something_raw' ) );
+
+$_GET['tzfd_ai'] = 'pair_not_provisioned';
+$html = render_page();
+check( 'pair_not_provisioned notice is shown and says nothing was sent', false !== strpos( $html, 'does not have one. Nothing was sent.' ) );
+$_GET['tzfd_ai'] = 'pair_rejected';
+$html = render_page();
+check( 'pair_rejected notice is shown and keeps the previous connection', false !== strpos( $html, 'did not accept this pairing code' ) );
+unset( $_GET['tzfd_ai'] );
+
+// Next-step line follows the connection, consent and plan state.
+$GLOBALS['tz_opts'] = array();
+TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-b', str_repeat( 'b', 64 ) );
+$html = render_page();
+check( 'connected without consent: next step is consent', false !== strpos( $html, 'Next step: grant hosted data consent below.' ) );
+TZFD_AI_Connector::grant_consent( array( 'faq.read' ) );
+$html = render_page();
+check( 'consent granted and no verified plan: next step explains the free level', false !== strpos( $html, 'stays on the free level' ) );
 
 echo "\n{$GLOBALS['tz_pass']} passed, {$GLOBALS['tz_fail']} failed\n";
 exit( 0 === $GLOBALS['tz_fail'] ? 0 : 1 );

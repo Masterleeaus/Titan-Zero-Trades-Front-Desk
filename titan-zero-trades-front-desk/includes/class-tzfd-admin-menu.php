@@ -31,11 +31,14 @@ final class TZFD_Admin_Menu {
     const PIPELINE = TZFD_Tables::PIPELINE;
     /** Standalone Front Desk navigation order. */
     public static function main_menu_order() {
-        return apply_filters( 'tz_fd_admin_menu_order', array(
+        $tzfd_order = array(
             self::PARENT, self::BOOKINGS, self::CALENDAR, self::ENQUIRIES, self::CUSTOMERS, self::SERVICES, self::PIPELINE, self::WORKERS, self::EQUIPMENT,
             self::LOCATIONS, self::ADDONS, self::SETTINGS,
             self::EMAILS, self::PREVIEW, self::SETUP, self::PACKS,
-        ) );
+        );
+        $tzfd_order = apply_filters( 'tzfd_admin_menu_order', $tzfd_order );
+        $tzfd_order = apply_filters( 'tz_fd_admin_menu_order', $tzfd_order ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        return $tzfd_order;
     }
 
     public static function register() {

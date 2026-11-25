@@ -51,7 +51,8 @@ final class TZFD_Booking_Delete_Service {
                 continue;
             }
             ++$result['deleted'];
-            do_action( 'tz_fd_item_deleted', $id );
+            do_action( 'tzfd_item_deleted', $id );
+            do_action( 'tz_fd_item_deleted', $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         }
         return $result;
     }

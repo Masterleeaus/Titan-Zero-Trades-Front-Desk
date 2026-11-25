@@ -86,6 +86,8 @@ jobs:
           - { php: "8.2", wp: "latest", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.4", wp: "latest", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.3", wp: "6.6", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
+          # Issue #428: the declared minimum (Requires PHP: 7.4) with the plugin minimum WordPress (6.6).
+          - { php: "7.4", wp: "6.6", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.3", wp: "latest", db: "mysql:8.0", db_label: "MySQL 8.0" }
     services:
       db:
@@ -220,8 +222,9 @@ jobs:
           # Both scripts print PASS and FAIL lines and gate on their own exit status; the step also gates on the log.
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash oversell-http-tests.sh 2>&1 | tee -a "$LOG"
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-cancel-http-tests.sh 2>&1 | tee -a "$LOG"
+          B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-reschedule-http-tests.sh 2>&1 | tee -a "$LOG"
           if grep -q '^FAIL ' "$LOG"; then echo "Checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
-          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused'; do
+          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused' 'B13R the reschedule event is dispatched from the outbox' 'B13R replayed confirmation is reported as already saved'; do
             grep -q "^PASS $check" "$LOG" || { echo "Did not pass or did not run: $check"; exit 1; }
           done
       - name: Extra WordPress test files (if any)

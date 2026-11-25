@@ -87,8 +87,10 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
 
 ## Skipped, and why
 
-- Customer reschedule end to end (B13, the reschedule half): the preview and confirm over HTTP are not driven yet, so
-  that check stays a SKIP. Cancel end to end over HTTP, with the customer outbox, is driven in
+- Customer reschedule end to end (B13, the reschedule half): driven over HTTP in `customer-reschedule-http-tests.sh`
+  (issue #428; written, not yet run on a site). Its booking is made through the public form, which uses the calendar
+  fixture in `oversell-state.php`, so it inherits that fixture's CAPTCHA-off setting. The customer copy e-mail is not
+  enabled, so reschedule mail capture is not asserted. Cancel end to end over HTTP, with the customer outbox, is driven in
   `customer-cancel-http-tests.sh`. Oversell through the public form (A18) is driven over HTTP in
   `oversell-http-tests.sh` (issue #389). The primitives (capacity lock, hold validation, tokens, compare-and-swap)
   are also tested in `wp-runtime-tests.php`.

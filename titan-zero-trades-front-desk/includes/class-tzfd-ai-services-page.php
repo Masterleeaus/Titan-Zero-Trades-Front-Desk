@@ -4,10 +4,10 @@
  *
  * Shows status, the descriptor comparison, the local downgrade and the hosted connector controls:
  * consent (grant and revoke), event retention and the redacted event log (#4, #261).
- * It does not take payment, card details or account credentials, and it makes no network calls.
- * "Connect account" takes a one-time pairing code and exchanges it for the per-site secret (#347, see TZFD_AI_Pairing).
- * It stays disabled until a pairing endpoint is configured. The connector secret is never rendered here;
- * only its stored/not-stored flag is shown.
+ * It does not take payment or card details, and it makes no network calls.
+ * Connect and disconnect: the administrator types the endpoint, site ID and secret once (nonce and capability
+ * checked). The secret field is write-only; the screen shows only its stored/not-stored flag.
+ * The "Connect account" control (hosted account pairing, #46) stays disabled until that verified pairing is live.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -24,7 +24,8 @@ final class TZFD_AI_Services_Page {
     const ACTION_REVOKE     = 'tzfd_ai_connector_revoke';
     const ACTION_RETENTION  = 'tzfd_ai_connector_retention';
     const ACTION_CLEAR      = 'tzfd_ai_connector_clear_events';
-    const ACTION_PAIR       = 'tzfd_ai_connector_pair';
+    const ACTION_CONNECT    = 'tzfd_ai_connector_connect';
+    const ACTION_DISCONNECT = 'tzfd_ai_connector_disconnect';
     const CONNECTOR_NONCE   = 'tzfd_ai_connector_admin';
 
     public static function register() {
@@ -34,7 +35,8 @@ final class TZFD_AI_Services_Page {
         add_action( 'admin_post_' . self::ACTION_REVOKE, array( __CLASS__, 'handle_revoke' ) );
         add_action( 'admin_post_' . self::ACTION_RETENTION, array( __CLASS__, 'handle_retention' ) );
         add_action( 'admin_post_' . self::ACTION_CLEAR, array( __CLASS__, 'handle_clear_events' ) );
-        add_action( 'admin_post_' . self::ACTION_PAIR, array( __CLASS__, 'handle_pair' ) );
+        add_action( 'admin_post_' . self::ACTION_CONNECT, array( __CLASS__, 'handle_connect' ) );
+        add_action( 'admin_post_' . self::ACTION_DISCONNECT, array( __CLASS__, 'handle_disconnect' ) );
     }
 
     public static function add_page() {
@@ -78,6 +80,34 @@ final class TZFD_AI_Services_Page {
         self::redirect_notice( 'consent_revoked' );
     }
 
+    /**
+     * Connect hosted account (issue #347): the admin enters the single-use pairing code shown by Supercharged.
+     * TZFD_AI_Pairing exchanges it over https for a signed central-pairing/1 assertion. The per-site secret comes from the secret store. The code is read once, passed on and
+     * dropped; it is never echoed, logged or stored. Consent is revoked by a successful pairing, so data is
+     * never sent to a new endpoint on old consent.
+     */
+    public static function handle_connect() {
+        self::guard_connector_request();
+        $code   = self::post_string( 'pairing_code' );
+        $result = TZFD_AI_Pairing::pair( $code );
+        $code   = '';
+        $map    = array(
+            'paired'      => 'connect_saved',
+            'pairing_off' => 'pair_off',
+            'busy'        => 'pair_offline',
+            'offline'     => 'pair_offline',
+        );
+        $status = isset( $result['status'] ) ? (string) $result['status'] : '';
+        self::redirect_notice( isset( $map[ $status ] ) ? $map[ $status ] : 'connect_invalid' );
+    }
+
+    /** Removes the secret, endpoint and consent. Usage history and the event log are kept. */
+    public static function handle_disconnect() {
+        self::guard_connector_request();
+        TZFD_AI_Connector::disconnect();
+        self::redirect_notice( 'disconnected' );
+    }
+
     public static function handle_retention() {
         self::guard_connector_request();
         $raw  = isset( $_POST['retention_days'] ) ? wp_unslash( $_POST['retention_days'] ) : null; // phpcs:ignore WordPress.Security.NonceVerification.Missing
@@ -86,22 +116,6 @@ final class TZFD_AI_Services_Page {
             self::redirect_notice( 'retention_invalid' );
         }
         self::redirect_notice( 'retention_saved' );
-    }
-
-    /** Exchanges the pasted one-time code for the per-site secret. The code is never echoed or stored. */
-    public static function handle_pair() {
-        self::guard_connector_request();
-        $raw    = isset( $_POST['pairing_code'] ) ? wp_unslash( $_POST['pairing_code'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
-        $code   = is_string( $raw ) ? trim( $raw ) : '';
-        $result = TZFD_AI_Pairing::pair( $code );
-        $map    = array(
-            'ok'               => 'pair_ok',
-            'invalid_code'     => 'pair_code_invalid',
-            'code_rejected'    => 'pair_code_rejected',
-            'not_configured'   => 'pair_not_configured',
-            'busy'             => 'pair_busy',
-        );
-        self::redirect_notice( isset( $map[ $result['status'] ] ) ? $map[ $result['status'] ] : 'pair_failed' );
     }
 
     public static function handle_clear_events() {
@@ -153,37 +167,73 @@ final class TZFD_AI_Services_Page {
                             }
                         ?></td></tr>
                     <tr><th scope="row"><?php esc_html_e( 'Hosted AI endpoint', 'titan-zero-trades-front-desk' ); ?></th>
-                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Hosted pairing stays off until a pairing endpoint is configured.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+                        <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Connect below if you use the hosted service.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
+
+            <h2><?php esc_html_e( 'Connection', 'titan-zero-trades-front-desk' ); ?></h2>
+            <?php if ( $status['endpoint_set'] || $status['secret_set'] ) : ?>
+                <p><?php esc_html_e( 'This site is paired with the hosted service. The secret is stored and is never shown on this screen.', 'titan-zero-trades-front-desk' ); ?></p>
+                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                    <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_DISCONNECT ); ?>" />
+                    <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Disconnect', 'titan-zero-trades-front-desk' ); ?></button>
+                        <span class="description"><?php esc_html_e( 'Removes the secret, the endpoint and consent. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
+                </form>
+            <?php else : ?>
+                <h3><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></h3>
+                <p class="description"><?php esc_html_e( 'Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect. Enter the pairing code shown by Supercharged. Each code works once.', 'titan-zero-trades-front-desk' ); ?></p>
+                <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+                    <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_CONNECT ); ?>" />
+                    <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
+                    <p>
+                        <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label><br />
+                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required disabled />
+                    </p>
+                    <p><button type="submit" class="button button-secondary" disabled><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <p class="description"><?php esc_html_e( 'Hosted pairing is not live yet, so this control stays disabled.', 'titan-zero-trades-front-desk' ); ?></p>
+                </form>
+            <?php endif; ?>
 
             <h2><?php esc_html_e( 'Hosted levels', 'titan-zero-trades-front-desk' ); ?></h2>
             <table class="widefat striped" style="max-width:52em">
                 <thead><tr>
                     <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
                     <th scope="col"><?php esc_html_e( 'What it adds', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage and fair use', 'titan-zero-trades-front-desk' ); ?></th>
                 </tr></thead>
                 <tbody>
                 <?php foreach ( $levels as $key => $level ) : ?>
                     <tr>
                         <td><?php echo esc_html( (string) $level['label'] ); ?></td>
                         <td><?php echo esc_html( (string) $level['disclosure'] ); ?></td>
+                        <td><?php echo esc_html( self::usage_text( $level ) ); ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
             </table>
 
-            <h2><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></h2>
-            <p class="description"><?php esc_html_e( 'Paste the one-time pairing code from your Titan Zero account. The code is used once and is not stored. A new pairing replaces the previous connection and asks for consent again.', 'titan-zero-trades-front-desk' ); ?></p>
-            <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-                <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_PAIR ); ?>" />
-                <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
-                <p>
-                    <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label>
-                    <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" autocomplete="off" spellcheck="false" maxlength="64" class="regular-text" <?php echo TZFD_AI_Pairing::endpoint_configured() ? '' : 'disabled="disabled"'; ?> />
-                    <button type="submit" class="button button-secondary" <?php echo TZFD_AI_Pairing::endpoint_configured() ? '' : 'disabled="disabled"'; ?>><?php esc_html_e( 'Connect account', 'titan-zero-trades-front-desk' ); ?></button>
-                </p>
-            </form>
+            <h2><?php esc_html_e( 'Usage and passthrough terms', 'titan-zero-trades-front-desk' ); ?></h2>
+            <table class="widefat striped" style="max-width:52em">
+                <thead><tr>
+                    <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage model, SMS and voice passthrough, fair use', 'titan-zero-trades-front-desk' ); ?></th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ( $levels as $key => $level ) : ?>
+                    <tr>
+                        <td><?php echo esc_html( (string) $level['label'] ); ?></td>
+                        <td><?php
+                            if ( isset( $level['usage_model'] ) && '' !== (string) $level['usage_model'] ) {
+                                echo esc_html( (string) $level['usage_model'] );
+                            } else {
+                                esc_html_e( 'No hosted usage model for this level.', 'titan-zero-trades-front-desk' );
+                            }
+                        ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
 
             <h2><?php esc_html_e( 'Hosted AI consent', 'titan-zero-trades-front-desk' ); ?></h2>
             <p class="description"><?php echo esc_html( $setup['text'] ); ?>
@@ -201,6 +251,7 @@ final class TZFD_AI_Services_Page {
                         </label>
                     <?php endforeach; ?>
                 </fieldset>
+                <p class="description"><?php echo esc_html( $setup['confirmation'] ); ?></p>
                 <p><button type="submit" class="button button-primary"><?php esc_html_e( 'Save consent', 'titan-zero-trades-front-desk' ); ?></button></p>
             </form>
             <?php if ( $status['consent'] ) : ?>
@@ -210,6 +261,29 @@ final class TZFD_AI_Services_Page {
                     <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Revoke consent', 'titan-zero-trades-front-desk' ); ?></button>
                         <span class="description"><?php esc_html_e( 'Hosted requests stop at once. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
                 </form>
+            <?php endif; ?>
+
+            <h2><?php esc_html_e( 'Connection and consent history', 'titan-zero-trades-front-desk' ); ?></h2>
+            <?php $trail = self::audit_rows( TZFD_AI_Connector::audit_log() ); ?>
+            <?php if ( array() === $trail ) : ?>
+                <p><?php esc_html_e( 'No connection or consent changes recorded.', 'titan-zero-trades-front-desk' ); ?></p>
+            <?php else : ?>
+                <table class="widefat striped" style="max-width:52em">
+                    <thead><tr>
+                        <th scope="col"><?php esc_html_e( 'When (UTC)', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Change', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Detail', 'titan-zero-trades-front-desk' ); ?></th>
+                    </tr></thead>
+                    <tbody>
+                    <?php foreach ( $trail as $row ) : ?>
+                        <tr>
+                            <td><?php echo esc_html( gmdate( 'Y-m-d H:i:s', $row['at'] ) ); ?></td>
+                            <td><?php echo esc_html( $row['label'] ); ?></td>
+                            <td><?php echo esc_html( $row['detail'] ); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
             <?php endif; ?>
 
             <h2><?php esc_html_e( 'Event log retention', 'titan-zero-trades-front-desk' ); ?></h2>
@@ -272,6 +346,21 @@ final class TZFD_AI_Services_Page {
     }
 
     /**
+     * Plain-words usage line for one level: the descriptor's usage model, including SMS and voice
+     * pass-through and fair use. A level without a usage model gets a plain Free line. Pure function.
+     *
+     * @param array $level One level from data/ai-services/capabilities-v1.json.
+     * @return string
+     */
+    public static function usage_text( array $level ) {
+        $model = isset( $level['usage_model'] ) && is_string( $level['usage_model'] ) ? trim( $level['usage_model'] ) : '';
+        if ( '' === $model ) {
+            return __( 'No hosted usage. Hosted AI stays off until you opt in.', 'titan-zero-trades-front-desk' );
+        }
+        return ucfirst( $model ) . '.';
+    }
+
+    /**
      * Keeps only scopes the connector defines for this build. Pure function, no WordPress calls.
      *
      * @param array $raw     Submitted values (untrusted).
@@ -326,6 +415,37 @@ final class TZFD_AI_Services_Page {
         return $rows;
     }
 
+    /**
+     * Turns stored audit entries into the three fields the screen shows. Pure function.
+     *
+     * @param array $entries Entries from TZFD_AI_Connector::audit_log().
+     * @return array<int, array{at:int, label:string, detail:string}>
+     */
+    public static function audit_rows( array $entries ) {
+        $labels = array(
+            'connect'         => __( 'Connected to the hosted service', 'titan-zero-trades-front-desk' ),
+            'consent_granted' => __( 'Consent granted', 'titan-zero-trades-front-desk' ),
+            'consent_revoked' => __( 'Consent revoked', 'titan-zero-trades-front-desk' ),
+            'disconnect'      => __( 'Disconnected', 'titan-zero-trades-front-desk' ),
+        );
+        $rows = array();
+        foreach ( $entries as $entry ) {
+            if ( ! is_array( $entry ) || ! isset( $entry['action'] ) || ! isset( $labels[ $entry['action'] ] ) ) {
+                continue;
+            }
+            $detail = '';
+            if ( isset( $entry['scopes'] ) && is_array( $entry['scopes'] ) ) {
+                $detail = implode( ', ', array_map( 'strval', $entry['scopes'] ) );
+            }
+            $rows[] = array(
+                'at'     => isset( $entry['at'] ) ? (int) $entry['at'] : 0,
+                'label'  => $labels[ $entry['action'] ],
+                'detail' => $detail,
+            );
+        }
+        return $rows;
+    }
+
     /** @return string[] */
     private static function allowed_scopes() {
         $disclosure = TZFD_AI_Connector::disclosure();
@@ -342,13 +462,18 @@ final class TZFD_AI_Services_Page {
             'retention_saved'   => __( 'Event log retention saved.', 'titan-zero-trades-front-desk' ),
             'retention_invalid' => __( 'Retention must be a whole number of days from 1 to 365.', 'titan-zero-trades-front-desk' ),
             'events_cleared'    => __( 'Hosted AI event log cleared.', 'titan-zero-trades-front-desk' ),
-            'pair_ok'           => __( 'Account connected. Grant consent below before any hosted request is sent.', 'titan-zero-trades-front-desk' ),
-            'pair_code_invalid' => __( 'The pairing code is not in the expected format. Copy it again from your Titan Zero account.', 'titan-zero-trades-front-desk' ),
-            'pair_code_rejected' => __( 'The pairing code was rejected. It may be expired or already used. Create a new code and try again.', 'titan-zero-trades-front-desk' ),
-            'pair_not_configured' => __( 'Hosted pairing is not available on this site yet. Nothing was sent.', 'titan-zero-trades-front-desk' ),
-            'pair_busy'         => __( 'Another pairing is in progress. Wait a minute and try again.', 'titan-zero-trades-front-desk' ),
-            'pair_failed'       => __( 'The account could not be connected. The previous connection, if any, is unchanged. Try again later.', 'titan-zero-trades-front-desk' ),
+            'connect_saved'     => __( 'Hosted AI service connected. Consent is needed again before any hosted request is sent.', 'titan-zero-trades-front-desk' ),
+            'connect_invalid'   => __( 'Connection not saved. Check the pairing code and try again. Your previous connection, if any, is unchanged.', 'titan-zero-trades-front-desk' ),
+            'pair_off'          => __( 'Hosted account pairing is not available on this site yet. Nothing was sent.', 'titan-zero-trades-front-desk' ),
+            'pair_offline'      => __( 'Could not reach the hosted service, or another pairing is in progress. Your previous connection, if any, is unchanged. Try again later.', 'titan-zero-trades-front-desk' ),
+            'disconnected'      => __( 'Hosted AI disconnected. The secret, endpoint and consent were removed. Local features are unchanged.', 'titan-zero-trades-front-desk' ),
         );
+    }
+
+    /** Reads one submitted text field. Anything that is not a string (for example an array) reads as empty. */
+    private static function post_string( $key ) {
+        $raw = isset( $_POST[ $key ] ) ? wp_unslash( $_POST[ $key ] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing
+        return is_string( $raw ) ? trim( $raw ) : '';
     }
 
     /** Capability and nonce check for every connector form. Stops the request when either fails. */

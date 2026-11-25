@@ -14,7 +14,7 @@ final class TZFD_Lead_Intake {
 
     const HOOK = 'tz_builder_lead_captured';
 
-    /** Called once from tz_fd_boot(), after Workspace is confirmed. */
+    /** Called once from tzfd_boot(), after Workspace is confirmed. */
     public static function register() {
         add_action( self::HOOK, array( __CLASS__, 'receive' ), 10, 1 );
         add_shortcode( 'tzfd_enquiry_form', array( __CLASS__, 'shortcode' ) );
@@ -66,6 +66,12 @@ final class TZFD_Lead_Intake {
         $ip_hash = hash_hmac( 'sha256', sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ?? '' ) ), wp_salt( 'auth' ) );
         $saved = self::receive( array( 'company_id' => $company, 'name' => $name, 'email' => $email, 'phone' => sanitize_text_field( wp_unslash( $_POST['phone'] ?? '' ) ), 'enquiry' => $message, 'source' => 'website-form', 'triage_ip_hash' => $ip_hash, 'privacy_consent_utc' => gmdate( 'Y-m-d H:i:s' ) ) );
         if ( ! $saved ) { wp_die( esc_html__( 'Your enquiry could not be saved. Please contact us directly.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) ); }
+        // First customer contact: write the greeting if none is saved yet (owner decision on #400, 2026-11-23).
+        // A greeting the administrator already has is never replaced, and nothing is written without a business name.
+        require_once __DIR__ . '/class-tzfd-ai-setup-check.php';
+        $profile  = TZFD_Scoped_Store::get( 'tz_fd_business_profile', array(), $company );
+        $greeting = TZFD_Ai_Setup_Check::first_contact_greeting( TZFD_Scoped_Store::get( 'tz_fd_ai_greeting', '', $company ), is_array( $profile ) ? (string) ( $profile['name'] ?? '' ) : '' );
+        if ( null !== $greeting ) { TZFD_Scoped_Store::update( 'tz_fd_ai_greeting', $greeting, $company ); }
         $referer = wp_get_referer();
         wp_safe_redirect( add_query_arg( 'tzfd_enquiry_sent', '1', $referer ? $referer : home_url( '/' ) ) );
         exit;

@@ -113,7 +113,8 @@ else if (isset($_POST['delmark']) && tzfd_request_text( 'post', 'delmark' ) != '
     $tzfd_delete_result = TZFD_Booking_Delete_Service::delete_selected( $tzfd_selected_ids, $this->item, (int) TZFD_Scoped_Store::company_id(), $wpdb );
     $tzfd_message = TZFD_Admin_Action_Result::bulk_delete_message( $tzfd_delete_result );
     if ( $tzfd_delete_result['deleted'] > 0 ) {
-        do_action( 'tz_fd_cache_clean', $this->item );
+        do_action( 'tzfd_cache_clean', $this->item );
+        do_action( 'tz_fd_cache_clean', $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
     }
 }
 else if (isset($_POST['del']) && tzfd_request_text( 'post', 'del' ) == 'all')
@@ -131,7 +132,8 @@ else if (isset($_POST['del']) && tzfd_request_text( 'post', 'del' ) == 'all')
             $tzfd_message = __( 'Unable to delete bookings; the database did not confirm the operation.', 'titan-zero-trades-front-desk' );
         } else {
             $tzfd_message = __( 'All selected bookings deleted', 'titan-zero-trades-front-desk' );
-            do_action( 'tz_fd_cache_clean', $this->item );
+            do_action( 'tzfd_cache_clean', $this->item );
+            do_action( 'tz_fd_cache_clean', $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         }
     } else {
         $tzfd_message = __( 'The business context is unavailable; no bookings were deleted.', 'titan-zero-trades-front-desk' );
@@ -146,7 +148,8 @@ else if (isset($_POST['ld']) && tzfd_request_text( 'post', 'ld' ) != '')
     );
     $tzfd_message = TZFD_Admin_Action_Result::single_delete_message( $tzfd_delete_result );
     if ( $tzfd_delete_result['deleted'] > 0 ) {
-        do_action( 'tz_fd_cache_clean', $this->item );
+        do_action( 'tzfd_cache_clean', $this->item );
+        do_action( 'tz_fd_cache_clean', $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
     }
 }
 else if (isset($_POST['ud']) && tzfd_request_text( 'post', 'ud' ) != '')
@@ -406,7 +409,9 @@ $tzfd_nonce = wp_create_nonce( 'tz_fd_actions_booking' );
                         }
                         // Never reverse HTML escaping for stored messages. Any genuine image markup must be independently validated by wp_kses().
                         echo '<div class="tzfd-appointment-header">'; // style="display:none"
-                        $tzfd_data = str_replace('<br /><br />', '</div><div>',$this->filter_allowed_tags(apply_filters( 'tz_fd_booking_orders_item', $tzfd_data, $tzfd_posted_data ))); 
+                        $tzfd_filtered = apply_filters( 'tzfd_booking_orders_item', $tzfd_data, $tzfd_posted_data );
+                        $tzfd_filtered = apply_filters( 'tz_fd_booking_orders_item', $tzfd_filtered, $tzfd_posted_data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+                        $tzfd_data = str_replace('<br /><br />', '</div><div>',$this->filter_allowed_tags($tzfd_filtered));
 
                         $tzfd_appts = "";
 

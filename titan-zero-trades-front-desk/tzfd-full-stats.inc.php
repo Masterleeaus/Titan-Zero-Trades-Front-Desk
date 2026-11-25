@@ -90,7 +90,7 @@ foreach($tzfd_local_rows as $tzfd_item)
 }
 
 
-function tz_fd_stats_get_monthly($tzfd_arr, $is_incoming = false)
+function tzfd_stats_get_monthly($tzfd_arr, $is_incoming = false)
 {
     $str = '';
     $tzfd_dt = ($is_incoming ? strtotime("-11 months") : time());
@@ -105,7 +105,7 @@ function tz_fd_stats_get_monthly($tzfd_arr, $is_incoming = false)
     }   
     echo ' x="'.esc_attr(join(",", $x)).'" y="'.esc_attr(join(",", $y)).'" '; 
 }
-function tz_fd_stats_get_weekly($tzfd_arr, $is_incoming = false)
+function tzfd_stats_get_weekly($tzfd_arr, $is_incoming = false)
 {
     $str = '';
     $tzfd_dt = ($is_incoming ? strtotime("-11 weeks") : time());
@@ -119,7 +119,7 @@ function tz_fd_stats_get_weekly($tzfd_arr, $is_incoming = false)
     }   
     echo ' x="'.esc_attr(join(",", $x)).'" y="'.esc_attr(join(",", $y)).'" ';
 }
-function tz_fd_stats_get_daily($tzfd_arr, $is_incoming = false)
+function tzfd_stats_get_daily($tzfd_arr, $is_incoming = false)
 {
     $str = '';
     $tzfd_dt = ($is_incoming ? strtotime("-29 days") : time());
@@ -148,7 +148,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Incoming - Monthly Stats (lastest 12 months)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartMonthlyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_monthly($tzfd_monthly_incoming, true)); ?> ></canvas>
+            <canvas id="chartMonthlyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_monthly($tzfd_monthly_incoming, true)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -158,7 +158,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Incoming - Weekly Stats (lastest 12 weeks)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartWeeklyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_weekly($tzfd_weekly_incoming, true)); ?> ></canvas>
+            <canvas id="chartWeeklyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_weekly($tzfd_weekly_incoming, true)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -168,7 +168,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Daily Stats(next 30 days)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartDailyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_daily($tzfd_daily_incoming, true)); ?>  ></canvas>
+            <canvas id="chartDailyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_daily($tzfd_daily_incoming, true)); ?>  ></canvas>
     	</div>
     </div> 
   </div> 
@@ -182,7 +182,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Monthly Stats (next 12 months)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartMonthly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_monthly($tzfd_monthly)); ?> ></canvas>
+            <canvas id="chartMonthly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_monthly($tzfd_monthly)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -192,7 +192,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Weekly Stats (next 12 weeks)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartWeekly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_weekly($tzfd_weekly)); ?> ></canvas>
+            <canvas id="chartWeekly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_weekly($tzfd_weekly)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -202,7 +202,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Daily Stats(next 30 days)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartDaily" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_daily($tzfd_daily)); ?>  ></canvas>
+            <canvas id="chartDaily" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_daily($tzfd_daily)); ?>  ></canvas>
     	</div>
     </div> 
   </div> 

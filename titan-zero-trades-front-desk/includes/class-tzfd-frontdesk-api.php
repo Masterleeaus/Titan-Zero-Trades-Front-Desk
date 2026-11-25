@@ -295,8 +295,10 @@ final class TZFD_FrontDesk {
             return new WP_Error( 'tzfd_commit_outcome_unknown', __( 'Booking update outcome is uncertain. Refresh the booking before attempting another change.', 'titan-zero-trades-front-desk' ), array( 'status' => 503 ) );
         }
 
-        do_action( 'tz_fd_update_status', $booking_id, $stored );
-        do_action( 'titan_zero_front_desk_booking_status_persisted', $booking_id, $stored, '-1' );
+        do_action( 'tzfd_update_status', $booking_id, $stored );
+        do_action( 'tz_fd_update_status', $booking_id, $stored ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        do_action( 'tzfd_booking_status_persisted', $booking_id, $stored, '-1' );
+        do_action( 'titan_zero_front_desk_booking_status_persisted', $booking_id, $stored, '-1' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         return array( 'booking_id' => $booking_id, 'status' => $label, 'changed' => true );
     }

@@ -28,7 +28,7 @@ if( !class_exists( 'TZFD_FollowUp' ) )
 			$this->description = $this->tr_apply("The add-on emails customers a follow-up a set number of hours after each appointment ends.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data', array( $this, 'schedule_followups' ), 40, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'schedule_followups' ), 40, 1 );
             add_action( self::HOOK, array( $this, 'send_followup' ), 10, 3 );
         } // End __construct
 

@@ -2336,7 +2336,7 @@ public function render_form_admin( $atts ) {
         // the appointment already exists, and a retry could create a duplicate.
         try {
             TZFD_Post_Commit_Dispatch::run_booking_created(
-                'tz_fd_process_data', array( &$tzfd_local_params ), (int) $item_number
+                'tzfd_process_data', array( &$tzfd_local_params ), (int) $item_number
             );
         } finally {
             remove_filter( 'tzfd_booking_created_payload', $titan_zero_front_desk_request_event, PHP_INT_MAX );

@@ -117,7 +117,7 @@ final class TZFD_Cancel_Assistant_API {
 
     /** Policy text from numbers the owner sets through the filter. Falls back to "contact us" when unset. */
     public static function policy_text() {
-        $hours = apply_filters( self::POLICY_FILTER, array() );
+        $hours = apply_filters( 'tzfd_cancel_policy_hours', array() );
         if ( ! is_array( $hours ) ) { $hours = array(); }
         return TZFD_Cancel_Reschedule_Assistant::policy_summary( $hours );
     }

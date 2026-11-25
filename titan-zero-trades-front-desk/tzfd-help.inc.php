@@ -238,7 +238,7 @@ $tzfd_help_sections = array(
             array( __( 'How can another system read a booking’s status?', 'titan-zero-trades-front-desk' ),
                    __( 'Send a GET request to <code>/wp-json/titan-zero-front-desk/v1/bookings/{id}</code>. It needs an administrator login and returns the status only. Customer and appointment details are left out on purpose.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'Which actions send WebHook events?', 'titan-zero-trades-front-desk' ),
-                   __( 'A new booking fires <code>tz_fd_process_data</code>, which sends booking.created. A status change fires <code>tzfd_update_status</code>, which sends booking.status_update_attempted.', 'titan-zero-trades-front-desk' ) ),
+                   __( 'A new booking fires <code>tzfd_process_data</code>, which sends booking.created. A status change fires <code>tzfd_update_status</code>, which sends booking.status_update_attempted.', 'titan-zero-trades-front-desk' ) ),
         ),
     ),
 

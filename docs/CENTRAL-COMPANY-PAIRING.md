@@ -44,6 +44,14 @@ Before any hosted request, `TZFD_AI_Connector` calls `TZFD_Central_Tenant::resol
 
 The pairing assertion itself is checked for: signature (HMAC-SHA256 over timestamp, nonce and raw body), timestamp within 300 seconds, nonce echoed in the signed body, contract id, site match, company UUID, issue time not in the future, lifetime of at most one hour, required fields, and no replay.
 
+## 3a. Pairing handshake and per-site secret (issue #347, owner decision)
+
+- Request: `POST` JSON `{"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. The pairing code is single use and is sent once.
+- Response: HTTP 200 with a JSON body that carries exactly the seven assertion fields (`contract`, `site`, `company_uuid`, `operations`, `nonce`, `issued_at`, `expires_at`). The response carries no other field: a missing field, an extra field or a `secret` field is refused. The response is signed in the `X-TZFD-Timestamp`, `X-TZFD-Nonce` and `X-TZFD-Signature` headers. The `X-TZFD-Nonce` must echo the request nonce.
+- The fields and the signature are checked by `TZFD_Central_Tenant::connect()`. Only a verified assertion is stored. A refused exchange leaves the existing pairing and credential unchanged.
+- Per-site secret: delivered out of band through the secret store, provisioned by the Central operator. It is not in the pairing response body, not in any header and not in the request. The plugin reads it with `TZFD_Central_Tenant::provisioned_secret()` from the constant `TZFD_CENTRAL_SITE_SECRET` or the filter `tzfd_central_site_secret`. It must be at least 32 characters. Without it, pairing sends nothing and returns `secret_missing`.
+- The secret value must never appear in code, tests, docs, PR text or comments. Tests generate it at run time.
+
 ## 4. Setup (site owner)
 
 Status: there is no admin screen for pairing yet. The connect call exists in code (`TZFD_Central_Tenant::connect()`) and is tested, but no page calls it.
@@ -80,7 +88,8 @@ Disconnecting removes the pairing and credential only. Bookings, customers, sett
 | Endpoint URL decision recorded | Done (section 6) |
 | Pairing endpoint constant or filter with https-only validation, off by default | Open in PR #427 (not merged) |
 | Pairing handshake and entitlement fetch, admin connect and disconnect | Open in PR #427 and issue #458 |
-| Hosted Central contract (#186), signing keys, per-site secret issuance | Needs owner sign-off; not ticked |
+| Hosted Central contract (#186) text and signing keys | Needs owner sign-off; not ticked |
+| Per-site secret issuance | Out of band through the secret store, provisioned by the Central operator (section 3a). Decided by the owner on #347. |
 | Live end-to-end test against the hosted service | Needs the hosted service; issue #458 |
 
 ## 8. Task breakdown for #451

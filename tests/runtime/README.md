@@ -30,7 +30,7 @@ not counted as a pass).
 | `runtime-tests.php` | Privacy export and erase, and signed missed-call requests (21 checks). |
 | `http-auth-tests.sh` | Unauthenticated refusals, plus logged-in admin and subscriber checks for REST nonce and capability. A route that is not registered is reported as FAIL, since a 404 there exercises no authorization. Set `SECRET` to the stored missed-call inbound secret to also check that a valid signature is accepted once and its replay refused. |
 | `uninstall-wipe-check.php` | Destructive: opt-in uninstall (`TZ_DELETE_DATA_ON_UNINSTALL`), run in its own process. |
-| `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. |
+| `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. Also checks that the base holds no location registry, writes one on the 3.x side after the upgrade (issue #369), and checks it reads back byte-identical after the downgrade. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |
 
 ## Results on main with the #370 harness, 2026-11-23 (issue #370; PHP 8.3.6, MariaDB 10.11.14, WP-CLI 2.12.0)

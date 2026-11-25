@@ -119,6 +119,8 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --
 
 echo "--- oversell through the public form over HTTP (oversell-http-tests.sh, issue #389 A18)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/oversell-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- public booking with name and email only over HTTP (public-booking-name-http-tests.sh, issue #420)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/public-booking-name-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- customer cancel end to end over HTTP (customer-cancel-http-tests.sh, issue #334 B13)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-cancel-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- portal session switching (portal-session-switch-tests.php, issue #334)"

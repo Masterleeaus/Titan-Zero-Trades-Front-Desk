@@ -29,6 +29,8 @@ not counted as a pass).
 | `wp-runtime-tests.php` | Real checks: booking create, slot holds, capacity lock, reschedule and cancel tokens, reminder outbox, capability, uninstall keep path, multisite detection. |
 | `runtime-tests.php` | Privacy export and erase, and signed missed-call requests (21 checks). |
 | `http-auth-tests.sh` | Unauthenticated refusals, plus logged-in admin and subscriber checks for REST nonce and capability. A route that is not registered is reported as FAIL, since a 404 there exercises no authorization. Set `SECRET` to the stored missed-call inbound secret to also check that a valid signature is accepted once and its replay refused. |
+| `public-booking-name-http-tests.sh` | Public POST with name and email only (no phone) through the form handler, then the stored row and the bookings list (issue #420). Reports a GAP, and sends nothing, when the calendar's CAPTCHA is on. |
+| `public-booking-name-state.php` | Helper for the script above: fixture setup, lookup and restore. Never turns the CAPTCHA off. |
 | `uninstall-wipe-check.php` | Destructive: opt-in uninstall (`TZ_DELETE_DATA_ON_UNINSTALL`), run in its own process. |
 | `upgrade-from-3.0.128.sh` | Installs the base release (default: Front Desk 2.0.1, the release ZIP committed at `4e0c3b3`, read with `git show`), swaps in this checkout, reactivates, checks the header version and the 3.x tables, then downgrades and checks again. Seeds and verifies bookings only when the base has the 3.x booking schema. Also checks that the base holds no location registry, writes one on the 3.x side after the upgrade (issue #369), and checks it reads back byte-identical after the downgrade. |
 | `upgrade-seed-verify.php` | The seed and verify steps used by the upgrade script. |

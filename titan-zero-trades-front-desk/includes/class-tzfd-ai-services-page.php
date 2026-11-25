@@ -230,9 +230,6 @@ final class TZFD_AI_Services_Page {
                     <?php endforeach; ?>
                 </fieldset>
                 <p class="description"><?php echo esc_html( $setup['confirmation'] ); ?></p>
-                <?php if ( ! empty( $setup['owner_review'] ) ) : ?>
-                    <p class="description"><em><?php esc_html_e( 'This wording is a proposed default and has not yet been signed off by the plugin owner.', 'titan-zero-trades-front-desk' ); ?></em></p>
-                <?php endif; ?>
                 <p><button type="submit" class="button button-primary"><?php esc_html_e( 'Save consent', 'titan-zero-trades-front-desk' ); ?></button></p>
             </form>
             <?php if ( $status['consent'] ) : ?>

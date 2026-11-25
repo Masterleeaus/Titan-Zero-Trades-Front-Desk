@@ -33,7 +33,7 @@ final class TZFD_Hosted_AI_Connector {
 
     /** The connector object, or null. The free build registers none. */
     public static function connector() {
-        $connector = apply_filters( self::FILTER, null );
+        $connector = apply_filters( 'tzfd_hosted_ai_connector', null );
         return is_object( $connector ) && method_exists( $connector, 'send' ) ? $connector : null;
     }
 

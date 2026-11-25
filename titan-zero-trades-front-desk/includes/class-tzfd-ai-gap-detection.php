@@ -76,7 +76,7 @@ final class TZFD_Ai_Gap_Detection {
 				}
 			}
 		}
-		$filtered = apply_filters( self::VOCAB_FILTER, $vocab );
+		$filtered = apply_filters( 'tzfd_ai_gap_vocabulary', $vocab );
 		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : array();
 	}
 
@@ -203,7 +203,7 @@ final class TZFD_Ai_Gap_Detection {
 
 	/** Age in days before approved content is reported as outdated. Clamped to 1..3650. */
 	public static function outdated_days() {
-		$days = apply_filters( self::OUTDATED_FILTER, self::OUTDATED_DAYS );
+		$days = apply_filters( 'tzfd_ai_outdated_days', self::OUTDATED_DAYS );
 		return max( 1, min( 3650, (int) $days ) );
 	}
 

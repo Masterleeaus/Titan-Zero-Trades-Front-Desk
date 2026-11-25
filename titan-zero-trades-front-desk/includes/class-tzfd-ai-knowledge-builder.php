@@ -66,7 +66,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$all[ $cid ] = $co;
 		self::save( $all );
 		if ( $unpublished ) {
-			do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+			do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		}
 		return array( 'ok' => true, 'id' => $id, 'status' => $entry['status'] );
 	}
@@ -96,7 +96,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$co['entries'][ $entry_id ] = self::with_revision( $entry, (int) $actor, (int) $now );
 		$all[ $cid ] = $co;
 		self::save( $all );
-		do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+		do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		return array( 'ok' => true, 'version' => $co['version'] );
 	}
 
@@ -132,7 +132,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$all[ $cid ] = $co;
 		self::save( $all );
 		if ( $was_published ) {
-			do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+			do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		}
 		return array( 'ok' => true, 'status' => 'draft', 'version' => $co['version'] );
 	}

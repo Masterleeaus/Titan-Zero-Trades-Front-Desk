@@ -35,7 +35,7 @@ final class TZFD_Service_Finder_Wiring {
 		$services = class_exists( 'TZFD_Local_Services' )
 			? TZFD_Local_Services::list( array( 'limit' => 200 ) )
 			: array();
-		$services = apply_filters( self::SERVICES_HOOK, $services );
+		$services = apply_filters( 'tzfd_service_finder_services', $services );
 		return is_array( $services ) ? $services : array();
 	}
 

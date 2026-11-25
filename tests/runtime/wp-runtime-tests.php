@@ -149,7 +149,8 @@ if ( is_array( $tzfd_handle ) ) {
 $tzfd_rows = TZFD_Booking_Capacity_Reader::all_for_calendar( $tzfd_form, $tzfd_company );
 tzfd_rt_ok( 'A17 capacity reader returns every reservation for the calendar, not an empty set on error', is_array( $tzfd_rows ) && count( $tzfd_rows ) >= 1, 'rows=' . ( is_array( $tzfd_rows ) ? count( $tzfd_rows ) : 'null' ) );
 
-tzfd_rt_skip( 'A18 end-to-end oversell prevention through the public form', 'the full submission pipeline (form, capacity check, confirmation) is not driven from this harness; primitives are tested above' );
+// A18 (oversell through the public form, end to end) runs over HTTP in oversell-http-tests.sh, which CI runs
+// after this file. It is not a SKIP here any more (issue #389).
 
 /* ------------------------------------------------------------------ B. Reschedule and cancel tokens */
 
@@ -174,7 +175,9 @@ $tzfd_cas    = TZFD_Customer_Cancellation::compare_and_swap( $wpdb, $tzfd_id, 's
 $tzfd_after  = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw column read, bypasses the object cache
 tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . wp_json_encode( $tzfd_cas ) );
 
-tzfd_rt_skip( 'B13 customer cancel and reschedule end to end', 'needs the stored booking with complete form data and mail capture; token and state rules are tested above' );
+// B13 cancel end to end over HTTP (with the customer outbox) runs in customer-cancel-http-tests.sh, which CI runs
+// after this file (issue #389). Reschedule end to end is not driven over HTTP yet, so it stays a SKIP.
+tzfd_rt_skip( 'B13 customer reschedule end to end', 'the reschedule preview and confirm over HTTP (customer-reschedule flow) is not driven yet; cancel is driven in customer-cancel-http-tests.sh' );
 
 /* ------------------------------------------------------------------ C. Reminders and the outbox */
 

@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-11-18T01:19:05+00:00\n"
+"POT-Creation-Date: 2026-11-22T19:53:39+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: titan-zero-trades-front-desk\n"
@@ -17,9 +17,9 @@ msgstr ""
 #. Plugin Name of the plugin
 #: titan-zero-front-desk.php
 #: addons/bookings/dashboard-box.addon.php:147
-#: includes/class-tzfd-admin-menu.php:135
+#: includes/class-tzfd-admin-menu.php:138
 #: includes/class-tzfd-privacy-exporter.php:45
-#: tzfd-bootstrap.inc.php:219
+#: tzfd-bootstrap.inc.php:220
 msgid "Scheduling & Enquiries Manager"
 msgstr ""
 
@@ -87,6 +87,7 @@ msgstr ""
 #: addons/bookings/icalexport.addon.php:324
 #: addons/bookings/icalexport.addon.php:349
 #: addons/bookings/icalexport.addon.php:375
+#: includes/class-tzfd-action-receipt-viewer.php:154
 #: includes/class-tzfd-operations-monitor.php:87
 #: includes/class-tzfd-settings-extras.php:93
 #: tzfd-admin-int.inc.php:409
@@ -104,9 +105,10 @@ msgid "No"
 msgstr ""
 
 #: addons/bookings/calendarless-interface.addon.php:108
-#: addons/bookings/dashboard-box.addon.php:424
+#: addons/bookings/dashboard-box.addon.php:427
 #: addons/bookings/icalexport.addon.php:323
 #: addons/bookings/icalexport.addon.php:376
+#: includes/class-tzfd-action-receipt-viewer.php:153
 #: includes/class-tzfd-operations-monitor.php:87
 #: tzfd-admin-int.inc.php:408
 #: tzfd-admin-int.inc.php:438
@@ -114,8 +116,8 @@ msgstr ""
 #: tzfd-admin-int.inc.php:554
 #: tzfd-admin-int.inc.php:602
 #: tzfd-admin-int.inc.php:682
-#: tzfd-main-class.inc.php:644
-#: tzfd-main-class.inc.php:3715
+#: tzfd-main-class.inc.php:648
+#: tzfd-main-class.inc.php:3746
 #: tzfd-settings.inc.php:130
 #: tzfd-settings.inc.php:143
 #: tzfd-settings.inc.php:241
@@ -199,12 +201,12 @@ msgid "Save settings"
 msgstr ""
 
 #: addons/bookings/dashboard-box.addon.php:185
-#: includes/class-tzfd-booking-view.php:360
+#: includes/class-tzfd-booking-view.php:362
 msgid "Today"
 msgstr ""
 
 #: addons/bookings/dashboard-box.addon.php:186
-#: includes/class-tzfd-admin-menu.php:594
+#: includes/class-tzfd-admin-menu.php:597
 msgid "Next 7 days"
 msgstr ""
 
@@ -220,7 +222,7 @@ msgstr ""
 
 #. translators: %s: amount booked today.
 #: addons/bookings/dashboard-box.addon.php:211
-#: includes/class-tzfd-admin-menu.php:476
+#: includes/class-tzfd-admin-menu.php:479
 msgid "Add booking"
 msgstr ""
 
@@ -230,17 +232,18 @@ msgstr ""
 
 #: addons/bookings/dashboard-box.addon.php:234
 #: addons/core/logs.addon.php:103
-#: includes/class-tzfd-booking-view.php:415
+#: includes/class-tzfd-action-receipt-viewer.php:146
+#: includes/class-tzfd-booking-view.php:417
 msgid "Time"
 msgstr ""
 
 #: addons/bookings/dashboard-box.addon.php:234
-#: includes/class-tzfd-admin-menu.php:434
-#: includes/class-tzfd-admin-menu.php:597
-#: includes/class-tzfd-admin-menu.php:604
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-booking-view.php:415
-#: includes/class-tzfd-enquiry-triage.php:289
+#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:600
+#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-booking-view.php:417
+#: includes/class-tzfd-enquiry-triage.php:290
 #: includes/class-tzfd-pipeline-screen.php:250
 #: tzfd-admin-int-schedule.inc.php:155
 #: ui-pack/ui/tz-app-front-desk-reads.php:61
@@ -260,7 +263,7 @@ msgstr ""
 msgid "Date"
 msgstr ""
 
-#: addons/bookings/dashboard-box.addon.php:301
+#: addons/bookings/dashboard-box.addon.php:304
 #: addons/core/onboarding.addon.php:916
 #: addons/core/onboarding.addon.php:944
 #: addons/core/onboarding.addon.php:983
@@ -268,15 +271,15 @@ msgstr ""
 #: addons/core/onboarding.addon.php:1001
 #: addons/core/onboarding.addon.php:1011
 #: addons/core/onboarding.addon.php:1029
-#: includes/class-tzfd-booking-view.php:361
+#: includes/class-tzfd-booking-view.php:363
 msgid "Next"
 msgstr ""
 
-#: addons/bookings/dashboard-box.addon.php:301
+#: addons/bookings/dashboard-box.addon.php:304
 msgid "upcoming appointments"
 msgstr ""
 
-#: addons/bookings/dashboard-box.addon.php:369
+#: addons/bookings/dashboard-box.addon.php:372
 msgid "No upcoming appointments found"
 msgstr ""
 
@@ -507,27 +510,27 @@ msgid "Event"
 msgstr ""
 
 #: addons/core/logs.addon.php:103
-#: includes/class-tzfd-admin-menu.php:604
-#: includes/class-tzfd-enquiry-triage.php:254
+#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-enquiry-triage.php:255
 #: includes/class-tzfd-pipeline-screen.php:247
 msgid "Booking"
 msgstr ""
 
 #: addons/core/logs.addon.php:103
-#: includes/class-tzfd-admin-menu.php:142
-#: includes/class-tzfd-admin-menu.php:604
-#: includes/class-tzfd-admin-menu.php:921
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-booking-view.php:327
-#: includes/class-tzfd-booking-view.php:370
-#: includes/class-tzfd-booking-view.php:415
+#: includes/class-tzfd-admin-menu.php:145
+#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-admin-menu.php:924
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-booking-view.php:329
+#: includes/class-tzfd-booking-view.php:372
+#: includes/class-tzfd-booking-view.php:417
 #: tzfd-help.inc.php:359
 #: ui-pack/ui/tz-app-front-desk.php:26
 msgid "Calendar"
 msgstr ""
 
 #: addons/core/logs.addon.php:103
-#: includes/class-tzfd-staff-access-admin.php:131
+#: includes/class-tzfd-staff-access-admin.php:143
 msgid "User"
 msgstr ""
 
@@ -567,11 +570,15 @@ msgstr ""
 #: addons/core/onboarding.addon.php:70
 #: addons/core/onboarding.addon.php:71
 #: addons/core/onboarding.addon.php:843
-#: includes/class-tzfd-admin-menu.php:173
-#: includes/class-tzfd-admin-menu.php:331
+#: includes/class-tzfd-admin-menu.php:176
+#: includes/class-tzfd-admin-menu.php:334
 #: tzfd-help.inc.php:338
 #: tzfd-help.inc.php:370
 msgid "Preset Setup"
+msgstr ""
+
+#: addons/core/onboarding.addon.php:256
+msgid "Missed-call settings are not available in this build."
 msgstr ""
 
 #: addons/core/onboarding.addon.php:347
@@ -642,6 +649,10 @@ msgstr ""
 msgid "Paste a booking address that starts with https://."
 msgstr ""
 
+#: addons/core/onboarding.addon.php:633
+msgid "Complete the details step before finishing setup."
+msgstr ""
+
 #: addons/core/onboarding.addon.php:661
 msgid "The booking page could not be created. Try again, or choose a page you already have."
 msgstr ""
@@ -655,6 +666,7 @@ msgid "Create a booking page for me. It will be published as \"Book an appointme
 msgstr ""
 
 #: addons/core/onboarding.addon.php:737
+#: addons/core/onboarding.addon.php:738
 msgid "Use a page I already have on this website:"
 msgstr ""
 
@@ -675,6 +687,7 @@ msgid "Only used when the booking page is created. For a page you already have, 
 msgstr ""
 
 #: addons/core/onboarding.addon.php:749
+#: addons/core/onboarding.addon.php:750
 msgid "My booking page is somewhere else. Paste its web address:"
 msgstr ""
 
@@ -790,10 +803,12 @@ msgid "Other booking plugins on this site (Bookly, Amelia, LatePoint, Booknetic)
 msgstr ""
 
 #: addons/core/onboarding.addon.php:925
+#: addons/core/onboarding.addon.php:931
 msgid "A CSV file (name, price)"
 msgstr ""
 
 #: addons/core/onboarding.addon.php:926
+#: addons/core/onboarding.addon.php:932
 msgid "A web page (list items are read)"
 msgstr ""
 
@@ -835,6 +850,7 @@ msgstr ""
 
 #: addons/core/onboarding.addon.php:964
 #: includes/class-tzfd-ai-faq-suggestions.php:119
+#: includes/class-tzfd-ai-gap-page.php:183
 msgid "Question"
 msgstr ""
 
@@ -872,12 +888,14 @@ msgid "Example prices from the trade pack, per unit. Enter numbers only. You can
 msgstr ""
 
 #: addons/core/onboarding.addon.php:976
+#: addons/core/onboarding.addon.php:978
 #: tzfd-admin-int-report.inc.php:279
 #: tzfd-admin-int-schedule.inc.php:122
 msgid "Item"
 msgstr ""
 
 #: addons/core/onboarding.addon.php:976
+#: addons/core/onboarding.addon.php:979
 msgid "Price per unit"
 msgstr ""
 
@@ -986,7 +1004,7 @@ msgid "straight away"
 msgstr ""
 
 #: addons/core/onboarding.addon.php:1036
-#: includes/class-tzfd-client-portal.php:588
+#: includes/class-tzfd-client-portal.php:617
 msgid "Booking page:"
 msgstr ""
 
@@ -1051,499 +1069,499 @@ msgstr ""
 msgid "Open Industry packs"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:183
+#: addons/core/vertical-packs.addon.php:184
 msgid "How do you explain your prices to customers?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:183
+#: addons/core/vertical-packs.addon.php:184
 msgid "We confirm the exact price with you before any work starts."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:183
+#: addons/core/vertical-packs.addon.php:184
 msgid "Write one or two sentences about how you quote. Example: We confirm the exact price with you before any work starts."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:184
+#: addons/core/vertical-packs.addon.php:185
 msgid "How much notice must customers give to cancel?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:184
+#: addons/core/vertical-packs.addon.php:185
 msgid "Customers need to give us [number] hours' notice to cancel a booking."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:184
+#: addons/core/vertical-packs.addon.php:185
 msgid "Write the notice time in hours. Example: [number] hours' notice before the booked time."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:185
+#: addons/core/vertical-packs.addon.php:186
 msgid "Do you charge a callout or travel fee?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:185
+#: addons/core/vertical-packs.addon.php:186
 msgid "We confirm any callout or travel fee with you when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:185
+#: addons/core/vertical-packs.addon.php:186
 msgid "Write yes or no, then the fee and what it covers. Example: Yes, the callout fee is [amount] and covers [what it covers]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:186
+#: addons/core/vertical-packs.addon.php:187
 msgid "Do you take a deposit when someone books?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:186
+#: addons/core/vertical-packs.addon.php:187
 msgid "First-time bookings may require a deposit, and we tell you the amount when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:186
+#: addons/core/vertical-packs.addon.php:187
 msgid "Write yes or no, then what the deposit covers. Example: Yes, a deposit of [amount] is due when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:187
+#: addons/core/vertical-packs.addon.php:188
 msgid "What happens if a customer is not happy with the work?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:187
+#: addons/core/vertical-packs.addon.php:188
 msgid "We explain how we handle any problem with the work when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:187
+#: addons/core/vertical-packs.addon.php:188
 msgid "Write how you handle complaints about the work. Example: Tell us what is not right, and we will [what you will do]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:188
+#: addons/core/vertical-packs.addon.php:189
 msgid "Do you give a warranty on your work?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:188
+#: addons/core/vertical-packs.addon.php:189
 msgid "We confirm our warranty terms with you before you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:188
+#: addons/core/vertical-packs.addon.php:189
 msgid "Write yes or no, then how long the warranty lasts. Example: Yes, our work is covered for [number] months."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:189
+#: addons/core/vertical-packs.addon.php:190
 msgid "Do you take emergency or after-hours calls?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:189
+#: addons/core/vertical-packs.addon.php:190
 msgid "We confirm whether we take emergency calls outside business hours when you get in touch."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:189
+#: addons/core/vertical-packs.addon.php:190
 msgid "Write yes or no, then when emergency calls are taken. Example: Yes, emergency calls are taken [days and hours]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:190
+#: addons/core/vertical-packs.addon.php:191
 msgid "Do you offer discounts or packages?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:190
+#: addons/core/vertical-packs.addon.php:191
 msgid "We may offer discounts and package pricing, and we explain any options when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:190
+#: addons/core/vertical-packs.addon.php:191
 msgid "Write yes or no, then what discounts or packages you offer. Example: Yes, we offer [discount or package] for [who it is for]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:191
+#: addons/core/vertical-packs.addon.php:192
 msgid "Do you offer a first consultation?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:191
+#: addons/core/vertical-packs.addon.php:192
 msgid "We may offer a first consultation, and we explain what it includes when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:191
+#: addons/core/vertical-packs.addon.php:192
 msgid "Write yes or no, then what a first consultation includes. Example: Yes, a first consultation lasts [length] and includes [what it includes]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:192
+#: addons/core/vertical-packs.addon.php:193
 msgid "Do you offer trial sessions?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:192
+#: addons/core/vertical-packs.addon.php:193
 msgid "We may offer trial sessions, and we explain the options when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:192
+#: addons/core/vertical-packs.addon.php:193
 msgid "Write yes or no, then what a trial session includes. Example: Yes, a trial session lasts [length] and includes [what it includes]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:193
+#: addons/core/vertical-packs.addon.php:194
 msgid "How long does a job usually take to finish?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:193
+#: addons/core/vertical-packs.addon.php:194
 msgid "We confirm the usual completion time with you when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:193
+#: addons/core/vertical-packs.addon.php:194
 msgid "Write the usual time a job takes. Example: Most jobs take [number] working days."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:194
+#: addons/core/vertical-packs.addon.php:195
 msgid "Do customers get raw or original files?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:194
+#: addons/core/vertical-packs.addon.php:195
 msgid "We confirm whether raw or original files are included when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:194
+#: addons/core/vertical-packs.addon.php:195
 msgid "Write yes or no, then how raw files are delivered. Example: Yes, raw files are delivered [how]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:195
+#: addons/core/vertical-packs.addon.php:196
 msgid "Is there a minimum job size or fee?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:195
+#: addons/core/vertical-packs.addon.php:196
 msgid "We confirm any minimum project fee with you when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:195
+#: addons/core/vertical-packs.addon.php:196
 msgid "Write yes or no, then the minimum fee. Example: Yes, the minimum fee is [amount]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:196
+#: addons/core/vertical-packs.addon.php:197
 msgid "When and how do customers pay?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:196
+#: addons/core/vertical-packs.addon.php:197
 msgid "We confirm our payment terms and any deposit with you when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:196
+#: addons/core/vertical-packs.addon.php:197
 msgid "Write when payment is due and how customers can pay. Example: Payment is due [when], by [payment methods]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:197
+#: addons/core/vertical-packs.addon.php:198
 msgid "When are you available outside normal hours?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:197
+#: addons/core/vertical-packs.addon.php:198
 msgid "We confirm our after-hours availability when you get in touch."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:197
+#: addons/core/vertical-packs.addon.php:198
 msgid "Write the days and hours you are available outside normal hours. Example: We are available [days and hours]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:198
+#: addons/core/vertical-packs.addon.php:199
 msgid "Do you offer appraisals and listings?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:198
+#: addons/core/vertical-packs.addon.php:199
 msgid "We confirm the appraisal and listing options available when you call."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:198
+#: addons/core/vertical-packs.addon.php:199
 msgid "Write yes or no, then what an appraisal includes. Example: Yes, an appraisal includes [what it includes]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:199
+#: addons/core/vertical-packs.addon.php:200
 msgid "Do you offer property management?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:199
+#: addons/core/vertical-packs.addon.php:200
 msgid "We confirm the property management options available when you call."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:199
+#: addons/core/vertical-packs.addon.php:200
 msgid "Write yes or no, then the management services you offer. Example: Yes, we offer [services]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:200
+#: addons/core/vertical-packs.addon.php:201
 msgid "Do you offer rate reviews?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:200
+#: addons/core/vertical-packs.addon.php:201
 msgid "We confirm the rate review process with you when you get in touch."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:200
+#: addons/core/vertical-packs.addon.php:201
 msgid "Write yes or no, then how often rates are reviewed. Example: Yes, rates are reviewed [how often]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:201
+#: addons/core/vertical-packs.addon.php:202
 msgid "Do you offer audits or reviews?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:201
+#: addons/core/vertical-packs.addon.php:202
 msgid "We confirm the audit and review options with you when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:201
+#: addons/core/vertical-packs.addon.php:202
 msgid "Write yes or no, then what an audit covers. Example: Yes, an audit covers [what it covers]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:202
+#: addons/core/vertical-packs.addon.php:203
 msgid "What are your contract terms and notice periods?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:202
+#: addons/core/vertical-packs.addon.php:203
 msgid "We confirm our contract terms and notice periods with you when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:202
+#: addons/core/vertical-packs.addon.php:203
 msgid "Write the contract length and the notice needed to end it. Example: Contracts run for [period], with [notice] to end."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:203
+#: addons/core/vertical-packs.addon.php:204
 msgid "Do you offer partner programs?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:203
+#: addons/core/vertical-packs.addon.php:204
 msgid "We confirm the partner programs we offer when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:203
+#: addons/core/vertical-packs.addon.php:204
 msgid "Write yes or no, then what the program offers. Example: Yes, our partner program offers [what it offers]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:204
+#: addons/core/vertical-packs.addon.php:205
 msgid "What qualifications and certifications do you hold?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:204
+#: addons/core/vertical-packs.addon.php:205
 msgid "We share our qualifications and certifications when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:204
+#: addons/core/vertical-packs.addon.php:205
 msgid "List your qualifications and licences. Example: We hold [qualifications or licences]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:205
+#: addons/core/vertical-packs.addon.php:206
 msgid "Do you offer a discovery session?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:205
+#: addons/core/vertical-packs.addon.php:206
 msgid "We confirm whether a discovery session is available when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:205
+#: addons/core/vertical-packs.addon.php:206
 msgid "Write yes or no, then what the session covers. Example: Yes, a discovery session covers [what it covers]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:206
+#: addons/core/vertical-packs.addon.php:207
 msgid "Do you keep a waitlist for bookings?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:206
+#: addons/core/vertical-packs.addon.php:207
 msgid "We confirm our waitlist options with you when you enquire."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:206
+#: addons/core/vertical-packs.addon.php:207
 msgid "Write yes or no, then how the waitlist works. Example: Yes, customers join the waitlist by [how]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:207
+#: addons/core/vertical-packs.addon.php:208
 msgid "Do you bill insurers or offer rebates?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:207
+#: addons/core/vertical-packs.addon.php:208
 msgid "We confirm our billing and rebate options with you when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:207
+#: addons/core/vertical-packs.addon.php:208
 msgid "Write yes or no, then which billing options you offer. Example: Yes, we bill [insurer or rebate option]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:208
+#: addons/core/vertical-packs.addon.php:209
 msgid "Do you accept health plans?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:208
+#: addons/core/vertical-packs.addon.php:209
 msgid "We confirm which health plans we accept when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:208
+#: addons/core/vertical-packs.addon.php:209
 msgid "List the health plans you accept. Example: We accept [list of health plans]."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:209
+#: addons/core/vertical-packs.addon.php:210
 msgid "How long after a job can a customer ask for a touch-up?"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:209
+#: addons/core/vertical-packs.addon.php:210
 msgid "We confirm the touch-up window for each job when you book."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:209
+#: addons/core/vertical-packs.addon.php:210
 msgid "Write how long customers have to ask for a touch-up. Example: Customers can ask for a touch-up within [period] of finishing."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:375
+#: addons/core/vertical-packs.addon.php:376
 msgid "Choose a company before you install a pack."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:377
+#: addons/core/vertical-packs.addon.php:378
 msgid "That pack could not be found. Refresh the page and try again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:492
-#: addons/core/vertical-packs.addon.php:493
-#: addons/core/vertical-packs.addon.php:640
-#: includes/class-tzfd-admin-menu.php:91
-#: includes/class-tzfd-admin-menu.php:187
-#: includes/class-tzfd-admin-menu.php:332
+#: addons/core/vertical-packs.addon.php:497
+#: addons/core/vertical-packs.addon.php:498
+#: addons/core/vertical-packs.addon.php:645
+#: includes/class-tzfd-admin-menu.php:94
+#: includes/class-tzfd-admin-menu.php:190
+#: includes/class-tzfd-admin-menu.php:335
 msgid "Industry packs"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:508
-#: addons/core/vertical-packs.addon.php:521
+#: addons/core/vertical-packs.addon.php:513
+#: addons/core/vertical-packs.addon.php:526
 msgid "Pack changes require a POST request."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:517
-#: addons/core/vertical-packs.addon.php:590
+#: addons/core/vertical-packs.addon.php:522
+#: addons/core/vertical-packs.addon.php:595
 msgid "Select a company first."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:525
-#: addons/core/vertical-packs.addon.php:580
+#: addons/core/vertical-packs.addon.php:530
+#: addons/core/vertical-packs.addon.php:585
 msgid "Conflicting pack actions."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:533
+#: addons/core/vertical-packs.addon.php:538
 msgid "Invalid or expired pack action."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:553
+#: addons/core/vertical-packs.addon.php:558
 msgid "The uploaded pack could not be deleted."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:562
-#: addons/core/vertical-packs.addon.php:576
+#: addons/core/vertical-packs.addon.php:567
+#: addons/core/vertical-packs.addon.php:581
 msgid "Uploads require a POST request."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:568
-#: addons/core/vertical-packs.addon.php:585
+#: addons/core/vertical-packs.addon.php:573
+#: addons/core/vertical-packs.addon.php:590
 msgid "Invalid or expired upload request."
 msgstr ""
 
 #. translators: 1: industry pack name, 2: number of questions and answers added, 3: number of price list items added.
-#: addons/core/vertical-packs.addon.php:609
+#: addons/core/vertical-packs.addon.php:614
 #, php-format
 msgid "Installed \"%1$s\". Added %2$d questions and answers, and %3$d price list items."
 msgstr ""
 
 #. translators: %s: name of an industry pack, such as Plumbing.
-#: addons/core/vertical-packs.addon.php:623
-#: addons/core/vertical-packs.addon.php:653
+#: addons/core/vertical-packs.addon.php:628
+#: addons/core/vertical-packs.addon.php:658
 #, php-format
 msgid "Banner for the %s pack"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:636
+#: addons/core/vertical-packs.addon.php:641
 msgid "The uploaded pack was deleted."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:636
+#: addons/core/vertical-packs.addon.php:641
 msgid "Pack uploaded. You can install it from the list below."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:642
+#: addons/core/vertical-packs.addon.php:647
 msgid "A pack gives your AI receptionist the questions, prices and service types for one trade. Install the packs that match your business. Installing a pack adds its questions and answers, price list items and service types to your site. Removing a pack deletes the items it added. Review every answer and price before customers see them."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:662
+#: addons/core/vertical-packs.addon.php:667
 msgid "price list items"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:663
+#: addons/core/vertical-packs.addon.php:668
 msgid "service types"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:665
+#: addons/core/vertical-packs.addon.php:670
 msgid "Spots emergency wording"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:674
+#: addons/core/vertical-packs.addon.php:679
 msgid "Remove this pack? The questions and prices it added to your site will be deleted."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:678
+#: addons/core/vertical-packs.addon.php:683
 msgid "Remove pack (installed)"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:682
+#: addons/core/vertical-packs.addon.php:687
 msgid "Install this pack"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:687
+#: addons/core/vertical-packs.addon.php:692
 msgid "Delete this uploaded pack? It will be removed from this site, and any questions and prices it added will be deleted too."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:690
+#: addons/core/vertical-packs.addon.php:695
 msgid "Delete uploaded pack"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:702
+#: addons/core/vertical-packs.addon.php:707
 msgid "Your details and policies"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:704
+#: addons/core/vertical-packs.addon.php:709
 msgid "These details fill in the answers from your packs. Enter your own policies, notice periods and prices. Your changes apply only to this site. They do not change the packs that came with the plugin. A pack keeps the details it had when you installed it, so remove it and install it again to use new details. Any text in [square brackets] is a fill-in: replace it with your own details before your site goes live. Check every answer before customers see it."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:716
+#: addons/core/vertical-packs.addon.php:721
 msgid "Save my details"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:719
+#: addons/core/vertical-packs.addon.php:724
 msgid "Upload your own pack"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:720
+#: addons/core/vertical-packs.addon.php:725
 msgid "Got a pack from someone else? Upload its JSON file here. The pack is saved in your WordPress database, and no files are saved to your server."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:725
+#: addons/core/vertical-packs.addon.php:730
 msgid "Upload pack"
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:728
+#: addons/core/vertical-packs.addon.php:733
 msgid "Only upload packs from people you trust. A pack can add questions and answers, price list items and instructions for your AI receptionist on this site."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:762
-#: addons/core/vertical-packs.addon.php:768
+#: addons/core/vertical-packs.addon.php:767
+#: addons/core/vertical-packs.addon.php:773
 msgid "The file could not be uploaded. Check the file and try again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:765
+#: addons/core/vertical-packs.addon.php:770
 msgid "The file is too large. The limit is 512 KB."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:773
+#: addons/core/vertical-packs.addon.php:778
 msgid "Only .json pack files can be uploaded."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:781
+#: addons/core/vertical-packs.addon.php:786
 msgid "The file could not be read. Check the file and try again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:785
+#: addons/core/vertical-packs.addon.php:790
 msgid "This is not a valid pack file. Check the file and try again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:791
+#: addons/core/vertical-packs.addon.php:796
 msgid "The pack could not be saved. Delete an uploaded pack to make room, then try again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:794
+#: addons/core/vertical-packs.addon.php:799
 msgid "This pack ID is used by a built-in pack. Change the pack ID in the file and upload it again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:799
+#: addons/core/vertical-packs.addon.php:804
 msgid "A pack with this ID is already on this site. Change the pack ID in the file and upload it again."
 msgstr ""
 
-#: addons/core/vertical-packs.addon.php:804
+#: addons/core/vertical-packs.addon.php:809
 msgid "The pack could not be saved. Please try again."
 msgstr ""
 
@@ -1617,6 +1635,26 @@ msgstr ""
 #: addons/messaging/missed-call.addon.php:49
 #: addons/messaging/missed-call.addon.php:62
 msgid "We are closed right now. Book your next available appointment here: {link}"
+msgstr ""
+
+#: addons/messaging/missed-call.addon.php:73
+msgid "The SMS address must start with https://."
+msgstr ""
+
+#: addons/messaging/missed-call.addon.php:74
+msgid "The booking address must start with https://."
+msgstr ""
+
+#: addons/messaging/missed-call.addon.php:75
+msgid "The inbound secret is not valid. Generate a new one."
+msgstr ""
+
+#: addons/messaging/missed-call.addon.php:76
+msgid "Both text messages must include {link}."
+msgstr ""
+
+#: addons/messaging/missed-call.addon.php:77
+msgid "Invalid business hours; use mon=09:00-17:00;tue=09:00-17:00."
 msgstr ""
 
 #: addons/messaging/missed-call.addon.php:102
@@ -1858,6 +1896,53 @@ msgstr ""
 msgid "Error: Action cannot be authenticated (nonce failed). Please contact our support service if this problem persists."
 msgstr ""
 
+#. translators: %s: the sequence number where the receipt history stopped verifying.
+#: includes/class-tzfd-action-receipt-viewer.php:142
+#, php-format
+msgid "Receipt history failed verification from sequence %s. Entries from that point are marked as not verified."
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:143
+msgid "Some stored receipts did not belong to this company and were not shown."
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:144
+msgid "No agent actions have been recorded yet."
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:145
+msgid "Sequence"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:147
+msgid "Tool"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:148
+msgid "Outcome"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:149
+#: includes/class-tzfd-ai-services-page.php:153
+#: includes/class-tzfd-pipeline-screen.php:253
+#: includes/class-tzfd-privacy-exporter.php:211
+msgid "Reason"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:150
+#: includes/class-tzfd-location-admin.php:187
+#: includes/class-tzfd-staff-access-admin.php:143
+msgid "Actor"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:151
+msgid "Grant version"
+msgstr ""
+
+#: includes/class-tzfd-action-receipt-viewer.php:152
+msgid "Verified"
+msgstr ""
+
 #: includes/class-tzfd-addon-support.php:340
 msgid "Leave blank to keep the current value"
 msgstr ""
@@ -1935,625 +2020,628 @@ msgstr ""
 msgid "Titan Zero — Business Operating System"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:98
+#: includes/class-tzfd-admin-menu.php:101
 msgid "Vertical Packs is switched off. Switch it on under Add-ons to use it."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:118
+#: includes/class-tzfd-admin-menu.php:121
 #: includes/class-tzfd-pipeline-screen.php:162
 msgid "Access denied."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:123
+#: includes/class-tzfd-admin-menu.php:126
 msgid "The portal builder is unavailable."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:136
+#: includes/class-tzfd-admin-menu.php:139
 msgid "Front Desk"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:141
-#: includes/class-tzfd-admin-menu.php:385
+#: includes/class-tzfd-admin-menu.php:144
+#: includes/class-tzfd-admin-menu.php:388
 #: tzfd-help.inc.php:358
 #: ui-pack/ui/tz-app-front-desk.php:25
 msgid "Dashboard"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:143
-#: includes/class-tzfd-admin-menu.php:563
+#: includes/class-tzfd-admin-menu.php:146
+#: includes/class-tzfd-admin-menu.php:566
 #: includes/class-tzfd-resource-admin.php:467
 #: tzfd-help.inc.php:360
 #: ui-pack/ui/tz-app-front-desk.php:27
 msgid "Bookings"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:144
+#: includes/class-tzfd-admin-menu.php:147
 #: includes/class-tzfd-customer-admin.php:75
 #: ui-pack/ui/tz-app-front-desk.php:29
 msgid "Customers"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:145
-#: includes/class-tzfd-admin-menu.php:817
-#: includes/class-tzfd-admin-menu.php:917
+#: includes/class-tzfd-admin-menu.php:148
+#: includes/class-tzfd-admin-menu.php:820
+#: includes/class-tzfd-admin-menu.php:920
 #: includes/class-tzfd-ai-setup-check.php:32
 #: tzfd-help.inc.php:361
 #: ui-pack/ui/tz-app-front-desk.php:31
 msgid "Services"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:147
+#: includes/class-tzfd-admin-menu.php:150
 #: includes/class-tzfd-enquiry-review.php:170
 #: ui-pack/ui/tz-app-front-desk.php:28
 msgid "Enquiries"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:148
+#: includes/class-tzfd-admin-menu.php:151
 #: tzfd-addons.inc.php:130
 #: ui-pack/ui/tz-app-front-desk.php:35
 msgid "Add-ons"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:149
+#: includes/class-tzfd-admin-menu.php:152
 #: tzfd-help.inc.php:364
-#: tzfd-main-class.inc.php:1053
+#: tzfd-main-class.inc.php:1061
 #: tzfd-settings.inc.php:85
 #: ui-pack/ui/tz-app-front-desk.php:36
 msgid "Settings"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:151
-#: includes/class-tzfd-admin-menu.php:186
-#: includes/class-tzfd-admin-menu.php:328
+#: includes/class-tzfd-admin-menu.php:154
+#: includes/class-tzfd-admin-menu.php:189
+#: includes/class-tzfd-admin-menu.php:331
 #: tzfd-admin-int-list.inc.php:273
 #: tzfd-admin-int.inc.php:787
 msgid "Help"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:152
-#: includes/class-tzfd-admin-menu.php:189
+#: includes/class-tzfd-admin-menu.php:155
+#: includes/class-tzfd-admin-menu.php:192
 msgid "Customer Portal"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:188
+#: includes/class-tzfd-admin-menu.php:191
 #: includes/class-tzfd-status-update-emails.php:296
 #: includes/class-tzfd-status-update-emails.php:297
 #: includes/class-tzfd-status-update-emails.php:312
 msgid "Scheduling & Enquiries Manager Status Emails"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:260
-#: includes/class-tzfd-admin-menu.php:368
-#: includes/class-tzfd-admin-menu.php:502
-#: includes/class-tzfd-admin-menu.php:801
-#: includes/class-tzfd-booking-view.php:306
-#: includes/class-tzfd-client-portal.php:662
+#: includes/class-tzfd-admin-menu.php:263
+#: includes/class-tzfd-admin-menu.php:371
+#: includes/class-tzfd-admin-menu.php:505
+#: includes/class-tzfd-admin-menu.php:804
+#: includes/class-tzfd-booking-view.php:308
+#: includes/class-tzfd-client-portal.php:691
 #: includes/class-tzfd-enquiry-review.php:161
-#: tzfd-main-class.inc.php:2952
-#: tzfd-main-class.inc.php:3083
-#: tzfd-main-class.inc.php:3187
-#: tzfd-main-class.inc.php:3190
-#: tzfd-main-class.inc.php:3383
-#: tzfd-main-class.inc.php:3561
+#: tzfd-main-class.inc.php:2981
+#: tzfd-main-class.inc.php:3112
+#: tzfd-main-class.inc.php:3216
+#: tzfd-main-class.inc.php:3219
+#: tzfd-main-class.inc.php:3412
+#: tzfd-main-class.inc.php:3592
 msgid "You do not have permission to open this page."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:323
+#: includes/class-tzfd-admin-menu.php:326
 msgid "Email reports"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:324
+#: includes/class-tzfd-admin-menu.php:327
 #: tzfd-help.inc.php:187
 #: tzfd-settings.inc.php:333
 msgid "Troubleshooting"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:325
+#: includes/class-tzfd-admin-menu.php:328
 #: tzfd-settings.inc.php:397
 msgid "CSV export"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:326
+#: includes/class-tzfd-admin-menu.php:329
 #: tzfd-settings.inc.php:439
 msgid "Calendar display"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:327
+#: includes/class-tzfd-admin-menu.php:330
 msgid "Other settings"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:329
+#: includes/class-tzfd-admin-menu.php:332
 #: tzfd-settings.inc.php:292
 msgid "Status update emails"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:330
+#: includes/class-tzfd-admin-menu.php:333
 #: includes/class-tzfd-scheduling-preview.php:13
 #: includes/class-tzfd-scheduling-preview.php:16
 #: includes/class-tzfd-scheduling-preview.php:70
 msgid "Scheduling Preview"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:343
+#: includes/class-tzfd-admin-menu.php:346
 msgid "Settings tabs"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:385
+#: includes/class-tzfd-admin-menu.php:388
 msgid "At a glance across enquiries and bookings."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:387
+#: includes/class-tzfd-admin-menu.php:390
 msgid "Some dashboard figures could not be loaded. A dash or unavailable message means the database read failed; check the related screen before relying on a zero."
 msgstr ""
 
 #. translators: %s: first name of the signed-in user.
-#: includes/class-tzfd-admin-menu.php:395
+#: includes/class-tzfd-admin-menu.php:398
 #, php-format
 msgid "Welcome back, %s"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:396
+#: includes/class-tzfd-admin-menu.php:399
 msgid "Front Desk is set up. The figures below show what needs you today."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:396
+#: includes/class-tzfd-admin-menu.php:399
 msgid "Front Desk is ready. Finish setup to open bookings."
 msgstr ""
 
 #. translators: 1: steps done, 2: total steps.
-#: includes/class-tzfd-admin-menu.php:399
+#: includes/class-tzfd-admin-menu.php:402
 #, php-format
 msgid "%1$d of %2$d steps complete"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:406
+#: includes/class-tzfd-admin-menu.php:409
 msgid "Continue setup"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:408
+#: includes/class-tzfd-admin-menu.php:411
 msgid "Ask an administrator to run setup."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:415
+#: includes/class-tzfd-admin-menu.php:418
 msgid "New enquiries"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:415
+#: includes/class-tzfd-admin-menu.php:418
 msgid "today"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:416
-#: includes/class-tzfd-admin-menu.php:430
-#: includes/class-tzfd-client-portal.php:516
+#: includes/class-tzfd-admin-menu.php:419
+#: includes/class-tzfd-admin-menu.php:433
+#: includes/class-tzfd-client-portal.php:544
 #: ui-pack/ui/tz-app-front-desk-reads.php:26
 #: ui-pack/ui/tz-app-front-desk-reads.php:57
 #: ui-pack/ui/tz-app-front-desk-reads.php:60
 msgid "Upcoming bookings"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:416
-#: includes/class-tzfd-admin-menu.php:577
+#: includes/class-tzfd-admin-menu.php:419
+#: includes/class-tzfd-admin-menu.php:580
 msgid "next 7 days"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:417
+#: includes/class-tzfd-admin-menu.php:420
 #: includes/class-tzfd-scheduling-preview.php:94
 #: tzfd-addons.inc.php:187
 #: ui-pack/ui/tz-app-front-desk-reads.php:27
 msgid "Needs attention"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:417
+#: includes/class-tzfd-admin-menu.php:420
 msgid "awaiting approval"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:431
+#: includes/class-tzfd-admin-menu.php:434
 msgid "Next 7 days, across every calendar"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:432
+#: includes/class-tzfd-admin-menu.php:435
 msgid "View calendar"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:434
-#: includes/class-tzfd-admin-menu.php:604
-#: includes/class-tzfd-booking-view.php:415
+#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-booking-view.php:417
 #: includes/class-tzfd-pipeline-screen.php:249
 #: ui-pack/ui/tz-app-front-desk-reads.php:61
 msgid "Customer"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:434
-#: includes/class-tzfd-admin-menu.php:604
+#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:607
 #: ui-pack/ui/tz-app-front-desk-reads.php:61
 msgid "Date and time"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:434
-#: includes/class-tzfd-admin-menu.php:604
-#: includes/class-tzfd-booking-view.php:415
+#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-booking-view.php:417
 #: includes/class-tzfd-enquiry-review.php:187
 #: includes/class-tzfd-enquiry-review.php:192
+#: includes/class-tzfd-location-admin.php:132
+#: includes/class-tzfd-location-admin.php:150
+#: includes/class-tzfd-location-admin.php:171
 #: includes/class-tzfd-privacy-exporter.php:181
 #: includes/class-tzfd-resource-admin.php:485
 #: includes/class-tzfd-resource-admin.php:513
 #: tzfd-admin-int-schedule.inc.php:160
-#: tzfd-public-int.inc.php:49
+#: tzfd-public-int.inc.php:50
 #: ui-pack/ui/tz-app-front-desk-reads.php:61
 #: ui-pack/ui/tz-app-front-desk-reads.php:91
 msgid "Status"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:440
 msgid "Bookings could not be loaded. Check the database and reload."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:437
+#: includes/class-tzfd-admin-menu.php:440
 #: ui-pack/ui/tz-app-front-desk-reads.php:63
 msgid "No bookings in the next 7 days."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:448
+#: includes/class-tzfd-admin-menu.php:451
 msgid "Front desk activity"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:448
+#: includes/class-tzfd-admin-menu.php:451
 msgid "LIVE"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:461
+#: includes/class-tzfd-admin-menu.php:464
 msgid "a customer"
 msgstr ""
 
 #. translators: %s: customer name.
-#: includes/class-tzfd-admin-menu.php:463
+#: includes/class-tzfd-admin-menu.php:466
 msgid "New enquiry received"
 msgstr ""
 
 #. translators: %s: customer name.
-#: includes/class-tzfd-admin-menu.php:463
+#: includes/class-tzfd-admin-menu.php:466
 #, php-format
 msgid "Booking from %s"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:466
+#: includes/class-tzfd-admin-menu.php:469
 msgid "Booking activity is unavailable. Check the database and reload this page."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:468
+#: includes/class-tzfd-admin-menu.php:471
 msgid "Nothing yet. New bookings appear here."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:473
+#: includes/class-tzfd-admin-menu.php:476
 msgid "Quick actions"
 msgstr ""
 
 #. translators: %s: amount booked today.
-#: includes/class-tzfd-admin-menu.php:475
+#: includes/class-tzfd-admin-menu.php:478
 #, php-format
 msgid "Today: %s booked"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:555
+#: includes/class-tzfd-admin-menu.php:558
 #: ui-pack/ui/tz-app-front-desk-reads.php:58
 msgid "All bookings"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:556
-#: includes/class-tzfd-admin-menu.php:577
+#: includes/class-tzfd-admin-menu.php:559
+#: includes/class-tzfd-admin-menu.php:580
 msgid "Upcoming"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:557
-#: includes/class-tzfd-admin-menu.php:578
+#: includes/class-tzfd-admin-menu.php:560
+#: includes/class-tzfd-admin-menu.php:581
 msgid "Needs approval"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:558
-#: includes/class-tzfd-admin-menu.php:579
+#: includes/class-tzfd-admin-menu.php:561
+#: includes/class-tzfd-admin-menu.php:582
 msgid "Completed"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:563
+#: includes/class-tzfd-admin-menu.php:566
 msgid "Review requests, confirm appointments and keep each booking moving."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:564
-#: includes/class-tzfd-client-portal.php:649
-#: includes/class-tzfd-client-portal.php:657
-#: includes/class-tzfd-client-portal.php:674
+#: includes/class-tzfd-admin-menu.php:567
+#: includes/class-tzfd-client-portal.php:678
+#: includes/class-tzfd-client-portal.php:686
+#: includes/class-tzfd-client-portal.php:703
 msgid "Create & manage booking portal"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:564
-#: includes/class-tzfd-booking-view.php:328
+#: includes/class-tzfd-admin-menu.php:567
+#: includes/class-tzfd-booking-view.php:330
 msgid "New booking"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:566
+#: includes/class-tzfd-admin-menu.php:569
 msgid "Booking data could not be loaded. Check the database before relying on these lists or totals."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:570
-#: includes/class-tzfd-admin-menu.php:571
+#: includes/class-tzfd-admin-menu.php:573
+#: includes/class-tzfd-admin-menu.php:574
 msgid "No bookings yet. Create a calendar, and its bookings will appear here."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:578
+#: includes/class-tzfd-admin-menu.php:581
 msgid "requests"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:579
+#: includes/class-tzfd-admin-menu.php:582
 msgid "this month"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:583
+#: includes/class-tzfd-admin-menu.php:586
 msgid "Booking lists"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:592
+#: includes/class-tzfd-admin-menu.php:595
 msgid "Search customer or booking ID"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:593
+#: includes/class-tzfd-admin-menu.php:596
 msgid "Date range"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:594
+#: includes/class-tzfd-admin-menu.php:597
 msgid "Next 30 days"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:594
+#: includes/class-tzfd-admin-menu.php:597
 msgid "Past 30 days"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:594
+#: includes/class-tzfd-admin-menu.php:597
 msgid "All dates"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:597
+#: includes/class-tzfd-admin-menu.php:600
 msgid "All services"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:600
-#: includes/class-tzfd-admin-menu.php:923
+#: includes/class-tzfd-admin-menu.php:603
+#: includes/class-tzfd-admin-menu.php:926
 #: includes/class-tzfd-enquiry-review.php:189
-#: tzfd-admin-int-message-list.inc.php:295
+#: tzfd-admin-int-message-list.inc.php:298
 #: tzfd-admin-int-report.inc.php:297
 #: tzfd-admin-int-schedule.inc.php:138
 msgid "Filter"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-admin-menu.php:610
 msgid "Booking records are unavailable. Check the database and reload this page."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:607
+#: includes/class-tzfd-admin-menu.php:610
 msgid "No bookings match these filters."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:616
+#: includes/class-tzfd-admin-menu.php:619
 #: ui-pack/ui/partials/dashboard.php:49
 msgid "Open"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:621
+#: includes/class-tzfd-admin-menu.php:624
 msgid "Booking workflow"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:622
+#: includes/class-tzfd-admin-menu.php:625
 msgid "Request, review details, confirm the time, then send confirmation."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:623
+#: includes/class-tzfd-admin-menu.php:626
 msgid "Automations"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:704
-#: includes/class-tzfd-admin-menu.php:1014
-#: includes/class-tzfd-admin-menu.php:1065
-#: includes/class-tzfd-client-portal.php:379
-#: includes/class-tzfd-client-portal.php:767
-#: includes/class-tzfd-client-portal.php:833
+#: includes/class-tzfd-admin-menu.php:707
+#: includes/class-tzfd-admin-menu.php:1017
+#: includes/class-tzfd-admin-menu.php:1068
+#: includes/class-tzfd-client-portal.php:396
+#: includes/class-tzfd-client-portal.php:796
+#: includes/class-tzfd-client-portal.php:862
 #: includes/class-tzfd-enquiry-review.php:119
 #: includes/class-tzfd-enquiry-triage.php:37
-#: includes/class-tzfd-enquiry-triage.php:328
+#: includes/class-tzfd-enquiry-triage.php:329
 #: includes/class-tzfd-operations-monitor.php:60
 #: includes/class-tzfd-pipeline-screen.php:181
 #: includes/class-tzfd-service-details.php:155
 msgid "POST request required."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:706
-#: includes/class-tzfd-admin-menu.php:1016
-#: includes/class-tzfd-admin-menu.php:1067
-#: includes/class-tzfd-client-portal.php:769
-#: includes/class-tzfd-client-portal.php:836
+#: includes/class-tzfd-admin-menu.php:709
+#: includes/class-tzfd-admin-menu.php:1019
+#: includes/class-tzfd-admin-menu.php:1070
+#: includes/class-tzfd-client-portal.php:798
+#: includes/class-tzfd-client-portal.php:865
 #: includes/class-tzfd-enquiry-review.php:121
 #: includes/class-tzfd-enquiry-triage.php:39
-#: includes/class-tzfd-enquiry-triage.php:330
+#: includes/class-tzfd-enquiry-triage.php:331
 #: includes/class-tzfd-service-details.php:157
 msgid "You do not have permission to do this."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:728
+#: includes/class-tzfd-admin-menu.php:731
 msgid "You do not have permission to manage services in this calendar."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:817
+#: includes/class-tzfd-admin-menu.php:820
 msgid "Set up the services customers can request and your team can deliver."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:818
+#: includes/class-tzfd-admin-menu.php:821
 msgid "New service"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:818
-#: includes/class-tzfd-admin-menu.php:906
-#: includes/class-tzfd-booking-view.php:385
+#: includes/class-tzfd-admin-menu.php:821
+#: includes/class-tzfd-admin-menu.php:909
+#: includes/class-tzfd-booking-view.php:387
 msgid "Manage calendars"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:820
+#: includes/class-tzfd-admin-menu.php:823
 msgid "Service address saved."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:822
+#: includes/class-tzfd-admin-menu.php:825
 msgid "Service updated in the catalogue and the calendar."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:824
+#: includes/class-tzfd-admin-menu.php:827
 msgid "Service archived. It can no longer be booked."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:828
+#: includes/class-tzfd-admin-menu.php:831
 msgid "Service created in the selected calendar. You can edit its hours and other calendar settings there."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:831
+#: includes/class-tzfd-admin-menu.php:834
 msgid "Enter a service name, valid price, duration and capacity."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:832
+#: includes/class-tzfd-admin-menu.php:835
 msgid "This calendar is being updated. Wait a moment and retry."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:833
+#: includes/class-tzfd-admin-menu.php:836
 msgid "That appointment field already has a service with this name."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:834
+#: includes/class-tzfd-admin-menu.php:837
 msgid "Another service in this calendar already has a saved address under that name. Choose a different name."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:835
+#: includes/class-tzfd-admin-menu.php:838
 msgid "The selected appointment field has reached its service limit."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:836
+#: includes/class-tzfd-admin-menu.php:839
 msgid "The service could not be saved. Reload the page and check the calendar."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:837
+#: includes/class-tzfd-admin-menu.php:840
 msgid "The calendar changed while this service was being created. Reload the page and try again."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:838
+#: includes/class-tzfd-admin-menu.php:841
 msgid "Choose a current calendar appointment field and try again."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:839
+#: includes/class-tzfd-admin-menu.php:842
 msgid "The calendar changed while this service was being saved. Reload the page and try again."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:840
+#: includes/class-tzfd-admin-menu.php:843
 msgid "The calendar was updated, but the service catalogue could not be archived. Contact an administrator to reconcile the records."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:842
+#: includes/class-tzfd-admin-menu.php:845
 msgid "That service or calendar was not found. Reload the page and try again."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:852
+#: includes/class-tzfd-admin-menu.php:855
 msgid "Calendar and service records could not be loaded. Check the database and reload this page before relying on an empty catalog."
 msgstr ""
 
 #. translators: %d: calendar ID.
-#: includes/class-tzfd-admin-menu.php:857
-#: includes/class-tzfd-admin-menu.php:869
-#: includes/class-tzfd-booking-view.php:221
+#: includes/class-tzfd-admin-menu.php:860
+#: includes/class-tzfd-admin-menu.php:872
+#: includes/class-tzfd-booking-view.php:223
 #: tzfd-settings.inc.php:184
 #, php-format
 msgid "Calendar %d"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:876
+#: includes/class-tzfd-admin-menu.php:879
 msgid "Add a service"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:877
+#: includes/class-tzfd-admin-menu.php:880
 msgid "Choose an appointment field. The new service is added to that calendar with its price, duration and capacity."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:881
+#: includes/class-tzfd-admin-menu.php:884
 msgid "Calendar and appointment field"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:881
+#: includes/class-tzfd-admin-menu.php:884
 msgid "Choose a calendar"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:884
-#: includes/class-tzfd-admin-menu.php:975
+#: includes/class-tzfd-admin-menu.php:887
+#: includes/class-tzfd-admin-menu.php:978
 msgid "Service name"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:885
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-admin-menu.php:976
+#: includes/class-tzfd-admin-menu.php:888
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-admin-menu.php:979
 #: includes/class-tzfd-shared-store.php:117
 msgid "Price"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:886
-#: includes/class-tzfd-admin-menu.php:977
+#: includes/class-tzfd-admin-menu.php:889
+#: includes/class-tzfd-admin-menu.php:980
 msgid "Duration (minutes)"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:887
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-admin-menu.php:978
+#: includes/class-tzfd-admin-menu.php:890
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-admin-menu.php:981
 msgid "Capacity"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:888
+#: includes/class-tzfd-admin-menu.php:891
 msgid "Create service"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:890
+#: includes/class-tzfd-admin-menu.php:893
 msgid "Service creation is unavailable until calendar records can be loaded."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:892
+#: includes/class-tzfd-admin-menu.php:895
 msgid "Create a calendar with an appointment field first, then add services here."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:903
+#: includes/class-tzfd-admin-menu.php:906
 msgid "Use Add a service to create a service in an appointment field. Manage calendars for opening hours and other calendar rules. This screen also edits addresses and locations for existing services."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:904
+#: includes/class-tzfd-admin-menu.php:907
 msgid "Your service catalog"
 msgstr ""
 
 #. translators: %d: number of active services.
-#: includes/class-tzfd-admin-menu.php:904
+#: includes/class-tzfd-admin-menu.php:907
 #, php-format
 msgid "%d ACTIVE"
 msgstr ""
 
 #. translators: %d: number of active services.
-#: includes/class-tzfd-admin-menu.php:904
+#: includes/class-tzfd-admin-menu.php:907
 msgid "UNAVAILABLE"
 msgstr ""
 
 #. translators: %d: number of active services.
-#: includes/class-tzfd-admin-menu.php:905
+#: includes/class-tzfd-admin-menu.php:908
 msgid "Services are linked to calendars, durations, prices and addresses."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:920
+#: includes/class-tzfd-admin-menu.php:923
 msgid "Search services"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:921
-#: includes/class-tzfd-booking-view.php:371
+#: includes/class-tzfd-admin-menu.php:924
+#: includes/class-tzfd-booking-view.php:373
 msgid "All calendars"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-admin-menu.php:955
-#: includes/class-tzfd-admin-menu.php:992
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-admin-menu.php:958
+#: includes/class-tzfd-admin-menu.php:995
 #: includes/class-tzfd-customer-admin.php:91
 #: includes/class-tzfd-privacy-exporter.php:195
 #: includes/class-tzfd-resource-admin.php:420
@@ -2561,131 +2649,131 @@ msgstr ""
 msgid "Address"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:926
-#: includes/class-tzfd-admin-menu.php:995
+#: includes/class-tzfd-admin-menu.php:929
+#: includes/class-tzfd-admin-menu.php:998
 #: includes/class-tzfd-resource-admin.php:549
 msgid "Location"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:926
+#: includes/class-tzfd-admin-menu.php:929
 msgid "Duration"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:926
+#: includes/class-tzfd-admin-menu.php:929
 msgid "Visibility"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:931
+#: includes/class-tzfd-admin-menu.php:934
 msgid "Service records are unavailable. Check the database and reload this page."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:933
-#: includes/class-tzfd-admin-menu.php:934
+#: includes/class-tzfd-admin-menu.php:936
+#: includes/class-tzfd-admin-menu.php:937
 msgid "No services yet. Add them in a calendar, or use Preset Setup."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:938
+#: includes/class-tzfd-admin-menu.php:941
 msgid "No services match these filters."
 msgstr ""
 
 #. translators: %d: minutes.
-#: includes/class-tzfd-admin-menu.php:942
+#: includes/class-tzfd-admin-menu.php:945
 #, php-format
 msgid "%d min"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:949
+#: includes/class-tzfd-admin-menu.php:952
 msgid "No address yet"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:954
+#: includes/class-tzfd-admin-menu.php:957
 msgid "Published"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:956
+#: includes/class-tzfd-admin-menu.php:959
 msgid "Edit calendar"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:960
+#: includes/class-tzfd-admin-menu.php:963
 msgid "Tip:"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:960
+#: includes/class-tzfd-admin-menu.php:963
 msgid "Add an address and location to each service, so customers and workers see where it is given."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:961
+#: includes/class-tzfd-admin-menu.php:964
 msgid "Manage calendars and services"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:971
+#: includes/class-tzfd-admin-menu.php:974
 msgid "Edit service"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:979
+#: includes/class-tzfd-admin-menu.php:982
 msgid "Save service"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:980
+#: includes/class-tzfd-admin-menu.php:983
 msgid "Archive this service? Customers will no longer be able to book it. Past bookings keep their details."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:983
+#: includes/class-tzfd-admin-menu.php:986
 msgid "Archive service"
 msgstr ""
 
 #. translators: %s: service name.
-#: includes/class-tzfd-admin-menu.php:985
+#: includes/class-tzfd-admin-menu.php:988
 #, php-format
 msgid "Address for %s"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:994
+#: includes/class-tzfd-admin-menu.php:997
 msgid "Where this service is given, such as a clinic room or the customer's home."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:996
+#: includes/class-tzfd-admin-menu.php:999
 msgid "No saved location"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:1001
+#: includes/class-tzfd-admin-menu.php:1004
 msgid "Add a location under Locations to pick one here."
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:1003
+#: includes/class-tzfd-admin-menu.php:1006
 msgid "Save address"
 msgstr ""
 
-#: includes/class-tzfd-admin-menu.php:1004
-#: includes/class-tzfd-client-portal.php:545
+#: includes/class-tzfd-admin-menu.php:1007
+#: includes/class-tzfd-client-portal.php:574
 #: includes/class-tzfd-resource-admin.php:366
 #: tzfd-main-class.inc.php:212
-#: tzfd-main-class.inc.php:932
+#: tzfd-main-class.inc.php:939
 msgid "Cancel"
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:54
+#: includes/class-tzfd-admin-notices.php:56
 msgid "Booking availability can be cached"
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:55
+#: includes/class-tzfd-admin-notices.php:57
 msgid "Turn on Cache Booking Availability under Addons. It keeps a copy of the availability display for busy sites, and it clears itself when bookings change, so customers still see current times."
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:57
+#: includes/class-tzfd-admin-notices.php:59
 msgid "Open Addons"
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:78
+#: includes/class-tzfd-admin-notices.php:80
 msgid "Remind me in 30 days"
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:88
-#: includes/class-tzfd-admin-notices.php:105
+#: includes/class-tzfd-admin-notices.php:90
+#: includes/class-tzfd-admin-notices.php:107
 msgid "Invalid notice request."
 msgstr ""
 
-#: includes/class-tzfd-admin-notices.php:109
+#: includes/class-tzfd-admin-notices.php:111
 msgid "Unknown notice."
 msgstr ""
 
@@ -2711,6 +2799,7 @@ msgid "You do not have permission to change agent permissions."
 msgstr ""
 
 #: includes/class-tzfd-agent-gateway-admin.php:106
+#: includes/class-tzfd-ai-services-page.php:485
 msgid "Set up your business first. Agent permissions apply to one business at a time."
 msgstr ""
 
@@ -2731,6 +2820,7 @@ msgid "State"
 msgstr ""
 
 #: includes/class-tzfd-agent-gateway-admin.php:114
+#: includes/class-tzfd-ai-services-page.php:504
 msgid "grant version"
 msgstr ""
 
@@ -2806,125 +2896,175 @@ msgstr ""
 msgid "Reject"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:30
-#: includes/class-tzfd-ai-gap-page.php:31
-#: includes/class-tzfd-ai-gap-page.php:90
+#: includes/class-tzfd-ai-gap-page.php:34
+#: includes/class-tzfd-ai-gap-page.php:35
+#: includes/class-tzfd-ai-gap-page.php:113
 msgid "FAQ gaps"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:56
+#: includes/class-tzfd-ai-gap-page.php:60
 msgid "You are not allowed to change FAQ gaps."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:71
-#: includes/class-tzfd-ai-monthly-insights.php:247
-#: includes/class-tzfd-ai-services-page.php:47
-msgid "You are not allowed to view this page."
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:91
-msgid "Topics customers asked about that approved FAQ answers did not cover, over the last 30 days. Counts only. No question text, names or contact details are kept or shown."
+#: includes/class-tzfd-ai-gap-page.php:80
+msgid "You are not allowed to review FAQ answers."
 msgstr ""
 
 #: includes/class-tzfd-ai-gap-page.php:94
-msgid "Topics merged. Counts were added into the target topic."
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:96
-msgid "Those topics could not be merged. Pick two different topics that do not already form a loop."
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:100
-msgid "No business is selected for this request, so there is nothing to show."
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:102
-msgid "Not enough questions yet to show shares. Counts appear once a topic has been asked about several times."
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:105
-msgid "Handled questions"
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:106
-msgid "Not answered from approved content"
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:110
-msgid "Minimum count"
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:112
-msgid "Topic contains"
+#: includes/class-tzfd-ai-monthly-insights.php:247
+#: includes/class-tzfd-ai-services-page.php:129
+msgid "You are not allowed to view this page."
 msgstr ""
 
 #: includes/class-tzfd-ai-gap-page.php:114
-msgid "Coverage"
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:116
-msgid "All topics"
+msgid "Topics customers asked about that approved FAQ answers did not cover, over the last 30 days. Counts only. No question text, names or contact details are kept or shown."
 msgstr ""
 
 #: includes/class-tzfd-ai-gap-page.php:117
-msgid "Missing or outdated"
+msgid "Topics merged. Counts were added into the target topic."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:118
-#: includes/class-tzfd-ai-gap-page.php:141
-msgid "Covered"
+#: includes/class-tzfd-ai-gap-page.php:119
+msgid "Those topics could not be merged. Pick two different topics that do not already form a loop."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:120
-msgid "Apply"
+#: includes/class-tzfd-ai-gap-page.php:121
+msgid "Answer marked as reviewed. Its text and version did not change."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:125
-msgid "Topic"
-msgstr ""
-
-#: includes/class-tzfd-ai-gap-page.php:126
-msgid "Questions"
+#: includes/class-tzfd-ai-gap-page.php:123
+msgid "That answer could not be marked as reviewed. Only published answers can be reviewed."
 msgstr ""
 
 #: includes/class-tzfd-ai-gap-page.php:127
+msgid "No business is selected for this request, so there is nothing to show."
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:129
+msgid "Not enough questions yet to show shares. Counts appear once a topic has been asked about several times."
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:132
+msgid "Handled questions"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:133
+msgid "Not answered from approved content"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:137
+msgid "Minimum count"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:139
+msgid "Topic contains"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:141
+msgid "Coverage"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:143
+msgid "All topics"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:144
+msgid "Missing or outdated"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:145
+#: includes/class-tzfd-ai-gap-page.php:168
+msgid "Covered"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:147
+msgid "Apply"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:152
+msgid "Topic"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:153
+msgid "Questions"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:154
 #: includes/class-tzfd-ai-monthly-insights.php:271
 msgid "Share"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:128
+#: includes/class-tzfd-ai-gap-page.php:155
 msgid "Approved content"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:132
+#: includes/class-tzfd-ai-gap-page.php:159
 msgid "No topics match these filters."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:138
+#: includes/class-tzfd-ai-gap-page.php:165
 msgid "Not enough data"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:140
+#: includes/class-tzfd-ai-gap-page.php:167
 msgid "Missing or outdated: add or update an approved answer"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:148
+#: includes/class-tzfd-ai-gap-page.php:176
+msgid "Outdated approved content"
+msgstr ""
+
+#. translators: %d: number of days since an approved answer was last edited or reviewed.
+#: includes/class-tzfd-ai-gap-page.php:179
+#, php-format
+msgid "Approved answers not edited or reviewed for %d days or more. Review them, then mark them reviewed if the facts still hold, or publish an update if they have changed."
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:184
+msgid "Last edited"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:185
+msgid "Last reviewed"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:186
+msgid "Age in days"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:187
+msgid "Review"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:191
+msgid "No approved answers are outdated."
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:197
+msgid "Never"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:204
+msgid "Mark reviewed"
+msgstr ""
+
+#: includes/class-tzfd-ai-gap-page.php:214
 msgid "Group topics"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:149
+#: includes/class-tzfd-ai-gap-page.php:215
 msgid "Merging adds the counts of the first topic into the second for reporting. Nothing is deleted."
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:153
+#: includes/class-tzfd-ai-gap-page.php:219
 msgid "Merge"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:155
+#: includes/class-tzfd-ai-gap-page.php:221
 msgid "into"
 msgstr ""
 
-#: includes/class-tzfd-ai-gap-page.php:157
+#: includes/class-tzfd-ai-gap-page.php:223
 msgid "Merge topics"
 msgstr ""
 
@@ -2954,80 +3094,362 @@ msgstr ""
 msgid "Of"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:26
-#: includes/class-tzfd-ai-services-page.php:27
-#: includes/class-tzfd-ai-services-page.php:56
+#: includes/class-tzfd-ai-services-page.php:45
+#: includes/class-tzfd-ai-services-page.php:46
+#: includes/class-tzfd-ai-services-page.php:141
 msgid "AI Services"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:37
+#: includes/class-tzfd-ai-services-page.php:56
+#: includes/class-tzfd-ai-services-page.php:462
 msgid "You are not allowed to change AI Services."
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:57
+#: includes/class-tzfd-ai-services-page.php:142
 msgid "Scheduling & Enquiries Manager is one plugin. Booking, customers, calendars, rules, FAQ and reports always work on this site. Hosted AI is optional."
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:60
-msgid "Hosted AI is switched off on this site. Your bookings, customers and settings were not changed."
-msgstr ""
-
-#: includes/class-tzfd-ai-services-page.php:63
+#: includes/class-tzfd-ai-services-page.php:148
 msgid "Current status"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:66
+#: includes/class-tzfd-ai-services-page.php:151
 msgid "Hosted level"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:68
-#: includes/class-tzfd-pipeline-screen.php:253
-#: includes/class-tzfd-privacy-exporter.php:211
-msgid "Reason"
-msgstr ""
-
-#: includes/class-tzfd-ai-services-page.php:70
+#: includes/class-tzfd-ai-services-page.php:155
 msgid "Local features"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:71
+#: includes/class-tzfd-ai-services-page.php:156
 msgid "Always enabled"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:72
+#: includes/class-tzfd-ai-services-page.php:157
 msgid "Hosted data consent"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:73
+#. translators: %s: comma-separated list of data classes
+#: includes/class-tzfd-ai-services-page.php:162
+#, php-format
+msgid "Granted for: %s"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:166
 msgid "None recorded. Hosted processing stays off until you agree to it."
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:77
+#: includes/class-tzfd-ai-services-page.php:169
+msgid "Hosted AI endpoint"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:170
+msgid "Set"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:170
+msgid "Not set. Connect below if you use the hosted service."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:174
+msgid "Connection"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:176
+msgid "This site is paired with the hosted service. The secret is stored and is never shown on this screen."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:180
+msgid "Disconnect"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:181
+msgid "Removes the secret, the endpoint and consent. Local features are unchanged."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:184
+#: includes/class-tzfd-ai-services-page.php:193
+msgid "Connect hosted account"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:185
+msgid "Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect. Enter the pairing code shown by Supercharged. Each code works once."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:190
+msgid "Pairing code"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:197
 msgid "Hosted levels"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:80
+#: includes/class-tzfd-ai-services-page.php:200
 msgid "Level"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:81
+#: includes/class-tzfd-ai-services-page.php:201
 msgid "What it adds"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:93
+#: includes/class-tzfd-ai-services-page.php:202
+msgid "Usage and fair use"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:215
+msgid "Hosted AI consent"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:217
+msgid "Terms"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:223
+msgid "Data the hosted service may receive"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:233
+msgid "This wording is a proposed default and has not yet been signed off by the plugin owner."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:235
+msgid "Save consent"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:241
+msgid "Revoke consent"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:242
+msgid "Hosted requests stop at once. Local features are unchanged."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:246
+msgid "Connection and consent history"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:249
+msgid "No connection or consent changes recorded."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:253
+#: includes/class-tzfd-ai-services-page.php:288
+msgid "When (UTC)"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:254
+#: includes/class-tzfd-enquiry-review.php:192
+msgid "Change"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:255
+msgid "Detail"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:269
+msgid "Event log retention"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:274
+msgid "Keep events for (days)"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:276
+msgid "Save retention"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:280
+msgid "Hosted AI event log"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:281
+msgid "Only the time, feature, result and latency are kept. Prompts, replies and keys are never logged."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:284
+msgid "No hosted AI events recorded."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:289
+msgid "Feature"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:290
+msgid "Result"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:291
+msgid "Latency (ms)"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:307
+msgid "Clear event log"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:313
 msgid "Hosted AI changes"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:99
+#: includes/class-tzfd-ai-services-page.php:319
 msgid "Switch this site to Free"
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:100
+#: includes/class-tzfd-ai-services-page.php:320
 msgid "Stops hosted AI on this site. Nothing local is deleted."
 msgstr ""
 
-#: includes/class-tzfd-ai-services-page.php:113
+#: includes/class-tzfd-ai-services-page.php:338
+msgid "No hosted usage. Hosted AI stays off until you opt in."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:406
+msgid "Connected to the hosted service"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:407
+msgid "Consent granted"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:408
+msgid "Consent revoked"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:409
+msgid "Disconnected"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:438
+msgid "Hosted AI is switched off on this site. Your bookings, customers and settings were not changed."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:439
+msgid "Hosted AI consent saved for the scopes you ticked."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:440
+msgid "No consent saved. Tick at least one data class to grant consent."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:441
+msgid "Hosted AI consent revoked. No hosted requests will be sent."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:442
+msgid "Event log retention saved."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:443
+msgid "Retention must be a whole number of days from 1 to 365."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:444
+msgid "Hosted AI event log cleared."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:445
+msgid "Hosted AI service connected. Consent is needed again before any hosted request is sent."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:446
+msgid "Connection not saved. Check the pairing code and try again. Your previous connection, if any, is unchanged."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:447
+msgid "Hosted account pairing is not available on this site yet. Nothing was sent."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:448
+msgid "Could not reach the hosted service, or another pairing is in progress. Your previous connection, if any, is unchanged. Try again later."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:449
+msgid "Hosted AI disconnected. The secret, endpoint and consent were removed. Local features are unchanged."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:478
+msgid "Agent Team controls"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:480
+msgid "Agent permissions are not available on this build."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:502
+msgid "Agent state"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:506
+msgid "Tools granted"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:508
+msgid "Dry run"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:509
+msgid "On. Changes are recorded, not made."
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:509
+#: tzfd-addons.inc.php:191
+#: tzfd-addons.inc.php:226
+msgid "Off"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:510
+msgid "Waiting for your approval"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:514
+msgid "Manage agent permissions, approvals and pause or stop"
+msgstr ""
+
+#: includes/class-tzfd-ai-services-page.php:523
 msgid "Free"
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:132
+msgid "Your site is on the Free level."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:135
+msgid "Hosted AI is active on this site."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:137
+msgid "Hosted AI is active during a short grace period."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:139
+msgid "The Agent Team is paused on this site."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:141
+msgid "No hosted AI plan is connected to this site."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:143
+msgid "The hosted plan details are from a version this site does not support."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:145
+msgid "The hosted plan details do not name a valid company."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:147
+msgid "The hosted plan belongs to a different company."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:149
+msgid "The hosted plan details have expired and need to be checked again."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:151
+msgid "The hosted plan does not include a hosted AI level."
+msgstr ""
+
+#: includes/class-tzfd-ai-services.php:153
+msgid "Hosted AI is not active on this site."
 msgstr ""
 
 #: includes/class-tzfd-ai-setup-check.php:29
@@ -3048,7 +3470,7 @@ msgid "Opening hours"
 msgstr ""
 
 #: includes/class-tzfd-ai-setup-check.php:35
-#: includes/class-tzfd-setup-checklist.php:28
+#: includes/class-tzfd-setup-checklist.php:56
 msgid "Set your own hours. None are assumed."
 msgstr ""
 
@@ -3068,43 +3490,43 @@ msgstr ""
 msgid "A suggested greeting is available."
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:59
+#: includes/class-tzfd-ai-widget.php:66
 msgid "Ask a question"
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:73
+#: includes/class-tzfd-ai-widget.php:81
 msgid "Your question"
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:75
+#: includes/class-tzfd-ai-widget.php:83
 msgid "Get answer"
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:80
+#: includes/class-tzfd-ai-widget.php:88
 #: includes/class-tzfd-booking-page.php:90
-#: includes/class-tzfd-client-portal.php:453
-#: includes/class-tzfd-client-portal.php:801
-#: includes/class-tzfd-client-portal.php:863
+#: includes/class-tzfd-client-portal.php:481
+#: includes/class-tzfd-client-portal.php:830
+#: includes/class-tzfd-client-portal.php:892
 msgid "Book an appointment"
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:83
+#: includes/class-tzfd-ai-widget.php:91
 msgid "Talk to a person"
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:98
+#: includes/class-tzfd-ai-widget.php:106
 msgid "Please enter a question of up to 300 characters."
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:99
+#: includes/class-tzfd-ai-widget.php:107
 msgid "Too many questions were asked from this connection. Please try again later or talk to a person."
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:100
+#: includes/class-tzfd-ai-widget.php:108
 msgid "We do not have an approved answer to that question. Please talk to a person."
 msgstr ""
 
-#: includes/class-tzfd-ai-widget.php:105
+#: includes/class-tzfd-ai-widget.php:113
 msgid "Automated answer. Please confirm details with us."
 msgstr ""
 
@@ -3142,21 +3564,21 @@ msgid "Booking report"
 msgstr ""
 
 #: includes/class-tzfd-booking-report-admin.php:67
-#: tzfd-admin-int-message-list.inc.php:292
+#: tzfd-admin-int-message-list.inc.php:295
 #: tzfd-admin-int-report.inc.php:277
 #: tzfd-admin-int-schedule.inc.php:115
 msgid "From"
 msgstr ""
 
 #: includes/class-tzfd-booking-report-admin.php:68
-#: tzfd-admin-int-message-list.inc.php:293
+#: tzfd-admin-int-message-list.inc.php:296
 #: tzfd-admin-int-report.inc.php:278
 #: tzfd-admin-int-schedule.inc.php:116
 msgid "To"
 msgstr ""
 
 #: includes/class-tzfd-booking-report-admin.php:69
-#: includes/class-tzfd-booking-view.php:375
+#: includes/class-tzfd-booking-view.php:377
 msgid "Show"
 msgstr ""
 
@@ -3176,7 +3598,7 @@ msgstr ""
 #: includes/class-tzfd-booking-report-admin.php:90
 #: includes/class-tzfd-customer-rescheduling.php:209
 #: includes/class-tzfd-customer-rescheduling.php:211
-#: tzfd-main-class.inc.php:2131
+#: tzfd-main-class.inc.php:2148
 msgid "Appointments"
 msgstr ""
 
@@ -3187,7 +3609,7 @@ msgid "%1$d appointments, %2$d cancelled, %3$d active."
 msgstr ""
 
 #: includes/class-tzfd-booking-report-admin.php:90
-#: includes/class-tzfd-booking-view.php:66
+#: includes/class-tzfd-booking-view.php:68
 msgid "Cancelled"
 msgstr ""
 
@@ -3237,78 +3659,82 @@ msgstr ""
 msgid "Booking status is unavailable."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:63
+#: includes/class-tzfd-booking-view.php:65
 msgid "Confirmed"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:64
+#: includes/class-tzfd-booking-view.php:66
 msgid "Pending"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:65
+#: includes/class-tzfd-booking-view.php:67
 msgid "Attended"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:67
+#: includes/class-tzfd-booking-view.php:69
 msgid "Cancelled by customer"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:68
+#: includes/class-tzfd-booking-view.php:70
 #: includes/class-tzfd-pipeline-screen.php:82
 #: includes/class-tzfd-pipeline-screen.php:143
 #: includes/class-tzfd-pipeline-screen.php:305
 msgid "Rejected"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:315
+#: includes/class-tzfd-booking-view.php:317
 #: tzfd-admin-int-block-times.inc.php:77
 msgid "Invalid calendar selection."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:327
+#: includes/class-tzfd-booking-view.php:329
 msgid "See appointments by week or month, and open a booking for details."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:333
+#: includes/class-tzfd-booking-view.php:335
 msgid "Calendar data could not be loaded. Check the database before relying on this view."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:335
+#: includes/class-tzfd-booking-view.php:337
 msgid "No calendars yet. Create one, and its bookings will appear here."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:337
+#: includes/class-tzfd-booking-view.php:339
 msgid "No bookings in this period."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:340
+#: includes/class-tzfd-booking-view.php:342
 msgid "Only the most recent bookings are shown. Open a single calendar to see all of its bookings."
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:359
+#: includes/class-tzfd-booking-view.php:361
 msgid "Previous"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:378
+#: includes/class-tzfd-booking-view.php:380
 msgid "View"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:379
+#: includes/class-tzfd-booking-view.php:381
 msgid "Day"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:379
+#: includes/class-tzfd-booking-view.php:381
 msgid "Week"
 msgstr ""
 
-#: includes/class-tzfd-booking-view.php:379
+#: includes/class-tzfd-booking-view.php:381
 msgid "Month"
 msgstr ""
 
 #. translators: %d: number of bookings not shown in the cell.
-#: includes/class-tzfd-booking-view.php:465
+#: includes/class-tzfd-booking-view.php:469
 #, php-format
 msgid "+%d more"
+msgstr ""
+
+#: includes/class-tzfd-booking-view.php:484
+msgid "Swipe sideways to see every day."
 msgstr ""
 
 #: includes/class-tzfd-business-knowledge.php:303
@@ -3383,28 +3809,28 @@ msgstr ""
 msgid "Secret key"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:267
+#: includes/class-tzfd-client-portal.php:270
 msgid "Invalid sign-out request."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:275
+#: includes/class-tzfd-client-portal.php:278
 msgid "Invalid portal session."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:349
+#: includes/class-tzfd-client-portal.php:366
 msgid "Confirm to open your bookings. This link works once."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:353
+#: includes/class-tzfd-client-portal.php:370
 msgid "Sign in"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:356
+#: includes/class-tzfd-client-portal.php:373
 msgid "Sign in to your bookings"
 msgstr ""
 
 #. translators: 1: site name, 2: sign-in link, 3: minutes the link lasts.
-#: includes/class-tzfd-client-portal.php:419
+#: includes/class-tzfd-client-portal.php:447
 #, php-format
 msgid ""
 "Open your bookings at %1$s:\n"
@@ -3415,257 +3841,257 @@ msgid ""
 msgstr ""
 
 #. translators: %s: site name.
-#: includes/class-tzfd-client-portal.php:426
+#: includes/class-tzfd-client-portal.php:454
 #, php-format
 msgid "Your bookings at %s"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:445
+#: includes/class-tzfd-client-portal.php:473
 msgid "Online booking is temporarily unavailable. Please try again shortly."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:448
+#: includes/class-tzfd-client-portal.php:476
 msgid "Online booking is not set up yet."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:477
+#: includes/class-tzfd-client-portal.php:505
 msgid "If this email address has bookings, a sign-in link is on its way. Check your inbox."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:478
+#: includes/class-tzfd-client-portal.php:506
 msgid "Please enter a valid email address."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:479
+#: includes/class-tzfd-client-portal.php:507
 msgid "That sign-in link has expired or was already used. Please request a new one."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:480
+#: includes/class-tzfd-client-portal.php:508
 msgid "We could not check the portal just now. Please try again shortly."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:487
-#: includes/class-tzfd-client-portal.php:864
+#: includes/class-tzfd-client-portal.php:515
+#: includes/class-tzfd-client-portal.php:893
 #: includes/class-tzfd-privacy-exporter.php:62
 msgid "Client portal"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:488
+#: includes/class-tzfd-client-portal.php:516
 msgid "See your bookings. Enter the email address you booked with and we will send you a sign-in link."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:495
+#: includes/class-tzfd-client-portal.php:523
 #: includes/class-tzfd-privacy-exporter.php:176
 #: includes/class-tzfd-privacy-exporter.php:193
 msgid "Email address"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:497
+#: includes/class-tzfd-client-portal.php:525
 msgid "Send sign-in link"
 msgstr ""
 
 #. translators: %s: email address.
-#: includes/class-tzfd-client-portal.php:508
+#: includes/class-tzfd-client-portal.php:536
 #, php-format
 msgid "Signed in as %s"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:514
+#: includes/class-tzfd-client-portal.php:542
 msgid "Sign out"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:518
+#: includes/class-tzfd-client-portal.php:546
 msgid "Your bookings could not be loaded. Please try again shortly."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:525
+#: includes/class-tzfd-client-portal.php:553
 msgid "Past bookings"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:535
+#: includes/class-tzfd-client-portal.php:564
 msgid "Nothing to show here yet."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:545
+#: includes/class-tzfd-client-portal.php:574
 msgid "Change time"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:576
+#: includes/class-tzfd-client-portal.php:605
 msgid "Booking page and client portal"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:577
+#: includes/class-tzfd-client-portal.php:606
 msgid "Creates a booking page and a client portal as normal pages, so they use your theme's header, footer and fonts. Clients sign in with their email address to see and change their bookings."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:579
+#: includes/class-tzfd-client-portal.php:608
 msgid "Pages are ready."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:582
+#: includes/class-tzfd-client-portal.php:611
 msgid "Choose a calendar that still exists before creating the booking pages."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:585
-#: includes/class-tzfd-client-portal.php:685
+#: includes/class-tzfd-client-portal.php:614
+#: includes/class-tzfd-client-portal.php:714
 msgid "Calendars could not be loaded. The database query failed; reload this page after the database is available."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:591
+#: includes/class-tzfd-client-portal.php:620
 msgid "Client portal:"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:599
+#: includes/class-tzfd-client-portal.php:628
 msgid "Calendar for the booking page"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:606
+#: includes/class-tzfd-client-portal.php:635
 msgid "Create or update pages"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:675
+#: includes/class-tzfd-client-portal.php:704
 msgid "Choose a look for each customer-facing page, use the switches to tune the layout, then create or update the WordPress pages. A final links page lets you open both pages to check them."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:677
+#: includes/class-tzfd-client-portal.php:706
 msgid "Styles saved and pages created or updated."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:679
+#: includes/class-tzfd-client-portal.php:708
 msgid "Could not create one or more portal pages. Check WordPress page permissions and try again."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:682
+#: includes/class-tzfd-client-portal.php:711
 msgid "Choose a calendar that still exists, then save the portal settings again."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:693
-#: includes/class-tzfd-privacy-exporter.php:733
+#: includes/class-tzfd-client-portal.php:722
+#: includes/class-tzfd-privacy-exporter.php:737
 msgid "Booking form"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:694
-#: includes/class-tzfd-client-portal.php:701
+#: includes/class-tzfd-client-portal.php:723
+#: includes/class-tzfd-client-portal.php:730
 msgid "Modern cards"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:694
-#: includes/class-tzfd-client-portal.php:701
+#: includes/class-tzfd-client-portal.php:723
+#: includes/class-tzfd-client-portal.php:730
 msgid "Classic"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:694
+#: includes/class-tzfd-client-portal.php:723
 msgid "Compact"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:696
+#: includes/class-tzfd-client-portal.php:725
 msgid "Show booking heading"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:697
+#: includes/class-tzfd-client-portal.php:726
 msgid "Place form in a card"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:698
-#: includes/class-tzfd-client-portal.php:705
+#: includes/class-tzfd-client-portal.php:727
+#: includes/class-tzfd-client-portal.php:734
 msgid "Use tighter spacing"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:700
-#: includes/class-tzfd-client-portal.php:802
+#: includes/class-tzfd-client-portal.php:729
+#: includes/class-tzfd-client-portal.php:831
 msgid "Customer portal"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:701
+#: includes/class-tzfd-client-portal.php:730
 msgid "Minimal"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:703
+#: includes/class-tzfd-client-portal.php:732
 msgid "Show portal heading"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:704
+#: includes/class-tzfd-client-portal.php:733
 msgid "Place portal in a card"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:708
+#: includes/class-tzfd-client-portal.php:737
 msgid "Calendar for booking form"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:712
+#: includes/class-tzfd-client-portal.php:741
 msgid "Save styles and create pages"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:714
+#: includes/class-tzfd-client-portal.php:743
 msgid "Check your pages"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:714
+#: includes/class-tzfd-client-portal.php:743
 msgid "After creating the pages, open them here to verify how they look on your site."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:716
+#: includes/class-tzfd-client-portal.php:745
 msgid "Booking form page"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:717
+#: includes/class-tzfd-client-portal.php:746
 msgid "Customer portal page"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:718
+#: includes/class-tzfd-client-portal.php:747
 msgid "Page containing both links"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:735
+#: includes/class-tzfd-client-portal.php:764
 msgid "Light"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:736
+#: includes/class-tzfd-client-portal.php:765
 msgid "Navy"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:737
+#: includes/class-tzfd-client-portal.php:766
 msgid "Slate"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:739
+#: includes/class-tzfd-client-portal.php:768
 msgid "Colour template"
 msgstr ""
 
 #. translators: %s: colour template name, such as Light, Navy or Slate.
-#: includes/class-tzfd-client-portal.php:744
+#: includes/class-tzfd-client-portal.php:773
 #, php-format
 msgid "%s template preview, desktop"
 msgstr ""
 
 #. translators: %s: colour template name, such as Light, Navy or Slate.
-#: includes/class-tzfd-client-portal.php:749
+#: includes/class-tzfd-client-portal.php:778
 #, php-format
 msgid "%s template preview, mobile"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:771
-#: includes/class-tzfd-client-portal.php:841
+#: includes/class-tzfd-client-portal.php:800
+#: includes/class-tzfd-client-portal.php:870
 msgid "The link has expired. Go back and try again."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:804
+#: includes/class-tzfd-client-portal.php:833
 msgid "Check your booking pages"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:804
+#: includes/class-tzfd-client-portal.php:833
 msgid "Use these links to check the customer-facing booking form and portal."
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:804
+#: includes/class-tzfd-client-portal.php:833
 msgid "Open booking form"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:804
+#: includes/class-tzfd-client-portal.php:833
 msgid "Open customer portal"
 msgstr ""
 
-#: includes/class-tzfd-client-portal.php:805
+#: includes/class-tzfd-client-portal.php:834
 msgid "Booking Portal Links"
 msgstr ""
 
@@ -3728,8 +4154,10 @@ msgstr ""
 #: includes/class-tzfd-customer-admin.php:87
 #: includes/class-tzfd-customer-admin.php:95
 #: includes/class-tzfd-enquiry-review.php:192
-#: includes/class-tzfd-human-handoff.php:164
+#: includes/class-tzfd-human-handoff.php:200
 #: includes/class-tzfd-lead-intake.php:35
+#: includes/class-tzfd-location-admin.php:132
+#: includes/class-tzfd-location-admin.php:206
 #: includes/class-tzfd-privacy-exporter.php:175
 #: includes/class-tzfd-privacy-exporter.php:192
 #: includes/class-tzfd-resource-admin.php:419
@@ -3743,16 +4171,16 @@ msgstr ""
 
 #: includes/class-tzfd-customer-admin.php:87
 #: includes/class-tzfd-customer-admin.php:95
-#: includes/class-tzfd-human-handoff.php:165
+#: includes/class-tzfd-human-handoff.php:201
 #: includes/class-tzfd-lead-intake.php:36
-#: tzfd-admin-int-message-list.inc.php:356
+#: tzfd-admin-int-message-list.inc.php:359
 #: tzfd-admin-int-schedule.inc.php:158
 msgid "Email"
 msgstr ""
 
 #: includes/class-tzfd-customer-admin.php:87
 #: includes/class-tzfd-customer-admin.php:95
-#: includes/class-tzfd-human-handoff.php:166
+#: includes/class-tzfd-human-handoff.php:202
 #: includes/class-tzfd-resource-admin.php:485
 #: includes/class-tzfd-settings-extras.php:26
 msgid "Phone"
@@ -3771,8 +4199,9 @@ msgid "Existing customers"
 msgstr ""
 
 #: includes/class-tzfd-customer-admin.php:95
+#: includes/class-tzfd-location-admin.php:187
 #: includes/class-tzfd-privacy-exporter.php:238
-#: includes/class-tzfd-staff-access-admin.php:131
+#: includes/class-tzfd-staff-access-admin.php:143
 msgid "Action"
 msgstr ""
 
@@ -3853,8 +4282,8 @@ msgid "Confirm cancellation"
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:123
-#: includes/class-tzfd-customer-rescheduling.php:478
 #: includes/class-tzfd-customer-rescheduling.php:479
+#: includes/class-tzfd-customer-rescheduling.php:480
 msgid "Change appointment time"
 msgstr ""
 
@@ -3904,7 +4333,7 @@ msgid "This booking has changed. Please use the latest appointment change link o
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:290
-#: includes/class-tzfd-customer-rescheduling.php:404
+#: includes/class-tzfd-customer-rescheduling.php:405
 msgid "Appointment changes are temporarily unavailable. Please try again."
 msgstr ""
 
@@ -3946,22 +4375,22 @@ msgid "Preview the time and use Confirm appointment change."
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:319
-#: includes/class-tzfd-customer-rescheduling.php:454
+#: includes/class-tzfd-customer-rescheduling.php:455
 msgid "Your confirmation has expired or is not valid. Review the new time again and confirm."
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:325
-#: includes/class-tzfd-customer-rescheduling.php:398
+#: includes/class-tzfd-customer-rescheduling.php:399
 msgid "Availability could not be checked. Your appointment has not changed. Please try again."
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:348
-#: includes/class-tzfd-customer-rescheduling.php:392
+#: includes/class-tzfd-customer-rescheduling.php:393
 msgid "Your requested appointment time has changed. Your request remains pending review."
 msgstr ""
 
 #: includes/class-tzfd-customer-rescheduling.php:348
-#: includes/class-tzfd-customer-rescheduling.php:392
+#: includes/class-tzfd-customer-rescheduling.php:393
 msgid "Your appointment time has changed."
 msgstr ""
 
@@ -3985,39 +4414,39 @@ msgstr ""
 msgid "The appointment change could not be confirmed safely. Check its status before retrying."
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:397
+#: includes/class-tzfd-customer-rescheduling.php:398
 msgid "Overnight appointments cannot be changed with this form. Contact the booking administrator. Your appointment has not changed."
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:399
+#: includes/class-tzfd-customer-rescheduling.php:400
 msgid "This booking cannot be changed with this single-appointment form. Contact the booking administrator."
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:446
+#: includes/class-tzfd-customer-rescheduling.php:447
 msgid "This request method is not supported."
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:482
+#: includes/class-tzfd-customer-rescheduling.php:483
 msgid "Times use the WordPress site timezone. Opening hours, closed dates, booking limits, daylight-saving transitions, capacity and blocks are checked again on confirmation."
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:487
+#: includes/class-tzfd-customer-rescheduling.php:488
 msgid "New appointment date"
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:488
+#: includes/class-tzfd-customer-rescheduling.php:489
 msgid "New start time"
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:490
+#: includes/class-tzfd-customer-rescheduling.php:491
 msgid "Confirm appointment change"
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:490
+#: includes/class-tzfd-customer-rescheduling.php:491
 msgid "Preview appointment change"
 msgstr ""
 
-#: includes/class-tzfd-customer-rescheduling.php:494
+#: includes/class-tzfd-customer-rescheduling.php:495
 msgid "Choose a different time"
 msgstr ""
 
@@ -4089,13 +4518,13 @@ msgstr ""
 #: includes/class-tzfd-enquiry-review.php:82
 #: includes/class-tzfd-enquiry-review.php:89
 #: includes/class-tzfd-enquiry-review.php:91
-#: includes/class-tzfd-enquiry-triage.php:356
-#: includes/class-tzfd-enquiry-triage.php:394
+#: includes/class-tzfd-enquiry-triage.php:357
+#: includes/class-tzfd-enquiry-triage.php:395
 msgid "The enquiry could not be updated."
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:83
-#: includes/class-tzfd-enquiry-triage.php:359
+#: includes/class-tzfd-enquiry-triage.php:360
 msgid "Enquiry not found."
 msgstr ""
 
@@ -4108,13 +4537,13 @@ msgid "The enquiry change could not be audited and was rolled back."
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:102
-#: includes/class-tzfd-enquiry-triage.php:397
+#: includes/class-tzfd-enquiry-triage.php:398
 #: includes/class-tzfd-frontdesk-api.php:284
 msgid "The change could not be recorded, so it was not saved."
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:111
-#: includes/class-tzfd-enquiry-triage.php:400
+#: includes/class-tzfd-enquiry-triage.php:401
 msgid "Enquiry update outcome is uncertain. Refresh the enquiry before retrying."
 msgstr ""
 
@@ -4127,17 +4556,17 @@ msgid "Quote request draft (owner review, no price)"
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:154
-#: includes/class-tzfd-enquiry-triage.php:290
+#: includes/class-tzfd-enquiry-triage.php:291
 msgid "Requested date"
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:155
-#: includes/class-tzfd-enquiry-triage.php:291
+#: includes/class-tzfd-enquiry-triage.php:292
 msgid "Site"
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:156
-#: includes/class-tzfd-enquiry-triage.php:293
+#: includes/class-tzfd-enquiry-triage.php:294
 msgid "Missing"
 msgstr ""
 
@@ -4218,10 +4647,6 @@ msgstr ""
 msgid "Source"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-review.php:192
-msgid "Change"
-msgstr ""
-
 #: includes/class-tzfd-enquiry-review.php:193
 msgid "No enquiries."
 msgstr ""
@@ -4231,7 +4656,7 @@ msgid "New status"
 msgstr ""
 
 #: includes/class-tzfd-enquiry-review.php:204
-#: includes/class-tzfd-setup-page.php:108
+#: includes/class-tzfd-setup-page.php:130
 msgid "Save"
 msgstr ""
 
@@ -4255,102 +4680,102 @@ msgid ""
 "Open the Enquiries screen to review it."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:250
+#: includes/class-tzfd-enquiry-triage.php:251
 msgid "Possible spam"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:251
+#: includes/class-tzfd-enquiry-triage.php:252
 msgid "Complaint"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:252
+#: includes/class-tzfd-enquiry-triage.php:253
 msgid "Cancellation"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:253
+#: includes/class-tzfd-enquiry-triage.php:254
 msgid "Quote request"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:255
+#: includes/class-tzfd-enquiry-triage.php:256
 msgid "Service request"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:256
+#: includes/class-tzfd-enquiry-triage.php:257
 #: tzfd-settings.inc.php:72
 #: tzfd-settings.inc.php:102
 msgid "General"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:266
+#: includes/class-tzfd-enquiry-triage.php:267
 msgid "Not triaged"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:273
+#: includes/class-tzfd-enquiry-triage.php:274
 msgid "Urgent"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:276
+#: includes/class-tzfd-enquiry-triage.php:277
 msgid "set by admin"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:278
+#: includes/class-tzfd-enquiry-triage.php:279
 msgid "Held for spam review. Nothing is deleted. Restore it or confirm spam."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:280
+#: includes/class-tzfd-enquiry-triage.php:281
 msgid "Spam hold restored by admin"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:282
+#: includes/class-tzfd-enquiry-triage.php:283
 msgid "Confirmed as spam by admin"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:284
+#: includes/class-tzfd-enquiry-triage.php:285
 msgid "Repeats an earlier message"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:288
+#: includes/class-tzfd-enquiry-triage.php:289
 msgid "Quote draft (no prices)"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:292
+#: includes/class-tzfd-enquiry-triage.php:293
 msgid "Two different dates were named. Correct the date before quoting."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:305
-#: includes/class-tzfd-enquiry-triage.php:308
+#: includes/class-tzfd-enquiry-triage.php:306
+#: includes/class-tzfd-enquiry-triage.php:309
 msgid "Restore (not spam)"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:306
+#: includes/class-tzfd-enquiry-triage.php:307
 msgid "Confirm spam"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:310
+#: includes/class-tzfd-enquiry-triage.php:311
 msgid "Mark not urgent"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:311
+#: includes/class-tzfd-enquiry-triage.php:312
 msgid "Mark urgent"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:312
+#: includes/class-tzfd-enquiry-triage.php:313
 msgid "Use rule result"
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:348
+#: includes/class-tzfd-enquiry-triage.php:349
 msgid "Choose a valid enquiry and action."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:353
+#: includes/class-tzfd-enquiry-triage.php:354
 msgid "Triage and audit tables must use InnoDB."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:365
+#: includes/class-tzfd-enquiry-triage.php:366
 msgid "This enquiry is not held for spam."
 msgstr ""
 
-#: includes/class-tzfd-enquiry-triage.php:370
+#: includes/class-tzfd-enquiry-triage.php:371
 msgid "Only a held enquiry can be confirmed as spam."
 msgstr ""
 
@@ -4417,12 +4842,12 @@ msgstr ""
 #: includes/class-tzfd-pipeline-screen.php:142
 #: includes/class-tzfd-pipeline-screen.php:303
 #: tzfd-main-class.inc.php:255
-#: tzfd-main-class.inc.php:635
-#: tzfd-main-class.inc.php:3499
-#: tzfd-main-class.inc.php:3513
-#: tzfd-main-class.inc.php:3705
-#: tzfd-main-class.inc.php:3932
-#: tzfd-main-class.inc.php:3946
+#: tzfd-main-class.inc.php:639
+#: tzfd-main-class.inc.php:3530
+#: tzfd-main-class.inc.php:3544
+#: tzfd-main-class.inc.php:3736
+#: tzfd-main-class.inc.php:3963
+#: tzfd-main-class.inc.php:3977
 msgid "Approved"
 msgstr ""
 
@@ -4463,80 +4888,84 @@ msgstr ""
 msgid "Counts must be non-negative integers."
 msgstr ""
 
-#: includes/class-tzfd-hosted-ai-connector.php:46
+#: includes/class-tzfd-hosted-ai-connector.php:54
 msgid "This hosted AI capability is not recognised."
 msgstr ""
 
-#: includes/class-tzfd-hosted-ai-connector.php:49
+#: includes/class-tzfd-hosted-ai-connector.php:61
 msgid "Hosted AI is off until you connect it and allow it."
 msgstr ""
 
-#: includes/class-tzfd-hosted-ai-connector.php:53
+#: includes/class-tzfd-hosted-ai-connector.php:65
 msgid "No hosted AI connection is set up in this version."
 msgstr ""
 
-#: includes/class-tzfd-hosted-ai-connector.php:56
+#: includes/class-tzfd-hosted-ai-connector.php:68
 msgid "The hosted AI connection returned an unexpected response."
 msgstr ""
 
-#: includes/class-tzfd-human-handoff.php:167
-msgid "What would you like us to call you about?"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:168
-msgid "I agree that this business may contact me about this enquiry using the details I have given."
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:170
-msgid "Request a callback"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:173
-msgid "Thank you. Your callback request has been received."
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:180
-#: includes/class-tzfd-lead-intake.php:47
-msgid "Method not allowed"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:181
-#: includes/class-tzfd-lead-intake.php:48
-msgid "Invalid form submission"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:183
-#: includes/class-tzfd-lead-intake.php:50
-msgid "Invalid submission"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:185
-msgid "Callback form unavailable"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:194
-#: includes/class-tzfd-human-handoff.php:211
-#: includes/class-tzfd-lead-intake.php:56
-msgid "Please complete all required fields"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:195
-msgid "Please check your email address"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:197
-msgid "Please give an email address or phone number so we can call you back"
-msgstr ""
-
-#: includes/class-tzfd-human-handoff.php:198
-msgid "Please tick the consent box so we can contact you"
+#: includes/class-tzfd-hosted-ai-connector.php:79
+msgid "This message is too long to send to hosted AI. Shorten it and try again."
 msgstr ""
 
 #: includes/class-tzfd-human-handoff.php:203
+msgid "What would you like us to call you about?"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:204
+msgid "I agree that this business may contact me about this enquiry using the details I have given."
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:206
+msgid "Request a callback"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:209
+msgid "Thank you. Your callback request has been received."
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:216
+#: includes/class-tzfd-lead-intake.php:49
+msgid "Method not allowed"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:217
+#: includes/class-tzfd-lead-intake.php:50
+msgid "Invalid form submission"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:219
+#: includes/class-tzfd-lead-intake.php:52
+msgid "Invalid submission"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:221
+msgid "Callback form unavailable"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:230
+#: includes/class-tzfd-human-handoff.php:247
+#: includes/class-tzfd-lead-intake.php:58
+msgid "Please complete all required fields"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:231
+msgid "Please check your email address"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:233
+msgid "Please give an email address or phone number so we can call you back"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:234
+msgid "Please tick the consent box so we can contact you"
+msgstr ""
+
+#: includes/class-tzfd-human-handoff.php:239
 msgid "Please wait before sending another callback request"
 msgstr ""
 
-#: includes/class-tzfd-human-handoff.php:214
+#: includes/class-tzfd-human-handoff.php:250
 msgid "Your request could not be saved. Please contact us directly."
 msgstr ""
 
@@ -4579,23 +5008,27 @@ msgstr ""
 msgid "How can we help?"
 msgstr ""
 
-#: includes/class-tzfd-lead-intake.php:40
+#: includes/class-tzfd-lead-intake.php:42
 msgid "Send enquiry"
 msgstr ""
 
-#: includes/class-tzfd-lead-intake.php:42
+#: includes/class-tzfd-lead-intake.php:44
 msgid "Thank you. Your enquiry has been received."
 msgstr ""
 
-#: includes/class-tzfd-lead-intake.php:52
+#: includes/class-tzfd-lead-intake.php:54
 msgid "Enquiry form unavailable"
 msgstr ""
 
-#: includes/class-tzfd-lead-intake.php:61
+#: includes/class-tzfd-lead-intake.php:60
+msgid "Please tick the privacy consent box to send your enquiry."
+msgstr ""
+
+#: includes/class-tzfd-lead-intake.php:65
 msgid "Please wait before submitting another enquiry"
 msgstr ""
 
-#: includes/class-tzfd-lead-intake.php:64
+#: includes/class-tzfd-lead-intake.php:68
 msgid "Your enquiry could not be saved. Please contact us directly."
 msgstr ""
 
@@ -4605,10 +5038,26 @@ msgstr ""
 msgid "Qualified Leads form conversion (group %1$d, form %2$d)."
 msgstr ""
 
-#: tzfd-admin-int-list.inc.php:231
-#: tzfd-admin-int-message-list.inc.php:443
-msgid "Delete"
+#: includes/class-tzfd-legacy-privacy.php:42
+#: includes/class-tzfd-legacy-privacy.php:50
+msgid "Booking assistant chats from earlier Front Desk versions"
 msgstr ""
+
+#: includes/class-tzfd-legacy-privacy.php:87
+msgid "Booking assistant chats (earlier versions)"
+msgstr ""
+
+#: includes/class-tzfd-legacy-privacy.php:109
+msgid "Booking assistant chats from an earlier version could not be erased. Please retry."
+msgstr ""
+
+#. translators: %d: number of deleted chat records.
+#: includes/class-tzfd-legacy-privacy.php:116
+#, php-format
+msgid "%d booking assistant chat from an earlier version deleted."
+msgid_plural "%d booking assistant chats from an earlier version deleted."
+msgstr[0] ""
+msgstr[1] ""
 
 #: includes/class-tzfd-local-brand.php:22
 msgid "Set up your Front Desk"
@@ -4620,6 +5069,152 @@ msgstr ""
 
 #: includes/class-tzfd-local-brand.php:38
 msgid "Visual guides"
+msgstr ""
+
+#. translators: %d: number of enabled team members.
+#: includes/class-tzfd-location-admin.php:30
+#: includes/class-tzfd-location-admin.php:100
+#: includes/class-tzfd-resource-admin.php:277
+#: includes/class-tzfd-resource-admin.php:479
+#: includes/class-tzfd-resource-admin.php:589
+#: includes/class-tzfd-resource-admin.php:608
+#: includes/class-tzfd-staff-access-admin.php:98
+#: includes/class-tzfd-staff-access-admin.php:143
+#: ui-pack/ui/tz-app-front-desk.php:33
+msgid "Locations"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:82
+msgid "You do not have permission to change locations."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:103
+msgid "Set up your business first. Locations apply to one business at a time."
+msgstr ""
+
+#. translators: %d: number of malformed stored locations.
+#: includes/class-tzfd-location-admin.php:108
+#, php-format
+msgid "%d stored location(s) are malformed and are not used. Recreate them."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:112
+msgid "That location is not registered."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:112
+msgid "Back to locations"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:128
+msgid "Registered locations"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:130
+msgid "No locations are registered yet. Staff access can only be granted at a registered location."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:132
+#: includes/class-tzfd-location-admin.php:148
+#: includes/class-tzfd-resource-admin.php:415
+#: includes/class-tzfd-resource-admin.php:447
+#: tzfd-admin-int-list.inc.php:194
+#: tzfd-admin-int-message-list.inc.php:357
+msgid "ID"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:132
+#: includes/class-tzfd-location-admin.php:149
+#: includes/class-tzfd-location-admin.php:207
+#: tzfd-settings.inc.php:105
+msgid "Time zone"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:139
+#: includes/class-tzfd-resource-admin.php:411
+msgid "Add a location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:145
+#: includes/class-tzfd-resource-admin.php:542
+msgid "All locations"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:153
+msgid "Staff access at this location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:159
+msgid "No staff access is granted at this location."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:161
+#: includes/class-tzfd-staff-access-admin.php:98
+msgid "User ID"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:161
+#: includes/class-tzfd-staff-access-admin.php:98
+#: includes/class-tzfd-staff-access-admin.php:119
+#: includes/class-tzfd-staff-access-admin.php:143
+msgid "Role"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:161
+#: includes/class-tzfd-staff-access-admin.php:98
+msgid "Staff ID"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:168
+#: includes/class-tzfd-resource-admin.php:411
+msgid "Edit location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:173
+msgid "Archive location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:173
+msgid "Restore location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:174
+msgid "Archiving keeps the record and its history. It is refused while staff access still uses this location; revoke that access first."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:180
+msgid "Operation log for this location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:185
+msgid "No changes recorded for this location yet."
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:187
+#: includes/class-tzfd-staff-access-admin.php:143
+msgid "Time (UTC)"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:187
+msgid "Fields"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:202
+msgid "Location ID (letters, digits, - and _; fixed after saving)"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:208
+#: includes/class-tzfd-resource-admin.php:643
+msgid "Add location"
+msgstr ""
+
+#: includes/class-tzfd-location-admin.php:208
+#: tzfd-settings.inc.php:88
+#: tzfd-settings.inc.php:201
+#: tzfd-settings.inc.php:392
+#: tzfd-settings.inc.php:434
+#: tzfd-settings.inc.php:526
+msgid "Save changes"
 msgstr ""
 
 #: includes/class-tzfd-messaging-replies.php:56
@@ -4634,6 +5229,7 @@ msgstr ""
 #: includes/class-tzfd-messaging-replies.php:126
 #: includes/class-tzfd-missed-call-tasks.php:33
 #: includes/class-tzfd-telephony-adapter.php:86
+#: includes/class-tzfd-twilio-call-events.php:74
 msgid "This request is not for the active business."
 msgstr ""
 
@@ -4894,7 +5490,7 @@ msgid "Save display names"
 msgstr ""
 
 #: includes/class-tzfd-pipeline-screen.php:165
-#: tzfd-main-class.inc.php:3004
+#: tzfd-main-class.inc.php:3033
 msgid "Company context required."
 msgstr ""
 
@@ -4920,7 +5516,7 @@ msgid "Slot"
 msgstr ""
 
 #: includes/class-tzfd-pipeline-screen.php:254
-#: tzfd-admin-int-message-list.inc.php:358
+#: tzfd-admin-int-message-list.inc.php:361
 msgid "Actions"
 msgstr ""
 
@@ -5142,7 +5738,7 @@ msgstr ""
 
 #: includes/class-tzfd-privacy-exporter.php:237
 #: includes/class-tzfd-privacy-exporter.php:254
-#: includes/class-tzfd-privacy-exporter.php:731
+#: includes/class-tzfd-privacy-exporter.php:735
 msgid "Booking record"
 msgstr ""
 
@@ -5170,55 +5766,55 @@ msgstr ""
 
 #: includes/class-tzfd-privacy-exporter.php:265
 #: includes/class-tzfd-status-update-emails.php:321
-#: tzfd-admin-int-message-list.inc.php:357
+#: tzfd-admin-int-message-list.inc.php:360
 #: tzfd-admin-int.inc.php:540
 #: tzfd-admin-int.inc.php:578
 msgid "Message"
 msgstr ""
 
 #: includes/class-tzfd-privacy-exporter.php:295
-#: includes/class-tzfd-privacy-exporter.php:727
+#: includes/class-tzfd-privacy-exporter.php:731
 msgid "Scheduling & Enquiries Manager bookings"
 msgstr ""
 
 #: includes/class-tzfd-privacy-exporter.php:330
-#: includes/class-tzfd-privacy-exporter.php:675
+#: includes/class-tzfd-privacy-exporter.php:679
 msgid "Invalid booking export page."
 msgstr ""
 
 #. translators: 1: record group name, 2: number of records deleted.
-#: includes/class-tzfd-privacy-exporter.php:555
+#: includes/class-tzfd-privacy-exporter.php:559
 #, php-format
 msgid "%1$s: %2$d record deleted."
 msgid_plural "%1$s: %2$d records deleted."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-tzfd-privacy-exporter.php:563
+#: includes/class-tzfd-privacy-exporter.php:567
 msgid "Booking records"
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:564
+#: includes/class-tzfd-privacy-exporter.php:568
 msgid "Client-portal sign-in records"
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:714
+#: includes/class-tzfd-privacy-exporter.php:718
 msgid "Booking form no longer available"
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:723
+#: includes/class-tzfd-privacy-exporter.php:727
 msgid "IP address"
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:732
+#: includes/class-tzfd-privacy-exporter.php:736
 msgid "Submitted"
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:846
+#: includes/class-tzfd-privacy-exporter.php:850
 msgid "Booking export data is temporarily unavailable. Please retry."
 msgstr ""
 
-#: includes/class-tzfd-privacy-exporter.php:853
+#: includes/class-tzfd-privacy-exporter.php:857
 msgid "Scheduling & Enquiries Manager records could not be checked. Please retry."
 msgstr ""
 
@@ -5227,12 +5823,12 @@ msgid "(required)"
 msgstr ""
 
 #. translators: 1: calendar id, 2: comma-separated booking ids
-#: includes/class-tzfd-public-slot-records.php:89
+#: includes/class-tzfd-public-slot-records.php:92
 #, php-format
 msgid "calendar %1$d: booking %2$s"
 msgstr ""
 
-#: includes/class-tzfd-public-slot-records.php:93
+#: includes/class-tzfd-public-slot-records.php:96
 msgid "Titan Zero Scheduling & Enquiries Manager skipped stored bookings when it built public availability. Public booking still works, but the slots those bookings hold may be offered as free. Repair or remove them under Bookings."
 msgstr ""
 
@@ -5358,17 +5954,6 @@ msgstr ""
 msgid "Equipment & rooms"
 msgstr ""
 
-#. translators: %d: number of enabled team members.
-#: includes/class-tzfd-resource-admin.php:277
-#: includes/class-tzfd-resource-admin.php:479
-#: includes/class-tzfd-resource-admin.php:589
-#: includes/class-tzfd-resource-admin.php:608
-#: includes/class-tzfd-staff-access-admin.php:96
-#: includes/class-tzfd-staff-access-admin.php:131
-#: ui-pack/ui/tz-app-front-desk.php:33
-msgid "Locations"
-msgstr ""
-
 #: includes/class-tzfd-resource-admin.php:300
 msgid "Mon"
 msgstr ""
@@ -5431,21 +6016,6 @@ msgstr ""
 
 #: includes/class-tzfd-resource-admin.php:391
 msgid "No hours set"
-msgstr ""
-
-#: includes/class-tzfd-resource-admin.php:411
-msgid "Edit location"
-msgstr ""
-
-#: includes/class-tzfd-resource-admin.php:411
-msgid "Add a location"
-msgstr ""
-
-#: includes/class-tzfd-resource-admin.php:415
-#: includes/class-tzfd-resource-admin.php:447
-#: tzfd-admin-int-list.inc.php:194
-#: tzfd-admin-int-message-list.inc.php:354
-msgid "ID"
 msgstr ""
 
 #: includes/class-tzfd-resource-admin.php:417
@@ -5628,10 +6198,6 @@ msgstr ""
 msgid "%1$s: %2$s — %3$s (remaining capacity %4$s)"
 msgstr ""
 
-#: includes/class-tzfd-resource-admin.php:542
-msgid "All locations"
-msgstr ""
-
 #: includes/class-tzfd-resource-admin.php:544
 msgid "Availability preview"
 msgstr ""
@@ -5723,10 +6289,6 @@ msgstr ""
 msgid "Manage the people, equipment, rooms and places that bookings use. Saving here does not change existing bookings."
 msgstr ""
 
-#: includes/class-tzfd-resource-admin.php:643
-msgid "Add location"
-msgstr ""
-
 #: includes/class-tzfd-resource-admin.php:644
 msgid "Add worker"
 msgstr ""
@@ -5787,7 +6349,7 @@ msgstr ""
 #: includes/class-tzfd-scheduling-preview.php:81
 #: includes/class-tzfd-scheduling-preview.php:93
 #: tzfd-main-class.inc.php:211
-#: tzfd-main-class.inc.php:934
+#: tzfd-main-class.inc.php:941
 msgid "Quantity"
 msgstr ""
 
@@ -5865,6 +6427,24 @@ msgstr ""
 
 #: includes/class-tzfd-scheduling-preview.php:95
 msgid "Structured schedule preview"
+msgstr ""
+
+#: includes/class-tzfd-service-finder-wiring.php:121
+msgid "Describe the service you need"
+msgstr ""
+
+#: includes/class-tzfd-service-finder-wiring.php:123
+msgid "Find service"
+msgstr ""
+
+#. translators: %s: service name from the catalogue
+#: includes/class-tzfd-service-finder-wiring.php:141
+#, php-format
+msgid "Book %s"
+msgstr ""
+
+#: includes/class-tzfd-service-finder-wiring.php:145
+msgid "No matching service was found. Choose the service in the form below."
 msgstr ""
 
 #: includes/class-tzfd-service-finder.php:178
@@ -5962,144 +6542,216 @@ msgstr ""
 msgid "Default notification email saved."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:26
+#: includes/class-tzfd-setup-checklist.php:33
+msgid "Local reports and staff access"
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:33
+msgid "Included in this plugin at no extra cost. There is no separate Pro plugin."
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:34
+msgid "Titan Zero AI Assistant (optional, hosted, paid)"
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:34
+msgid "Off until you connect it and record consent. Booking works without it."
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:35
+msgid "Titan Zero AI Agent Team (optional, hosted, paid)"
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:35
+msgid "Acts only through the tools you grant. Review its receipts before you grant more."
+msgstr ""
+
+#: includes/class-tzfd-setup-checklist.php:54
 #: includes/class-tzfd-shared-store.php:116
 msgid "Service catalogue"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:26
+#: includes/class-tzfd-setup-checklist.php:54
 msgid "Add the services you offer. At least one service must exist."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:27
+#: includes/class-tzfd-setup-checklist.php:55
 msgid "Staff and calendar"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:27
+#: includes/class-tzfd-setup-checklist.php:55
 msgid "Create a calendar (booking form) for the people or places you book."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:28
+#: includes/class-tzfd-setup-checklist.php:56
 msgid "Operating hours"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:29
+#: includes/class-tzfd-setup-checklist.php:57
 msgid "Publish the booking form"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:29
+#: includes/class-tzfd-setup-checklist.php:57
 msgid "Place the booking form on a page customers can reach. This is not checked automatically."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:30
+#: includes/class-tzfd-setup-checklist.php:58
 msgid "Make a test booking"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:30
+#: includes/class-tzfd-setup-checklist.php:58
 msgid "Book once from the public form to check the whole path. Any booking counts, so a real one works too."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:31
+#: includes/class-tzfd-setup-checklist.php:59
 msgid "View a customer record"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:31
+#: includes/class-tzfd-setup-checklist.php:59
 msgid "Open a customer record to see what is stored."
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:32
+#: includes/class-tzfd-setup-checklist.php:60
 msgid "Configure reminders"
 msgstr ""
 
-#: includes/class-tzfd-setup-checklist.php:32
+#: includes/class-tzfd-setup-checklist.php:60
 msgid "Choose when customers get reminders, or leave them off."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:28
-#: includes/class-tzfd-setup-page.php:83
+#: includes/class-tzfd-setup-page.php:29
+#: includes/class-tzfd-setup-page.php:105
 msgid "Get started"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:32
+#: includes/class-tzfd-setup-page.php:39
 msgid "You do not have permission to change setup settings."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:86
+#: includes/class-tzfd-setup-page.php:108
 msgid "Setup checklist"
 msgstr ""
 
 #. translators: 1: steps done, 2: total steps.
-#: includes/class-tzfd-setup-page.php:89
+#: includes/class-tzfd-setup-page.php:111
 #, php-format
 msgid "%1$d of %2$d steps done."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:94
+#: includes/class-tzfd-setup-page.php:116
 msgid "Done"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:94
+#: includes/class-tzfd-setup-page.php:116
 msgid "To do"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:95
+#: includes/class-tzfd-setup-page.php:117
 msgid "you mark this"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:100
+#: includes/class-tzfd-setup-page.php:122
 msgid "Mark the steps you have done yourself"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:110
+#: includes/class-tzfd-setup-page.php:132
 msgid "Setup progress records"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:111
+#: includes/class-tzfd-setup-page.php:133
 msgid "If you turn this on, the plugin keeps the date each step was first seen done, on this site only. Nothing is sent anywhere. You can turn it off at any time, and clear the records."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:112
+#: includes/class-tzfd-setup-page.php:134
 msgid "Progress records are on."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:112
+#: includes/class-tzfd-setup-page.php:134
 msgid "Progress records are off. Nothing is recorded."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:116
+#: includes/class-tzfd-setup-page.php:138
 msgid "Turn progress records off"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:116
+#: includes/class-tzfd-setup-page.php:138
 msgid "Turn progress records on"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:121
+#: includes/class-tzfd-setup-page.php:143
 msgid "Clear the records"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:124
+#: includes/class-tzfd-setup-page.php:148
+msgid "Setup measures for this site"
+msgstr ""
+
+#. translators: 1: completion percentage, 2: steps recorded, 3: total steps.
+#: includes/class-tzfd-setup-page.php:151
+#, php-format
+msgid "Setup completion: %1$d%% (%2$d of %3$d steps recorded)."
+msgstr ""
+
+#. translators: %s: date and time of the first booking seen.
+#: includes/class-tzfd-setup-page.php:157
+#, php-format
+msgid "First booked job seen: %s."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:161
+msgid "First booked job seen: none yet."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:163
+msgid "Setup to first booking: reached."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:163
+msgid "Setup to first booking: not yet reached."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:167
 msgid "Optional hosted services"
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:125
+#: includes/class-tzfd-setup-page.php:168
 msgid "Booking, the calendar, customer records, reports, exports and staff access all work with this plugin alone. Nothing here is needed to take bookings."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:127
+#: includes/class-tzfd-setup-page.php:170
 msgid "Titan Zero AI Assistant (hosted, paid)."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:128
+#: includes/class-tzfd-setup-page.php:171
 msgid "Answers customer questions from the business details you publish. It stays off until you connect it and record consent on the Integrations tab. Without it, the plugin answers from its own rules."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:129
+#: includes/class-tzfd-setup-page.php:172
 msgid "Titan Zero AI Agent Team (hosted, paid)."
 msgstr ""
 
-#: includes/class-tzfd-setup-page.php:130
+#: includes/class-tzfd-setup-page.php:173
 msgid "Acts only through the tools you grant on the Agent permissions screen. Each action it tries is recorded in a receipt you can read there."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:180
+msgid "Links to optional services"
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:187
+msgid "Links to optional services are on for this site."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:188
+msgid "Links to optional services are off. Turn them on to see them here once you start using the plugin. No registration is needed."
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:192
+msgid "Hide links to optional services"
+msgstr ""
+
+#: includes/class-tzfd-setup-page.php:192
+msgid "Show links to optional services"
 msgstr ""
 
 #: includes/class-tzfd-shared-store.php:120
@@ -6156,89 +6808,71 @@ msgstr ""
 msgid "Confirmation text"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:27
-#: includes/class-tzfd-staff-access-admin.php:81
+#: includes/class-tzfd-staff-access-admin.php:28
+#: includes/class-tzfd-staff-access-admin.php:83
 msgid "Staff access"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:73
+#: includes/class-tzfd-staff-access-admin.php:75
 msgid "You do not have permission to change staff access."
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:84
+#: includes/class-tzfd-staff-access-admin.php:86
 msgid "Set up your business first. Staff access applies to one business at a time."
 msgstr ""
 
 #. translators: %d: number of malformed stored grants.
-#: includes/class-tzfd-staff-access-admin.php:89
+#: includes/class-tzfd-staff-access-admin.php:91
 #, php-format
 msgid "%d stored grant(s) are malformed and grant nothing. Revoke and re-add them."
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:92
+#: includes/class-tzfd-staff-access-admin.php:94
 msgid "Current grants"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:94
+#: includes/class-tzfd-staff-access-admin.php:96
 msgid "No staff access has been granted yet."
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:96
-msgid "User ID"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:96
-#: includes/class-tzfd-staff-access-admin.php:117
-#: includes/class-tzfd-staff-access-admin.php:131
-msgid "Role"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:96
-msgid "Staff ID"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:99
+#: includes/class-tzfd-staff-access-admin.php:101
 msgid "all locations"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:104
+#: includes/class-tzfd-staff-access-admin.php:106
 msgid "Revoke at this location"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:112
+#: includes/class-tzfd-staff-access-admin.php:114
 msgid "Grant access"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:116
+#: includes/class-tzfd-staff-access-admin.php:118
 msgid "WordPress user ID"
 msgstr ""
 
-#: includes/class-tzfd-staff-access-admin.php:122
-msgid "Location IDs (comma separated; not used for company admin)"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:123
-msgid "Staff ID (staff role only)"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:124
-msgid "Save access"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:126
-msgid "Operation log"
+#: includes/class-tzfd-staff-access-admin.php:127
+msgid "No active locations are registered. Add one on the Locations screen before granting location access."
 msgstr ""
 
 #: includes/class-tzfd-staff-access-admin.php:129
+msgid "Locations (not used for company admin)"
+msgstr ""
+
+#: includes/class-tzfd-staff-access-admin.php:135
+msgid "Staff ID (staff role only)"
+msgstr ""
+
+#: includes/class-tzfd-staff-access-admin.php:136
+msgid "Save access"
+msgstr ""
+
+#: includes/class-tzfd-staff-access-admin.php:138
+msgid "Operation log"
+msgstr ""
+
+#: includes/class-tzfd-staff-access-admin.php:141
 msgid "No changes recorded yet."
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:131
-msgid "Time (UTC)"
-msgstr ""
-
-#: includes/class-tzfd-staff-access-admin.php:131
-msgid "Actor"
 msgstr ""
 
 #: includes/class-tzfd-status-update-emails.php:325
@@ -6287,6 +6921,12 @@ msgstr ""
 #: includes/class-tzfd-telephony-adapter.php:71
 #: includes/class-tzfd-telephony-adapter.php:81
 msgid "Invalid telephony request."
+msgstr ""
+
+#: includes/class-tzfd-twilio-call-events.php:49
+#: includes/class-tzfd-twilio-call-events.php:53
+#: includes/class-tzfd-twilio-call-events.php:60
+msgid "Invalid call status callback"
 msgstr ""
 
 #: includes/class-tzfd-twilio-status.php:21
@@ -6426,11 +7066,6 @@ msgstr ""
 msgid "On"
 msgstr ""
 
-#: tzfd-addons.inc.php:191
-#: tzfd-addons.inc.php:226
-msgid "Off"
-msgstr ""
-
 #: tzfd-addons.inc.php:196
 msgid "Configure"
 msgstr ""
@@ -6504,7 +7139,7 @@ msgid "Invalid calendar identifier."
 msgstr ""
 
 #: tzfd-admin-int-add-booking.inc.php:45
-#: tzfd-main-class.inc.php:867
+#: tzfd-main-class.inc.php:873
 msgid "Choose service"
 msgstr ""
 
@@ -6516,7 +7151,7 @@ msgstr ""
 
 #: tzfd-admin-int-add-booking.inc.php:356
 #: tzfd-admin-int-block-times.inc.php:116
-#: tzfd-admin-int-message-list.inc.php:243
+#: tzfd-admin-int-message-list.inc.php:246
 #: tzfd-admin-int-report.inc.php:259
 #: tzfd-admin-int-report.inc.php:405
 #: tzfd-admin-int-schedule.inc.php:102
@@ -6574,8 +7209,8 @@ msgid "Invalid blocked-time security token."
 msgstr ""
 
 #: tzfd-admin-int-block-times.inc.php:82
-#: tzfd-main-class.inc.php:1447
-#: tzfd-main-class.inc.php:2997
+#: tzfd-main-class.inc.php:1455
+#: tzfd-main-class.inc.php:3026
 msgid "Calendar access denied."
 msgstr ""
 
@@ -6728,7 +7363,7 @@ msgid "Publish"
 msgstr ""
 
 #: tzfd-admin-int-list.inc.php:224
-#: tzfd-admin-int-message-list.inc.php:242
+#: tzfd-admin-int-message-list.inc.php:245
 #: tzfd-help.inc.php:347
 msgid "Booking Orders"
 msgstr ""
@@ -6748,6 +7383,11 @@ msgstr ""
 
 #: tzfd-admin-int-list.inc.php:230
 msgid "Clone"
+msgstr ""
+
+#: tzfd-admin-int-list.inc.php:231
+#: tzfd-admin-int-message-list.inc.php:448
+msgid "Delete"
 msgstr ""
 
 #: tzfd-admin-int-list.inc.php:273
@@ -6785,151 +7425,151 @@ msgstr ""
 msgid "Notification resend request processed; delivery is not guaranteed."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:131
+#: tzfd-admin-int-message-list.inc.php:132
 msgid "Unable to delete bookings; the database did not confirm the operation."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:133
+#: tzfd-admin-int-message-list.inc.php:134
 msgid "All selected bookings deleted"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:137
+#: tzfd-admin-int-message-list.inc.php:139
 msgid "The business context is unavailable; no bookings were deleted."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:159
+#: tzfd-admin-int-message-list.inc.php:162
 msgid "Invalid booking status; no change was made."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:165
+#: tzfd-admin-int-message-list.inc.php:168
 msgid "Status updated"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:166
+#: tzfd-admin-int-message-list.inc.php:169
 msgid "Status was not changed; verify the booking and its current status."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:189
+#: tzfd-admin-int-message-list.inc.php:192
 #: tzfd-admin-int-report.inc.php:69
 msgid "Invalid search filter."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:219
+#: tzfd-admin-int-message-list.inc.php:222
 msgid "Unable to read booking totals."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:236
+#: tzfd-admin-int-message-list.inc.php:239
 msgid "Unable to read bookings."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:242
+#: tzfd-admin-int-message-list.inc.php:245
 msgid "Calendar not found"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:242
+#: tzfd-admin-int-message-list.inc.php:245
 #: tzfd-admin-int-schedule.inc.php:92
 msgid "All forms"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:245
+#: tzfd-admin-int-message-list.inc.php:248
 msgid "This calendar was not found for the current company."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:258
+#: tzfd-admin-int-message-list.inc.php:261
 msgid "Are you sure that you want to resend the notification emails for this item?"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:259
+#: tzfd-admin-int-message-list.inc.php:262
 msgid "Are you sure that you want to delete this item?"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:260
+#: tzfd-admin-int-message-list.inc.php:263
 msgid "Sending..."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:261
+#: tzfd-admin-int-message-list.inc.php:264
 msgid "Sent!"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:275
+#: tzfd-admin-int-message-list.inc.php:278
 #: tzfd-admin-int-report.inc.php:280
 #: tzfd-admin-int-schedule.inc.php:123
 msgid "All Items"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:291
+#: tzfd-admin-int-message-list.inc.php:294
 msgid "Search..."
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:296
+#: tzfd-admin-int-message-list.inc.php:299
 msgid "Export CSV"
 msgstr ""
 
 #. translators: %s: Number of items.
-#: tzfd-admin-int-message-list.inc.php:305
+#: tzfd-admin-int-message-list.inc.php:308
 #, php-format
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#: tzfd-admin-int-message-list.inc.php:317
+#: tzfd-admin-int-message-list.inc.php:320
 msgid "First page"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:318
+#: tzfd-admin-int-message-list.inc.php:321
 msgid "Previous page"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:322
+#: tzfd-admin-int-message-list.inc.php:325
 msgid "Current Page"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:324
+#: tzfd-admin-int-message-list.inc.php:327
 msgid "of"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:331
+#: tzfd-admin-int-message-list.inc.php:334
 msgid "Next page"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:332
+#: tzfd-admin-int-message-list.inc.php:335
 msgid "Last page"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:355
+#: tzfd-admin-int-message-list.inc.php:358
 msgid "Submission Date"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:384
+#: tzfd-admin-int-message-list.inc.php:387
 msgid "Contains"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:384
+#: tzfd-admin-int-message-list.inc.php:387
 msgid "non-approved or cancelled dates"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:384
+#: tzfd-admin-int-message-list.inc.php:387
 msgid "See details in schedule"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:442
+#: tzfd-admin-int-message-list.inc.php:447
 msgid "Resend Email"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:455
+#: tzfd-admin-int-message-list.inc.php:460
 msgid "Apply Status"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:456
+#: tzfd-admin-int-message-list.inc.php:461
 msgid "Delete Selected"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:459
+#: tzfd-admin-int-message-list.inc.php:464
 msgid "Print List"
 msgstr ""
 
-#: tzfd-admin-int-message-list.inc.php:460
+#: tzfd-admin-int-message-list.inc.php:465
 msgid "Delete ALL Bookings"
 msgstr ""
 
@@ -7196,7 +7836,7 @@ msgstr ""
 
 #: tzfd-admin-int.inc.php:251
 #: tzfd-main-class.inc.php:214
-#: tzfd-main-class.inc.php:937
+#: tzfd-main-class.inc.php:944
 msgid "No more slots available."
 msgstr ""
 
@@ -7206,7 +7846,7 @@ msgstr ""
 
 #: tzfd-admin-int.inc.php:257
 #: tzfd-main-class.inc.php:215
-#: tzfd-main-class.inc.php:936
+#: tzfd-main-class.inc.php:943
 msgid "Selected time is no longer available. Please select a different time."
 msgstr ""
 
@@ -7883,7 +8523,7 @@ msgstr ""
 msgid "If you don't want to enable add ons now then <strong>continue saving these settings and publishing the booking form</strong>."
 msgstr ""
 
-#: tzfd-bootstrap.inc.php:160
+#: tzfd-bootstrap.inc.php:161
 msgid "Scheduling & Enquiries Manager: the PHP GD library is not installed, so the booking CAPTCHA is turned off. Ask your host to enable GD to protect your booking form from automated submissions."
 msgstr ""
 
@@ -8565,7 +9205,7 @@ msgid "How do I change the total a customer pays?"
 msgstr ""
 
 #: tzfd-help.inc.php:227
-msgid "Use the filter <code>tz_fd_invoice_amount</code>. It receives the amount and an array with <code>formid</code> and <code>itemnumber</code>, and returns the new amount."
+msgid "Use the filter <code>tzfd_invoice_amount</code>. It receives the amount and an array with <code>formid</code> and <code>itemnumber</code>, and returns the new amount."
 msgstr ""
 
 #: tzfd-help.inc.php:228
@@ -8573,7 +9213,7 @@ msgid "How do I clear the availability cache from code?"
 msgstr ""
 
 #: tzfd-help.inc.php:229
-msgid "Run the action <code>tz_fd_cache_clean</code> with the calendar’s form ID as its only argument."
+msgid "Run the action <code>tzfd_cache_clean</code> with the calendar’s form ID as its only argument."
 msgstr ""
 
 #: tzfd-help.inc.php:230
@@ -8621,7 +9261,7 @@ msgid "Which actions send WebHook events?"
 msgstr ""
 
 #: tzfd-help.inc.php:241
-msgid "A new booking fires <code>tz_fd_process_data</code>, which sends booking.created. A status change fires <code>tz_fd_update_status</code>, which sends booking.status_update_attempted."
+msgid "A new booking fires <code>tzfd_process_data</code>, which sends booking.created. A status change fires <code>tzfd_update_status</code>, which sends booking.status_update_attempted."
 msgstr ""
 
 #: tzfd-help.inc.php:247
@@ -9191,7 +9831,7 @@ msgid "The readme.txt file in the plugin folder has installation notes and the c
 msgstr ""
 
 #: tzfd-main-class.inc.php:213
-#: tzfd-main-class.inc.php:935
+#: tzfd-main-class.inc.php:942
 msgid "Cost"
 msgstr ""
 
@@ -9199,235 +9839,235 @@ msgstr ""
 msgid "[All]"
 msgstr ""
 
-#: tzfd-main-class.inc.php:599
+#: tzfd-main-class.inc.php:603
 msgid "No appointments found with the selected filters"
 msgstr ""
 
-#: tzfd-main-class.inc.php:650
+#: tzfd-main-class.inc.php:654
 msgid "Update Status"
 msgstr ""
 
-#: tzfd-main-class.inc.php:818
+#: tzfd-main-class.inc.php:824
 msgid "Please enter no more than {0} characters."
 msgstr ""
 
-#: tzfd-main-class.inc.php:819
+#: tzfd-main-class.inc.php:825
 msgid "Please enter at least {0} characters."
 msgstr ""
 
-#: tzfd-main-class.inc.php:839
+#: tzfd-main-class.inc.php:845
 msgid "This booking form is temporarily unavailable. Please contact the site owner."
 msgstr ""
 
-#: tzfd-main-class.inc.php:933
+#: tzfd-main-class.inc.php:940
 msgid "Close"
 msgstr ""
 
-#: tzfd-main-class.inc.php:1083
+#: tzfd-main-class.inc.php:1091
 msgid "Insert Scheduling & Enquiries Manager booking form"
 msgstr ""
 
-#: tzfd-main-class.inc.php:1091
+#: tzfd-main-class.inc.php:1099
 msgid "- Please select a booking form -"
 msgstr ""
 
 #. translators: %s: file name inside the plugin folder.
-#: tzfd-main-class.inc.php:1128
+#: tzfd-main-class.inc.php:1136
 #, php-format
 msgid "Scheduling & Enquiries Manager is incomplete: the file %s is missing. Reinstall the plugin."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1215
-#: tzfd-main-class.inc.php:1222
-#: tzfd-main-class.inc.php:1225
+#: tzfd-main-class.inc.php:1223
 #: tzfd-main-class.inc.php:1230
-#: tzfd-main-class.inc.php:1241
+#: tzfd-main-class.inc.php:1233
+#: tzfd-main-class.inc.php:1238
+#: tzfd-main-class.inc.php:1249
 msgid "Please select a booking form."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1273
+#: tzfd-main-class.inc.php:1281
 msgid "OK, booking form selected. Great!"
 msgstr ""
 
-#: tzfd-main-class.inc.php:1274
+#: tzfd-main-class.inc.php:1282
 msgid "The appointment booking form will appear here when viewed in the public website."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1438
+#: tzfd-main-class.inc.php:1446
 msgid "Not authorized to publish a booking form."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1452
+#: tzfd-main-class.inc.php:1460
 msgid "Invalid publishing destination."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1455
+#: tzfd-main-class.inc.php:1463
 msgid "Page editing permission required."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1458
+#: tzfd-main-class.inc.php:1466
 msgid "Post editing permission required."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1466
+#: tzfd-main-class.inc.php:1474
 msgid "Some unexpected error happened. If you see this error contact the support service at "
 msgstr ""
 
-#: tzfd-main-class.inc.php:1481
+#: tzfd-main-class.inc.php:1489
 msgid "This is a <b>preview</b> page, remember to publish it if needed. You can edit the full calendar and form settings into the admin settings page.<br /><br /> "
 msgstr ""
 
-#: tzfd-main-class.inc.php:1721
-#: tzfd-main-class.inc.php:1846
+#: tzfd-main-class.inc.php:1730
+#: tzfd-main-class.inc.php:1860
 msgid "Authentication required"
 msgstr ""
 
-#: tzfd-main-class.inc.php:1969
+#: tzfd-main-class.inc.php:1984
 msgid "Settings changes require POST."
 msgstr ""
 
-#: tzfd-main-class.inc.php:1988
+#: tzfd-main-class.inc.php:2003
 msgid "This booking form has expired. Please reload the page and submit it again."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2037
+#: tzfd-main-class.inc.php:2054
 msgid "This booking form is not configured correctly. Please ask an administrator to check its fields."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2048
+#: tzfd-main-class.inc.php:2065
 msgid "Please choose a valid service, date and appointment time before saving."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2064
+#: tzfd-main-class.inc.php:2081
 msgid "Blocked by anti-spam rule. Please contact our support service if you this this is an error."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2071
+#: tzfd-main-class.inc.php:2088
 msgid "This booking could not be saved because the form is not linked to an active business. Please contact us to make the booking."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2177
-#: tzfd-main-class.inc.php:3058
+#: tzfd-main-class.inc.php:2196
+#: tzfd-main-class.inc.php:3087
 msgid "BLOCKED BY ADMIN"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2191
+#: tzfd-main-class.inc.php:2212
 msgid "Empty post! No data received."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2206
+#: tzfd-main-class.inc.php:2228
 msgid "Invalid customer selection. Refresh the booking form and choose a customer."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2225
+#: tzfd-main-class.inc.php:2248
 msgid "The selected customer no longer exists. Refresh the booking form and select a valid customer."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2272
+#: tzfd-main-class.inc.php:2297
 msgid "The booking outcome could not be confirmed. Contact the administrator before trying again to avoid a duplicate."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2274
+#: tzfd-main-class.inc.php:2299
 msgid "The booking could not be saved. Please contact the administrator if this continues."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2339
-#: tzfd-main-class.inc.php:2824
+#: tzfd-main-class.inc.php:2365
+#: tzfd-main-class.inc.php:2852
 msgid "Booking request received"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2381
+#: tzfd-main-class.inc.php:2407
 msgid "Your booking is confirmed."
 msgstr ""
 
 #. translators: %d: booking reference number
-#: tzfd-main-class.inc.php:2382
+#: tzfd-main-class.inc.php:2408
 #, php-format
 msgid "Booking reference: %d"
 msgstr ""
 
 #. translators: %s: booked date and start time
-#: tzfd-main-class.inc.php:2384
+#: tzfd-main-class.inc.php:2410
 #, php-format
 msgid "Date and time: %s"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2386
+#: tzfd-main-class.inc.php:2412
 msgid "Booking confirmed"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2397
+#: tzfd-main-class.inc.php:2423
 msgid "Selected time is no longer available"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2397
+#: tzfd-main-class.inc.php:2423
 msgid "please go back and select another time"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2826
-#: tzfd-main-class.inc.php:2835
+#: tzfd-main-class.inc.php:2854
+#: tzfd-main-class.inc.php:2863
 msgid "Request reference:"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2832
+#: tzfd-main-class.inc.php:2860
 msgid "Booking request status update"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2833
+#: tzfd-main-class.inc.php:2861
 msgid "Current appointment statuses:"
 msgstr ""
 
-#: tzfd-main-class.inc.php:2968
+#: tzfd-main-class.inc.php:2997
 msgid "Invalid blocked-time selection."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2972
+#: tzfd-main-class.inc.php:3001
 msgid "Invalid blocked-time dates."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2987
+#: tzfd-main-class.inc.php:3016
 msgid "Invalid blocked-time date."
 msgstr ""
 
-#: tzfd-main-class.inc.php:2993
+#: tzfd-main-class.inc.php:3022
 msgid "Invalid calendar."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3011
+#: tzfd-main-class.inc.php:3040
 msgid "Invalid blocked-time hours."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3028
+#: tzfd-main-class.inc.php:3057
 msgid "Invalid blocked-time interval."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3048
+#: tzfd-main-class.inc.php:3077
 msgid "[all services]"
 msgstr ""
 
-#: tzfd-main-class.inc.php:3182
+#: tzfd-main-class.inc.php:3211
 msgid "Invalid booking calendar."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3212
+#: tzfd-main-class.inc.php:3241
 msgid "Invalid form configuration."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3224
+#: tzfd-main-class.inc.php:3253
 msgid "Invalid booking form structure."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3419
-#: tzfd-main-class.inc.php:3613
+#: tzfd-main-class.inc.php:3448
+#: tzfd-main-class.inc.php:3644
 msgid "Invalid export date range."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3444
-#: tzfd-main-class.inc.php:3625
+#: tzfd-main-class.inc.php:3475
+#: tzfd-main-class.inc.php:3656
 msgid "Booking export could not be completed. Please retry."
 msgstr ""
 
-#: tzfd-main-class.inc.php:3590
+#: tzfd-main-class.inc.php:3621
 msgid "Invalid export calendar."
 msgstr ""
 
@@ -9447,15 +10087,15 @@ msgstr ""
 msgid "Required field validation ignored!"
 msgstr ""
 
-#: tzfd-public-int.inc.php:69
+#: tzfd-public-int.inc.php:70
 msgid "Security Code"
 msgstr ""
 
-#: tzfd-public-int.inc.php:71
+#: tzfd-public-int.inc.php:72
 msgid "Please enter the security code"
 msgstr ""
 
-#: tzfd-public-int.inc.php:78
+#: tzfd-public-int.inc.php:79
 msgid "Block selected dates"
 msgstr ""
 
@@ -9578,24 +10218,12 @@ msgstr ""
 msgid "Set your business defaults and notification preferences."
 msgstr ""
 
-#: tzfd-settings.inc.php:88
-#: tzfd-settings.inc.php:201
-#: tzfd-settings.inc.php:392
-#: tzfd-settings.inc.php:434
-#: tzfd-settings.inc.php:526
-msgid "Save changes"
-msgstr ""
-
 #: tzfd-settings.inc.php:94
 msgid "Settings sections"
 msgstr ""
 
 #: tzfd-settings.inc.php:103
 msgid "Front Desk uses its own business settings and currency when operating independently."
-msgstr ""
-
-#: tzfd-settings.inc.php:105
-msgid "Time zone"
 msgstr ""
 
 #: tzfd-settings.inc.php:106

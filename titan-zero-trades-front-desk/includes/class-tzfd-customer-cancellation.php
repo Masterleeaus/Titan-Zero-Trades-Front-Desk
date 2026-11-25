@@ -21,7 +21,7 @@ if ( ! class_exists( 'TZFD_Customer_Cancellation' ) ) {
         private $email_format = 'text';
 
         public function register() {
-            add_action( 'tz_fd_process_data', array( $this, 'capture_booking' ), 1000, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'capture_booking' ), 1000, 1 );
             add_filter( 'wp_mail', array( $this, 'filter_customer_mail' ), 10, 1 );
             add_action( 'admin_post_' . self::ACTION, array( $this, 'handle_public_request' ) );
             add_action( 'admin_post_nopriv_' . self::ACTION, array( $this, 'handle_public_request' ) );

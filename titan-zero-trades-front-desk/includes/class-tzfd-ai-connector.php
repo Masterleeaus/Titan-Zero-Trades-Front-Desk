@@ -71,7 +71,7 @@ final class TZFD_AI_Connector {
      * Named monthly budget sets per site (issue #331). 'contract' is live by default (the standing contract
      * figures). 'pilot' holds the provisional #284 pilot figures and is selected only through the
      * tzfd_ai_connector_budget_profile filter. The pilot faq_batch (weekly) is approximated as 4 per month.
-     * Per-visitor turn limits from #284 (2 fallback turns, 3 missed-call reply turns) have no counter in code yet.
+     * Per-visitor fallback turn cap (#353, 200 per visitor) is enforced in TZFD_AI_Answer_Box. The 3 missed-call reply turns from #284 have no counter in code yet.
      */
     public static function budget_profiles() {
         return array(
@@ -316,8 +316,8 @@ final class TZFD_AI_Connector {
      * Setup notice shown before the administrator keeps AI on: what leaves the site, the confirmation the
      * administrator gives when saving consent, and where the terms are.
      * Consent wording and the 30-day retention default were approved by the owner on issue #348 (decision
-     * recorded 2026-11-23). wording_status records that approval. The terms link is NOT covered by that
-     * decision: it is still a draft page pending legal review.
+     * recorded 2026-11-23). wording_status records that approval. The owner confirmed on 2026-11-23 that the
+     * terms were legal-reviewed; terms_status records that approval (not draft).
      * Filters: tzfd_ai_setup_notice( $text, $disclosure ), tzfd_ai_consent_confirmation( $text, $disclosure )
      * and tzfd_ai_terms_url( $url ).
      */
@@ -328,7 +328,7 @@ final class TZFD_AI_Connector {
             . $d['provider'] . '. Booking, calendar, customer and reminder features work without AI. '
             . 'You can withdraw consent or turn AI off at any time, and withdrawing stops hosted requests straight away.';
         $confirm = 'I agree that the data listed above may be sent to the hosted AI endpoint I have connected, and I understand I can withdraw this at any time.';
-        // DRAFT: this terms page is pending legal review. Replace or confirm it before AI is offered to real sites.
+        // Terms page approved by the owner on 2026-11-23 after legal review (issue #348). Not a draft.
         $url     = 'https://titanzero.io/scheduling-enquiries-terms/';
         if ( function_exists( 'apply_filters' ) ) {
             $text    = apply_filters( 'tzfd_ai_setup_notice', $text, $d );
@@ -341,6 +341,7 @@ final class TZFD_AI_Connector {
             'terms_url'      => (string) $url,
             'owner_review'   => false,
             'wording_status' => 'owner_approved_issue_348',
+            'terms_status'   => 'owner_approved_issue_348',
         );
     }
 

@@ -104,35 +104,56 @@ final class TZFD_Setup_Checklist {
 	 * Measures from the stored progress record, for this site only. Nothing is measured without consent, so a
 	 * site that has not turned progress records on gets measured => false and no figures.
 	 *
-	 * completion_percent: recorded steps as a whole percentage of the catalogue.
-	 * first_booking_at:   unix time the test_booking step was first seen done, or null.
+	 * Only well-formed entries count: a step key in the catalogue with a positive whole-number unix time. Anything
+	 * else in the stored option (text, zero, negative, unknown keys) is ignored, never read as a time.
+	 *
+	 * completion_percent:       recorded steps as a whole percentage of the catalogue.
+	 * configured_at:            unix time the last of the six non-booking steps was first seen done, or null.
+	 * first_booking_at:         unix time the test_booking step was first seen done, or null.
 	 * seconds_to_first_booking: from the earliest recorded step to the first booking, never negative; null if unknown.
-	 * converted:          setup is complete and a booking has been seen, i.e. the site reached its first booked job.
+	 * converted:                the first booking was seen on or after configuration (configured_at), or false.
+	 *                           Candidate definition: its wording is an owner decision (issue #367, T7).
 	 *
 	 * @param array $record  step => unix time of first completion (see record()).
 	 * @param bool  $consent Administrator turned progress recording on.
 	 * @return array
 	 */
-	public static function metrics( $record, $consent ) {
+	public static function measures( $record, $consent ) {
+		$steps = self::steps();
 		if ( true !== $consent ) {
-			return array( 'measured' => false, 'steps_done' => null, 'total' => count( self::steps() ), 'completion_percent' => null, 'complete' => null, 'first_booking_at' => null, 'seconds_to_first_booking' => null, 'converted' => null );
+			return array( 'measured' => false, 'steps_done' => null, 'total' => count( $steps ), 'completion_percent' => null, 'complete' => null, 'configured_at' => null, 'first_booking_at' => null, 'seconds_to_first_booking' => null, 'converted' => null );
 		}
-		$record  = is_array( $record ) ? $record : array();
-		$known   = array_intersect_key( $record, self::steps() );
-		$total   = count( self::steps() );
+		$record = is_array( $record ) ? $record : array();
+		$known  = array();
+		foreach ( $record as $key => $time ) {
+			if ( ! isset( $steps[ $key ] ) ) { continue; }
+			if ( is_int( $time ) && $time > 0 ) {
+				$known[ $key ] = $time;
+			} elseif ( is_string( $time ) && ctype_digit( $time ) && (int) $time > 0 ) {
+				$known[ $key ] = (int) $time;
+			}
+		}
+		$total   = count( $steps );
 		$done    = count( $known );
-		$first   = $done > 0 ? (int) min( $known ) : null;
-		$booking = isset( $known['test_booking'] ) ? (int) $known['test_booking'] : null;
-		$complete = $done === $total;
+		$first   = $done > 0 ? min( $known ) : null;
+		$booking = isset( $known['test_booking'] ) ? $known['test_booking'] : null;
+
+		$configured_keys = array_diff( array_keys( $steps ), array( 'test_booking' ) );
+		$configured_at   = null;
+		if ( count( array_intersect_key( $known, array_flip( $configured_keys ) ) ) === count( $configured_keys ) ) {
+			$configured_at = max( array_intersect_key( $known, array_flip( $configured_keys ) ) );
+		}
+
 		return array(
 			'measured'                  => true,
 			'steps_done'                => $done,
 			'total'                     => $total,
 			'completion_percent'        => (int) round( 100 * $done / $total ),
-			'complete'                  => $complete,
+			'complete'                  => $done === $total,
+			'configured_at'             => $configured_at,
 			'first_booking_at'          => $booking,
 			'seconds_to_first_booking'  => ( null !== $booking && null !== $first ) ? max( 0, $booking - $first ) : null,
-			'converted'                 => $complete && null !== $booking,
+			'converted'                 => null !== $configured_at && null !== $booking && $booking >= $configured_at,
 		);
 	}
 

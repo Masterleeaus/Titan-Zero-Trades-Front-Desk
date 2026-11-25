@@ -91,6 +91,15 @@ else
   say "SKIP data seed and verify -- base $OLD_VER has no includes/class-tzfd-tables.php (its own booking schema); carry-over needs an owner decision (issue #194)"
 fi
 
+# Location registry (issue #369, T4). The base has no location store, so its site must hold no location options. The
+# 3.x code writes a registry after the upgrade, and the same raw options must read back identical after the downgrade.
+LOC_FP="$WORK/locations-fingerprint.json"
+run_loc() { # phase, check the 3.x location API (1 or 0)
+  TZFD_RT_PHASE="$1" TZFD_RT_LOC_FINGERPRINT="$LOC_FP" TZFD_RT_LOC_API="$2" $WP_CLI --allow-root --path="$WORK/wp" eval-file "$HERE/upgrade-seed-verify.php" --user=1 2>/dev/null | tee -a "$LOG"
+}
+say "--- location registry on $OLD_VER"
+run_loc locbase 0
+
 # 3. Upgrade: replace the plugin folder, deactivate, reactivate.
 swap_to() { # folder
   CURRENT_SRC="$1"
@@ -102,12 +111,16 @@ say "--- upgrade to this checkout ($NEW_VER)"
 swap_to "$NEW_PLUGIN" || { say "FAIL upgrade -- activation on $NEW_VER failed; see $LOG"; exit 1; }
 run_schema "$NEW_VER" 1
 if [ "$SEEDED" = 1 ]; then run_php verify; fi
+say "--- location registry written on $NEW_VER"
+run_loc locseed 1
+run_loc locverify 1
 
 # 4. Downgrade back to the old folder: the same data must still read.
 say "--- downgrade back to $OLD_VER"
 swap_to "$OLD_PLUGIN" || { say "FAIL downgrade -- activation on $OLD_VER failed; see $LOG"; exit 1; }
 run_schema "$OLD_VER" 0
 if [ "$SEEDED" = 1 ]; then run_php verify; fi
+run_loc locverify 0
 
 FAILS=$(grep -c '^FAIL ' "$LOG")
 PASSES=$(grep -c '^PASS ' "$LOG")

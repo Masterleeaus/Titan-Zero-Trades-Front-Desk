@@ -225,7 +225,7 @@ tzfd_rt_ok( 'B13d a replayed cancel is refused and stages no second event', 200 
 // B13e: customer reschedule end to end is not driven. A booking made through the booking submit path is refused by the
 // reschedule engine (unsupported_booking): it needs the single-appointment record shape, with the flat app_* keys and a
 // service map from the form. A fixture in that shape is still to be written. Reschedule token rules are tested above.
-tzfd_rt_skip( 'B13e customer reschedule end to end', 'needs a stored single-appointment record in the engine shape (unsupported_booking for submit-path rows); token rules are tested above' );
+tzfd_rt_skip( 'B13e customer reschedule end to end', 'in-process: needs a stored single-appointment record in the engine shape (unsupported_booking for submit-path rows); driven over HTTP by customer-reschedule-http-tests.sh (issue #463); token rules are tested above' );
 
 /* ------------------------------------------------------------------ C. Reminders and the outbox */
 

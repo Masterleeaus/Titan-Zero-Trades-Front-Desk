@@ -89,6 +89,29 @@ tzfd_br_ok( 'booking-report: administrator sees the totals', false !== strpos( $
 tzfd_br_ok( 'booking-report: screen says what is not measured', false !== strpos( $br_html, 'Not measured yet' ) && false !== strpos( $br_html, 'lead source' ) );
 tzfd_br_ok( 'booking-report: screen shows no customer name or email', false === strpos( $br_html, 'rt-report@example.test' ) && false === strpos( $br_html, 'RT Customer' ) );
 
+// 2b. Enquiries by lead source: counted per source for this company and range only. Another company's
+// enquiry and one just outside the range must not change the figures. No enquirer name or email is shown.
+$br_enq_table = $wpdb->prefix . 'tz_enquiries';
+$br_enq_ids   = array();
+foreach ( array(
+	array( 'company_id' => $br_company, 'source' => 'website-form', 'received_utc' => '2031-01-01 09:00:00' ),
+	array( 'company_id' => $br_company, 'source' => 'phone', 'received_utc' => '2031-01-03 23:59:59' ),
+	array( 'company_id' => $br_company, 'source' => '', 'received_utc' => '2031-01-02 10:00:00' ),
+	array( 'company_id' => $br_company, 'source' => 'phone', 'received_utc' => '2031-01-04 00:00:00' ), // outside range
+	array( 'company_id' => $br_company + 1, 'source' => 'phone', 'received_utc' => '2031-01-02 10:00:00' ), // other company
+) as $br_enq ) {
+	$wpdb->insert( $br_enq_table, $br_enq + array( 'name' => 'RT Enquirer', 'email' => 'rt-enquirer@example.test', 'enquiry' => 'RT enquiry', 'created' => $br_enq['received_utc'], 'status' => 'new' ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	$br_enq_ids[] = (int) $wpdb->insert_id;
+}
+$_GET['from'] = $br_from; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- test input only.
+$_GET['to']   = $br_to;   // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- test input only.
+ob_start();
+TZFD_Booking_Report_Admin::render();
+$br_lead_html = ob_get_clean();
+unset( $_GET['from'], $_GET['to'] );
+tzfd_br_ok( 'booking-report: lead source table shows phone 1, web form 1, unknown 1, total 3', false !== strpos( $br_lead_html, '<td>Phone</td><td>1</td>' ) && false !== strpos( $br_lead_html, '<td>Web form</td><td>1</td>' ) && false !== strpos( $br_lead_html, '<td>Unknown</td><td>1</td>' ) && false !== strpos( $br_lead_html, '<th>Total</th><th>3</th>' ) );
+tzfd_br_ok( 'booking-report: lead source figures leave out enquirer name and email', false === strpos( $br_lead_html, 'rt-enquirer@example.test' ) && false === strpos( $br_lead_html, 'RT Enquirer' ) );
+
 // 3. Permission isolation: a non-administrator sees nothing, whichever roles exist on this site.
 // A temporary editor and a temporary subscriber are created here, so the check never depends on existing users.
 require_once ABSPATH . 'wp-admin/includes/user.php';
@@ -122,6 +145,9 @@ foreach ( $br_ids as $br_id ) {
 	if ( $br_id > 0 ) { $wpdb->delete( $br_bookings, array( 'id' => $br_id ) ); } // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 }
 $wpdb->delete( $br_forms, array( 'id' => $br_form ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+foreach ( $br_enq_ids as $br_enq_id ) {
+	if ( $br_enq_id > 0 ) { $wpdb->delete( $br_enq_table, array( 'id' => $br_enq_id ) ); } // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+}
 
 echo 'Summary (booking-report-runtime): ' . (int) $GLOBALS['tzfd_br']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_br']['FAIL'] . " failed\n";
 exit( (int) $GLOBALS['tzfd_br']['FAIL'] > 0 ? 1 : 0 );

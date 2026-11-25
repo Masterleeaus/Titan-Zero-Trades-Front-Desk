@@ -16,8 +16,9 @@
  * - The response body carries exactly the eight signed fields of central-pairing/1 and nothing else: the seven
  *   assertion fields plus feature_endpoint, the AI endpoint. It is signed with HMAC-SHA256 in the X-TZFD-Timestamp,
  *   X-TZFD-Nonce and X-TZFD-Signature headers, so the endpoint is covered by the same signature. The signature and
- *   every field are checked by TZFD_Central_Tenant::connect(). The nonce must echo the request. The endpoint must be
- *   https and on the host of the pairing endpoint; it is then set as the AI connector endpoint.
+ *   every field are checked by TZFD_Central_Tenant::connect(). The nonce must echo the request. The feature endpoint
+ *   must be https with an exact host in feature_hosts() (default superchargedat.work, filter tzfd_ai_feature_hosts).
+ *   Subdomains, lookalike domains, http, a port or userinfo are refused. It is then set as the AI connector endpoint.
  * - A refused or failed exchange leaves the existing pairing and credential unchanged.
  *
  * Request (POST, JSON body):    {"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}
@@ -44,6 +45,8 @@ final class TZFD_AI_Pairing {
     const CODE_PATTERN    = '/^[A-Za-z0-9-]{6,64}$/D';
     const SECRET_PATTERN  = '/^[0-9a-f]{64}$/D';
     const SITE_PATTERN    = '/^[A-Za-z0-9_.-]{1,64}$/D';
+    const FEATURE_HOSTS_FILTER = 'tzfd_ai_feature_hosts';
+    const FEATURE_HOST_DEFAULT = 'superchargedat.work';
 
     /**
      * The https pairing endpoint, or '' when pairing is off. Constant first, then filter.
@@ -130,7 +133,7 @@ final class TZFD_AI_Pairing {
 
         // The AI endpoint is signed with the rest of the body. It must be https on the pairing endpoint's host.
         $feature = is_string( $data['feature_endpoint'] ) ? $data['feature_endpoint'] : '';
-        if ( ! self::valid_https_url( $feature ) || ! self::same_host( $endpoint, $feature ) ) {
+        if ( ! self::feature_endpoint_allowed( $feature ) ) {
             return self::result( 'invalid_response', array( 'reason' => 'endpoint_invalid' ) );
         }
 
@@ -169,12 +172,29 @@ final class TZFD_AI_Pairing {
             && ! isset( $parts['user'] ) && ! isset( $parts['pass'] );
     }
 
-    private static function same_host( $a, $b ) {
+    /**
+     * The hosts the AI feature endpoint may be on. Default: superchargedat.work. The filter tzfd_ai_feature_hosts
+     * replaces the list. A non-array result allows nothing; non-string entries are dropped.
+     */
+    public static function feature_hosts() {
+        $hosts = function_exists( 'apply_filters' )
+            ? apply_filters( 'tzfd_ai_feature_hosts', array( self::FEATURE_HOST_DEFAULT ) )
+            : array( self::FEATURE_HOST_DEFAULT );
+        if ( ! is_array( $hosts ) ) { return array(); }
+        $clean = array();
+        foreach ( $hosts as $host ) {
+            if ( is_string( $host ) && '' !== $host ) { $clean[] = strtolower( $host ); }
+        }
+        return $clean;
+    }
+
+    /** https only, no userinfo, no explicit port, and a host that is exactly one entry of feature_hosts(). */
+    public static function feature_endpoint_allowed( $url ) {
+        if ( ! self::valid_https_url( $url ) ) { return false; }
         // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pa = parse_url( $a );
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pb = parse_url( $b );
-        return is_array( $pa ) && is_array( $pb ) && strtolower( $pa['host'] ) === strtolower( $pb['host'] );
+        $parts = parse_url( $url );
+        if ( isset( $parts['port'] ) ) { return false; }
+        return in_array( strtolower( $parts['host'] ), self::feature_hosts(), true );
     }
 
     private static function transport( array $request ) {

@@ -10,7 +10,7 @@ require_once __DIR__ . '/class-tzfd-outbox.php';
  * Shared wiring for the SMS provider add-ons (Twilio, Clickatell, MMD Smart, SMSBroadcast, Text-Em-All).
  *
  * The providers share one delivery path, so they behave the same way:
- *  - sends queued texts through the outbox (filter tz_fd_sms_send) using the adapter tz_fd_{SLUG}_send.
+ *  - sends queued texts through the outbox (filter tzfd_sms_send) using the adapter tz_fd_{SLUG}_send.
  *    With no adapter connected the text stays queued and nothing is sent;
  *  - can queue a booking confirmation text when the customer gave a phone number (notify setting);
  *  - STOP replies: handle_inbound() would opt a number out, but the generic webhook route is removed, so inbound
@@ -40,8 +40,8 @@ abstract class TZFD_Sms_Provider_Addon extends TZFD_BaseAddon
     {
         if ( ! $this->addon_is_active() ) { return; }
         TZFD_Outbox::boot();
-        add_filter( 'tz_fd_sms_send', array( $this, 'send' ), 10, 2 );
-        add_action( 'tz_fd_process_data', array( $this, 'queue_booking_text' ), 40, 1 );
+        add_filter( 'tzfd_sms_send', array( $this, 'send' ), 10, 2 );
+        add_action( 'tzfd_process_data', array( $this, 'queue_booking_text' ), 40, 1 );
         // The generic webhook route was removed (19 Oct, decision). handle_inbound() is not reachable until a route is re-homed.
     }
 
@@ -67,14 +67,14 @@ abstract class TZFD_Sms_Provider_Addon extends TZFD_BaseAddon
     }
 
     /** Queues the confirmation text for a new booking, when enabled and a phone number was given. */
-    public function queue_booking_text( $tz_params )
+    public function queue_booking_text( $tzfd_local_params )
     {
-        if ( ! $this->addon_is_active() || ! is_array( $tz_params ) ) { return; }
+        if ( ! $this->addon_is_active() || ! is_array( $tzfd_local_params ) ) { return; }
         $settings = $this->settings();
         if ( '1' !== (string) $settings['notify'] ) { return; }
         $field = preg_replace( '/[^A-Za-z0-9_\-]/', '', (string) $settings['phone_field'] );
-        $phone = ( '' !== $field && isset( $tz_params[ $field ] ) && is_scalar( $tz_params[ $field ] ) ) ? (string) $tz_params[ $field ] : '';
-        TZFD_Outbox::queue( 'sms', $phone, (string) $settings['template'], (int) ( $tz_params['itemnumber'] ?? 0 ), static::SLUG );
+        $phone = ( '' !== $field && isset( $tzfd_local_params[ $field ] ) && is_scalar( $tzfd_local_params[ $field ] ) ) ? (string) $tzfd_local_params[ $field ] : '';
+        TZFD_Outbox::queue( 'sms', $phone, (string) $settings['template'], (int) ( $tzfd_local_params['itemnumber'] ?? 0 ), static::SLUG );
     }
 
     /** Inbound webhook: records a STOP reply once the request has been verified. */

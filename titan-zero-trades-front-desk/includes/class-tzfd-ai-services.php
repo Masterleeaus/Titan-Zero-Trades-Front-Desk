@@ -43,7 +43,7 @@ final class TZFD_AI_Services {
 
     /**
      * Capability descriptors (levels, what each includes, remote services, disclosure text).
-     * Prices are intentionally null: they come from the verified Titan account, never from this file.
+     * Prices are the owner-approved Standard band (A$ per month, incl. GST): Assistant 29, Agent Team 99. Free stays null.
      *
      * @return array<string,mixed>
      */
@@ -90,8 +90,10 @@ final class TZFD_AI_Services {
             return self::result( self::LEVEL_FREE, 'cache_expired' );
         }
 
-        $state = (string) ( $payload['state'] ?? '' );
-        $known = array_values( array_intersect( self::KNOWN_ENTITLEMENTS, (array) ( $payload['entitlements'] ?? array() ) ) );
+        // Malformed field types fail safe: a non-string state is unknown, and only string entitlements count.
+        $state        = is_string( $payload['state'] ?? null ) ? $payload['state'] : '';
+        $entitlements = is_array( $payload['entitlements'] ?? null ) ? array_filter( $payload['entitlements'], 'is_string' ) : array();
+        $known        = array_values( array_intersect( self::KNOWN_ENTITLEMENTS, $entitlements ) );
         if ( array() === $known ) {
             return self::result( self::LEVEL_FREE, 'no_known_entitlement' );
         }
@@ -115,6 +117,41 @@ final class TZFD_AI_Services {
             return self::result( self::LEVEL_AGENT_TEAM, $reason ); // Agent Team includes the Assistant experience.
         }
         return self::result( self::LEVEL_ASSISTANT, $reason );
+    }
+
+    /**
+     * Plain-words sentence for a reason code returned by resolve(). Owners see this, never the raw code.
+     * Unknown codes (for example a revoked or cancelled state) get the generic sentence, so no snake_case
+     * value is ever shown on the AI Services screen. Issue #273.
+     *
+     * @param string $reason Reason code from resolve().
+     * @return string
+     */
+    public static function reason_text( $reason ) {
+        $reason = (string) $reason;
+        $free   = __( 'Your site is on the Free level.', 'titan-zero-trades-front-desk' );
+        switch ( $reason ) {
+            case 'active':
+                return __( 'Hosted AI is active on this site.', 'titan-zero-trades-front-desk' );
+            case 'grace':
+                return __( 'Hosted AI is active during a short grace period.', 'titan-zero-trades-front-desk' );
+            case 'paused_agents':
+                return __( 'The Agent Team is paused on this site.', 'titan-zero-trades-front-desk' );
+            case 'no_entitlement':
+                return __( 'No hosted AI plan is connected to this site.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'unsupported_schema':
+                return __( 'The hosted plan details are from a version this site does not support.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'invalid_company':
+                return __( 'The hosted plan details do not name a valid company.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'company_mismatch':
+                return __( 'The hosted plan belongs to a different company.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'cache_expired':
+                return __( 'The hosted plan details have expired and need to be checked again.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            case 'no_known_entitlement':
+                return __( 'The hosted plan does not include a hosted AI level.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+            default:
+                return __( 'Hosted AI is not active on this site.', 'titan-zero-trades-front-desk' ) . ' ' . $free;
+        }
     }
 
     /**

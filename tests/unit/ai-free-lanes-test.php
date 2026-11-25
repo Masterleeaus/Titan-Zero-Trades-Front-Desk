@@ -224,7 +224,7 @@ ok( 'setup: enabling AI lists missing configuration', $enable_blocked['ok'] === 
 
 $fresh = array( 'business_name' => 'Harbour Plumbing', 'greeting' => '', 'services' => array( 'Boiler repair', 'Drain unblocking' ), 'hours_configured' => true, 'faq_questions' => array(), 'tags' => array(), 'connector_available' => true );
 $sgs = TZFD_Ai_Setup_Check::suggestions( $fresh );
-ok( 'setup: fresh site gets greeting, service FAQs and tags', count( array_filter( $sgs, static function ( $s ) { return 'greeting' === $s['type']; } ) ) === 1 && count( array_filter( $sgs, static function ( $s ) { return 'faq' === $s['type']; } ) ) === 2 && count( array_filter( $sgs, static function ( $s ) { return 'tags' === $s['type']; } ) ) === 1 );
+ok( 'setup: fresh site gets service FAQs and tags, and no greeting suggestion (#400)', count( array_filter( $sgs, static function ( $s ) { return 'greeting' === $s['type']; } ) ) === 0 && count( array_filter( $sgs, static function ( $s ) { return 'faq' === $s['type']; } ) ) === 2 && count( array_filter( $sgs, static function ( $s ) { return 'tags' === $s['type']; } ) ) === 1 );
 ok( 'setup: suggestion values contain no invented hours or prices', preg_match( '/\d|\$|\b(am|pm)\b/i', json_encode( array_column( $sgs, 'value' ) ) ) === 0 );
 ok( 'setup: every suggestion needs confirmation', array_reduce( $sgs, static function ( $c, $s ) { return $c && $s['needs_confirmation'] === true; }, true ) );
 $upgraded = $fresh;
@@ -232,7 +232,7 @@ $upgraded['greeting'] = 'Welcome to Harbour';
 $upgraded['faq_questions'] = array( 'Do you offer boiler repair?' );
 $upgraded['tags'] = array( 'boiler-repair' );
 $up = TZFD_Ai_Setup_Check::suggestions( $upgraded );
-ok( 'setup: upgraded site keeps existing greeting, FAQ and tag', ! in_array( 'greeting', array_column( $up, 'type' ), true ) && count( array_filter( $up, static function ( $s ) { return 'faq' === $s['type'] && 'do you offer boiler repair?' === strtolower( $s['value']['question'] ); } ) ) === 0 && count( array_filter( $up, static function ( $s ) { return 'tags' === $s['type'] && in_array( 'boiler-repair', $s['value'], true ); } ) ) === 0 );
+ok( 'setup: upgraded site keeps existing FAQ and tag', ! in_array( 'greeting', array_column( $up, 'type' ), true ) && count( array_filter( $up, static function ( $s ) { return 'faq' === $s['type'] && 'do you offer boiler repair?' === strtolower( $s['value']['question'] ); } ) ) === 0 && count( array_filter( $up, static function ( $s ) { return 'tags' === $s['type'] && in_array( 'boiler-repair', $s['value'], true ); } ) ) === 0 );
 ok( 'setup: AI gate passes once required items exist', TZFD_Ai_Setup_Check::ai_gate( $fresh )['allowed'] === true );
 ok( 'setup: enabling AI needs admin confirmation', TZFD_Ai_Setup_Check::enable_ai( $fresh, false, $NOW )['error'] === 'admin_confirmation_required' && TZFD_Ai_Free_Core::consent_granted() === false );
 ok( 'setup: confirmed enable records consent', TZFD_Ai_Setup_Check::enable_ai( $fresh, true, $NOW )['ok'] === true && TZFD_Ai_Free_Core::consent_granted() === true );
@@ -410,6 +410,56 @@ ok( 'kb tenant: another company does not receive company 9 builder entries', $kb
 $GLOBALS['tzfd_test_caps'] = false;
 ok( 'kb permissions: rollback refused without edit capability', TZFD_Ai_Knowledge_Builder::rollback( $KB_CO, $kb_draft['id'], 1, $KB_NOW, 1 )['error'] === 'forbidden' );
 $GLOBALS['tzfd_test_caps'] = true;
+
+/* ---------- #36 outdated approved content (age since last edit or review, #436) ---------- */
+$OD_NOW = 1767225600;
+$OD_DAY = DAY_IN_SECONDS;
+$od_entries = array(
+	array( 'id' => 'faq-old', 'question' => 'Old price?', 'answer' => 'SECRET ANSWER TEXT', 'updated' => $OD_NOW - 200 * $OD_DAY ),
+	array( 'id' => 'faq-fresh', 'question' => 'Fresh?', 'answer' => 'x', 'updated' => $OD_NOW - 10 * $OD_DAY ),
+	array( 'id' => 'faq-edge', 'question' => 'Edge?', 'answer' => 'x', 'updated' => $OD_NOW - 180 * $OD_DAY ),
+	array( 'id' => 'faq-nodate', 'question' => 'No date?', 'answer' => 'x', 'updated' => 0 ),
+	array( 'id' => 'faq-future', 'question' => 'Future?', 'answer' => 'x', 'updated' => $OD_NOW + $OD_DAY ),
+	array( 'id' => 'faq-older', 'question' => 'Older?', 'answer' => 'x', 'updated' => $OD_NOW - 400 * $OD_DAY ),
+);
+$od = TZFD_Ai_Gap_Detection::outdated( $od_entries, $OD_NOW, 180 );
+ok( 'outdated: default threshold is 180 days', TZFD_Ai_Gap_Detection::OUTDATED_DAYS === 180 && TZFD_Ai_Gap_Detection::outdated_days() === 180 );
+ok( 'outdated: entries older than the threshold are listed, oldest first', array_column( $od, 'id' ) === array( 'faq-older', 'faq-old', 'faq-edge' ) );
+ok( 'outdated: age in days is counted from last edit', $od[0]['age_days'] === 400 && $od[1]['age_days'] === 200 && $od[2]['age_days'] === 180 );
+ok( 'outdated: fresh, undated and future-dated entries are not reported', ! in_array( 'faq-fresh', array_column( $od, 'id' ), true ) && ! in_array( 'faq-nodate', array_column( $od, 'id' ), true ) && ! in_array( 'faq-future', array_column( $od, 'id' ), true ) );
+ok( 'outdated: rows carry no answer text', false === strpos( json_encode( $od ), 'SECRET ANSWER TEXT' ) && array_keys( $od[0] ) === array( 'id', 'question', 'updated', 'reviewed', 'age_days' ) );
+ok( 'outdated: a shorter threshold widens the list', count( TZFD_Ai_Gap_Detection::outdated( $od_entries, $OD_NOW, 30 ) ) === 3 );
+$GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] = static function () { return 0; };
+ok( 'outdated: filter below 1 is clamped to 1 day', TZFD_Ai_Gap_Detection::outdated_days() === 1 );
+$GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] = static function () { return 99999; };
+ok( 'outdated: filter above 3650 is clamped', TZFD_Ai_Gap_Detection::outdated_days() === 3650 );
+unset( $GLOBALS['tzfd_test_filters']['tzfd_ai_outdated_days'] );
+ok( 'outdated: published entries expose their last-edit time', TZFD_Ai_Knowledge_Builder::published( $KB_CO )[0]['updated'] === $KB_NOW + 20 );
+ok( 'outdated: a company with no published entries has nothing outdated', TZFD_Ai_Gap_Detection::outdated( TZFD_Ai_Knowledge_Builder::published( 8 ), $OD_NOW, 180 ) === array() );
+$od_rev_entries = array(
+	array( 'id' => 'rev-recent', 'question' => 'Reviewed lately?', 'answer' => 'x', 'updated' => $OD_NOW - 400 * $OD_DAY, 'reviewed' => $OD_NOW - 10 * $OD_DAY ),
+	array( 'id' => 'rev-stale', 'question' => 'Reviewed long ago?', 'answer' => 'x', 'updated' => $OD_NOW - 400 * $OD_DAY, 'reviewed' => $OD_NOW - 200 * $OD_DAY ),
+	array( 'id' => 'rev-future', 'question' => 'Future review?', 'answer' => 'x', 'updated' => $OD_NOW - 300 * $OD_DAY, 'reviewed' => $OD_NOW + $OD_DAY ),
+	array( 'id' => 'rev-edit-after', 'question' => 'Edited after review?', 'answer' => 'x', 'updated' => $OD_NOW - 10 * $OD_DAY, 'reviewed' => $OD_NOW - 300 * $OD_DAY ),
+);
+$od_rev = TZFD_Ai_Gap_Detection::outdated( $od_rev_entries, $OD_NOW, 180 );
+ok( 'outdated: a recent review keeps an old answer out of the list', ! in_array( 'rev-recent', array_column( $od_rev, 'id' ), true ) );
+ok( 'outdated: a review older than the threshold is listed, aged from the review', array_column( $od_rev, 'id' ) === array( 'rev-future', 'rev-stale' ) && $od_rev[1]['age_days'] === 200 && $od_rev[1]['reviewed'] === $OD_NOW - 200 * $OD_DAY );
+ok( 'outdated: an edit after an old review restarts the age', ! in_array( 'rev-edit-after', array_column( $od_rev, 'id' ), true ) );
+ok( 'outdated: a review dated after now is ignored and the edit age counts', $od_rev[0]['id'] === 'rev-future' && $od_rev[0]['age_days'] === 300 && $od_rev[0]['reviewed'] === 0 );
+
+$GLOBALS['tzfd_test_caps'] = false;
+ok( 'review: mark_reviewed refused without edit capability', TZFD_Ai_Knowledge_Builder::mark_reviewed( $KB_CO, $kb_draft['id'], $KB_NOW + 40, 1 )['error'] === 'forbidden' );
+$GLOBALS['tzfd_test_caps'] = true;
+$kb_before = TZFD_Ai_Knowledge_Builder::published( $KB_CO )[0];
+$kb_ver0   = TZFD_Ai_Knowledge_Builder::version( $KB_CO );
+ok( 'review: unknown entry is not found', TZFD_Ai_Knowledge_Builder::mark_reviewed( $KB_CO, 'kb-000000000000', $KB_NOW + 40, 1 )['error'] === 'not_found' );
+$kb_new = TZFD_Ai_Knowledge_Builder::save_draft( $KB_CO, null, 'Draft only?', 'Not yet.', array(), $KB_NOW + 45, 1 );
+ok( 'review: a draft cannot be marked reviewed', TZFD_Ai_Knowledge_Builder::mark_reviewed( $KB_CO, $kb_new['id'], $KB_NOW + 46, 1 )['error'] === 'not_published' );
+$kb_rv = TZFD_Ai_Knowledge_Builder::mark_reviewed( $KB_CO, $kb_draft['id'], $KB_NOW + 40, 1 );
+$kb_after = TZFD_Ai_Knowledge_Builder::published( $KB_CO )[0];
+ok( 'review: published answer records the review time', $kb_rv['ok'] === true && $kb_after['reviewed'] === $KB_NOW + 40 );
+ok( 'review: text, updated time, version and serving are unchanged', $kb_after['answer'] === $kb_before['answer'] && $kb_after['updated'] === $kb_before['updated'] && TZFD_Ai_Knowledge_Builder::version( $KB_CO ) === $kb_ver0 && $kb_faq->answer( $KB_Q, 'en' )['answer'] === 'Yes, boiler repair is offered.' );
 
 /* ---------- result ---------- */
 echo "Passed: {$GLOBALS['tzfd_pass']}  Failed: {$GLOBALS['tzfd_fail']}\n";

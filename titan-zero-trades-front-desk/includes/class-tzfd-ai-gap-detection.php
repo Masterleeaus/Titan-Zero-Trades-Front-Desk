@@ -25,6 +25,9 @@ final class TZFD_Ai_Gap_Detection {
 	const ANSWERED_CONFIDENCE = 0.6;
 	const HANDLED_ACTION      = 'tzfd_ai_question_handled';
 	const VOCAB_FILTER        = 'tzfd_ai_gap_vocabulary';
+	/** Approved entries not edited or reviewed for this many days are reported as outdated (issue #36; issue #436 owner decision: 180 days without review). */
+	const OUTDATED_DAYS       = 180;
+	const OUTDATED_FILTER     = 'tzfd_ai_outdated_days';
 
 	const STOPWORDS = array(
 		'a', 'an', 'the', 'is', 'are', 'do', 'does', 'you', 'i', 'we', 'my', 'our', 'of', 'to', 'for', 'and', 'or',
@@ -73,7 +76,7 @@ final class TZFD_Ai_Gap_Detection {
 				}
 			}
 		}
-		$filtered = apply_filters( self::VOCAB_FILTER, $vocab );
+		$filtered = apply_filters( 'tzfd_ai_gap_vocabulary', $vocab );
 		return is_array( $filtered ) ? array_values( array_filter( $filtered, 'is_string' ) ) : array();
 	}
 
@@ -196,6 +199,47 @@ final class TZFD_Ai_Gap_Detection {
 			'insufficient'     => $total < self::MIN_BASE,
 			'topics'           => $rows,
 		);
+	}
+
+	/** Age in days before approved content is reported as outdated. Clamped to 1..3650. */
+	public static function outdated_days() {
+		$days = apply_filters( 'tzfd_ai_outdated_days', self::OUTDATED_DAYS );
+		return max( 1, min( 3650, (int) $days ) );
+	}
+
+	/**
+	 * Approved entries whose last check is older than $max_age_days, oldest first (issue #436).
+	 * The last check is the later of the last edit and the last administrator review. A review newer than $now is ignored.
+	 * Each row is array( 'id', 'question', 'updated', 'reviewed', 'age_days' ). 'updated' is the last-edit unix time and
+	 * 'reviewed' the last-review unix time (0 if never reviewed). 'age_days' counts from the last check.
+	 * Entries with no usable edit time are skipped rather than guessed at. Entries edited after $now are skipped.
+	 * Only the admin-written question and id are returned: no answer text.
+	 */
+	public static function outdated( array $entries, $now, $max_age_days ) {
+		$now    = (int) $now;
+		$cutoff = $now - max( 1, (int) $max_age_days ) * DAY_IN_SECONDS;
+		$rows   = array();
+		foreach ( $entries as $e ) {
+			$updated  = (int) ( $e['updated'] ?? 0 );
+			$reviewed = (int) ( $e['reviewed'] ?? 0 );
+			if ( $updated < 1 || $updated > $now ) {
+				continue;
+			}
+			$reviewed = ( $reviewed >= 1 && $reviewed <= $now ) ? $reviewed : 0;
+			$checked  = max( $updated, $reviewed );
+			if ( $checked > $cutoff ) {
+				continue;
+			}
+			$rows[] = array(
+				'id'       => (string) ( $e['id'] ?? '' ),
+				'question' => (string) ( $e['question'] ?? '' ),
+				'updated'  => $updated,
+				'reviewed' => $reviewed,
+				'age_days' => (int) floor( ( $now - $checked ) / DAY_IN_SECONDS ),
+			);
+		}
+		usort( $rows, static function ( $a, $b ) { return $b['age_days'] <=> $a['age_days'] ?: strcmp( $a['id'], $b['id'] ); } );
+		return $rows;
 	}
 
 	/** Words of the label appear in approved text, so the topic is covered. */

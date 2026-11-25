@@ -295,11 +295,11 @@ class TZFD_Privacy_Exporter {
 			'exporter_friendly_name' => __( 'Scheduling & Enquiries Manager bookings', 'titan-zero-trades-front-desk' ),
 			'callback'               => array( __CLASS__, 'export' ),
 		);
-		foreach ( self::email_tables() as $tz_key => $tz_table ) {
-			$exporters[ 'tzfd-' . $tz_key ] = array(
-				'exporter_friendly_name' => $tz_table['label'],
-				'callback'               => function ( $email_address, $page = 1 ) use ( $tz_key ) {
-					return self::export_table( $tz_key, $email_address, $page );
+		foreach ( self::email_tables() as $tzfd_key => $tzfd_table ) {
+			$exporters[ 'tzfd-' . $tzfd_key ] = array(
+				'exporter_friendly_name' => $tzfd_table['label'],
+				'callback'               => function ( $email_address, $page = 1 ) use ( $tzfd_key ) {
+					return self::export_table( $tzfd_key, $email_address, $page );
 				},
 			);
 		}
@@ -350,6 +350,7 @@ class TZFD_Privacy_Exporter {
 		list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
 		$rows = $wpdb->get_results(
 			$wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the WHERE fragment is built from fixed column clauses in the table config; every value is a placeholder.
 				'SELECT * FROM %i WHERE ' . $sql . ' ORDER BY id ASC LIMIT %d OFFSET %d',
 				...array_merge( array( $table ), $values, array( self::PAGE_SIZE + 1, ( $page - 1 ) * self::PAGE_SIZE ) )
 			)
@@ -450,7 +451,8 @@ class TZFD_Privacy_Exporter {
 					return self::erase_unavailable( $removed );
 				}
 				$removed['bookings'] = isset( $removed['bookings'] ) ? $removed['bookings'] + 1 : 1;
-				do_action( 'tz_fd_item_deleted', $booking_id );
+				do_action( 'tzfd_item_deleted', $booking_id );
+				do_action( 'tz_fd_item_deleted', $booking_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 			}
 			$response['done'] = ! $has_more;
 		}
@@ -471,6 +473,7 @@ class TZFD_Privacy_Exporter {
 			list( $sql, $values ) = call_user_func( $config['where'], $email_address, $identity );
 			$wpdb->last_error     = '';
 			$count                = $wpdb->query( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- the WHERE fragment is built from fixed column clauses in the table config; every value is a placeholder.
 				'DELETE FROM %i WHERE ' . $sql,
 				...array_merge( array( $table_name ), $values )
 			) );
@@ -531,6 +534,7 @@ class TZFD_Privacy_Exporter {
 			}
 			$wpdb->last_error = '';
 			$count            = $wpdb->query( $wpdb->prepare(
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- placeholders are generated from a count of integer ids; every value is a placeholder.
 				'DELETE FROM %i WHERE booking_id IN (' . $placeholders . ')',
 				...array_merge( array( $table ), $booking_ids )
 			) );
@@ -681,23 +685,23 @@ class TZFD_Privacy_Exporter {
 		}
 
 		$table  = $wpdb->prefix . TZFD_Tables::BOOKINGS;
-		$tz_offset = ( $page - 1 ) * self::PAGE_SIZE;
+		$tzfd_offset = ( $page - 1 ) * self::PAGE_SIZE;
 		// Validate this fixed WordPress table identifier before placing it in SQL.
 		if ( ! preg_match( '/^[A-Za-z0-9_]+$/D', $table ) ) {
 			return self::storage_error();
 		}
-		$tz_rows = $wpdb->get_results(
-			$wpdb->prepare("SELECT id, formid, time, notifyto, ipaddr, posted_data FROM %i WHERE LOWER(notifyto) = %s ORDER BY id ASC LIMIT %d OFFSET %d", $table, $email_address, self::PAGE_SIZE + 1, $tz_offset)
+		$tzfd_local_rows = $wpdb->get_results(
+			$wpdb->prepare("SELECT id, formid, time, notifyto, ipaddr, posted_data FROM %i WHERE LOWER(notifyto) = %s ORDER BY id ASC LIMIT %d OFFSET %d", $table, $email_address, self::PAGE_SIZE + 1, $tzfd_offset)
 		);
-		if ( ! is_array( $tz_rows ) || ! empty( $wpdb->last_error ) ) {
+		if ( ! is_array( $tzfd_local_rows ) || ! empty( $wpdb->last_error ) ) {
 			return self::storage_error();
 		}
 
-		$has_more = count( $tz_rows ) > self::PAGE_SIZE;
-		$tz_rows     = array_slice( $tz_rows, 0, self::PAGE_SIZE );
+		$has_more = count( $tzfd_local_rows ) > self::PAGE_SIZE;
+		$tzfd_local_rows     = array_slice( $tzfd_local_rows, 0, self::PAGE_SIZE );
 		$forms    = array();
-		$tz_data     = array();
-		foreach ( $tz_rows as $row ) {
+		$tzfd_data     = array();
+		foreach ( $tzfd_local_rows as $row ) {
 			$booking = self::decode_booking( isset( $row->posted_data ) ? $row->posted_data : null );
 			if ( null === $booking ) {
 				continue;
@@ -707,22 +711,22 @@ class TZFD_Privacy_Exporter {
 			if ( ! array_key_exists( $form_id, $forms ) ) {
 				$forms[ $form_id ] = self::get_form( $form_id );
 			}
-			$tz_form = $forms[ $form_id ];
-			if ( $tz_form instanceof WP_Error ) { return $tz_form; }
-			if ( null === $tz_form ) {
+			$tzfd_local_form = $forms[ $form_id ];
+			if ( $tzfd_local_form instanceof WP_Error ) { return $tzfd_local_form; }
+			if ( null === $tzfd_local_form ) {
 				// The calendar form is missing or unreadable: the booking's own stored fields are still this person's data.
-				$tz_form = array( 'name' => __( 'Booking form no longer available', 'titan-zero-trades-front-desk' ), 'fields' => array() );
-				foreach ( array_keys( $booking ) as $tz_key ) {
-					$tz_form['fields'][ $tz_key ] = sanitize_text_field( (string) $tz_key );
+				$tzfd_local_form = array( 'name' => __( 'Booking form no longer available', 'titan-zero-trades-front-desk' ), 'fields' => array() );
+				foreach ( array_keys( $booking ) as $tzfd_key ) {
+					$tzfd_local_form['fields'][ $tzfd_key ] = sanitize_text_field( (string) $tzfd_key );
 				}
 			}
 
-			$fields = self::submitted_fields( $booking, $tz_form['fields'] );
+			$fields = self::submitted_fields( $booking, $tzfd_local_form['fields'] );
 			$ip_address = isset( $row->ipaddr ) ? self::plain_text( $row->ipaddr ) : '';
 			if ( '' !== $ip_address ) {
 				$fields[] = array( 'name' => __( 'IP address', 'titan-zero-trades-front-desk' ), 'value' => $ip_address );
 			}
-			$tz_data[] = array(
+			$tzfd_data[] = array(
 				'group_id'    => 'tzfd-bookings',
 				'group_label' => __( 'Scheduling & Enquiries Manager bookings', 'titan-zero-trades-front-desk' ),
 				'item_id'     => 'booking-' . absint( isset( $row->id ) ? $row->id : 0 ),
@@ -730,14 +734,14 @@ class TZFD_Privacy_Exporter {
 					array(
 						array( 'name' => __( 'Booking record', 'titan-zero-trades-front-desk' ), 'value' => absint( isset( $row->id ) ? $row->id : 0 ) ),
 						array( 'name' => __( 'Submitted', 'titan-zero-trades-front-desk' ), 'value' => self::plain_text( isset( $row->time ) ? $row->time : '' ) ),
-						array( 'name' => __( 'Booking form', 'titan-zero-trades-front-desk' ), 'value' => $tz_form['name'] ),
+						array( 'name' => __( 'Booking form', 'titan-zero-trades-front-desk' ), 'value' => $tzfd_local_form['name'] ),
 					),
 					$fields
 				),
 			);
 		}
 
-		return array( 'data' => $tz_data, 'done' => ! $has_more );
+		return array( 'data' => $tzfd_data, 'done' => ! $has_more );
 	}
 
 	/** Decode only array/scalar legacy payloads; never restore PHP objects. */
@@ -753,13 +757,13 @@ class TZFD_Privacy_Exporter {
 	}
 
 	/** Reject incomplete-class objects, resources and excessive nesting. */
-	private static function is_safe_value( $tz_value, $depth = 0 ) {
+	private static function is_safe_value( $tzfd_value, $depth = 0 ) {
 		if ( $depth > 16 ) {
 			return false;
 		}
-		if ( is_array( $tz_value ) ) {
-			foreach ( $tz_value as $tz_key => $child ) {
-				if ( ! is_int( $tz_key ) && ! is_string( $tz_key ) ) {
+		if ( is_array( $tzfd_value ) ) {
+			foreach ( $tzfd_value as $tzfd_key => $child ) {
+				if ( ! is_int( $tzfd_key ) && ! is_string( $tzfd_key ) ) {
 					return false;
 				}
 				if ( ! self::is_safe_value( $child, $depth + 1 ) ) {
@@ -768,7 +772,7 @@ class TZFD_Privacy_Exporter {
 			}
 			return true;
 		}
-		return is_scalar( $tz_value ) || null === $tz_value;
+		return is_scalar( $tzfd_value ) || null === $tzfd_value;
 	}
 
 	/** Load one form's labels and field names from the legacy form table. */
@@ -810,36 +814,36 @@ class TZFD_Privacy_Exporter {
 
 	/** Return only configured customer form fields, excluding internal metadata. */
 	private static function submitted_fields( $booking, $field_labels ) {
-		$tz_data = array();
-		foreach ( $field_labels as $field_name => $tz_label ) {
+		$tzfd_data = array();
+		foreach ( $field_labels as $field_name => $tzfd_label ) {
 			if ( ! array_key_exists( $field_name, $booking ) || ! self::is_safe_value( $booking[ $field_name ] ) ) {
 				continue;
 			}
-			$tz_value = self::export_value( $booking[ $field_name ] );
-			if ( null === $tz_value || '' === $tz_value || array() === $tz_value ) {
+			$tzfd_value = self::export_value( $booking[ $field_name ] );
+			if ( null === $tzfd_value || '' === $tzfd_value || array() === $tzfd_value ) {
 				continue;
 			}
 			// WordPress' HTML export formatter expects a string, not an array.
 			// JSON preserves nested checkbox values without flattening them away.
-			if ( is_array( $tz_value ) ) {
-				$tz_value = wp_json_encode( $tz_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE );
-				if ( false === $tz_value ) { $tz_value = ''; }
+			if ( is_array( $tzfd_value ) ) {
+				$tzfd_value = wp_json_encode( $tzfd_value, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE );
+				if ( false === $tzfd_value ) { $tzfd_value = ''; }
 			}
-			$tz_data[] = array( 'name' => $tz_label, 'value' => $tz_value );
+			$tzfd_data[] = array( 'name' => $tzfd_label, 'value' => $tzfd_value );
 		}
-		return $tz_data;
+		return $tzfd_data;
 	}
 
 	/** Normalize submitted values for the WordPress privacy exporter format. */
-	private static function export_value( $tz_value ) {
-		if ( is_array( $tz_value ) ) {
+	private static function export_value( $tzfd_value ) {
+		if ( is_array( $tzfd_value ) ) {
 			$values = array();
-			foreach ( $tz_value as $tz_key => $child ) {
-				$values[ $tz_key ] = self::export_value( $child );
+			foreach ( $tzfd_value as $tzfd_key => $child ) {
+				$values[ $tzfd_key ] = self::export_value( $child );
 			}
 			return $values;
 		}
-		return is_scalar( $tz_value ) ? self::plain_text( $tz_value ) : null;
+		return is_scalar( $tzfd_value ) ? self::plain_text( $tzfd_value ) : null;
 	}
 
 	private static function storage_error() {
@@ -854,7 +858,7 @@ class TZFD_Privacy_Exporter {
 		return $response;
 	}
 
-	private static function plain_text( $tz_value ) {
-		return sanitize_text_field( is_scalar( $tz_value ) ? (string) $tz_value : '' );
+	private static function plain_text( $tzfd_value ) {
+		return sanitize_text_field( is_scalar( $tzfd_value ) ? (string) $tzfd_value : '' );
 	}
 }

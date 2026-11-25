@@ -124,6 +124,34 @@ final class TZFD_Action_Receipt_Viewer {
 	}
 
 	private static function t( $text ) {
-		return function_exists( '__' ) ? __( $text, 'titan-zero-trades-front-desk' ) : $text;
+		$labels = self::labels();
+		return isset( $labels[ $text ] ) ? $labels[ $text ] : $text;
+	}
+
+	/**
+	 * Every translatable string is a literal here, so translation tooling can extract each one.
+	 *
+	 * @return array<string,string> English text mapped to its translation.
+	 */
+	private static function labels() {
+		if ( ! function_exists( '__' ) ) {
+			return array();
+		}
+		return array(
+			// translators: %s: the sequence number where the receipt history stopped verifying.
+			'Receipt history failed verification from sequence %s. Entries from that point are marked as not verified.' => __( 'Receipt history failed verification from sequence %s. Entries from that point are marked as not verified.', 'titan-zero-trades-front-desk' ),
+			'Some stored receipts did not belong to this company and were not shown.' => __( 'Some stored receipts did not belong to this company and were not shown.', 'titan-zero-trades-front-desk' ),
+			'No agent actions have been recorded yet.' => __( 'No agent actions have been recorded yet.', 'titan-zero-trades-front-desk' ),
+			'Sequence' => __( 'Sequence', 'titan-zero-trades-front-desk' ),
+			'Time' => __( 'Time', 'titan-zero-trades-front-desk' ),
+			'Tool' => __( 'Tool', 'titan-zero-trades-front-desk' ),
+			'Outcome' => __( 'Outcome', 'titan-zero-trades-front-desk' ),
+			'Reason' => __( 'Reason', 'titan-zero-trades-front-desk' ),
+			'Actor' => __( 'Actor', 'titan-zero-trades-front-desk' ),
+			'Grant version' => __( 'Grant version', 'titan-zero-trades-front-desk' ),
+			'Verified' => __( 'Verified', 'titan-zero-trades-front-desk' ),
+			'Yes' => __( 'Yes', 'titan-zero-trades-front-desk' ),
+			'No' => __( 'No', 'titan-zero-trades-front-desk' ),
+		);
 	}
 }

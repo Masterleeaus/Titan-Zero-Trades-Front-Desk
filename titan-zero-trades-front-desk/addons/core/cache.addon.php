@@ -48,15 +48,15 @@ if( !class_exists( 'TZFD_Cache' ) )
             // Check if the plugin is active
 			if( !$this->addon_is_active() ) return;      
                       
-            add_action( 'tz_fd_cache_check', array( &$this, 'cache_check'), 99, 2 ); // $formid, $dataquery
+            add_action( 'tzfd_cache_check', array( &$this, 'cache_check'), 99, 2 ); // $formid, $dataquery
             
-            add_action( 'tz_fd_cache_store', array( &$this, 'cache_store'), 99, 3 ); // $formid, $dataquery, $dataoutput
+            add_action( 'tzfd_cache_store', array( &$this, 'cache_store'), 99, 3 ); // $formid, $dataquery, $dataoutput
             
-            add_action( 'tz_fd_cache_clean', array( &$this, 'cache_clean'), 99, 1 ); // $formid
+            add_action( 'tzfd_cache_clean', array( &$this, 'cache_clean'), 99, 1 ); // $formid
                         
-            add_action( 'tz_fd_update_status', array( &$this, 'update_status' ), 10, 3 );
-            add_action( 'tz_fd_process_data', array( &$this, 'new_submission' ), 10, 2 );
-            add_action( 'tz_fd_item_deleted', array( &$this, 'item_deleted' ), 10, 1 );
+            add_action( 'tzfd_update_status', array( &$this, 'update_status' ), 10, 3 );
+            add_action( 'tzfd_process_data', array( &$this, 'new_submission' ), 10, 2 );
+            add_action( 'tzfd_item_deleted', array( &$this, 'item_deleted' ), 10, 1 );
             
             
             // Create or upgrade the table only when the schema version changes, not on every page view.
@@ -78,10 +78,10 @@ if( !class_exists( 'TZFD_Cache' ) )
 			global $wpdb;
 
 			$charset_collate = $wpdb->get_charset_collate();
-            $tz_table_name      = $wpdb->prefix . esc_sql( $this->form_table );
+            $tzfd_table_name      = $wpdb->prefix . esc_sql( $this->form_table );
 
             // Note: dbDelta does not need "IF NOT EXISTS"
-            $sql = "CREATE TABLE {$tz_table_name} (
+            $sql = "CREATE TABLE {$tzfd_table_name} (
                     id mediumint(9) NOT NULL AUTO_INCREMENT,
                     company_id bigint(20) unsigned NOT NULL DEFAULT 0,
                     formid INT NOT NULL,
@@ -122,7 +122,7 @@ if( !class_exists( 'TZFD_Cache' ) )
 
         public function	cache_clean( $formid )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
             
             $company = self::calendar_company( $formid );
             if ( $company < 1 ) { return; }
@@ -152,10 +152,10 @@ if( !class_exists( 'TZFD_Cache' ) )
 		{
             global $wpdb;
             if ( (int) $itemnumber < 1 ) { return; }
-            $tz_myrows = $wpdb->get_results( $wpdb->prepare("SELECT formid FROM %i WHERE id=%d", $wpdb->prefix.TZFD_Tables::BOOKINGS, (int) $itemnumber) );
+            $tzfd_myrows = $wpdb->get_results( $wpdb->prepare("SELECT formid FROM %i WHERE id=%d", $wpdb->prefix.TZFD_Tables::BOOKINGS, (int) $itemnumber) );
 
-            if (is_array($tz_myrows) && count($tz_myrows))
-                $this->cache_clean( $tz_myrows[0]->formid );
+            if (is_array($tzfd_myrows) && count($tzfd_myrows))
+                $this->cache_clean( $tzfd_myrows[0]->formid );
 		}
         
         
@@ -171,12 +171,12 @@ if( !class_exists( 'TZFD_Cache' ) )
 		/**
          * new_submission
          */
-        public function	new_submission($tz_params, $indexonly = -1 )
+        public function	new_submission($tzfd_local_params, $indexonly = -1 )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
             
-            if (isset($tz_params[ 'formid' ]))
-                $this->cache_clean( intval( $tz_params[ 'formid' ] ) );
+            if (isset($tzfd_local_params[ 'formid' ]))
+                $this->cache_clean( intval( $tzfd_local_params[ 'formid' ] ) );
             
 		} // end new_submission          
         
@@ -196,7 +196,7 @@ if( !class_exists( 'TZFD_Cache' ) )
 
         public function	cache_check( $formid, $dataquery )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
             
             $company = self::calendar_company( $formid );
             if ( $company < 1 ) { return; }
@@ -215,13 +215,13 @@ if( !class_exists( 'TZFD_Cache' ) )
                 // cacheddata is the JSON feed that cache_store() wrote with wp_json_encode(). Decode it and encode it
                 // again so the output is escaped JSON. A row that does not decode is ignored and rebuilt.
                 // Rows are stored as {stored_at, feed}. A row without a timestamp, or older than TTL, is rebuilt.
-                $tz_envelope = json_decode( (string) $is_cached[0]->cacheddata, true );
-                $tz_age = is_array( $tz_envelope ) && isset( $tz_envelope['stored_at'] ) ? time() - (int) $tz_envelope['stored_at'] : -1;
-                $tz_cached = ( $tz_age >= 0 && $tz_age < self::TTL && is_string( $tz_envelope['feed'] ?? null ) )
-                    ? json_decode( $tz_envelope['feed'], true ) : null;
-                if ( is_array( $tz_cached ) )
+                $tzfd_envelope = json_decode( (string) $is_cached[0]->cacheddata, true );
+                $tzfd_age = is_array( $tzfd_envelope ) && isset( $tzfd_envelope['stored_at'] ) ? time() - (int) $tzfd_envelope['stored_at'] : -1;
+                $tzfd_cached = ( $tzfd_age >= 0 && $tzfd_age < self::TTL && is_string( $tzfd_envelope['feed'] ?? null ) )
+                    ? json_decode( $tzfd_envelope['feed'], true ) : null;
+                if ( is_array( $tzfd_cached ) )
                 {
-                    $encoded = wp_json_encode( $tz_cached );
+                    $encoded = wp_json_encode( $tzfd_cached );
                     if ( false !== $encoded ) {
                         header( 'Content-Type: application/json; charset=UTF-8' );
                         header( 'X-Content-Type-Options: nosniff' );
@@ -239,7 +239,7 @@ if( !class_exists( 'TZFD_Cache' ) )
          */
         public function	cache_store( $formid, $dataquery, $dataoutput )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
             
             $queryhash = self::cache_key( $dataquery );
             $company = self::calendar_company( $formid );
@@ -261,11 +261,11 @@ if( !class_exists( 'TZFD_Cache' ) )
                 );
                 if ( false === $inserted ) { return; }
             }
-            $tz_envelope = wp_json_encode( array( 'stored_at' => time(), 'feed' => $dataoutput ) );
-            if ( false === $tz_envelope ) { return; }
+            $tzfd_envelope = wp_json_encode( array( 'stored_at' => time(), 'feed' => $dataoutput ) );
+            if ( false === $tzfd_envelope ) { return; }
             $wpdb->update(
                 $wpdb->prefix . TZFD_Tables::CACHE,
-                array( 'cacheddata' => $tz_envelope ),
+                array( 'cacheddata' => $tzfd_envelope ),
                 array( 'formid' => intval( $formid ), 'company_id' => $company, 'cachedquery' => $queryhash )
             );
 		} // end cache_store          
@@ -287,7 +287,7 @@ if( !class_exists( 'TZFD_Cache' ) )
     $TZFD_Cache_obj = new TZFD_Cache();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_Cache_obj->get_addon_id() ] = $TZFD_Cache_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_Cache_obj->get_addon_id() ] = $TZFD_Cache_obj;
 }
 

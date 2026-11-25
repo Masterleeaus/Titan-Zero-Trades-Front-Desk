@@ -74,6 +74,7 @@ final class TZFD_Public_Slot_Records {
             update_option( self::SKIPPED_OPTION, $all, false );
         }
         foreach ( $booking_ids as $booking_id ) {
+            // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- operator diagnostic for unreadable stored data; logs only numeric ids, never customer fields.
             error_log( sprintf( 'Titan Zero Scheduling & Enquiries Manager: skipped stored booking %d of calendar %d in public availability (unreadable payload).', $booking_id, $calendar_id ) );
         }
     }
@@ -81,6 +82,8 @@ final class TZFD_Public_Slot_Records {
     /** Admin notice: lists every skipped row, so the problem stays visible until the row is fixed or removed. */
     public static function admin_notice() {
         if ( ! current_user_can( 'tz_fd_access' ) ) { return; }
+        // The Get started screen shows no admin notice (issue #366).
+        if ( class_exists( 'TZFD_Setup_Page' ) && TZFD_Setup_Page::is_current_screen() ) { return; }
         $all = get_option( self::SKIPPED_OPTION, array() );
         if ( ! is_array( $all ) || ! $all ) { return; }
         $items = array();

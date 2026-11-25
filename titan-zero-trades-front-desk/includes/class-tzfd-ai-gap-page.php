@@ -6,7 +6,8 @@
  * handled questions, and whether approved content covers each topic. Topics can be merged by an
  * administrator. Only counts and admin-approved topic labels are shown: no question text, names or
  * contact details are ever stored or rendered. Read access needs tz_fd_access, and the merge form is
- * nonce-checked and capability-checked again on submit.
+ * nonce-checked and capability-checked again on submit. Outdated approved answers can be marked reviewed
+ * (issue #436); that form is nonce-checked and capability-checked the same way.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -17,11 +18,14 @@ final class TZFD_Ai_Gap_Page {
 	const SLUG         = 'tzfd-ai-gaps';
 	const MERGE_ACTION = 'tzfd_ai_gap_merge';
 	const MERGE_NONCE  = 'tzfd_ai_gap_merge';
+	const REVIEW_ACTION = 'tzfd_ai_entry_review';
+	const REVIEW_NONCE  = 'tzfd_ai_entry_review';
 	const CAP          = 'tz_fd_access';
 
 	public static function register() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_page' ), 13 );
 		add_action( 'admin_post_' . self::MERGE_ACTION, array( __CLASS__, 'handle_merge' ) );
+		add_action( 'admin_post_' . self::REVIEW_ACTION, array( __CLASS__, 'handle_review' ) );
 	}
 
 	public static function add_page() {
@@ -66,6 +70,25 @@ final class TZFD_Ai_Gap_Page {
 		exit;
 	}
 
+	/** Entry ids are the 'kb-' plus 12 hex characters that the knowledge builder generates. */
+	public static function valid_entry_id( $id ) {
+		return is_string( $id ) && 1 === preg_match( '/^kb-[a-f0-9]{12}$/', $id );
+	}
+
+	public static function handle_review() {
+		if ( ! current_user_can( self::CAP ) ) {
+			wp_die( esc_html__( 'You are not allowed to review FAQ answers.', 'titan-zero-trades-front-desk' ), 403 );
+		}
+		check_admin_referer( self::REVIEW_NONCE );
+		$cid   = self::company_id();
+		$post  = wp_unslash( $_POST ); // phpcs:ignore WordPress.Security.NonceVerification.Missing -- checked above.
+		$entry = isset( $post['entry'] ) ? (string) $post['entry'] : '';
+		$ok    = $cid > 0 && self::valid_entry_id( $entry )
+			&& ! empty( TZFD_Ai_Knowledge_Builder::mark_reviewed( $cid, $entry, time(), get_current_user_id() )['ok'] );
+		wp_safe_redirect( add_query_arg( array( 'page' => self::SLUG, 'tzfd_gap' => $ok ? 'reviewed' : 'review_failed' ), admin_url( 'admin.php' ) ) );
+		exit;
+	}
+
 	public static function render() {
 		if ( ! current_user_can( self::CAP ) ) {
 			wp_die( esc_html__( 'You are not allowed to view this page.', 'titan-zero-trades-front-desk' ), 403 );
@@ -94,6 +117,10 @@ final class TZFD_Ai_Gap_Page {
 				<div class="notice notice-success"><p><?php esc_html_e( 'Topics merged. Counts were added into the target topic.', 'titan-zero-trades-front-desk' ); ?></p></div>
 			<?php elseif ( 'merge_failed' === $notice ) : ?>
 				<div class="notice notice-error"><p><?php esc_html_e( 'Those topics could not be merged. Pick two different topics that do not already form a loop.', 'titan-zero-trades-front-desk' ); ?></p></div>
+			<?php elseif ( 'reviewed' === $notice ) : ?>
+				<div class="notice notice-success"><p><?php esc_html_e( 'Answer marked as reviewed. Its text and version did not change.', 'titan-zero-trades-front-desk' ); ?></p></div>
+			<?php elseif ( 'review_failed' === $notice ) : ?>
+				<div class="notice notice-error"><p><?php esc_html_e( 'That answer could not be marked as reviewed. Only published answers can be reviewed.', 'titan-zero-trades-front-desk' ); ?></p></div>
 			<?php endif; ?>
 
 			<?php if ( $cid < 1 ) : ?>
@@ -143,6 +170,45 @@ final class TZFD_Ai_Gap_Page {
 				<?php endforeach; ?>
 				</tbody>
 			</table>
+
+			<?php if ( $cid > 0 ) : ?>
+				<?php $outdated = TZFD_Ai_Gap_Detection::outdated( TZFD_Ai_Knowledge_Builder::published( $cid ), $now, TZFD_Ai_Gap_Detection::outdated_days() ); ?>
+				<h2><?php esc_html_e( 'Outdated approved content', 'titan-zero-trades-front-desk' ); ?></h2>
+				<p class="description"><?php
+					/* translators: %d: number of days since an approved answer was last edited or reviewed. */
+					echo esc_html( sprintf( __( 'Approved answers not edited or reviewed for %d days or more. Review them, then mark them reviewed if the facts still hold, or publish an update if they have changed.', 'titan-zero-trades-front-desk' ), TZFD_Ai_Gap_Detection::outdated_days() ) );
+				?></p>
+				<table class="widefat striped" style="max-width:56em">
+					<thead><tr>
+						<th scope="col"><?php esc_html_e( 'Question', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Last edited', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Last reviewed', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Age in days', 'titan-zero-trades-front-desk' ); ?></th>
+						<th scope="col"><?php esc_html_e( 'Review', 'titan-zero-trades-front-desk' ); ?></th>
+					</tr></thead>
+					<tbody>
+					<?php if ( empty( $outdated ) ) : ?>
+						<tr><td colspan="5"><?php esc_html_e( 'No approved answers are outdated.', 'titan-zero-trades-front-desk' ); ?></td></tr>
+					<?php endif; ?>
+					<?php foreach ( $outdated as $row ) : ?>
+						<tr>
+							<td><?php echo esc_html( $row['question'] ); ?></td>
+							<td><?php echo esc_html( gmdate( 'Y-m-d', $row['updated'] ) ); ?></td>
+							<td><?php echo $row['reviewed'] ? esc_html( gmdate( 'Y-m-d', $row['reviewed'] ) ) : esc_html__( 'Never', 'titan-zero-trades-front-desk' ); ?></td>
+							<td><?php echo esc_html( number_format_i18n( $row['age_days'] ) ); ?></td>
+							<td>
+								<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+									<input type="hidden" name="action" value="<?php echo esc_attr( self::REVIEW_ACTION ); ?>" />
+									<input type="hidden" name="entry" value="<?php echo esc_attr( (string) $row['id'] ); ?>" />
+									<?php wp_nonce_field( self::REVIEW_NONCE ); ?>
+									<button type="submit" class="button button-secondary"><?php esc_html_e( 'Mark reviewed', 'titan-zero-trades-front-desk' ); ?></button>
+								</form>
+							</td>
+						</tr>
+					<?php endforeach; ?>
+					</tbody>
+				</table>
+			<?php endif; ?>
 
 			<?php if ( $cid > 0 && count( $all['topics'] ) > 1 ) : ?>
 				<h2><?php esc_html_e( 'Group topics', 'titan-zero-trades-front-desk' ); ?></h2>

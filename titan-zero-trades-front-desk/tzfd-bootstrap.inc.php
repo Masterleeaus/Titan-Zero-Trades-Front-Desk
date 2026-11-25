@@ -4,7 +4,7 @@
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
 /* Front Desk boot. Loads with standalone services or optional suite integrations. */
-global $tz_plugin, $tz_addons_active_list, $tz_addons_objs_list;
+global $tzfd_plugin, $tzfd_addons_active_list, $tzfd_addons_objs_list;
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-business-schema.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-scoped-store.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-tenant-storage.php';
@@ -21,38 +21,39 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-builtin-verticals.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-automation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-status-api.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-business-knowledge.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-service-contract-rest.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-loader.php';
 
 // loading add-ons
 // -----------------------------------------
-global $tz_addons_active_list, // List of addon IDs
-	   $tz_addons_objs_list; // List of addon objects
+global $tzfd_addons_active_list, // List of addon IDs
+	   $tzfd_addons_objs_list; // List of addon objects
 
-$tz_addons_active_list = array();
-if (!is_array($tz_addons_objs_list))
-    $tz_addons_objs_list	 = array();
+$tzfd_addons_active_list = array();
+if (!is_array($tzfd_addons_objs_list))
+    $tzfd_addons_objs_list	 = array();
 
-function tz_fd_loading_add_ons()
+function tzfd_loading_add_ons()
 {
-	global $tz_addons_active_list, // List of addon IDs
-		   $tz_addons_objs_list; // List of addon objects
+	global $tzfd_addons_active_list, // List of addon IDs
+		   $tzfd_addons_objs_list; // List of addon objects
 
     // Get the list of active addons
-	$tz_addons_active_list = TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() );
-    if (!is_array($tz_addons_active_list))
-        $tz_addons_active_list	 = array();
+	$tzfd_addons_active_list = TZFD_Scoped_Store::get_for_boot( 'tz_fd_addons_active_list', array() );
+    if (!is_array($tzfd_addons_active_list))
+        $tzfd_addons_active_list	 = array();
     
     // --- ONE-TIME CHECK TO ENABLE CACHE ADD-ON ---
     //if ( ! get_option( 'tz_fd_cache_addon_initializeda', false ) ) {
-    //    if ( ! in_array( 'tzfd-Cache', $tz_addons_active_list ) ) {
-    //        $tz_addons_active_list[] = 'tzfd-Cache';
-    //        update_option( 'tz_fd_addons_active_list', $tz_addons_active_list );
+    //    if ( ! in_array( 'tzfd-Cache', $tzfd_addons_active_list ) ) {
+    //        $tzfd_addons_active_list[] = 'tzfd-Cache';
+    //        update_option( 'tz_fd_addons_active_list', $tzfd_addons_active_list );
     //    }
     //    update_option( 'tz_fd_cache_addon_initializeda', '1' );
     //}
     // ---------------------------------------------
     
-	if( !empty( $tz_addons_active_list )
+	if( !empty( $tzfd_addons_active_list )
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request value used for display or routing; this code path changes no state.
         || ( isset( $_GET["page"] ) && tzfd_request_text( 'get', "page" ) == "tzfd" )
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request value used for display or routing; this code path changes no state.
@@ -64,9 +65,9 @@ function tz_fd_loading_add_ons()
 	{
 		$path = dirname( __FILE__ ).'/addons';
 		// Group folders are listed by TZFD_Addon_Loader, core first.
-		foreach ( TZFD_Addon_Loader::files( $path ) as $tz_addon_file )
+		foreach ( TZFD_Addon_Loader::files( $path ) as $tzfd_addon_file )
 		{
-			require_once $tz_addon_file;
+			require_once $tzfd_addon_file;
 		}
 	}
 }
@@ -110,6 +111,9 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-review.php';
 TZFD_Enquiry_Review::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-triage.php';
 TZFD_Enquiry_Triage::register();
+// Guided booking step and cancel/reschedule assistant: read-only REST entry points (issue #336).
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-guided-booking-runtime.php';
+TZFD_Guided_Booking_Runtime::register();
 // Booking pipeline: managers, approval and supervisor for assistant and channel bookings.
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline.php';
@@ -122,12 +126,12 @@ TZFD_Pipeline_Screen::register();
 
 
 
-$tz_plugin = new TZFD_Scheduling_Plugin;
-add_action('tz_fd_process_data_before_insert', array($tz_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);
-add_action('tz_fd_process_data', array($tz_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
+$tzfd_plugin = new TZFD_Scheduling_Plugin;
+add_action('tzfd_process_data_before_insert', array($tzfd_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
 // A rejected/failed submission must release its per-calendar database lock as
 // reliably as a successful insert, including invalid customer and insert errors.
-add_action('tz_fd_process_data_insert_failed', array($tz_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data_insert_failed', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
 
 
 // Customer self-service, status emails, and the messaging and sync framework. These load on every
@@ -147,7 +151,7 @@ include_once dirname( __FILE__ ) . '/includes/class-tzfd-sms-provider.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-captcha-gate.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-sync-addon.php';
 ( new TZFD_Customer_Cancellation() )->register();
-( new TZFD_Customer_Rescheduling( $tz_plugin ) )->register();
+( new TZFD_Customer_Rescheduling( $tzfd_plugin ) )->register();
 ( new TZFD_Client_Portal() )->register();
 ( new TZFD_Status_Update_Emails() )->register();
 TZFD_Outbox::boot();
@@ -159,39 +163,39 @@ add_action( 'admin_notices', function () {
     if ( 'false' === get_option( 'cv_enable_captcha', 'true' ) ) { return; }
     echo '<div class="notice notice-warning is-dismissible"><p>' . esc_html__( 'Scheduling & Enquiries Manager: the PHP GD library is not installed, so the booking CAPTCHA is turned off. Ask your host to enable GD to protect your booking form from automated submissions.', 'titan-zero-trades-front-desk' ) . '</p></div>';
 } );
-add_action( 'media_buttons', array($tz_plugin, 'insert_button'), 11);
-add_action( 'init', array($tz_plugin, 'data_management'));
-add_action( 'wp_loaded', array($tz_plugin, 'data_management_loaded'));
+add_action( 'media_buttons', array($tzfd_plugin, 'insert_button'), 11);
+add_action( 'init', array($tzfd_plugin, 'data_management'));
+add_action( 'wp_loaded', array($tzfd_plugin, 'data_management_loaded'));
 // Front Desk boots during plugins_loaded. A callback added at a lower priority than the running one is never called,
 // so when plugins_loaded has already started, run the loader now. Otherwise the add-on loader (and the setup wizard
 // class) never loads on web requests and admin.php?page=tzfd-setup returns "not allowed".
 if ( did_action( 'plugins_loaded' ) ) {
-    $tz_plugin->data_management_pluginsloaded();
+    $tzfd_plugin->data_management_pluginsloaded();
 } else {
-    add_action( 'plugins_loaded', array($tz_plugin, 'data_management_pluginsloaded'), -1);
+    add_action( 'plugins_loaded', array($tzfd_plugin, 'data_management_pluginsloaded'), -1);
 }
 
 if ( is_admin() ) {
 
 
-    add_action('admin_enqueue_scripts', array($tz_plugin,'insert_adminScripts'), 1);
-    add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array($tz_plugin,'plugin_page_links'));
-    add_action('admin_menu', array($tz_plugin,'admin_menu') );
-    add_action('enqueue_block_editor_assets', array($tz_plugin,'gutenberg_block'));
+    add_action('admin_enqueue_scripts', array($tzfd_plugin,'insert_adminScripts'), 1);
+    add_filter("plugin_action_links_".plugin_basename( dirname( __FILE__ ) . '/titan-zero-front-desk.php' ), array($tzfd_plugin,'plugin_page_links'));
+    add_action('admin_menu', array($tzfd_plugin,'admin_menu') );
+    add_action('enqueue_block_editor_assets', array($tzfd_plugin,'gutenberg_block'));
 
 
 } else {
-    add_shortcode( $tz_plugin->shorttag, array($tz_plugin, 'filter_content') );
-    add_shortcode( 'TZFD_FRONT_DESK_LIST', array($tz_plugin, 'filter_list') );
+    add_shortcode( $tzfd_plugin->shorttag, array($tzfd_plugin, 'filter_content') );
+    add_shortcode( 'TZFD_FRONT_DESK_LIST', array($tzfd_plugin, 'filter_list') );
 }
 
 // register gutenberg block
 if (function_exists('register_block_type'))
 {
-    add_action( 'init', 'tz_fd_hour_register_dynamic_block' );
+    add_action( 'init', 'tzfd_hour_register_dynamic_block' );
 
-    function tz_fd_hour_register_dynamic_block() {
-        global $tz_plugin;
+    function tzfd_hour_register_dynamic_block() {
+        global $tzfd_plugin;
 
         register_block_type( 'tzfdhour/form-rendering', array(
             'api_version'     => 3,
@@ -203,14 +207,14 @@ if (function_exists('register_block_type'))
                     'type' => 'string',
                 ),
             ),
-            'render_callback' => array( $tz_plugin, 'render_form_admin' ),
+            'render_callback' => array( $tzfd_plugin, 'render_form_admin' ),
         ) );
     }
 }
 
-add_filter( 'block_categories_all', 'tz_fd_hour_register_block_category', 10, 2 );
+add_filter( 'block_categories_all', 'tzfd_hour_register_block_category', 10, 2 );
 
-function tz_fd_hour_register_block_category( $categories, $post ) {
+function tzfd_hour_register_block_category( $categories, $post ) {
     return array_merge(
         $categories,
         array(
@@ -225,8 +229,8 @@ function tz_fd_hour_register_block_category( $categories, $post ) {
 
 
 
-add_filter('autoptimize_filter_js_exclude', 'tz_fd_hour_autoptimize_filter_js_exclude' );
-function tz_fd_hour_autoptimize_filter_js_exclude($excluded)
+add_filter('autoptimize_filter_js_exclude', 'tzfd_hour_autoptimize_filter_js_exclude' );
+function tzfd_hour_autoptimize_filter_js_exclude($excluded)
 {
     return $excluded.",jquery.ui.datepicker-fr-CA.js,".
                      "jquery.ui.datepicker-es_ES.js,".
@@ -289,8 +293,8 @@ function tz_fd_hour_autoptimize_filter_js_exclude($excluded)
 
 // code for compatibility with third party scripts
 
-add_filter('litespeed_cache_optimize_js_excludes', 'tz_fd_hour_litespeed_cache_optimize_js_excludes' );
-function tz_fd_hour_litespeed_cache_optimize_js_excludes($tz_options)
+add_filter('litespeed_cache_optimize_js_excludes', 'tzfd_hour_litespeed_cache_optimize_js_excludes' );
+function tzfd_hour_litespeed_cache_optimize_js_excludes($tzfd_options)
 {
     return  "jquery.ui.datepicker-fr-CA.js\n".
                      "jquery.ui.datepicker-es_ES.js\n".
@@ -347,21 +351,21 @@ function tz_fd_hour_litespeed_cache_optimize_js_excludes($tz_options)
                      "jquery.ui.datepicker-th.js\n".
                      "jquery.ui.datepicker-uk.js\n".
                      "jquery.ui.datepicker-vi.js\n".
-                     "jquery.validate.min.js\njQuery.stringify.js\njquery.validate.js\njquery.js\n".$tz_options;
+                     "jquery.validate.min.js\njQuery.stringify.js\njquery.validate.js\njquery.js\n".$tzfd_options;
 }
 
-add_filter('option_sbp_settings', 'tz_fd_hour_sbp_fix_conflict' );
-function tz_fd_hour_sbp_fix_conflict($tz_option)
+add_filter('option_sbp_settings', 'tzfd_hour_sbp_fix_conflict' );
+function tzfd_hour_sbp_fix_conflict($tzfd_option)
 {
     if(!is_admin())
     {
-       if(is_array($tz_option) && isset($tz_option['jquery_to_footer']))
-           unset($tz_option['jquery_to_footer']);
+       if(is_array($tzfd_option) && isset($tzfd_option['jquery_to_footer']))
+           unset($tzfd_option['jquery_to_footer']);
     }
-    return $tz_option;
+    return $tzfd_option;
 }
 
-function tz_fd_hour_tp_disable_filter()
+function tzfd_hour_tp_disable_filter()
 {
     return false;
 }
@@ -386,16 +390,16 @@ add_filter( 'content_save_pre', function ( $content ) {
 
 
 // Exclude from SiteGround Speed Optimizer JS Combination
-add_filter( 'sgo_javascript_combine_exclude', 'tz_fd_hour_exclude_js_from_combination' );
-function tz_fd_hour_exclude_js_from_combination( $exclude_list ) {
+add_filter( 'sgo_javascript_combine_exclude', 'tzfd_hour_exclude_js_from_combination' );
+function tzfd_hour_exclude_js_from_combination( $exclude_list ) {
     $exclude_list[] = 'tz_fd_frontdesk_language_file';
     $exclude_list[] = 'tz_fd_frontdesk_builder_script';
     return $exclude_list;
 }
 
 // Exclude from SiteGround Speed Optimizer JS Minification
-add_filter( 'sgo_js_minify_exclude', 'tz_fd_hour_exclude_js_from_minification' );
-    function tz_fd_hour_exclude_js_from_minification( $exclude_list ) {
+add_filter( 'sgo_js_minify_exclude', 'tzfd_hour_exclude_js_from_minification' );
+    function tzfd_hour_exclude_js_from_minification( $exclude_list ) {
     $exclude_list[] = 'tz_fd_frontdesk_language_file';
     $exclude_list[] = 'tz_fd_frontdesk_builder_script';
     return $exclude_list;

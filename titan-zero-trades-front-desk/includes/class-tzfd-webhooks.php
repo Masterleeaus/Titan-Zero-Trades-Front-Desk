@@ -7,13 +7,13 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
  */
 class TZFD_Webhooks {
     const CRON_HOOK = 'titan_zero_front_desk_deliver_webhook';
-    const CONFIG_FILTER = 'titan_zero_front_desk_webhook_config';
+    const CONFIG_FILTER = 'tzfd_webhook_config';
     const MAX_ATTEMPTS = 5;
     const MAX_BODY_BYTES = 65536;
 
     public static function register() {
         if ( ! function_exists( 'add_action' ) ) { return; }
-        add_action( 'titan_zero_front_desk_booking_event', array( __CLASS__, 'receive_event' ), 20, 2 );
+        add_action( 'tzfd_booking_event', array( __CLASS__, 'receive_event' ), 20, 2 );
         add_action( self::CRON_HOOK, array( __CLASS__, 'deliver' ), 10, 3 );
     }
 
@@ -131,22 +131,22 @@ class TZFD_Webhooks {
 
         foreach ( $payload['appointments'] as $appointment ) {
             if ( ! is_array( $appointment ) ) { return null; }
-            foreach ( $appointment_keys as $tz_key ) {
-                if ( ! array_key_exists( $tz_key, $appointment ) ) { return null; }
+            foreach ( $appointment_keys as $tzfd_key ) {
+                if ( ! array_key_exists( $tzfd_key, $appointment ) ) { return null; }
             }
-            foreach ( array( 'id', 'service_index', 'duration', 'quantity' ) as $tz_key ) {
-                if ( ! is_int( $appointment[ $tz_key ] ) ) { return null; }
+            foreach ( array( 'id', 'service_index', 'duration', 'quantity' ) as $tzfd_key ) {
+                if ( ! is_int( $appointment[ $tzfd_key ] ) ) { return null; }
             }
-            foreach ( array( 'service_id', 'service', 'date', 'slot', 'status' ) as $tz_key ) {
-                if ( ! is_string( $appointment[ $tz_key ] ) ) { return null; }
+            foreach ( array( 'service_id', 'service', 'date', 'slot', 'status' ) as $tzfd_key ) {
+                if ( ! is_string( $appointment[ $tzfd_key ] ) ) { return null; }
             }
             if ( ! is_int( $appointment['price'] ) && ! is_float( $appointment['price'] ) ) { return null; }
             if ( ! is_finite( (float) $appointment['price'] ) || $appointment['price'] < 0 ) { return null; }
             if ( $appointment['id'] < 0 || $appointment['duration'] < 0 || $appointment['quantity'] < 1 ) { return null; }
 
             $canonical_appointment = array();
-            foreach ( $appointment_keys as $tz_key ) {
-                $canonical_appointment[ $tz_key ] = $appointment[ $tz_key ];
+            foreach ( $appointment_keys as $tzfd_key ) {
+                $canonical_appointment[ $tzfd_key ] = $appointment[ $tzfd_key ];
             }
             $canonical['appointments'][] = $canonical_appointment;
         }
@@ -174,7 +174,8 @@ class TZFD_Webhooks {
     private static function get_config() {
         if ( ! function_exists( 'apply_filters' ) || ! function_exists( 'wp_http_validate_url' ) ) { return null; }
 
-        $settings = apply_filters( 'titan_zero_front_desk_webhook_config', array() ); // Same value as self::CONFIG_FILTER; literal keeps the hook name checkable.
+        $settings = apply_filters( 'tzfd_webhook_config', array() ); // Same value as self::CONFIG_FILTER; literal keeps the hook name checkable.
+        $settings = apply_filters( 'titan_zero_front_desk_webhook_config', $settings ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         if ( ! is_array( $settings ) || empty( $settings['url'] ) || ! isset( $settings['secret'] ) ) { return null; }
         if ( ! is_string( $settings['url'] ) || ! is_string( $settings['secret'] ) || strlen( $settings['secret'] ) < 32 ) { return null; }
 

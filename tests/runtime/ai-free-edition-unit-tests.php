@@ -118,9 +118,10 @@ foreach ( $php_files as $file ) {
 	}
 }
 // The AI connector POSTs only after an admin configures an https endpoint, site id and secret (main's gated connector).
+// The pairing class (issue #347) POSTs only when a pairing endpoint is set by constant or filter, and is off by default.
 sort( $remote );
-$expected_remote = array( 'includes/class-tzfd-ai-connector.php', 'includes/class-tzfd-twilio-sms.php' );
-ai_check( 'only the Twilio SMS transport and the gated AI connector make outbound HTTP calls', $expected_remote === $remote, implode( ',', $remote ) );
+$expected_remote = array( 'includes/class-tzfd-ai-connector.php', 'includes/class-tzfd-ai-pairing.php', 'includes/class-tzfd-twilio-sms.php' );
+ai_check( 'only the Twilio SMS transport, the gated AI connector and the off-by-default pairing make outbound HTTP calls', $expected_remote === $remote, implode( ',', $remote ) );
 ai_check( 'no AI provider host or endpoint in plugin PHP', array() === $ai_hosts, implode( ',', $ai_hosts ) );
 
 echo "\n$pass passed, $fail failed\n";

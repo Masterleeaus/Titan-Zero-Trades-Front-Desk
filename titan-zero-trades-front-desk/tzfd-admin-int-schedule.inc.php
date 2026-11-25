@@ -18,78 +18,78 @@ require_once __DIR__ . '/includes/class-tzfd-admin-report-scope.php';
 $tzfd_report_company = TZFD_Admin_Report_Scope::enforce( $this->item );
 
 $current_user = wp_get_current_user();
-$tz_current_user_access = current_user_can('tz_fd_access');
-$tz_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
+$tzfd_current_user_access = current_user_can('tz_fd_access');
+$tzfd_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
 
-if ( !is_admin() || (!$tz_current_user_access && !in_array($current_user->ID, $tz_calendar_access_ids, true)))
+if ( !is_admin() || (!$tzfd_current_user_access && !in_array($current_user->ID, $tzfd_calendar_access_ids, true)))
 {
     echo esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' );
     exit;
 }
 
-$tz_firstday = 0;
+$tzfd_firstday = 0;
 if ($this->item != 0)
 {
-    $tz_myform = $wpdb->get_results( $wpdb->prepare('SELECT * FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $this->item, $tzfd_report_company) ); 
-    if ( ! is_array( $tz_myform ) || ! isset( $tz_myform[0]->form_structure ) ) {
+    $tzfd_myform = $wpdb->get_results( $wpdb->prepare('SELECT * FROM %i WHERE id=%d AND company_id=%d', $wpdb->prefix.TZFD_Tables::FORMS, $this->item, $tzfd_report_company) ); 
+    if ( ! is_array( $tzfd_myform ) || ! isset( $tzfd_myform[0]->form_structure ) ) {
         wp_die( esc_html__( 'Calendar not found.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 404 ) );
     }
-    $tz_raw_form_str = $this->cleanJSON( $tz_myform[0]->form_structure );
-    $tz_form_data = json_decode( $tz_raw_form_str );
-    if ( ! is_array( $tz_form_data ) || ! isset( $tz_form_data[0] ) || ! is_array( $tz_form_data[0] ) ) {
+    $tzfd_raw_form_str = $this->cleanJSON( $tzfd_myform[0]->form_structure );
+    $tzfd_form_data = json_decode( $tzfd_raw_form_str );
+    if ( ! is_array( $tzfd_form_data ) || ! isset( $tzfd_form_data[0] ) || ! is_array( $tzfd_form_data[0] ) ) {
         wp_die( esc_html__( 'Invalid calendar configuration.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 400 ) );
     }
-    foreach ( $tz_form_data[0] as $tz_item ) {
-        if ( is_object( $tz_item ) && isset( $tz_item->ftype ) && 'fapp' === $tz_item->ftype ) {
-            $tz_firstday = isset( $tz_item->firstDay ) ? absint( $tz_item->firstDay ) % 7 : 0;
+    foreach ( $tzfd_form_data[0] as $tzfd_item ) {
+        if ( is_object( $tzfd_item ) && isset( $tzfd_item->ftype ) && 'fapp' === $tzfd_item->ftype ) {
+            $tzfd_firstday = isset( $tzfd_item->firstDay ) ? absint( $tzfd_item->firstDay ) % 7 : 0;
             break;
         }
     }
 }
 
-$tz_default_from = gmdate("Y-m-d",strtotime("today -10 days"));
-$tz_default_to = gmdate("Y-m-d",strtotime("today +30 days"));
+$tzfd_default_from = gmdate("Y-m-d",strtotime("today -10 days"));
+$tzfd_default_to = gmdate("Y-m-d",strtotime("today +30 days"));
 
 // Use the same strict filter validation as booking lists and analytics reports.
 // Invalid dates must not silently turn into a 1970 range.
-list( $tz_selected_from, $tz_selected_to ) = TZFD_Admin_Filter_Input::enforce( $_GET, $this->get_option( 'date_format', 'mm/dd/yy' ) );
-$tz_dfrom = null === $tz_selected_from ? $tz_default_from : $tz_selected_from;
-$tz_dto   = null === $tz_selected_to ? $tz_default_to : $tz_selected_to;
+list( $tzfd_selected_from, $tzfd_selected_to ) = TZFD_Admin_Filter_Input::enforce( $_GET, $this->get_option( 'date_format', 'mm/dd/yy' ) );
+$tzfd_dfrom = null === $tzfd_selected_from ? $tzfd_default_from : $tzfd_selected_from;
+$tzfd_dto   = null === $tzfd_selected_to ? $tzfd_default_to : $tzfd_selected_to;
 
 if ($this->get_option('date_format', 'mm/dd/yy') == 'd M, y')
 {
-	$tz_dfrom_formatted = gmdate("d/m/Y", strtotime($tz_dfrom));
-    $tz_dto_formatted = gmdate("d/m/Y", strtotime($tz_dto));
+	$tzfd_dfrom_formatted = gmdate("d/m/Y", strtotime($tzfd_dfrom));
+    $tzfd_dto_formatted = gmdate("d/m/Y", strtotime($tzfd_dto));
 }
 else
 {
-    $tz_dfrom_formatted = $this->format_date($tz_dfrom);
-    $tz_dto_formatted = $this->format_date($tz_dto);
+    $tzfd_dfrom_formatted = $this->format_date($tzfd_dfrom);
+    $tzfd_dto_formatted = $this->format_date($tzfd_dto);
 }
 
 // Page assets (review R2). Enqueued here because this template renders after admin_enqueue_scripts.
-$tz_schedule_calendar_view = isset( $_GET["calendarview"] );
-$tz_schedule_deps = array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' );
-if ( $tz_schedule_calendar_view && wp_script_is( 'tzfdtslots-schedcal-tzfdcalendar', 'registered' ) ) {
-    $tz_schedule_deps[] = 'tzfdtslots-schedcal-tzfdcalendar';
+$tzfd_schedule_calendar_view = isset( $_GET["calendarview"] );
+$tzfd_schedule_deps = array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' );
+if ( $tzfd_schedule_calendar_view && wp_script_is( 'tzfdtslots-schedcal-tzfdcalendar', 'registered' ) ) {
+    $tzfd_schedule_deps[] = 'tzfdtslots-schedcal-tzfdcalendar';
 }
-$tz_dformatc = $this->get_option( 'date_format', 'mm/dd/yy' );
-if ( $tz_dformatc == 'd M, y' ) $tz_dformatc = 'dd/mm/yy';
+$tzfd_dformatc = $this->get_option( 'date_format', 'mm/dd/yy' );
+if ( $tzfd_dformatc == 'd M, y' ) $tzfd_dformatc = 'dd/mm/yy';
 
-wp_enqueue_script( 'tzfd-schedule', plugins_url( 'js/inline/admina-schedule.js', __FILE__ ), $tz_schedule_deps, '2.0.1', true );
+wp_enqueue_script( 'tzfd-schedule', plugins_url( 'js/inline/admina-schedule.js', __FILE__ ), $tzfd_schedule_deps, '2.0.1', true );
 wp_localize_script( 'tzfd-schedule', 'tzfdScheduleData', array(
-    'calendarView' => $tz_schedule_calendar_view,
+    'calendarView' => $tzfd_schedule_calendar_view,
     'calendarId'   => intval( $this->item ),
-    'firstDay'     => intval( $tz_firstday ),
+    'firstDay'     => intval( $tzfd_firstday ),
     // The calendar feed (mv) checks this anonce on every request the calendar script makes.
     'pathCalendar' => $this->get_site_url( true ) . '?tz_fd_app_action=mv&formid=' . intval( $this->item ) . '&anonce=' . rawurlencode( wp_create_nonce( 'tz_fd_actions_booking' ) ),
-    'dateFormat'   => $tz_dformatc,
+    'dateFormat'   => $tzfd_dformatc,
 ) );
 
 ?>
 
 
-<h1><?php echo wp_kses( TZFD_UI_Graphics::brand_html( 'availability' ), TZFD_UI_Graphics::allowed_html() ); ?><?php esc_html_e('Schedule','titan-zero-trades-front-desk'); ?> -<?php if ($this->item != 0) echo esc_html($tz_myform[0]->form_name); else echo esc_html__( 'All forms', 'titan-zero-trades-front-desk' ); ?></h1>
+<h1><?php echo wp_kses( TZFD_UI_Graphics::brand_html( 'availability' ), TZFD_UI_Graphics::allowed_html() ); ?><?php esc_html_e('Schedule','titan-zero-trades-front-desk'); ?> -<?php if ($this->item != 0) echo esc_html($tzfd_myform[0]->form_name); else echo esc_html__( 'All forms', 'titan-zero-trades-front-desk' ); ?></h1>
 
 <div class="tzfd-buttons-container">
 
@@ -112,25 +112,25 @@ wp_localize_script( 'tzfd-schedule', 'tzfdScheduleData', array(
         <input type="hidden" name="cal" value="<?php echo intval($this->item); ?>" />
         <input type="hidden" name="schedule" value="1" />
         <input type="hidden" name="anonce" value="<?php echo esc_attr( wp_create_nonce( 'tz_fd_actions_booking' ) ); ?>" />
-		<nobr><label for="dfrom"><?php esc_html_e('From','titan-zero-trades-front-desk'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr($tz_dfrom_formatted); ?>" >&nbsp;&nbsp;</nobr>
-		<nobr><label for="dto"><?php esc_html_e('To','titan-zero-trades-front-desk'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php echo esc_attr($tz_dto_formatted); ?>" >&nbsp;&nbsp;</nobr>
+		<nobr><label for="dfrom"><?php esc_html_e('From','titan-zero-trades-front-desk'); ?>:</label> <input autocomplete="off" type="text" id="dfrom" name="dfrom" value="<?php echo esc_attr($tzfd_dfrom_formatted); ?>" >&nbsp;&nbsp;</nobr>
+		<nobr><label for="dto"><?php esc_html_e('To','titan-zero-trades-front-desk'); ?>:</label> <input autocomplete="off" type="text" id="dto" name="dto" value="<?php echo esc_attr($tzfd_dto_formatted); ?>" >&nbsp;&nbsp;</nobr>
 		<nobr><label for="paid"><?php esc_html_e('Paid Status','titan-zero-trades-front-desk'); ?>:</label> <select id="paid" name="paid">
          <option value=""><?php esc_html_e('All','titan-zero-trades-front-desk'); ?></option>
          <option value="1" <?php if (!empty($_GET["paid"])) echo ' selected'; ?>><?php esc_html_e('Paid only','titan-zero-trades-front-desk'); ?></option>
       </select></nobr>
         <nobr><label for="status"><?php esc_html_e('Booking Status','titan-zero-trades-front-desk'); ?>:</label> <?php $this->render_status_box('status', (!isset($_GET["status"])?'all':tzfd_request_text( 'get', "status" )), true); ?></nobr>
 		<nobr><label for="cal"><?php esc_html_e('Item','titan-zero-trades-front-desk'); ?>:</label> <select id="cal" name="cal">
-          <?php if ($tz_current_user_access) { ?> <option value="0">[<?php esc_html_e('All Items','titan-zero-trades-front-desk'); ?>]</option><?php } ?>
+          <?php if ($tzfd_current_user_access) { ?> <option value="0">[<?php esc_html_e('All Items','titan-zero-trades-front-desk'); ?>]</option><?php } ?>
    <?php
-    $tz_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE company_id=%d", $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_report_company ) );  
-    $tz_saved_id = $this->item;
-    foreach ($tz_myrows as $tz_item)
+    $tzfd_myrows = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE company_id=%d", $wpdb->prefix . TZFD_Tables::FORMS, $tzfd_report_company ) );  
+    $tzfd_saved_id = $this->item;
+    foreach ($tzfd_myrows as $tzfd_item)
     {
-        $this->setId($tz_item->id);
-        if ($tz_current_user_access || in_array($current_user->ID, $tz_calendar_access_ids, true))
-           echo '<option value="'.intval($tz_item->id).'"'.(intval($tz_item->id)==intval($tz_saved_id)?" selected":"").'>'.esc_html($tz_item->form_name).'</option>';
+        $this->setId($tzfd_item->id);
+        if ($tzfd_current_user_access || in_array($current_user->ID, $tzfd_calendar_access_ids, true))
+           echo '<option value="'.intval($tzfd_item->id).'"'.(intval($tzfd_item->id)==intval($tzfd_saved_id)?" selected":"").'>'.esc_html($tzfd_item->form_name).'</option>';
     }
-    $this->setId($tz_saved_id);
+    $this->setId($tzfd_saved_id);
    ?>
     </select></nobr>
        <div style="float:right;margin-top:3px;">
@@ -167,8 +167,8 @@ wp_localize_script( 'tzfd-schedule', 'tzfdScheduleData', array(
 echo wp_kses( $this->filter_list( array(
                                'calendar' => ($this->item != 0 ? intval($this->item) : ''),
                                'fields' => 'DATE,TIME,SERVICE,quantity,paid,email,data,cancelled,options',
-	    	                   'from' => esc_html($tz_dfrom),
-	    	                   'to' => esc_html($tz_dto),
+	    	                   'from' => esc_html($tzfd_dfrom),
+	    	                   'to' => esc_html($tzfd_dto),
                                'paidonly' => esc_html( (!empty($_GET["paid"])?tzfd_request_text( 'get', "paid" ):'')),
                                'status' => (!isset($_GET["status"])?'all':esc_html(tzfd_request_text( 'get', "status" )))
                                ) ), $this->admin_markup_allowed() );

@@ -193,22 +193,22 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 
 		public function get_addon_form_settings( $form_id )
 		{
-			global $wpdb, $tz_plugin;
+			global $wpdb, $tzfd_plugin;
             $form_id = absint( $form_id );
             $company_id = TZFD_Scoped_Store::company_id();
             if ( ! $form_id || ! $company_id || TZFD_Scoped_Store::company_for_form( $form_id ) !== $company_id ) {
                 return '';
             }
 
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'attachical');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'base_summary');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'base_description');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'cal_tzid');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_uselocal');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'attachical');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'base_summary');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'base_description');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'cal_tzid');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_uselocal');
             
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizer');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizername');
-            $tz_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizeremail');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizer');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizername');
+            $tzfd_plugin->add_field_verify ($wpdb->prefix.$this->form_table, 'ical_organizeremail');
 
 			// Insertion in database
 			if(
@@ -226,8 +226,8 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 									'ical_daylight_zone'	 => self::allowed_value( tzfd_request_text( 'post', "ical_daylight_zone" ), array( 'EUROPE', 'USA', 'AU', 'NZ' ) ),
 									'cal_time_zone_modify'	 => self::allowed_value( tzfd_request_text( 'post', "cal_time_zone_modify" ), self::time_zone_modify_values() ),
                                     'attachical'	 => self::allowed_value( tzfd_request_text( 'post', "attachical" ), array( '0', '1' ) ),
-                                    'base_summary'	 => stripslashes_deep($tz_plugin->sanitize(tzfd_request_text( 'post', "base_summary" ))),
-                                    'base_description'	 => stripslashes_deep($tz_plugin->sanitize(tzfd_request_text( 'post', "base_description" ))),
+                                    'base_summary'	 => stripslashes_deep($tzfd_plugin->sanitize(tzfd_request_text( 'post', "base_summary" ))),
+                                    'base_description'	 => stripslashes_deep($tzfd_plugin->sanitize(tzfd_request_text( 'post', "base_description" ))),
                                     'cal_tzid'	 => self::allowed_value( tzfd_request_text( 'post', "cal_tzid" ), array_merge( array( '' ), $this->timezones ) ),
                                     'ical_uselocal'	 => self::allowed_value( tzfd_request_text( 'post', "ical_uselocal" ), array( '0', '1' ) ),
                                     'ical_organizer'	 => self::allowed_value( tzfd_request_text( 'post', "ical_organizer" ), array( '0', '1' ) ),
@@ -239,10 +239,10 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 							);
 			}
 
-			$tz_rows = $wpdb->get_results(
+			$tzfd_local_rows = $wpdb->get_results(
 						$wpdb->prepare( "SELECT * FROM %i WHERE formid=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::ICALEXPORT, $form_id, $company_id )
 					);
-			if (!count($tz_rows))
+			if (!count($tzfd_local_rows))
 			{
 			    $row["observe_day_light"] = "true";
 			    $row["ical_daylight_zone"] = "EUROPE";
@@ -254,19 +254,19 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                 $row["ical_uselocal"] = '0';
                 $row["ical_organizer"] = '0';
                 $row["ical_organizername"] = sanitize_text_field( (string) wp_parse_url( home_url( '/' ), PHP_URL_HOST ) );
-                $row["ical_organizeremail"] = sanitize_email($tz_plugin->get_option('fp_from_email'));
+                $row["ical_organizeremail"] = sanitize_email($tzfd_plugin->get_option('fp_from_email'));
 			} else {
-			    $row["observe_day_light"] = $tz_rows[0]->observe_day_light;
-			    $row["ical_daylight_zone"] = $tz_rows[0]->ical_daylight_zone;
-                $row["cal_time_zone_modify"] = $tz_rows[0]->cal_time_zone_modify;
-                $row["attachical"] = $tz_rows[0]->attachical;
-                $row["cal_tzid"] = $tz_rows[0]->cal_tzid;
-                $row["base_summary"] = $tz_rows[0]->base_summary;
-                $row["base_description"] = $tz_rows[0]->base_description;
-                $row["ical_uselocal"] = $tz_rows[0]->ical_uselocal;
-                $row["ical_organizer"] = $tz_rows[0]->ical_organizer;
-                $row["ical_organizername"] = $tz_rows[0]->ical_organizername;
-                $row["ical_organizeremail"] = $tz_rows[0]->ical_organizeremail;
+			    $row["observe_day_light"] = $tzfd_local_rows[0]->observe_day_light;
+			    $row["ical_daylight_zone"] = $tzfd_local_rows[0]->ical_daylight_zone;
+                $row["cal_time_zone_modify"] = $tzfd_local_rows[0]->cal_time_zone_modify;
+                $row["attachical"] = $tzfd_local_rows[0]->attachical;
+                $row["cal_tzid"] = $tzfd_local_rows[0]->cal_tzid;
+                $row["base_summary"] = $tzfd_local_rows[0]->base_summary;
+                $row["base_description"] = $tzfd_local_rows[0]->base_description;
+                $row["ical_uselocal"] = $tzfd_local_rows[0]->ical_uselocal;
+                $row["ical_organizer"] = $tzfd_local_rows[0]->ical_organizer;
+                $row["ical_organizername"] = $tzfd_local_rows[0]->ical_organizername;
+                $row["ical_organizeremail"] = $tzfd_local_rows[0]->ical_organizeremail;
 			}
 			?>
 			<div id="metabox_basic_settings" class="postbox" >
@@ -287,13 +287,13 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     <td><select name="cal_time_zone_modify">
                           <option value=""><?php echo esc_html__( '- none -', 'titan-zero-trades-front-desk' ); ?></option>
                           <?php
-                            for ($tz_i=-23;$tz_i<24; $tz_i++)
+                            for ($tzfd_i=-23;$tzfd_i<24; $tzfd_i++)
                             {
-                                $orgi = $tz_i;
+                                $orgi = $tzfd_i;
                                 if ($orgi > 0) $orgi--;
-                                $text = " ".($tz_i<=0?"":"+").$tz_i.":30 hours"; $text2 = " ".($tz_i<=0?"+".(-1*$orgi):"-".$orgi).":30 hours";
+                                $text = " ".($tzfd_i<=0?"":"+").$tzfd_i.":30 hours"; $text2 = " ".($tzfd_i<=0?"+".(-1*$orgi):"-".$orgi).":30 hours";
                                 echo '<option value="'.esc_attr($text).'" '.($row["cal_time_zone_modify"] == trim($text)?' selected':'').'>'.esc_html($text2).'</option>';
-                                $text_a = " ".($tz_i<=0?"":"+").$tz_i." hours"; $text_a2 = " ".($tz_i<=0?"+".(-1*$tz_i):"-".$tz_i).":00 hours";
+                                $text_a = " ".($tzfd_i<=0?"":"+").$tzfd_i." hours"; $text_a2 = " ".($tzfd_i<=0?"+".(-1*$tzfd_i):"-".$tzfd_i).":00 hours";
                                 echo '<option value="'.esc_attr($text_a).'" '.($row["cal_time_zone_modify"] == trim($text_a)?' selected':'').'>'.esc_html($text_a2).'</option>';
                             }
                           ?>
@@ -308,8 +308,8 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     <td><select name="cal_tzid">
                         <?php $tzone =  wp_timezone_string(); if (substr($tzone,0,1) == "+" || substr($tzone,0,1) == "-") $tzone = "GMT".$tzone; ?>
                           <option value="" <?php if ($row["cal_tzid"] == '') echo ' selected'; ?>><?php echo esc_html__( '- No, don\'t include it - (select this if you are not sure)', 'titan-zero-trades-front-desk' ); ?></option>
-                          <?php foreach ($this->timezones as $tz_value) { ?>
-                          <option value="<?php echo esc_attr($tz_value); ?>"  <?php if ($row["cal_tzid"] == $tz_value) echo ' selected'; ?>><?php echo esc_html($tz_value); ?></option>
+                          <?php foreach ($this->timezones as $tzfd_value) { ?>
+                          <option value="<?php echo esc_attr($tzfd_value); ?>"  <?php if ($row["cal_tzid"] == $tzfd_value) echo ' selected'; ?>><?php echo esc_html($tzfd_value); ?></option>
                           <?php } ?>
                          </select>
                          <br /><em><?php esc_html_e( 'Note: Use this adjusting also the above field for the iCal timezone difference.', 'titan-zero-trades-front-desk' ); ?></em>
@@ -418,7 +418,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 			add_action( 'init', array( &$this, 'pp_iCalExport_update_status' ), 10, 1 );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_assets' ) );
 
-            add_filter( 'tz_fd_email_attachments', array( &$this, 'attach_ical_file' ), 10, 3 );
+            add_filter( 'tzfd_email_attachments', array( &$this, 'attach_ical_file' ), 10, 3 );
 
             // Calendar files are deleted once every email that carries them has finished sending.
             add_filter( 'wp_mail', array( &$this, 'track_ical_attachments' ), 999, 1 );
@@ -458,9 +458,9 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             
             $charset_collate = $wpdb->get_charset_collate();
             
-            $tz_table_name = $wpdb->prefix . sanitize_key( $this->form_table );
+            $tzfd_table_name = $wpdb->prefix . sanitize_key( $this->form_table );
             
-            $sql = "CREATE TABLE {$tz_table_name} (
+            $sql = "CREATE TABLE {$tzfd_table_name} (
                 id mediumint(9) NOT NULL AUTO_INCREMENT,
                 formid int NOT NULL,
                 company_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -477,11 +477,11 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             ) $charset_collate;";
 
             // dbDelta() runs only when this schema is not yet recorded. The key is a hash of the SQL, so a schema change runs it again.
-            $tz_schema_key = 'tzfd_schema_' . md5( $sql );
-            if ( ! get_option( $tz_schema_key ) ) {
+            $tzfd_schema_key = 'tzfd_schema_' . md5( $sql );
+            if ( ! get_option( $tzfd_schema_key ) ) {
                 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
                 dbDelta( $sql );
-                update_option( $tz_schema_key, '1', false );
+                update_option( $tzfd_schema_key, '1', false );
             }
             // Historical rows predate tenant IDs. Map them to the owner of their
             // globally unique form ID, never to whichever company is logged in.
@@ -489,7 +489,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             if ( ! get_option( 'tzfd_tenant_migration_icalexport_v1', false ) ) {
                 $migrated = $wpdb->query( $wpdb->prepare(
                     'UPDATE %i a INNER JOIN %i f ON f.id=a.formid SET a.company_id=f.company_id WHERE a.company_id=0 AND f.company_id>0',
-                    $tz_table_name, $wpdb->prefix . TZFD_Tables::FORMS
+                    $tzfd_table_name, $wpdb->prefix . TZFD_Tables::FORMS
                 ) );
                 if ( false !== $migrated ) { update_option( 'tzfd_tenant_migration_icalexport_v1', 1, false ); }
             }
@@ -548,13 +548,13 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 
         private function getiCalLink($form_id)
         {
-            global $tz_plugin;
-            return $tz_plugin->get_site_url()."?tz_fd_app=calfeed&id=".$form_id."&verify=".self::feed_token( $form_id, self::calendar_feed_secret() );
+            global $tzfd_plugin;
+            return $tzfd_plugin->get_site_url()."?tz_fd_app=calfeed&id=".$form_id."&verify=".self::feed_token( $form_id, self::calendar_feed_secret() );
         }
 
 		public function pp_iCalExport_update_status( )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
 
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only request value used for display or routing; this code path changes no state.
             if (!isset($_GET["tz_fd_app"]) || tzfd_request_text( 'get', "tz_fd_app" ) != 'calfeed')
@@ -571,7 +571,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 
        	private function export_iCal( $form_id, $date_from = 'today -1 month', $date_to = 'today +10 years')
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
 
             $form_id = TZFD_Admin_Request_Ids::positive( $form_id );
             $company_id = $form_id ? TZFD_Scoped_Store::company_for_form( $form_id ) : 0;
@@ -594,10 +594,10 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             // Calendar subscriptions are public bearer-token endpoints: scope every row to
             // the authenticated calendar owner, not merely the incoming calendar number.
             require_once dirname( __DIR__, 2 ) . '/includes/class-tzfd-booking-export-reader.php';
-            $tz_rows = TZFD_Booking_Export_Reader::read(
-                (int) $company_id, (int) $form_id, $to, (string) $tz_plugin->blocked_by_admin_indicator
+            $tzfd_local_rows = TZFD_Booking_Export_Reader::read(
+                (int) $company_id, (int) $form_id, $to, (string) $tzfd_plugin->blocked_by_admin_indicator
             );
-            if ( null === $tz_rows ) {
+            if ( null === $tzfd_local_rows ) {
                 status_header( 503 );
                 echo esc_html__( 'Calendar export could not be completed. Please retry.', 'titan-zero-trades-front-desk' );
                 return;
@@ -608,28 +608,28 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             echo "PRODID:-//Scheduling & Enquiries Manager for WordPress//EN\n";
             echo "VERSION:2.0\n";
 
-            $tz_blockedstatuses = explode(",", get_option('tz_fd_statuses_block',''));
-            $tz_blockedstatuses[] = '';
+            $tzfd_blockedstatuses = explode(",", get_option('tz_fd_statuses_block',''));
+            $tzfd_blockedstatuses[] = '';
 
-            foreach($tz_rows as $tz_item)
-                if ($tz_item->ipaddr != 'remote-ical-file')
+            foreach($tzfd_local_rows as $tzfd_item)
+                if ($tzfd_item->ipaddr != 'remote-ical-file')
                 {
-                    $tz_data = TZFD_Stored_Data::decode_booking($tz_item->posted_data);
-					if (!is_array($tz_data)) $tz_data = array();  
-					if (!isset($tz_data["apps"]) || !is_array($tz_data["apps"])) $tz_data["apps"] = array();                      
+                    $tzfd_data = TZFD_Stored_Data::decode_booking($tzfd_item->posted_data);
+					if (!is_array($tzfd_data)) $tzfd_data = array();  
+					if (!isset($tzfd_data["apps"]) || !is_array($tzfd_data["apps"])) $tzfd_data["apps"] = array();                      
                     $ct = 0;
-                    foreach($tz_data["apps"] as $tz_app)
+                    foreach($tzfd_data["apps"] as $tzfd_app)
                         if (
-                            is_array( $tz_app ) && self::valid_appointment( $tz_app ) &&
-                            ($tz_app["date"] ?? '') >= $from && ($tz_app["date"] ?? '') <= $to
-                            && (!isset($tz_app["cancelled"]) || in_array($tz_app["cancelled"],$tz_blockedstatuses))
+                            is_array( $tzfd_app ) && self::valid_appointment( $tzfd_app ) &&
+                            ($tzfd_app["date"] ?? '') >= $from && ($tzfd_app["date"] ?? '') <= $to
+                            && (!isset($tzfd_app["cancelled"]) || in_array($tzfd_app["cancelled"],$tzfd_blockedstatuses))
                            )
                         {
                             $ct++;
-                            $time = explode("/", $tz_app["slot"] ?? '');
-                            $datetime = ($tz_app["date"] ?? '')." ".trim($time[0]);
-                            $duration = "+".($tz_app["duration"] ?? '')." minutes";
-                            $submissiontime = strtotime($tz_item->time);
+                            $time = explode("/", $tzfd_app["slot"] ?? '');
+                            $datetime = ($tzfd_app["date"] ?? '')." ".trim($time[0]);
+                            $duration = "+".($tzfd_app["duration"] ?? '')." minutes";
+                            $submissiontime = strtotime($tzfd_item->time);
                             if ( self::observes_day_light( $icalSettings[0] ) )
                                 $datetime = self::daylight_adjusted( $datetime, $icalSettings[0] );
 
@@ -641,16 +641,16 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                             $base_summary = str_replace ('%>', '%', $base_summary);
                             $base_description = str_replace ('%>', '%', $base_description);
 
-                            $base_summary = str_replace('%apps%', $tz_plugin->get_appointments_text($tz_data["apps"]), $base_summary);
-                            $base_description = str_replace('%apps%', $tz_plugin->get_appointments_text($tz_data["apps"]), $base_description);
-                            foreach ($tz_data as $itemgt => $tz_value)
+                            $base_summary = str_replace('%apps%', $tzfd_plugin->get_appointments_text($tzfd_data["apps"]), $base_summary);
+                            $base_description = str_replace('%apps%', $tzfd_plugin->get_appointments_text($tzfd_data["apps"]), $base_description);
+                            foreach ($tzfd_data as $itemgt => $tzfd_value)
                             {
-                                $base_summary = str_replace('%'.$itemgt.'%',(is_array($tz_value)?($tz_plugin->recursive_implode(", ",$tz_value)):((string) $tz_value)),$base_summary);
-                                $base_description = str_replace('%'.$itemgt.'%',(is_array($tz_value)?($tz_plugin->recursive_implode(", ",$tz_value)):((string) $tz_value)),$base_description);
+                                $base_summary = str_replace('%'.$itemgt.'%',(is_array($tzfd_value)?($tzfd_plugin->recursive_implode(", ",$tzfd_value)):((string) $tzfd_value)),$base_summary);
+                                $base_description = str_replace('%'.$itemgt.'%',(is_array($tzfd_value)?($tzfd_plugin->recursive_implode(", ",$tzfd_value)):((string) $tzfd_value)),$base_description);
                             }
 
-                            $base_summary = $tz_plugin->replace_tags($base_summary, $tz_data, false, $ct-1);
-                            $base_description = $tz_plugin->replace_tags($base_description, $tz_data, false, $ct-1);
+                            $base_summary = $tzfd_plugin->replace_tags($base_summary, $tzfd_data, false, $ct-1);
+                            $base_description = $tzfd_plugin->replace_tags($base_description, $tzfd_data, false, $ct-1);
 
                             $base_summary = str_replace(array("<br>", "<br />"), "\n", str_replace("\r", '', $base_summary));
                             $base_description = str_replace(array("<br>", "<br />"), "\n", str_replace("\r", '', $base_description));
@@ -659,7 +659,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                             echo "DTSTART".(esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) !== '' ? ';TZID=' . esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) : '').":".esc_html( gmdate("Ymd",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify)) )."T".esc_html( gmdate("His",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify)) ).(esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) !== '' || $icalSettings[0]->ical_uselocal == '1'?'':'Z')."\n";
                             echo "DTEND".(esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) !== '' ? ';TZID=' . esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) : '').":".esc_html( gmdate("Ymd",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify.$duration)) )."T".esc_html( gmdate("His",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify.$duration)) ).(esc_html( self::safe_tzid( $icalSettings[0]->cal_tzid ) ) !== '' || $icalSettings[0]->ical_uselocal == '1'?'':'Z')."\n";
                             echo "DTSTAMP:".esc_html(gmdate("Ymd",$submissiontime))."T".esc_html(gmdate("His",$submissiontime))."Z\n";
-                            echo "UID:" . esc_html( self::safe_uid( $tz_item->id, $ct, wp_parse_url( home_url( '/' ), PHP_URL_HOST ), $submissiontime > $updatefeaturetime ? $form_id : 0 ) ) . "\n";
+                            echo "UID:" . esc_html( self::safe_uid( $tzfd_item->id, $ct, wp_parse_url( home_url( '/' ), PHP_URL_HOST ), $submissiontime > $updatefeaturetime ? $form_id : 0 ) ) . "\n";
                             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- iCal (text/calendar) output, not HTML; the value is escaped by ical_escape_text().
                             echo "DESCRIPTION:".self::ical_escape_text(wp_strip_all_tags($base_description))."\n";
                             echo "LAST-MODIFIED:".esc_html(gmdate("Ymd",$submissiontime))."T".esc_html(gmdate("His",$submissiontime))."Z\n";
@@ -668,7 +668,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                             echo "STATUS:CONFIRMED\n";
                             if ($icalSettings[0]->ical_organizer == '1')
                                 // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- iCal (text/calendar) output, not HTML; the name is escaped by ical_escape_param() and the email by sanitize_email().
-                                echo "ORGANIZER;CN=\"".self::ical_escape_param($tz_plugin->replace_tags($icalSettings[0]->ical_organizername, $tz_data, false, $ct-1))."\":MAILTO:".sanitize_email($tz_plugin->replace_tags($icalSettings[0]->ical_organizeremail, $tz_data, false, $ct-1))."\r\n";                            
+                                echo "ORGANIZER;CN=\"".self::ical_escape_param($tzfd_plugin->replace_tags($icalSettings[0]->ical_organizername, $tzfd_data, false, $ct-1))."\":MAILTO:".sanitize_email($tzfd_plugin->replace_tags($icalSettings[0]->ical_organizeremail, $tzfd_data, false, $ct-1))."\r\n";                            
                             // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- iCal (text/calendar) output, not HTML; the value is escaped by ical_escape_text().
                             echo "SUMMARY:".self::ical_escape_text(wp_strip_all_tags($base_summary))."\n";
                             echo "TRANSP:OPAQUE\n";
@@ -681,9 +681,9 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 		}
 
 
-        function attach_ical_file( $attachments, $tz_params, $form_id)
+        function attach_ical_file( $attachments, $tzfd_local_params, $form_id)
         {
-            global $wpdb, $tz_plugin, $wp_filesystem;
+            global $wpdb, $tzfd_plugin, $wp_filesystem;
 
             $updatefeaturetime = strtotime('2019-03-05');
 
@@ -697,25 +697,25 @@ if( !class_exists( 'TZFD_iCalExport' ) )
             if ($icalSettings[0]->attachical != '1' && $icalSettings[0]->attachical != '2')
                 return $attachments;
 
-            $tz_data = $tz_params;
+            $tzfd_data = $tzfd_local_params;
             $ct = 0;
-            foreach ( (array) ( $tz_data["apps"] ?? array() ) as $tz_app )
+            foreach ( (array) ( $tzfd_data["apps"] ?? array() ) as $tzfd_app )
             {
-                if ( ! is_array( $tz_app ) || ! self::valid_appointment( $tz_app ) ) { continue; }
-                $tz_cancelled = strtolower( is_string( $tz_app['cancelled'] ?? '' ) ? $tz_app['cancelled'] : '' );
+                if ( ! is_array( $tzfd_app ) || ! self::valid_appointment( $tzfd_app ) ) { continue; }
+                $tzfd_cancelled = strtolower( is_string( $tzfd_app['cancelled'] ?? '' ) ? $tzfd_app['cancelled'] : '' );
                 if
                   (
-                   is_array( $tz_app ) && self::valid_appointment( $tz_app ) &&
-                   ($tz_cancelled != 'cancelled') &&
-                   ($tz_cancelled != 'cancelled by customer') &&
-                   ($tz_cancelled != 'rejected') &&
-                   ($icalSettings[0]->attachical != '2' || $tz_cancelled == '' || $tz_cancelled == 'approved')
+                   is_array( $tzfd_app ) && self::valid_appointment( $tzfd_app ) &&
+                   ($tzfd_cancelled != 'cancelled') &&
+                   ($tzfd_cancelled != 'cancelled by customer') &&
+                   ($tzfd_cancelled != 'rejected') &&
+                   ($icalSettings[0]->attachical != '2' || $tzfd_cancelled == '' || $tzfd_cancelled == 'approved')
                   )
                 {
                     $ct++;
-                    $time = explode("/", $tz_app["slot"] ?? '');
-                    $datetime = ($tz_app["date"] ?? '')." ".trim($time[0]);
-                    $duration = "+".($tz_app["duration"] ?? '')." minutes";
+                    $time = explode("/", $tzfd_app["slot"] ?? '');
+                    $datetime = ($tzfd_app["date"] ?? '')." ".trim($time[0]);
+                    $duration = "+".($tzfd_app["duration"] ?? '')." minutes";
                     $submissiontime = time();
                     if ( self::observes_day_light( $icalSettings[0] ) )
                         $datetime = self::daylight_adjusted( $datetime, $icalSettings[0] );
@@ -728,16 +728,16 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     $base_summary = str_replace ('%>', '%', $base_summary);
                     $base_description = str_replace ('%>', '%', $base_description);
 
-                    $base_summary = str_replace('%apps%', $tz_plugin->get_appointments_text($tz_data["apps"]), $base_summary);
-                    $base_description = str_replace('%apps%', $tz_plugin->get_appointments_text($tz_data["apps"]), $base_description);
-                    foreach ($tz_data as $itemgt => $tz_value)
+                    $base_summary = str_replace('%apps%', $tzfd_plugin->get_appointments_text($tzfd_data["apps"]), $base_summary);
+                    $base_description = str_replace('%apps%', $tzfd_plugin->get_appointments_text($tzfd_data["apps"]), $base_description);
+                    foreach ($tzfd_data as $itemgt => $tzfd_value)
                     {
-                        $base_summary = str_replace('%'.$itemgt.'%',(is_array($tz_value)?($tz_plugin->recursive_implode(", ",$tz_value)):((string) $tz_value)),$base_summary);
-                        $base_description = str_replace('%'.$itemgt.'%',(is_array($tz_value)?($tz_plugin->recursive_implode(", ",$tz_value)):((string) $tz_value)),$base_description);
+                        $base_summary = str_replace('%'.$itemgt.'%',(is_array($tzfd_value)?($tzfd_plugin->recursive_implode(", ",$tzfd_value)):((string) $tzfd_value)),$base_summary);
+                        $base_description = str_replace('%'.$itemgt.'%',(is_array($tzfd_value)?($tzfd_plugin->recursive_implode(", ",$tzfd_value)):((string) $tzfd_value)),$base_description);
                     }
 
-                    $base_summary = $tz_plugin->replace_tags($base_summary, $tz_data, false, $ct-1);
-                    $base_description = $tz_plugin->replace_tags($base_description, $tz_data, false, $ct-1);
+                    $base_summary = $tzfd_plugin->replace_tags($base_summary, $tzfd_data, false, $ct-1);
+                    $base_description = $tzfd_plugin->replace_tags($base_description, $tzfd_data, false, $ct-1);
 
                     $base_summary = str_replace(array("<br>", "<br />"), "\n", str_replace("\r", '', $base_summary));
                     $base_description = str_replace(array("<br>", "<br />"), "\n", str_replace("\r", '', $base_description));
@@ -751,7 +751,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     $buffer .= "DTSTART".(self::safe_tzid( $icalSettings[0]->cal_tzid ) !== '' ? ';TZID=' . self::safe_tzid( $icalSettings[0]->cal_tzid ) : '').":".gmdate("Ymd",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify))."T".gmdate("His",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify)).(self::safe_tzid( $icalSettings[0]->cal_tzid ) !== '' || $icalSettings[0]->ical_uselocal == '1'?'':'Z')."\n";
                     $buffer .= "DTEND".(self::safe_tzid( $icalSettings[0]->cal_tzid ) !== '' ? ';TZID=' . self::safe_tzid( $icalSettings[0]->cal_tzid ) : '').":".gmdate("Ymd",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify.$duration))."T".gmdate("His",strtotime($datetime.$icalSettings[0]->cal_time_zone_modify.$duration)).(self::safe_tzid( $icalSettings[0]->cal_tzid ) !== '' || $icalSettings[0]->ical_uselocal == '1'?'':'Z')."\n";
                     $buffer .= "DTSTAMP:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
-                    $buffer .= "UID:" . self::safe_uid( $tz_params['itemnumber'] ?? 0, $ct, wp_parse_url( home_url( '/' ), PHP_URL_HOST ), $submissiontime > $updatefeaturetime ? $form_id : 0 ) . "\n";
+                    $buffer .= "UID:" . self::safe_uid( $tzfd_local_params['itemnumber'] ?? 0, $ct, wp_parse_url( home_url( '/' ), PHP_URL_HOST ), $submissiontime > $updatefeaturetime ? $form_id : 0 ) . "\n";
                     $buffer .= "DESCRIPTION:".self::ical_escape_text(wp_strip_all_tags($base_description))."\n";
                     $buffer .= "LAST-MODIFIED:".gmdate("Ymd",$submissiontime)."T".gmdate("His",$submissiontime)."Z\n";
                     $buffer .= "LOCATION:\n";
@@ -759,7 +759,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                     $buffer .= "STATUS:CONFIRMED\n";
                     
                     if ($icalSettings[0]->ical_organizer == '1')
-                        $buffer .= "ORGANIZER;CN=\"".self::ical_escape_param($tz_plugin->replace_tags($icalSettings[0]->ical_organizername, $tz_data, false, $ct-1))."\":MAILTO:".sanitize_email($tz_plugin->replace_tags($icalSettings[0]->ical_organizeremail, $tz_data, false, $ct-1))."\r\n";
+                        $buffer .= "ORGANIZER;CN=\"".self::ical_escape_param($tzfd_plugin->replace_tags($icalSettings[0]->ical_organizername, $tzfd_data, false, $ct-1))."\":MAILTO:".sanitize_email($tzfd_plugin->replace_tags($icalSettings[0]->ical_organizeremail, $tzfd_data, false, $ct-1))."\r\n";
                     $buffer .= "SUMMARY:".self::ical_escape_text(wp_strip_all_tags($base_summary))."\n";
                     $buffer .= "TRANSP:OPAQUE\n";
                     $buffer .= "END:VEVENT\n";
@@ -770,7 +770,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
                         require_once( ABSPATH . '/wp-admin/includes/file.php' );
                         WP_Filesystem();
                     }
-                    $booking_id = $tz_params['itemnumber'] ?? null;
+                    $booking_id = $tzfd_local_params['itemnumber'] ?? null;
                     if ( ! is_scalar( $booking_id ) || ! preg_match( '/^[1-9][0-9]{0,17}$/D', (string) $booking_id ) ||
                         ! is_int( $ct ) || $ct < 1 || ! is_object( $wp_filesystem ) ) { return $attachments; }
                     $upload_dir_info = wp_upload_dir( null, false );
@@ -913,10 +913,10 @@ if( !class_exists( 'TZFD_iCalExport' ) )
     } // End Class
 
     // Main add-on code
-    $tz_iCalExport_obj = new TZFD_iCalExport();
+    $tzfd_iCalExport_obj = new TZFD_iCalExport();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_iCalExport_obj->get_addon_id() ] = $tz_iCalExport_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_iCalExport_obj->get_addon_id() ] = $tzfd_iCalExport_obj;
 }
 

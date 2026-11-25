@@ -20,12 +20,19 @@ final class TZFD_Setup_Page {
 		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 15 );
 		add_action( 'admin_post_tzfd_setup_manual', array( __CLASS__, 'handle_manual' ) );
 		add_action( 'admin_post_tzfd_setup_consent', array( __CLASS__, 'handle_consent' ) );
+		add_action( 'admin_post_tzfd_setup_discovery', array( __CLASS__, 'handle_discovery' ) );
 	}
 
 	public static function menu() {
 		if ( ! current_user_can( self::CAP ) ) { return; }
 		$parent = class_exists( 'TZFD_Admin_Menu' ) ? TZFD_Admin_Menu::PARENT : '';
 		add_submenu_page( $parent, __( 'Get started', 'titan-zero-trades-front-desk' ), __( 'Get started', 'titan-zero-trades-front-desk' ), self::CAP, self::PAGE, array( __CLASS__, 'render' ) );
+	}
+
+	/** True while the Get started screen is the request's page. The admin notice renderers stay quiet here (issue #366). */
+	public static function is_current_screen() {
+		$page = isset( $_GET['page'] ) && is_string( $_GET['page'] ) ? sanitize_key( wp_unslash( $_GET['page'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+		return self::PAGE === $page;
 	}
 
 	private static function guard( $action ) {
@@ -68,13 +75,28 @@ final class TZFD_Setup_Page {
 		}
 		self::back( 'bad_request' );
 	}
+
+	public static function handle_discovery() {
+		self::guard( 'tzfd_setup_discovery' );
+		$action = isset( $_POST['discovery'] ) ? sanitize_key( wp_unslash( $_POST['discovery'] ) ) : '';
+		if ( 'on' === $action ) {
+			update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, true, false );
+			self::back( 'discovery_on' );
+		}
+		if ( 'off' === $action ) {
+			update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
+			self::back( 'discovery_off' );
+		}
+		self::back( 'bad_request' );
+	}
 	// phpcs:enable WordPress.Security.NonceVerification.Missing
 
 	public static function render() {
 		if ( ! current_user_can( self::CAP ) ) { return; }
 		$notice = isset( $_GET['tzfd_setup_notice'] ) ? sanitize_key( wp_unslash( $_GET['tzfd_setup_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
 		$manual = get_option( TZFD_Setup_Checklist::MANUAL_OPTION, array() );
-		$state  = TZFD_Setup_Checklist::evaluate( TZFD_Setup_Checklist::facts(), is_array( $manual ) ? $manual : array() );
+		$detected = TZFD_Setup_Checklist::facts();
+		$state    = TZFD_Setup_Checklist::evaluate( $detected, is_array( $manual ) ? $manual : array() );
 		$consent = true === get_option( TZFD_Setup_Checklist::CONSENT_OPTION, false );
 		$record  = get_option( TZFD_Setup_Checklist::PROGRESS_OPTION, array() );
 		$record  = TZFD_Setup_Checklist::record( $consent, is_array( $record ) ? $record : array(), $state['steps'], time() );
@@ -121,6 +143,27 @@ final class TZFD_Setup_Page {
 			echo '<button class="button" type="submit">' . esc_html__( 'Clear the records', 'titan-zero-trades-front-desk' ) . '</button></form>';
 		}
 
+		$measures = TZFD_Setup_Checklist::metrics( $record, $consent );
+		if ( $measures['measured'] ) {
+			echo '<h3>' . esc_html__( 'Setup measures for this site', 'titan-zero-trades-front-desk' ) . '</h3><ul>';
+			echo '<li>' . esc_html( sprintf(
+				/* translators: 1: completion percentage, 2: steps recorded, 3: total steps. */
+				__( 'Setup completion: %1$d%% (%2$d of %3$d steps recorded).', 'titan-zero-trades-front-desk' ),
+				$measures['completion_percent'], $measures['steps_done'], $measures['total']
+			) ) . '</li>';
+			if ( null !== $measures['first_booking_at'] ) {
+				echo '<li>' . esc_html( sprintf(
+					/* translators: %s: date and time of the first booking seen. */
+					__( 'First booked job seen: %s.', 'titan-zero-trades-front-desk' ),
+					wp_date( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), (int) $measures['first_booking_at'] )
+				) ) . '</li>';
+			} else {
+				echo '<li>' . esc_html__( 'First booked job seen: none yet.', 'titan-zero-trades-front-desk' ) . '</li>';
+			}
+			echo '<li>' . esc_html( $measures['converted'] ? __( 'Setup to first booking: reached.', 'titan-zero-trades-front-desk' ) : __( 'Setup to first booking: not yet reached.', 'titan-zero-trades-front-desk' ) ) . '</li>';
+			echo '</ul>';
+		}
+
 		echo '<h2>' . esc_html__( 'Optional hosted services', 'titan-zero-trades-front-desk' ) . '</h2>';
 		echo '<p>' . esc_html__( 'Booking, the calendar, customer records, reports, exports and staff access all work with this plugin alone. Nothing here is needed to take bookings.', 'titan-zero-trades-front-desk' ) . '</p>';
 		echo '<ul>';
@@ -129,6 +172,24 @@ final class TZFD_Setup_Page {
 		echo '<li><strong>' . esc_html__( 'Titan Zero AI Agent Team (hosted, paid).', 'titan-zero-trades-front-desk' ) . '</strong> '
 			. esc_html__( 'Acts only through the tools you grant on the Agent permissions screen. Each action it tries is recorded in a receipt you can read there.', 'titan-zero-trades-front-desk' ) . '</li>';
 		echo '</ul>';
+
+		// Discovery links: off by default, shown only after the administrator opts in and the plugin is in use.
+		$discovery = get_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false );
+		$opt_in    = true === $discovery;
+		if ( TZFD_Setup_Checklist::discovery_visible( $discovery, $detected ) ) {
+			echo '<h3>' . esc_html__( 'Links to optional services', 'titan-zero-trades-front-desk' ) . '</h3><ul>';
+			foreach ( TZFD_Setup_Checklist::discovery_links() as $link ) {
+				echo '<li><a href="' . esc_url( admin_url( 'admin.php?page=' . $link['page'] ) ) . '">' . esc_html( $link['label'] ) . '</a><br><span class="description">' . esc_html( $link['hint'] ) . '</span></li>';
+			}
+			echo '</ul>';
+		}
+		echo '<p class="description">' . esc_html( $opt_in
+			? __( 'Links to optional services are on for this site.', 'titan-zero-trades-front-desk' )
+			: __( 'Links to optional services are off. Turn them on to see them here once you start using the plugin. No registration is needed.', 'titan-zero-trades-front-desk' ) ) . '</p>';
+		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
+		wp_nonce_field( 'tzfd_setup_discovery', '_wpnonce' );
+		echo '<input type="hidden" name="action" value="tzfd_setup_discovery"><input type="hidden" name="discovery" value="' . esc_attr( $opt_in ? 'off' : 'on' ) . '">';
+		echo '<button class="button" type="submit">' . esc_html( $opt_in ? __( 'Hide links to optional services', 'titan-zero-trades-front-desk' ) : __( 'Show links to optional services', 'titan-zero-trades-front-desk' ) ) . '</button></form>';
 		echo '</div>';
 	}
 }

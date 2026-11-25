@@ -19,117 +19,117 @@ require_once __DIR__ . '/includes/class-tzfd-admin-report-scope.php';
 $tzfd_report_company = TZFD_Admin_Report_Scope::enforce( $this->item );
 
 $current_user = wp_get_current_user();
-$tz_current_user_access = current_user_can('tz_fd_access');
-$tz_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
+$tzfd_current_user_access = current_user_can('tz_fd_access');
+$tzfd_calendar_access_ids = TZFD_Access_List::decode( $this->get_option( 'tz_fd_user_access', '' ) );
 
-if ( !is_admin() || (!$tz_current_user_access && !in_array($current_user->ID, $tz_calendar_access_ids, true)))
+if ( !is_admin() || (!$tzfd_current_user_access && !in_array($current_user->ID, $tzfd_calendar_access_ids, true)))
 {
     echo esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' );
     exit;
 }
 
 // pre-select time-slots
-$tz_selection = array();
+$tzfd_selection = array();
 // Read the complete company- and calendar-scoped history. Reporting must never
 // silently drop older bookings or present a partial result after an SQL failure.
-$tz_rows = TZFD_Booking_Export_Reader::read(
+$tzfd_local_rows = TZFD_Booking_Export_Reader::read(
     (int) $tzfd_report_company,
     (int) $this->item,
     '9999-12-31 23:59:59',
     (string) $this->blocked_by_admin_indicator
 );
-if ( null === $tz_rows ) {
+if ( null === $tzfd_local_rows ) {
     wp_die( esc_html__( 'Booking statistics are temporarily unavailable. No partial report was generated.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 503 ) );
 }  
 
-$tz_yearly_incoming = array();
-$tz_monthly_incoming = array();
-$tz_weekly_incoming = array();
-$tz_daily_incoming = array();
+$tzfd_yearly_incoming = array();
+$tzfd_monthly_incoming = array();
+$tzfd_weekly_incoming = array();
+$tzfd_daily_incoming = array();
 
-$tz_yearly = array();
-$tz_monthly = array();
-$tz_weekly = array();
-$tz_daily = array();
-$tz_currentdate = strtotime(gmdate("Y-m-d"));
+$tzfd_yearly = array();
+$tzfd_monthly = array();
+$tzfd_weekly = array();
+$tzfd_daily = array();
+$tzfd_currentdate = strtotime(gmdate("Y-m-d"));
 
 
-$tz_blockedstatuses = explode(",", get_option('tz_fd_statuses_block',',Attended'));
+$tzfd_blockedstatuses = explode(",", get_option('tz_fd_statuses_block',',Attended'));
 
-foreach($tz_rows as $tz_item)
+foreach($tzfd_local_rows as $tzfd_item)
 {        
-    $tz_data = TZFD_Stored_Data::decode_booking($tz_item->posted_data);
-    if (null === $tz_data || !isset($tz_data["apps"])) { continue; }
-    foreach($tz_data["apps"] as $tz_app)
-        if ( in_array($tz_app["cancelled"],$tz_blockedstatuses) )
+    $tzfd_data = TZFD_Stored_Data::decode_booking($tzfd_item->posted_data);
+    if (null === $tzfd_data || !isset($tzfd_data["apps"])) { continue; }
+    foreach($tzfd_data["apps"] as $tzfd_app)
+        if ( in_array($tzfd_app["cancelled"],$tzfd_blockedstatuses) )
         {       
-                $tz_dt = strtotime($tz_app["date"]);
-                $tz_dt_incoming = strtotime($tz_item->time);
-                if ($tz_dt>=$tz_currentdate)
+                $tzfd_dt = strtotime($tzfd_app["date"]);
+                $tzfd_dt_incoming = strtotime($tzfd_item->time);
+                if ($tzfd_dt>=$tzfd_currentdate)
                 {  
-                    //$tz_selection[] = array($tz_app["date"]." ".$tz_app["slot"], $tz_app["date"], $tz_app["slot"]);
-					if (!isset($tz_yearly["x".gmdate("Y",$tz_dt)])) $tz_yearly["x".gmdate("Y",$tz_dt)] = 0;
-                    $tz_yearly["x".gmdate("Y",$tz_dt)]++;
-					if (!isset($tz_monthly["x".gmdate("Ym",$tz_dt)])) $tz_monthly["x".gmdate("Ym",$tz_dt)] = 0;
-                    $tz_monthly["x".gmdate("Ym",$tz_dt)]++;
-					if (!isset($tz_weekly["x".gmdate("YW",$tz_dt)])) $tz_weekly["x".gmdate("YW",$tz_dt)] = 0;
-                    $tz_weekly["x".gmdate("YW",$tz_dt)]++;
-					if (!isset($tz_daily["x".gmdate("Ymd",$tz_dt)])) $tz_daily["x".gmdate("Ymd",$tz_dt)] = 0;
-                    $tz_daily["x".gmdate("Ymd",$tz_dt)]++;                                   
+                    //$tzfd_selection[] = array($tzfd_app["date"]." ".$tzfd_app["slot"], $tzfd_app["date"], $tzfd_app["slot"]);
+					if (!isset($tzfd_yearly["x".gmdate("Y",$tzfd_dt)])) $tzfd_yearly["x".gmdate("Y",$tzfd_dt)] = 0;
+                    $tzfd_yearly["x".gmdate("Y",$tzfd_dt)]++;
+					if (!isset($tzfd_monthly["x".gmdate("Ym",$tzfd_dt)])) $tzfd_monthly["x".gmdate("Ym",$tzfd_dt)] = 0;
+                    $tzfd_monthly["x".gmdate("Ym",$tzfd_dt)]++;
+					if (!isset($tzfd_weekly["x".gmdate("YW",$tzfd_dt)])) $tzfd_weekly["x".gmdate("YW",$tzfd_dt)] = 0;
+                    $tzfd_weekly["x".gmdate("YW",$tzfd_dt)]++;
+					if (!isset($tzfd_daily["x".gmdate("Ymd",$tzfd_dt)])) $tzfd_daily["x".gmdate("Ymd",$tzfd_dt)] = 0;
+                    $tzfd_daily["x".gmdate("Ymd",$tzfd_dt)]++;                                   
                 }
-                if (empty($tz_yearly_incoming["x".gmdate("Y",$tz_dt_incoming)])) $tz_yearly_incoming["x".gmdate("Y",$tz_dt_incoming)] = 0;
-                if (empty($tz_monthly_incoming["x".gmdate("Ym",$tz_dt_incoming)])) $tz_monthly_incoming["x".gmdate("Ym",$tz_dt_incoming)] = 0;
-                if (empty($tz_weekly_incoming["x".gmdate("YW",$tz_dt_incoming)])) $tz_weekly_incoming["x".gmdate("YW",$tz_dt_incoming)] = 0;
-                if (empty($tz_daily_incoming["x".gmdate("Ymd",$tz_dt_incoming)])) $tz_daily_incoming["x".gmdate("Ymd",$tz_dt_incoming)] = 0;                
+                if (empty($tzfd_yearly_incoming["x".gmdate("Y",$tzfd_dt_incoming)])) $tzfd_yearly_incoming["x".gmdate("Y",$tzfd_dt_incoming)] = 0;
+                if (empty($tzfd_monthly_incoming["x".gmdate("Ym",$tzfd_dt_incoming)])) $tzfd_monthly_incoming["x".gmdate("Ym",$tzfd_dt_incoming)] = 0;
+                if (empty($tzfd_weekly_incoming["x".gmdate("YW",$tzfd_dt_incoming)])) $tzfd_weekly_incoming["x".gmdate("YW",$tzfd_dt_incoming)] = 0;
+                if (empty($tzfd_daily_incoming["x".gmdate("Ymd",$tzfd_dt_incoming)])) $tzfd_daily_incoming["x".gmdate("Ymd",$tzfd_dt_incoming)] = 0;                
                 
-                $tz_yearly_incoming["x".gmdate("Y",$tz_dt_incoming)]++;
-                $tz_monthly_incoming["x".gmdate("Ym",$tz_dt_incoming)]++;
-                $tz_weekly_incoming["x".gmdate("YW",$tz_dt_incoming)]++;
-                $tz_daily_incoming["x".gmdate("Ymd",$tz_dt_incoming)]++;                  
+                $tzfd_yearly_incoming["x".gmdate("Y",$tzfd_dt_incoming)]++;
+                $tzfd_monthly_incoming["x".gmdate("Ym",$tzfd_dt_incoming)]++;
+                $tzfd_weekly_incoming["x".gmdate("YW",$tzfd_dt_incoming)]++;
+                $tzfd_daily_incoming["x".gmdate("Ymd",$tzfd_dt_incoming)]++;                  
         }    
 }
 
 
-function tz_fd_stats_get_monthly($tz_arr, $is_incoming = false)
+function tzfd_stats_get_monthly($tzfd_arr, $is_incoming = false)
 {
     $str = '';
-    $tz_dt = ($is_incoming ? strtotime("-11 months") : time());
-    $tz_dt = strtotime(gmdate("Y-m-01", $tz_dt));
+    $tzfd_dt = ($is_incoming ? strtotime("-11 months") : time());
+    $tzfd_dt = strtotime(gmdate("Y-m-01", $tzfd_dt));
     $x = []; $y = [];
-    for ($tz_i=0;$tz_i<12;$tz_i++)
+    for ($tzfd_i=0;$tzfd_i<12;$tzfd_i++)
     {
-        $x[] = gmdate("Ym",$tz_dt);
-        $tz_key = "x".gmdate("Ym",$tz_dt);
-        $y[] = (isset($tz_arr[$tz_key])?$tz_arr[$tz_key]:'0'); 
-        $tz_dt = strtotime( "+1 month" ,$tz_dt);    
+        $x[] = gmdate("Ym",$tzfd_dt);
+        $tzfd_key = "x".gmdate("Ym",$tzfd_dt);
+        $y[] = (isset($tzfd_arr[$tzfd_key])?$tzfd_arr[$tzfd_key]:'0'); 
+        $tzfd_dt = strtotime( "+1 month" ,$tzfd_dt);    
     }   
     echo ' x="'.esc_attr(join(",", $x)).'" y="'.esc_attr(join(",", $y)).'" '; 
 }
-function tz_fd_stats_get_weekly($tz_arr, $is_incoming = false)
+function tzfd_stats_get_weekly($tzfd_arr, $is_incoming = false)
 {
     $str = '';
-    $tz_dt = ($is_incoming ? strtotime("-11 weeks") : time());
+    $tzfd_dt = ($is_incoming ? strtotime("-11 weeks") : time());
     $x = []; $y = [];
-    for ($tz_i=0;$tz_i<12;$tz_i++)
+    for ($tzfd_i=0;$tzfd_i<12;$tzfd_i++)
     {
-        $x[] = gmdate("YW",$tz_dt);
-        $tz_key = "x".gmdate("YW",$tz_dt);
-        $y[] = (isset($tz_arr[$tz_key])?$tz_arr[$tz_key]:'0');         
-        $tz_dt = strtotime("+1 week",$tz_dt);    
+        $x[] = gmdate("YW",$tzfd_dt);
+        $tzfd_key = "x".gmdate("YW",$tzfd_dt);
+        $y[] = (isset($tzfd_arr[$tzfd_key])?$tzfd_arr[$tzfd_key]:'0');         
+        $tzfd_dt = strtotime("+1 week",$tzfd_dt);    
     }   
     echo ' x="'.esc_attr(join(",", $x)).'" y="'.esc_attr(join(",", $y)).'" ';
 }
-function tz_fd_stats_get_daily($tz_arr, $is_incoming = false)
+function tzfd_stats_get_daily($tzfd_arr, $is_incoming = false)
 {
     $str = '';
-    $tz_dt = ($is_incoming ? strtotime("-29 days") : time());
+    $tzfd_dt = ($is_incoming ? strtotime("-29 days") : time());
     $x = []; $y = [];
-    for ($tz_i=0;$tz_i<30;$tz_i++)
+    for ($tzfd_i=0;$tzfd_i<30;$tzfd_i++)
     {
-        $x[] = gmdate("Ymd",$tz_dt);
-        $tz_key = "x".gmdate("Ymd",$tz_dt); 
-        $y[] = (isset($tz_arr[$tz_key])?$tz_arr[$tz_key]:'0'); 
-        $tz_dt = strtotime("+1 day",$tz_dt);    
+        $x[] = gmdate("Ymd",$tzfd_dt);
+        $tzfd_key = "x".gmdate("Ymd",$tzfd_dt); 
+        $y[] = (isset($tzfd_arr[$tzfd_key])?$tzfd_arr[$tzfd_key]:'0'); 
+        $tzfd_dt = strtotime("+1 day",$tzfd_dt);    
     }
     echo ' x="'.esc_attr(join(",", $x)).'" y="'.esc_attr(join(",", $y)).'" ';
 }
@@ -148,7 +148,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Incoming - Monthly Stats (lastest 12 months)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartMonthlyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_monthly($tz_monthly_incoming, true)); ?> ></canvas>
+            <canvas id="chartMonthlyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_monthly($tzfd_monthly_incoming, true)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -158,7 +158,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Incoming - Weekly Stats (lastest 12 weeks)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartWeeklyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_weekly($tz_weekly_incoming, true)); ?> ></canvas>
+            <canvas id="chartWeeklyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_weekly($tzfd_weekly_incoming, true)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -168,7 +168,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Daily Stats(next 30 days)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartDailyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_daily($tz_daily_incoming, true)); ?>  ></canvas>
+            <canvas id="chartDailyIncoming" label="<?php esc_html_e('Submissions','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_daily($tzfd_daily_incoming, true)); ?>  ></canvas>
     	</div>
     </div> 
   </div> 
@@ -182,7 +182,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Monthly Stats (next 12 months)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartMonthly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_monthly($tz_monthly)); ?> ></canvas>
+            <canvas id="chartMonthly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_monthly($tzfd_monthly)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -192,7 +192,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Weekly Stats (next 12 weeks)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartWeekly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_weekly($tz_weekly)); ?> ></canvas>
+            <canvas id="chartWeekly" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_weekly($tzfd_weekly)); ?> ></canvas>
     	</div>
     </div> 
   </div>
@@ -202,7 +202,7 @@ wp_add_inline_style( 'tzfd-full-stats-inline', "#cTable th{background:#2b3140;co
     		<h3><?php esc_html_e('Daily Stats(next 30 days)','titan-zero-trades-front-desk'); ?></h3>
     	</div>
     	<div class="tzfd-statssection">
-            <canvas id="chartDaily" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tz_fd_stats_get_daily($tz_daily)); ?>  ></canvas>
+            <canvas id="chartDaily" label="<?php esc_html_e('Booked times','titan-zero-trades-front-desk'); ?>" <?php (tzfd_stats_get_daily($tzfd_daily)); ?>  ></canvas>
     	</div>
     </div> 
   </div> 

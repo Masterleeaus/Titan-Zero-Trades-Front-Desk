@@ -66,7 +66,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$all[ $cid ] = $co;
 		self::save( $all );
 		if ( $unpublished ) {
-			do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+			do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		}
 		return array( 'ok' => true, 'id' => $id, 'status' => $entry['status'] );
 	}
@@ -96,7 +96,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$co['entries'][ $entry_id ] = self::with_revision( $entry, (int) $actor, (int) $now );
 		$all[ $cid ] = $co;
 		self::save( $all );
-		do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+		do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		return array( 'ok' => true, 'version' => $co['version'] );
 	}
 
@@ -132,9 +132,34 @@ final class TZFD_Ai_Knowledge_Builder {
 		$all[ $cid ] = $co;
 		self::save( $all );
 		if ( $was_published ) {
-			do_action( self::CHANGED_ACTION, $cid, $co['version'] );
+			do_action( 'tzfd_ai_knowledge_changed', $cid, $co['version'] );
 		}
 		return array( 'ok' => true, 'status' => 'draft', 'version' => $co['version'] );
+	}
+
+	/**
+	 * Records that an administrator checked a published answer and its facts still hold (issue #436).
+	 * Only the review time changes. Text, status, version and revision history stay as they are.
+	 */
+	public static function mark_reviewed( $company_id, $entry_id, $now, $actor ) {
+		if ( ! self::can_edit() ) {
+			return TZFD_Ai_Free_Core::fail( 'forbidden' );
+		}
+		$cid = (int) $company_id;
+		$all = self::load();
+		$co  = $all[ $cid ] ?? null;
+		if ( null === $co || ! isset( $co['entries'][ $entry_id ] ) ) {
+			return TZFD_Ai_Free_Core::fail( 'not_found' );
+		}
+		$entry = $co['entries'][ $entry_id ];
+		if ( 'published' !== $entry['status'] ) {
+			return TZFD_Ai_Free_Core::fail( 'not_published' );
+		}
+		$entry['reviewed'] = (int) $now;
+		$co['entries'][ $entry_id ] = $entry;
+		$all[ $cid ] = $co;
+		self::save( $all );
+		return array( 'ok' => true, 'reviewed' => (int) $now, 'by' => (int) $actor );
 	}
 
 	/** Entries visitors may see. Only published entries. */
@@ -143,7 +168,7 @@ final class TZFD_Ai_Knowledge_Builder {
 		$out = array();
 		foreach ( $co['entries'] as $e ) {
 			if ( 'published' === $e['status'] ) {
-				$out[] = array( 'id' => $e['id'], 'question' => $e['question'], 'answer' => $e['answer'], 'sources' => $e['sources'] );
+				$out[] = array( 'id' => $e['id'], 'question' => $e['question'], 'answer' => $e['answer'], 'sources' => $e['sources'], 'updated' => (int) ( $e['updated'] ?? 0 ), 'reviewed' => (int) ( $e['reviewed'] ?? 0 ) );
 			}
 		}
 		return $out;

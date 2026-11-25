@@ -21,8 +21,8 @@ require_once __DIR__ . '/class-tzfd-workspace-customer-owner.php';
  * set_booking_status and default_paid_status (Invoicing). Invoices and payments are not here. They belong to Titan Zero Invoicing (19 Oct split),
  * which exposes its own read API. Front Desk does not read those tables.
  */
-if ( ! class_exists( 'TZ_FrontDesk' ) ) {
-final class TZ_FrontDesk {
+if ( ! class_exists( 'TZFD_FrontDesk' ) ) {
+final class TZFD_FrontDesk {
 
     const LIMIT_BOOKINGS = 100;
     /** Maximum booking rows read per customer lookup (the CRM scan limit, now owned here). */
@@ -295,8 +295,10 @@ final class TZ_FrontDesk {
             return new WP_Error( 'tzfd_commit_outcome_unknown', __( 'Booking update outcome is uncertain. Refresh the booking before attempting another change.', 'titan-zero-trades-front-desk' ), array( 'status' => 503 ) );
         }
 
-        do_action( 'tz_fd_update_status', $booking_id, $stored );
-        do_action( 'titan_zero_front_desk_booking_status_persisted', $booking_id, $stored, '-1' );
+        do_action( 'tzfd_update_status', $booking_id, $stored );
+        do_action( 'tz_fd_update_status', $booking_id, $stored ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        do_action( 'tzfd_booking_status_persisted', $booking_id, $stored, '-1' );
+        do_action( 'titan_zero_front_desk_booking_status_persisted', $booking_id, $stored, '-1' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         return array( 'booking_id' => $booking_id, 'status' => $label, 'changed' => true );
     }
@@ -419,4 +421,8 @@ final class TZ_FrontDesk {
         return false;
     }
 }
+}
+// Public name kept for integrations: Invoicing and others check class_exists( 'TZ_FrontDesk' ).
+if ( ! class_exists( 'TZ_FrontDesk', false ) ) {
+    class_alias( 'TZFD_FrontDesk', 'TZ_FrontDesk' );
 }

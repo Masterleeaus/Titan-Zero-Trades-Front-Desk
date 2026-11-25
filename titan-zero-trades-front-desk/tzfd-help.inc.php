@@ -3,10 +3,10 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 if ( ! is_admin() ) { echo esc_html__( 'Direct access not allowed.', 'titan-zero-trades-front-desk' ); exit; }
 
 // Support goes to the titanzero.io support page for this plugin.
-$tz_help_support_url = 'mailto:support@titanzero.io';
+$tzfd_help_support_url = 'mailto:support@titanzero.io';
 wp_enqueue_script( 'tzfd-adminb-help', plugins_url( 'js/inline/adminb-help.js', __FILE__ ), array(), '2.0.1', true );
 
-$tz_help_sections = array(
+$tzfd_help_sections = array(
 
     array(
         'id'    => 'start',
@@ -224,9 +224,9 @@ $tz_help_sections = array(
             array( __( 'Who can see the booking list shortcode?', 'titan-zero-trades-front-desk' ),
                    __( 'Only administrators. Visitors see nothing where <code>[TZFD_FRONT_DESK_LIST]</code> is placed, because the list shows customer details. You can still set the fields attribute to leave out anything you do not want shown.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'How do I change the total a customer pays?', 'titan-zero-trades-front-desk' ),
-                   __( 'Use the filter <code>tz_fd_invoice_amount</code>. It receives the amount and an array with <code>formid</code> and <code>itemnumber</code>, and returns the new amount.', 'titan-zero-trades-front-desk' ) ),
+                   __( 'Use the filter <code>tzfd_invoice_amount</code>. It receives the amount and an array with <code>formid</code> and <code>itemnumber</code>, and returns the new amount.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'How do I clear the availability cache from code?', 'titan-zero-trades-front-desk' ),
-                   __( 'Run the action <code>tz_fd_cache_clean</code> with the calendar’s form ID as its only argument.', 'titan-zero-trades-front-desk' ) ),
+                   __( 'Run the action <code>tzfd_cache_clean</code> with the calendar’s form ID as its only argument.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'What REST endpoints does the plugin expose?', 'titan-zero-trades-front-desk' ),
                    __( '<code>/wp-json/titan-zero-front-desk/v1/missed-call</code> receives events from your phone system and checks the signature on every request. Resource routes under <code>/wp-json/titan-zero-front-desk/v1/</code> need an administrator login.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'What do webhook events contain?', 'titan-zero-trades-front-desk' ),
@@ -238,7 +238,7 @@ $tz_help_sections = array(
             array( __( 'How can another system read a booking’s status?', 'titan-zero-trades-front-desk' ),
                    __( 'Send a GET request to <code>/wp-json/titan-zero-front-desk/v1/bookings/{id}</code>. It needs an administrator login and returns the status only. Customer and appointment details are left out on purpose.', 'titan-zero-trades-front-desk' ) ),
             array( __( 'Which actions send WebHook events?', 'titan-zero-trades-front-desk' ),
-                   __( 'A new booking fires <code>tz_fd_process_data</code>, which sends booking.created. A status change fires <code>tz_fd_update_status</code>, which sends booking.status_update_attempted.', 'titan-zero-trades-front-desk' ) ),
+                   __( 'A new booking fires <code>tzfd_process_data</code>, which sends booking.created. A status change fires <code>tzfd_update_status</code>, which sends booking.status_update_attempted.', 'titan-zero-trades-front-desk' ) ),
         ),
     ),
 
@@ -264,7 +264,7 @@ $tz_help_sections = array(
     ),
 );
 
-$tz_help_guides = array(
+$tzfd_help_guides = array(
     array( __( 'Before you go live', 'titan-zero-trades-front-desk' ), array(
         __( 'Set your timezone in WordPress under Settings, then General.', 'titan-zero-trades-front-desk' ),
         __( 'Create the calendar, its services and working hours, and block any closed dates.', 'titan-zero-trades-front-desk' ),
@@ -318,7 +318,7 @@ $tz_help_guides = array(
     ) ),
 );
 
-$tz_help_addons = array(
+$tzfd_help_addons = array(
     array( __( 'Activity Logs', 'titan-zero-trades-front-desk' ), __( 'Records activity; administrators can clear the log.', 'titan-zero-trades-front-desk' ), __( 'Add-ons screen', 'titan-zero-trades-front-desk' ) ),
     array( __( 'Automatically cancel pending bookings', 'titan-zero-trades-front-desk' ), __( 'Cancels bookings still pending after the hours you set.', 'titan-zero-trades-front-desk' ), __( 'Addons', 'titan-zero-trades-front-desk' ) ),
     array( __( 'Cache Booking Availability', 'titan-zero-trades-front-desk' ), __( 'Keeps a copy of availability for busy sites; cleared when bookings change.', 'titan-zero-trades-front-desk' ), __( 'Addons', 'titan-zero-trades-front-desk' ) ),
@@ -338,7 +338,7 @@ $tz_help_addons = array(
     array( __( 'Preset Setup', 'titan-zero-trades-front-desk' ), __( 'Starts a calendar from a vertical preset.', 'titan-zero-trades-front-desk' ), __( 'Settings, then Preset Setup', 'titan-zero-trades-front-desk' ) ),
 );
 /* Page reference: every Front Desk page, what it is for and where it is found. */
-$tz_help_pages = array(
+$tzfd_help_pages = array(
     array(
         'title' => __( 'Calendars', 'titan-zero-trades-front-desk' ),
         'rows'  => array(
@@ -388,7 +388,7 @@ $tz_help_pages = array(
 
     <div class="notice notice-info inline tzfd-help-notice">
         <p><?php esc_html_e( 'Search below first. If you still need help, contact support.', 'titan-zero-trades-front-desk' ); ?></p>
-        <p><a href="<?php echo esc_url( $tz_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'Contact support', 'titan-zero-trades-front-desk' ); ?></a></p>
+        <p><a href="<?php echo esc_url( $tzfd_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'Contact support', 'titan-zero-trades-front-desk' ); ?></a></p>
     </div>
 
     <figure class="tzfd-help-figure"><img src="<?php echo esc_url( plugins_url( 'images/brand/marketing/workflow-overview-1600x1000.svg', __FILE__ ) ); ?>" alt="<?php echo esc_attr__( 'Workflow overview: an enquiry is captured by phone, message or website, the next step is prepared as a quote summary and reviewed before sending, and appointment options are checked for availability before the booking is confirmed.', 'titan-zero-trades-front-desk' ); ?>" width="1600" height="1000" loading="lazy" decoding="async" /></figure>
@@ -403,8 +403,8 @@ $tz_help_pages = array(
     <nav class="tzfd-help-toc" aria-label="<?php esc_attr_e( 'Sections', 'titan-zero-trades-front-desk' ); ?>">
         <ul>
             <li><a href="#tzfd-help-guides"><?php esc_html_e( 'Step-by-step guides', 'titan-zero-trades-front-desk' ); ?></a></li>
-            <?php foreach ( $tz_help_sections as $tz_section ) : ?>
-                <li><a href="<?php echo esc_url( '#tzfd-help-' . sanitize_html_class( $tz_section['id'] ) ); ?>"><?php echo esc_html( $tz_section['title'] ); ?></a></li>
+            <?php foreach ( $tzfd_help_sections as $tzfd_section ) : ?>
+                <li><a href="<?php echo esc_url( '#tzfd-help-' . sanitize_html_class( $tzfd_section['id'] ) ); ?>"><?php echo esc_html( $tzfd_section['title'] ); ?></a></li>
             <?php endforeach; ?>
             <li><a href="#tzfd-help-pages"><?php esc_html_e( 'Page reference', 'titan-zero-trades-front-desk' ); ?></a></li>
             <li><a href="#tzfd-help-addons"><?php esc_html_e( 'Add-on reference', 'titan-zero-trades-front-desk' ); ?></a></li>
@@ -415,25 +415,25 @@ $tz_help_pages = array(
 
         <h2 id="tzfd-help-guides"><?php esc_html_e( 'Step-by-step guides', 'titan-zero-trades-front-desk' ); ?></h2>
         <div class="tzfd-help-section">
-            <?php foreach ( $tz_help_guides as $tz_guide ) : ?>
+            <?php foreach ( $tzfd_help_guides as $tzfd_guide ) : ?>
                 <details class="tzfd-help-item">
-                    <summary><?php echo esc_html( $tz_guide[0] ); ?></summary>
+                    <summary><?php echo esc_html( $tzfd_guide[0] ); ?></summary>
                     <ol>
-                        <?php foreach ( $tz_guide[1] as $tz_step ) : ?>
-                            <li><?php echo esc_html( $tz_step ); ?></li>
+                        <?php foreach ( $tzfd_guide[1] as $tzfd_step ) : ?>
+                            <li><?php echo esc_html( $tzfd_step ); ?></li>
                         <?php endforeach; ?>
                     </ol>
                 </details>
             <?php endforeach; ?>
         </div>
 
-        <?php foreach ( $tz_help_sections as $tz_section ) : ?>
-            <h2 id="tzfd-help-<?php echo esc_attr( $tz_section['id'] ); ?>"><?php echo esc_html( $tz_section['title'] ); ?></h2>
+        <?php foreach ( $tzfd_help_sections as $tzfd_section ) : ?>
+            <h2 id="tzfd-help-<?php echo esc_attr( $tzfd_section['id'] ); ?>"><?php echo esc_html( $tzfd_section['title'] ); ?></h2>
             <div class="tzfd-help-section">
-                <?php foreach ( $tz_section['items'] as $tz_item ) : ?>
+                <?php foreach ( $tzfd_section['items'] as $tzfd_item ) : ?>
                     <details class="tzfd-help-item">
-                        <summary><?php echo esc_html( $tz_item[0] ); ?></summary>
-                        <div class="tzfd-help-answer"><?php echo wp_kses( $tz_item[1], array( 'code' => array(), 'strong' => array(), 'em' => array() ) ); ?></div>
+                        <summary><?php echo esc_html( $tzfd_item[0] ); ?></summary>
+                        <div class="tzfd-help-answer"><?php echo wp_kses( $tzfd_item[1], array( 'code' => array(), 'strong' => array(), 'em' => array() ) ); ?></div>
                     </details>
                 <?php endforeach; ?>
             </div>
@@ -442,8 +442,8 @@ $tz_help_pages = array(
         <h2 id="tzfd-help-pages"><?php esc_html_e( 'Page reference', 'titan-zero-trades-front-desk' ); ?></h2>
         <div class="tzfd-help-section">
             <p><?php esc_html_e( 'Each page of Scheduling & Enquiries Manager, what it is for, and where to find it. The Front Desk menu lists the main pages; the Settings tabs hold the rest.', 'titan-zero-trades-front-desk' ); ?></p>
-            <?php foreach ( $tz_help_pages as $tz_page_area ) : ?>
-                <h3><?php echo esc_html( $tz_page_area['title'] ); ?></h3>
+            <?php foreach ( $tzfd_help_pages as $tzfd_page_area ) : ?>
+                <h3><?php echo esc_html( $tzfd_page_area['title'] ); ?></h3>
                 <table class="widefat striped tzfd-help-table">
                     <thead>
                         <tr>
@@ -452,10 +452,10 @@ $tz_help_pages = array(
                         </tr>
                     </thead>
                     <tbody>
-                    <?php foreach ( $tz_page_area['rows'] as $tz_page_row ) : ?>
+                    <?php foreach ( $tzfd_page_area['rows'] as $tzfd_page_row ) : ?>
                         <tr>
-                            <td><strong><?php echo esc_html( $tz_page_row[0] ); ?></strong></td>
-                            <td><?php echo esc_html( $tz_page_row[1] ); ?></td>
+                            <td><strong><?php echo esc_html( $tzfd_page_row[0] ); ?></strong></td>
+                            <td><?php echo esc_html( $tzfd_page_row[1] ); ?></td>
                         </tr>
                     <?php endforeach; ?>
                     </tbody>
@@ -474,11 +474,11 @@ $tz_help_pages = array(
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ( $tz_help_addons as $tz_addon ) : ?>
+                    <?php foreach ( $tzfd_help_addons as $tzfd_addon ) : ?>
                         <tr class="tzfd-help-item">
-                            <td><?php echo esc_html( $tz_addon[0] ); ?></td>
-                            <td><?php echo esc_html( $tz_addon[1] ); ?></td>
-                            <td><?php echo esc_html( $tz_addon[2] ); ?></td>
+                            <td><?php echo esc_html( $tzfd_addon[0] ); ?></td>
+                            <td><?php echo esc_html( $tzfd_addon[1] ); ?></td>
+                            <td><?php echo esc_html( $tzfd_addon[2] ); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
@@ -487,8 +487,8 @@ $tz_help_pages = array(
     </div>
 
     <div class="tzfd-help-footer">
-        <a href="<?php echo esc_url( $tz_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-secondary"><?php esc_html_e( 'Help centre', 'titan-zero-trades-front-desk' ); ?></a>
-        <a href="<?php echo esc_url( $tz_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'Contact support', 'titan-zero-trades-front-desk' ); ?></a>
+        <a href="<?php echo esc_url( $tzfd_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-secondary"><?php esc_html_e( 'Help centre', 'titan-zero-trades-front-desk' ); ?></a>
+        <a href="<?php echo esc_url( $tzfd_help_support_url ); ?>" target="_blank" rel="noopener" class="button button-primary"><?php esc_html_e( 'Contact support', 'titan-zero-trades-front-desk' ); ?></a>
         <span class="description"><?php esc_html_e( 'The readme.txt file in the plugin folder has installation notes and the changelog.', 'titan-zero-trades-front-desk' ); ?></span>
     </div>
 </div>

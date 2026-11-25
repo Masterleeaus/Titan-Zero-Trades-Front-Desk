@@ -27,7 +27,7 @@ if( !class_exists( 'TZFD_WhatsappButton' ) )
 			$this->description = $this->tr_apply("The add-on adds a WhatsApp chat button below the booking form.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_filter( 'tz_fd_the_form', array( $this, 'append_button' ), 99, 2 );
+            add_filter( 'tzfd_the_form', array( $this, 'append_button' ), 99, 2 );
         } // End __construct
 
         /************************ SETTINGS *****************************/
@@ -88,9 +88,9 @@ if( !class_exists( 'TZFD_WhatsappButton' ) )
     } // End Class
 
     // Main add-on code
-    $tz_WhatsappButton_obj = new TZFD_WhatsappButton();
+    $tzfd_WhatsappButton_obj = new TZFD_WhatsappButton();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_WhatsappButton_obj->get_addon_id() ] = $tz_WhatsappButton_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_WhatsappButton_obj->get_addon_id() ] = $tzfd_WhatsappButton_obj;
 }

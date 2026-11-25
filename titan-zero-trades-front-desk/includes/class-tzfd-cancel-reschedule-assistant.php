@@ -98,6 +98,62 @@ if ( ! class_exists( 'TZFD_Cancel_Reschedule_Assistant' ) ) {
             return self::INTENT_CANCEL === $intent ? self::ACTION_LINK_CANCEL : self::ACTION_LINK_RESCHEDULE;
         }
 
+        /** Customer-facing copy for each action. Fixed strings only; nothing here is copied from the message. */
+        const MESSAGES = array(
+            self::ACTION_LINK_CANCEL     => 'You can cancel with the link we emailed you. Please use it to confirm.',
+            self::ACTION_LINK_RESCHEDULE => 'You can change the time with the link we emailed you. Please use it to pick a new time.',
+            self::ACTION_VERIFY          => 'To change this booking, please use the secure link in your booking email. We cannot change a booking from a phone number alone.',
+            self::ACTION_HANDOFF         => 'We need a person to help with this one. Please contact our staff.',
+            self::ACTION_REFUSE          =>'We could not find a booking matching these details. Please contact our staff.',
+        );
+
+        /**
+         * Entry point for one customer message. Composes classify(), decide() and policy_summary(). It never changes a
+         * booking and takes no phone number. Plain messages with no change request return not_applicable, so the
+         * caller can continue with the normal enquiry flow.
+         *
+         * $facts as for decide(), plus ownership_verified, which the caller sets from ownership_verified().
+         * $policy as for policy_summary().
+         *
+         * @return array Keys: intent, action, message, policy.
+         */
+        public static function plan( $text, array $facts, array $policy ) {
+            $intent = self::classify( $text );
+            $policy_text = self::policy_summary( $policy );
+            if ( self::INTENT_NONE === $intent ) {
+                return array( 'intent' => $intent, 'action' => 'not_applicable', 'message' => '', 'policy' => $policy_text );
+            }
+            $action = self::decide( $intent, $facts );
+            return array(
+                'intent'  => $intent,
+                'action'  => $action,
+                'message' => isset( self::MESSAGES[ $action ] ) ? self::MESSAGES[ $action ] : self::MESSAGES[ self::ACTION_HANDOFF ],
+                'policy'  => $policy_text,
+            );
+        }
+
+        /**
+         * Runtime entry point for a message with no booking context (the public assistant route). It can only
+         * classify, explain policy and point to the signed link. It never looks up a booking, never returns a
+         * change action, and a clear cancel or reschedule message always gets the verify step.
+         *
+         * @return array Keys: intent, action, message, policy.
+         */
+        public static function plan_without_booking( $text, array $policy ) {
+            $intent      = self::classify( $text );
+            $policy_text = self::policy_summary( $policy );
+            if ( self::INTENT_NONE === $intent ) {
+                return array( 'intent' => $intent, 'action' => 'not_applicable', 'message' => '', 'policy' => $policy_text );
+            }
+            $action = self::INTENT_UNCERTAIN === $intent ? self::ACTION_HANDOFF : self::ACTION_VERIFY;
+            return array(
+                'intent'  => $intent,
+                'action'  => $action,
+                'message' => self::MESSAGES[ $action ],
+                'policy'  => $policy_text,
+            );
+        }
+
         /**
          * Plain-language policy text from fixed, validated numbers only.
          * $policy keys: cancel_notice_hours, reschedule_notice_hours (non-negative ints, max 8760).

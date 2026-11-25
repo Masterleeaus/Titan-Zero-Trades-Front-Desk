@@ -56,8 +56,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
         /** Loads the confirm-before-remove script on the packs page. Replaces the inline onclick (R2). */
         public function enqueue_packs_assets( $hook_suffix ) {
             // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only page check, no change is made.
-            $tz_page = isset( $_GET['page'] ) ? sanitize_key( tzfd_request_text( 'get', 'page' ) ) : '';
-            if ( 'tzfd-packs' !== $tz_page ) return;
+            $tzfd_page = isset( $_GET['page'] ) ? sanitize_key( tzfd_request_text( 'get', 'page' ) ) : '';
+            if ( 'tzfd-packs' !== $tzfd_page ) return;
 
             wp_enqueue_script(
                 'tzfd-core-addons-packs',
@@ -117,49 +117,50 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             $packs = array();
 
             // 1. Optional site or extension packs. These add custom IDs; Workspace wins on canonical ID collisions.
-            $extra = apply_filters( 'tz_fd_vertical_packs_register', array() );
-            foreach ( (array) $extra as $tz_entry ) {
-                if ( is_string( $tz_entry ) && file_exists( $tz_entry ) ) {
-                    $tz_data = self::read_pack( $tz_entry );
-                    if ( $tz_data ) $packs[ $tz_data['id'] ] = $tz_data;
-                } elseif ( is_array( $tz_entry ) && isset( $tz_entry['id'] ) ) {
-                    $packs[ $tz_entry['id'] ] = $tz_entry;
+            $extra = apply_filters( 'tzfd_vertical_packs_register', array() );
+            $extra = apply_filters( 'tz_fd_vertical_packs_register', $extra ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+            foreach ( (array) $extra as $tzfd_local_entry ) {
+                if ( is_string( $tzfd_local_entry ) && file_exists( $tzfd_local_entry ) ) {
+                    $tzfd_data = self::read_pack( $tzfd_local_entry );
+                    if ( $tzfd_data ) $packs[ $tzfd_data['id'] ] = $tzfd_data;
+                } elseif ( is_array( $tzfd_local_entry ) && isset( $tzfd_local_entry['id'] ) ) {
+                    $packs[ $tzfd_local_entry['id'] ] = $tzfd_local_entry;
                 }
             }
 
             // 2. User-uploaded packs (stored in company-scoped options for admin convenience).
             $uploaded = TZFD_Scoped_Store::get( 'tz_fd_user_packs', array() );
-            foreach ( (array) $uploaded as $tz_data ) {
-                if ( TZFD_Pack_Import_Guard::validate( $tz_data ) ) $packs[ $tz_data['id'] ] = $tz_data;
+            foreach ( (array) $uploaded as $tzfd_data ) {
+                if ( TZFD_Pack_Import_Guard::validate( $tzfd_data ) ) $packs[ $tzfd_data['id'] ] = $tzfd_data;
             }
 
             // 3. The built-in vertical list and packs: Workspace's when Workspace is present, otherwise the packs bundled
             // in data/verticals/. Either way they win duplicate IDs.
-            foreach ( TZFD_Vertical_Registry::ids() as $tz_registry_id ) {
-                $tz_registry_pack = TZFD_Vertical_Registry::pack( $tz_registry_id );
-                if ( $tz_registry_pack ) $packs[ $tz_registry_pack['id'] ] = $tz_registry_pack;
+            foreach ( TZFD_Vertical_Registry::ids() as $tzfd_registry_id ) {
+                $tzfd_registry_pack = TZFD_Vertical_Registry::pack( $tzfd_registry_id );
+                if ( $tzfd_registry_pack ) $packs[ $tzfd_registry_pack['id'] ] = $tzfd_registry_pack;
             }
 
             return $packs;
         }
 
-        private static function read_pack( $tz_file_path ) {
+        private static function read_pack( $tzfd_file_path ) {
             // The file is only read and parsed as JSON data. Nothing in it is executed.
-            if ( ! is_string( $tz_file_path ) || ! is_readable( $tz_file_path ) ||
-                 ! is_file( $tz_file_path ) || filesize( $tz_file_path ) > TZFD_Pack_Import_Guard::MAX_BYTES ) return null;
+            if ( ! is_string( $tzfd_file_path ) || ! is_readable( $tzfd_file_path ) ||
+                 ! is_file( $tzfd_file_path ) || filesize( $tzfd_file_path ) > TZFD_Pack_Import_Guard::MAX_BYTES ) return null;
             require_once ABSPATH . 'wp-admin/includes/file.php';
             if ( ! WP_Filesystem() || ! isset( $GLOBALS['wp_filesystem'] ) ) return null;
-            $raw = $GLOBALS['wp_filesystem']->get_contents( $tz_file_path );
+            $raw = $GLOBALS['wp_filesystem']->get_contents( $tzfd_file_path );
             if ( ! is_string( $raw ) || strlen( $raw ) > TZFD_Pack_Import_Guard::MAX_BYTES ) return null;
-            $tz_data = json_decode( $raw, true, 32 );
-            if ( ! TZFD_Pack_Import_Guard::validate( $tz_data ) ) return null;
+            $tzfd_data = json_decode( $raw, true, 32 );
+            if ( ! TZFD_Pack_Import_Guard::validate( $tzfd_data ) ) return null;
             // Sanitize every field we will use
-            $tz_data['id']   = sanitize_key( $tz_data['id'] );
-            $tz_data['name'] = sanitize_text_field( $tz_data['name'] ?? $tz_data['id'] );
-            $tz_data['icon'] = sanitize_text_field( $tz_data['icon'] ?? '📦' );
-            $tz_data['service_types'] = (array) map_deep( $tz_data['service_types'] ?? array(), 'sanitize_text_field' );
-            $tz_data['staff_skills']  = (array) map_deep( $tz_data['staff_skills'] ?? array(), 'sanitize_text_field' );
-            return $tz_data;
+            $tzfd_data['id']   = sanitize_key( $tzfd_data['id'] );
+            $tzfd_data['name'] = sanitize_text_field( $tzfd_data['name'] ?? $tzfd_data['id'] );
+            $tzfd_data['icon'] = sanitize_text_field( $tzfd_data['icon'] ?? '📦' );
+            $tzfd_data['service_types'] = (array) map_deep( $tzfd_data['service_types'] ?? array(), 'sanitize_text_field' );
+            $tzfd_data['staff_skills']  = (array) map_deep( $tzfd_data['staff_skills'] ?? array(), 'sanitize_text_field' );
+            return $tzfd_data;
         }
 
         public static function installed() {
@@ -403,7 +404,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             // write it. Quotes listens to this action and seeds its own catalogue from the pack.
             $cat_created = 0;
             if ( ! empty( $pack['catalog'] ) ) {
-                do_action( 'tz_fd_pack_catalog_items', $pack['catalog'], $id );
+                do_action( 'tzfd_pack_catalog_items', $pack['catalog'], $id );
+                do_action( 'tz_fd_pack_catalog_items', $pack['catalog'], $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 $cat_created = is_array( $pack['catalog'] ) ? count( $pack['catalog'] ) : 0;
             }
 
@@ -420,7 +422,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             );
             TZFD_Scoped_Store::update( self::STATE_OPTION, $installed );
 
-            do_action( 'tz_fd_vertical_pack_installed', $id, $pack );
+            do_action( 'tzfd_vertical_pack_installed', $id, $pack );
+            do_action( 'tz_fd_vertical_pack_installed', $id, $pack ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
             return array(
                 'ok'      => true,
@@ -441,7 +444,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             if ( $pack ) {
                 // Catalog items belong to Titan Zero Quotes. Quotes removes its own items for this pack.
                 if ( ! empty( $pack['catalog'] ) ) {
-                    do_action( 'tz_fd_pack_catalog_items_removed', $pack['catalog'], $id );
+                    do_action( 'tzfd_pack_catalog_items_removed', $pack['catalog'], $id );
+                    do_action( 'tz_fd_pack_catalog_items_removed', $pack['catalog'], $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 }
                 // Remove the pack-specific prompt block
                 $cur = (string) TZFD_Scoped_Store::get('tz_fd_ai_system_prompt','');
@@ -456,7 +460,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             // Report success only when the installed-state write is saved. A pack still marked installed must not fire the uninstall hook.
             if ( ! TZFD_Scoped_Store::update( self::STATE_OPTION, $installed ) ) { return false; }
 
-            do_action( 'tz_fd_vertical_pack_uninstalled', $id, $pack );
+            do_action( 'tzfd_vertical_pack_uninstalled', $id, $pack );
+            do_action( 'tz_fd_vertical_pack_uninstalled', $id, $pack ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             return true;
         }
 
@@ -616,11 +621,11 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
                     ); ?></p>
                     <?php
                     // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only display value.
-                    $tz_installed_pack = tzfd_request_text( 'get', 'pack_installed' );
+                    $tzfd_installed_pack = tzfd_request_text( 'get', 'pack_installed' );
                     // Slim trade banner for the pack just installed. This page has no pack rows, so the banner shows in this notice.
-                    $tz_slim_url = self::slim_banner_url_for_name( $tz_installed_pack, $packs );
-                    if ( '' !== $tz_slim_url ) { ?>
-                        <img class="tzfd-packs-banner" src="<?php echo esc_url( $tz_slim_url ); ?>" alt="<?php echo esc_attr( sprintf( /* translators: %s: name of an industry pack, such as Plumbing. */ __( 'Banner for the %s pack', 'titan-zero-trades-front-desk' ), $tz_installed_pack ) ); ?>" width="1440" height="220" loading="lazy" decoding="async" />
+                    $tzfd_slim_url = self::slim_banner_url_for_name( $tzfd_installed_pack, $packs );
+                    if ( '' !== $tzfd_slim_url ) { ?>
+                        <img class="tzfd-packs-banner" src="<?php echo esc_url( $tzfd_slim_url ); ?>" alt="<?php echo esc_attr( sprintf( /* translators: %s: name of an industry pack, such as Plumbing. */ __( 'Banner for the %s pack', 'titan-zero-trades-front-desk' ), $tzfd_installed_pack ) ); ?>" width="1440" height="220" loading="lazy" decoding="async" />
                     <?php }
                     ?>
                 </div>
@@ -780,25 +785,25 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             if ( ! $raw || strlen( $raw ) > self::MAX_UPLOAD_BYTES ) {
                 self::upload_failed( __( 'The file could not be read. Check the file and try again.', 'titan-zero-trades-front-desk' ) );
             }
-            $tz_data = json_decode( $raw, true, 32 );
-            if ( ! TZFD_Pack_Import_Guard::validate( $tz_data ) ) {
+            $tzfd_data = json_decode( $raw, true, 32 );
+            if ( ! TZFD_Pack_Import_Guard::validate( $tzfd_data ) ) {
                 self::upload_failed( __( 'This is not a valid pack file. Check the file and try again.', 'titan-zero-trades-front-desk' ) );
             }
-            $tz_data = self::sanitize_pack_data( $tz_data );
-            $tz_data['id'] = sanitize_key( $tz_data['id'] );
+            $tzfd_data = self::sanitize_pack_data( $tzfd_data );
+            $tzfd_data['id'] = sanitize_key( $tzfd_data['id'] );
             $user_packs = TZFD_Scoped_Store::get( 'tz_fd_user_packs', array() );
             if ( ! is_array( $user_packs ) || count( $user_packs ) > 200 ) {
                 self::upload_failed( __( 'The pack could not be saved. Delete an uploaded pack to make room, then try again.', 'titan-zero-trades-front-desk' ) );
             }
-            if ( in_array( $tz_data['id'], TZFD_Vertical_Registry::ids(), true ) ) {
+            if ( in_array( $tzfd_data['id'], TZFD_Vertical_Registry::ids(), true ) ) {
                 self::upload_failed( __( 'This pack ID is used by a built-in pack. Change the pack ID in the file and upload it again.', 'titan-zero-trades-front-desk' ) );
             }
             // Do not silently shadow an installed or extension-provided pack.
             $available_packs = self::available();
-            if ( isset( $available_packs[ $tz_data['id'] ] ) && ! isset( $user_packs[ $tz_data['id'] ] ) ) {
+            if ( isset( $available_packs[ $tzfd_data['id'] ] ) && ! isset( $user_packs[ $tzfd_data['id'] ] ) ) {
                 self::upload_failed( __( 'A pack with this ID is already on this site. Change the pack ID in the file and upload it again.', 'titan-zero-trades-front-desk' ) );
             }
-            $user_packs[ $tz_data['id'] ] = $tz_data;
+            $user_packs[ $tzfd_data['id'] ] = $tzfd_data;
             TZFD_Scoped_Store::update( 'tz_fd_user_packs', $user_packs );
             if ( TZFD_Scoped_Store::get( 'tz_fd_user_packs', array() ) !== $user_packs ) {
                 self::upload_failed( __( 'The pack could not be saved. Please try again.', 'titan-zero-trades-front-desk' ) );
@@ -825,6 +830,6 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
     }
 
     $TZFD_Vertical_Packs_obj = new TZFD_Vertical_Packs();
-    global $tz_addons_objs_list;
-    $tz_addons_objs_list[ $TZFD_Vertical_Packs_obj->get_addon_id() ] = $TZFD_Vertical_Packs_obj;
+    global $tzfd_addons_objs_list;
+    $tzfd_addons_objs_list[ $TZFD_Vertical_Packs_obj->get_addon_id() ] = $TZFD_Vertical_Packs_obj;
 }

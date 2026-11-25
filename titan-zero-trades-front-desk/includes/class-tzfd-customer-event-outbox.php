@@ -297,16 +297,18 @@ final class TZFD_Customer_Event_Outbox {
                         if ( 'cancelled' === $row['event_type'] ) {
                             // do_action() succeeds silently if no listener is registered.
                             // Treat the missing integration as retryable, not as delivery.
-                            if ( false === has_action( 'tz_fd_update_status' ) ) {
+                            if ( false === has_action( 'tzfd_update_status' ) && false === has_action( 'tz_fd_update_status' ) ) {
                                 $error = 'hook_unavailable';
                             } else {
-                                do_action( 'tz_fd_update_status', (int) $row['booking_id'], 'Cancelled by customer' );
+                                do_action( 'tzfd_update_status', (int) $row['booking_id'], 'Cancelled by customer' );
+                                do_action( 'tz_fd_update_status', (int) $row['booking_id'], 'Cancelled by customer' ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                             }
                         } elseif ( 'rescheduled' === $row['event_type'] ) {
-                            if ( false === has_action( 'titan_zero_front_desk_booking_rescheduled' ) ) {
+                            if ( false === has_action( 'tzfd_booking_rescheduled' ) && false === has_action( 'titan_zero_front_desk_booking_rescheduled' ) ) {
                                 $error = 'hook_unavailable';
                             } else {
-                                do_action( 'titan_zero_front_desk_booking_rescheduled', (int) $row['booking_id'], (int) $row['form_id'], $payload );
+                                do_action( 'tzfd_booking_rescheduled', (int) $row['booking_id'], (int) $row['form_id'], $payload );
+                                do_action( 'titan_zero_front_desk_booking_rescheduled', (int) $row['booking_id'], (int) $row['form_id'], $payload ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                             }
                         } elseif ( 'reschedule_email' === $row['event_type'] ) {
                             if ( ! self::send_reschedule_email( $payload ) ) { $error = 'mail_not_accepted'; }

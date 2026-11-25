@@ -33,6 +33,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
         const MAX_HTML = 1000000;  // 1 MB read from a web page
         const MAX_ITEMS = 60;      // list items taken from a web page
         const MAX_SERVICES = 500;
+        const MAX_HOURS    = 300;  // characters of opening-hours text the setup wizard keeps
+        const HOURS_KEY    = 'tz_fd_ai_opening_hours'; // company-scoped; written only when the administrator enters hours
 
         /** Booking plugins whose service tables can be read. Column names are for the current releases. */
         const PLUGIN_TABLES = array(
@@ -252,8 +254,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
 
             TZFD_Scoped_Store::update( TZFD_Vertical_Packs::VARS_OPTION, self::pack_vars_from( $d ) );
 
+            // Opening hours: stored only when entered. A blank answer keeps the saved value and never invents hours.
+            $hours = trim( (string) ( $d['opening_hours'] ?? '' ) );
+            if ( '' !== $hours ) {
+                TZFD_Scoped_Store::update( self::HOURS_KEY, mb_substr( $hours, 0, self::MAX_HOURS, 'UTF-8' ) );
+            }
+
             if ( $on ) {
-                if ( ! class_exists( 'TZFD_Addon_Support' ) ) return 'Missed-call settings are not available in this build.';
+                if ( ! class_exists( 'TZFD_Addon_Support' ) ) return __( 'Missed-call settings are not available in this build.', 'titan-zero-trades-front-desk' );
                 TZFD_Addon_Support::save_global_settings( 'missed_call', TZFD_MissedCall::defaults(), $settings );
             }
             return '';
@@ -593,6 +601,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     $fields['booking_url'] = $link;
                 }
                 self::merge_details( $draft, $fields );
+                return self::go( 'hours' );
+            }
+
+            if ( 'hours' === $action ) {
+                // Optional. Blank stays blank: no hours are ever assumed (owner-approved default on #400).
+                $hours  = sanitize_textarea_field( wp_unslash( (string) ( $_POST['opening_hours'] ?? '' ) ) );
+                $fields = array( 'opening_hours' => mb_substr( trim( $hours ), 0, self::MAX_HOURS, 'UTF-8' ) );
+                self::merge_details( $draft, $fields );
                 return self::go( 6 );
             }
 
@@ -630,7 +646,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $d = $draft['details'];
                 // Finish needs the details step: without it there is nothing valid to install or to write.
                 if ( ! is_array( $d ) || ! array_key_exists( 'intake_mode', $d ) || ! array_key_exists( 'business_name', $d ) ) {
-                    return self::go( 5, 'Complete the details step before finishing setup.' );
+                    return self::go( 5, __( 'Complete the details step before finishing setup.', 'titan-zero-trades-front-desk' ) );
                 }
                 $secret = '';
                 $current = TZFD_Addon_Support::global_settings( 'missed_call', TZFD_MissedCall::defaults() );
@@ -668,17 +684,28 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $err = self::apply_details( $d, $draft['services'], $secret );
                 if ( '' !== $err ) return self::go( 8, $err );
 
+                // Enquiry tags: only the suggested tags the administrator left ticked are stored, in the per-site list.
+                if ( class_exists( 'TZFD_Ai_Setup_Check' ) ) {
+                    $offered = self::offered_tags( $draft );
+                    $ticked  = isset( $_POST['ai_tags'] ) ? array_map( 'sanitize_text_field', (array) map_deep( wp_unslash( $_POST['ai_tags'] ), 'sanitize_text_field' ) ) : array();
+                    $chosen  = array_values( array_intersect( $offered, $ticked ) );
+                    if ( ! empty( $chosen ) ) {
+                        $tag_suggestion = array( 'type' => 'tags', 'value' => $offered, 'source' => 'services' );
+                        TZFD_Ai_Setup_Check::store_confirmed_tags( $tag_suggestion, array( 'confirmed' => true, 'value' => $chosen ) );
+                    }
+                }
+
                 // Booking intake: the chosen mode becomes the site default and applies to every calendar in the setup.
-                $tz_intake = TZFD_Intake_Mode::normalize( $d['intake_mode'] ?? '' );
-                TZFD_Intake_Mode::set_default( $tz_intake );
+                $tzfd_intake = TZFD_Intake_Mode::normalize( $d['intake_mode'] ?? '' );
+                TZFD_Intake_Mode::set_default( $tzfd_intake );
                 global $wpdb;
-                $tz_intake_ids = $wpdb->get_col( $wpdb->prepare(
+                $tzfd_intake_ids = $wpdb->get_col( $wpdb->prepare(
                     'SELECT id FROM %i WHERE company_id = %d',
                     $wpdb->prefix . TZFD_Tables::FORMS,
                     TZFD_Scoped_Store::company_id()
                 ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Plugin's own table name, bound with %i.
-                foreach ( (array) $tz_intake_ids as $tz_intake_id ) {
-                    TZFD_Intake_Mode::set_for_form( (int) $tz_intake_id, $tz_intake );
+                foreach ( (array) $tzfd_intake_ids as $tzfd_intake_id ) {
+                    TZFD_Intake_Mode::set_for_form( (int) $tzfd_intake_id, $tzfd_intake );
                 }
 
                 TZFD_Scoped_Store::update( self::DONE, gmdate( 'Y-m-d H:i' ) . ' UTC' );
@@ -735,7 +762,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             echo '<fieldset><legend><strong>' . esc_html__( 'Where do customers book?', 'titan-zero-trades-front-desk' ) . '</strong></legend>';
             echo '<p><label><input type="radio" name="booking_choice" value="new" ' . checked( $choice, 'new', false ) . ' /> ' . esc_html__( 'Create a booking page for me. It will be published as "Book an appointment". (Recommended)', 'titan-zero-trades-front-desk' ) . '</label></p>';
             echo '<p><label><input type="radio" name="booking_choice" value="page" ' . checked( $choice, 'page', false ) . ' /> ' . esc_html__( 'Use a page I already have on this website:', 'titan-zero-trades-front-desk' ) . '</label><br>';
-            echo '<select name="booking_page_id"><option value="0">' . esc_html__( 'Choose a page', 'titan-zero-trades-front-desk' ) . '</option>';
+            echo '<select name="booking_page_id" aria-label="' . esc_attr__( 'Use a page I already have on this website:', 'titan-zero-trades-front-desk' ) . '"><option value="0">' . esc_html__( 'Choose a page', 'titan-zero-trades-front-desk' ) . '</option>';
             foreach ( TZFD_Booking_Page::choices() as $page ) {
                 echo '<option value="' . (int) $page['id'] . '" ' . selected( $chosen_page, (int) $page['id'], false ) . '>' . esc_html( $page['title'] ) . '</option>';
             }
@@ -747,7 +774,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             }
             echo '</select></label><br><span class="description">' . esc_html__( 'Only used when the booking page is created. For a page you already have, set the calendar in that page.', 'titan-zero-trades-front-desk' ) . '</span></p>';
             echo '<p><label><input type="radio" name="booking_choice" value="link" ' . checked( $choice, 'link', false ) . ' /> ' . esc_html__( 'My booking page is somewhere else. Paste its web address:', 'titan-zero-trades-front-desk' ) . '</label><br>';
-            echo '<input type="url" class="large-text" name="booking_link" placeholder="https://" value="' . esc_attr( $d['booking_url'] ?? '' ) . '" /></p>';
+            echo '<input type="url" class="large-text" name="booking_link" placeholder="https://" aria-label="' . esc_attr__( 'My booking page is somewhere else. Paste its web address:', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( $d['booking_url'] ?? '' ) . '" /></p>';
             echo '</fieldset>';
         }
 
@@ -804,11 +831,43 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 'business_name'       => $name,
                 'services'            => $services,
                 'greeting'            => is_string( $greeting ) ? $greeting : '',
-                'hours_configured'    => false, // This wizard does not collect opening hours, so hours stay a named gap.
+                'hours_configured'    => '' !== trim( self::hours_text( $draft ) ),
                 'faq_questions'       => $faq_questions,
-                'tags'                => array(),
+                'tags'                => class_exists( 'TZFD_Ai_Setup_Check' ) ? TZFD_Ai_Setup_Check::saved_tags() : array(),
                 'connector_available' => function_exists( 'has_filter' ) && has_filter( TZFD_Ai_Free_Core::HOSTED_FILTER ),
             );
+        }
+
+        /** Opening hours: the answer typed in this wizard, else the saved value. Empty means missing. */
+        private static function hours_text( array $draft )
+        {
+            $typed = trim( (string) ( $draft['details']['opening_hours'] ?? '' ) );
+            if ( '' !== $typed ) { return $typed; }
+            $saved = TZFD_Scoped_Store::get( self::HOURS_KEY, '' );
+            return is_string( $saved ) ? $saved : '';
+        }
+
+        /** Tags suggested for this site (not yet saved), from the setup check. */
+        private static function offered_tags( array $draft )
+        {
+            if ( ! class_exists( 'TZFD_Ai_Setup_Check' ) ) return array();
+            foreach ( TZFD_Ai_Setup_Check::suggestions( self::ai_setup_state( $draft ) ) as $suggestion ) {
+                if ( 'tags' === $suggestion['type'] && is_array( $suggestion['value'] ) ) return array_values( $suggestion['value'] );
+            }
+            return array();
+        }
+
+        /** Tick boxes for the suggested enquiry tags, inside the finish form. All are ticked by default. */
+        private static function render_tag_confirmation( array $draft )
+        {
+            $tags = self::offered_tags( $draft );
+            if ( empty( $tags ) ) return;
+            echo '<fieldset><legend><strong>' . esc_html__( 'Enquiry tags (optional)', 'titan-zero-trades-front-desk' ) . '</strong></legend>';
+            echo '<p class="description">' . esc_html__( 'Untick any tag you do not want. The ticked tags are saved when you finish setup.', 'titan-zero-trades-front-desk' ) . '</p>';
+            foreach ( $tags as $tag ) {
+                echo '<p><label><input type="checkbox" name="ai_tags[]" value="' . esc_attr( $tag ) . '" checked /> ' . esc_html( $tag ) . '</label></p>';
+            }
+            echo '</fieldset>';
         }
 
         /** Short text for the review page. */
@@ -928,8 +987,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 foreach ( $opts as $key => $label ) {
                     echo '<p><label><input type="checkbox" name="sources[]" value="' . esc_attr( $key ) . '" ' . checked( 'pack' === $key && isset( $packs[ $draft['vertical'] ] ), true, false ) . ' /> ' . esc_html( $label ) . '</label></p>';
                 }
-                echo '<p><input type="file" name="services_csv" accept=".csv,text/csv" /></p>';
-                echo '<p><input type="url" name="web_url" class="regular-text" placeholder="https://" /> <span class="description">' . esc_html__( 'Must start with https://. Read once, when you press Next. Nothing is sent.', 'titan-zero-trades-front-desk' ) . '</span></p>';
+                echo '<p><input type="file" name="services_csv" accept=".csv,text/csv" aria-label="' . esc_attr__( 'A CSV file (name, price)', 'titan-zero-trades-front-desk' ) . '" /></p>';
+                echo '<p><input type="url" name="web_url" class="regular-text" placeholder="https://" aria-label="' . esc_attr__( 'A web page (list items are read)', 'titan-zero-trades-front-desk' ) . '" /> <span class="description">' . esc_html__( 'Must start with https://. Read once, when you press Next. Nothing is sent.', 'titan-zero-trades-front-desk' ) . '</span></p>';
                 echo '<p><button class="button button-primary">' . esc_html__( 'Find services', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             } elseif ( '3' === $step ) {
                 echo '<h2>' . wp_kses( TZFD_UI_Graphics::brand_html( 'services', 32 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( '3. Choose your services', 'titan-zero-trades-front-desk' ) . '</h2>';
@@ -961,22 +1020,22 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     echo '<h3>' . esc_html__( 'Questions customers ask', 'titan-zero-trades-front-desk' ) . '</h3>';
                     foreach ( (array) $view['kb'] as $i => $qa ) {
                         $i = (int) $i;
-                        echo '<fieldset class="tzfd-qa-row"><p><label>' . esc_html__( 'Question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_q[' . (int) $i . ']" value="' . esc_attr( $qa['q'] ?? '' ) . '" /></label></p>';
+                        echo '<div class="tzfd-qa-row"><p><label>' . esc_html__( 'Question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_q[' . (int) $i . ']" value="' . esc_attr( $qa['q'] ?? '' ) . '" /></label></p>';
                         echo '<p><label>' . esc_html__( 'Answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="3" name="kb_a[' . (int) $i . ']">' . esc_textarea( $qa['a'] ?? '' ) . '</textarea></label></p>';
-                        echo '<p><label><input type="checkbox" name="kb_del[' . (int) $i . ']" value="1" ' . checked( in_array( $i, $removed, true ), true, false ) . ' /> ' . esc_html__( 'Remove this question', 'titan-zero-trades-front-desk' ) . '</label></p></fieldset>';
+                        echo '<p><label><input type="checkbox" name="kb_del[' . (int) $i . ']" value="1" ' . checked( in_array( $i, $removed, true ), true, false ) . ' /> ' . esc_html__( 'Remove this question', 'titan-zero-trades-front-desk' ) . '</label></p></div>';
                     }
                     echo '<h3>' . esc_html__( 'Add your own questions (optional)', 'titan-zero-trades-front-desk' ) . '</h3>';
                     echo '<p class="description">' . esc_html__( 'Write a question a customer often asks, and the answer you would give. Leave a row empty to skip it.', 'titan-zero-trades-front-desk' ) . '</p>';
                     for ( $k = 0; $k < 3; $k++ ) {
-                        echo '<fieldset class="tzfd-qa-row"><p><label>' . esc_html__( 'New question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_nq[' . (int) $k . ']" value="" /></label></p>';
-                        echo '<p><label>' . esc_html__( 'Your answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="2" name="kb_na[' . (int) $k . ']"></textarea></label></p></fieldset>';
+                        echo '<div class="tzfd-qa-row"><p><label>' . esc_html__( 'New question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_nq[' . (int) $k . ']" value="" /></label></p>';
+                        echo '<p><label>' . esc_html__( 'Your answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="2" name="kb_na[' . (int) $k . ']"></textarea></label></p></div>';
                     }
                     echo '<h3>' . esc_html__( 'Prices', 'titan-zero-trades-front-desk' ) . '</h3>';
                     echo '<p class="description">' . esc_html__( 'Example prices from the trade pack, per unit. Enter numbers only. You can set your own full price list later in Titan Zero Quotes.', 'titan-zero-trades-front-desk' ) . '</p>';
-                    echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+                    echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
                     foreach ( (array) $view['catalog'] as $i => $item ) {
-                        echo '<tr><td><input type="text" class="regular-text" name="cat_label[' . (int) $i . ']" value="' . esc_attr( $item['label'] ?? '' ) . '" /></td>';
-                        echo '<td><input type="number" min="0" step="0.01" name="cat_price[' . (int) $i . ']" value="' . esc_attr( number_format( (float) ( $item['unit_price'] ?? 0 ), 2, '.', '' ) ) . '" /> <span class="description">' . esc_html( $item['unit'] ?? '' ) . '</span></td></tr>';
+                        echo '<tr><td><input type="text" class="regular-text" name="cat_label[' . (int) $i . ']" aria-label="' . esc_attr__( 'Item', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( $item['label'] ?? '' ) . '" /></td>';
+                        echo '<td><input type="number" min="0" step="0.01" name="cat_price[' . (int) $i . ']" aria-label="' . esc_attr__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( number_format( (float) ( $item['unit_price'] ?? 0 ), 2, '.', '' ) ) . '" /> <span class="description">' . esc_html( $item['unit'] ?? '' ) . '</span></td></tr>';
                     }
                     echo '</tbody></table>';
                 }
@@ -991,6 +1050,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<p><label>' . esc_html__( 'Which suburbs or towns do you work in?', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="service_area" value="' . esc_attr( $d['service_area'] ?? '' ) . '" /></label></p>';
                 self::render_booking_choice( $d );
                 echo '<p><button class="button button-primary">' . esc_html__( 'Next', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
+            } elseif ( 'hours' === $step ) {
+                $d = $draft['details'];
+                echo '<h2>' . esc_html__( 'Opening hours (optional)', 'titan-zero-trades-front-desk' ) . '</h2>';
+                echo '<p class="description">' . esc_html__( 'Enter your hours in your own words, for example "Mon to Fri 8am to 5pm". Leave this blank to add them later. No hours are assumed.', 'titan-zero-trades-front-desk' ) . '</p>';
+                echo wp_kses( $form_open, self::form_allowed_html() );
+                echo '<input type="hidden" name="tz_fd_setup_action" value="hours" />';
+                echo '<p><label>' . esc_html__( 'When are you open?', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="3" name="opening_hours">' . esc_textarea( self::hours_text( $draft ) ) . '</textarea></label></p>';
+                echo '<p><button class="button button-primary">' . esc_html__( 'Next', 'titan-zero-trades-front-desk' ) . '</button> <a class="button" href="' . esc_url( admin_url( 'admin.php?page=tzfd-setup&step=6' ) ) . '">' . esc_html__( 'Skip', 'titan-zero-trades-front-desk' ) . '</a></p></form>';
             } elseif ( '6' === $step ) {
                 $d = $draft['details'];
                 echo '<h2>' . esc_html__( '6. Pricing and payment', 'titan-zero-trades-front-desk' ) . '</h2>';
@@ -1014,10 +1081,10 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<h2>' . esc_html__( '8. Booking confirmation and text-back', 'titan-zero-trades-front-desk' ) . '</h2>';
                 echo wp_kses( $form_open, self::form_allowed_html() );
                 echo '<input type="hidden" name="tz_fd_setup_action" value="confirm" />';
-                $tz_intake_now = isset( $d['intake_mode'] ) ? $d['intake_mode'] : TZFD_Intake_Mode::default_mode();
+                $tzfd_intake_now = isset( $d['intake_mode'] ) ? $d['intake_mode'] : TZFD_Intake_Mode::default_mode();
                 echo '<p><label>' . esc_html__( 'When a customer books online, how should it be confirmed?', 'titan-zero-trades-front-desk' ) . '<br><select name="intake_mode">';
-                echo '<option value="instant"' . selected( $tz_intake_now, TZFD_Intake_Mode::MODE_INSTANT, false ) . '>' . esc_html__( 'Straight away. The booking is confirmed at once.', 'titan-zero-trades-front-desk' ) . '</option>';
-                echo '<option value="request"' . selected( $tz_intake_now, TZFD_Intake_Mode::MODE_REQUEST, false ) . '>' . esc_html__( 'After I approve it. The booking waits as Pending until you approve it.', 'titan-zero-trades-front-desk' ) . '</option>';
+                echo '<option value="instant"' . selected( $tzfd_intake_now, TZFD_Intake_Mode::MODE_INSTANT, false ) . '>' . esc_html__( 'Straight away. The booking is confirmed at once.', 'titan-zero-trades-front-desk' ) . '</option>';
+                echo '<option value="request"' . selected( $tzfd_intake_now, TZFD_Intake_Mode::MODE_REQUEST, false ) . '>' . esc_html__( 'After I approve it. The booking waits as Pending until you approve it.', 'titan-zero-trades-front-desk' ) . '</option>';
                 echo '</select></label></p>';
                 echo '<p class="description">' . esc_html__( 'Choose "After I approve it" if you check every job before you accept it. You can change this for each calendar later in Settings.', 'titan-zero-trades-front-desk' ) . '</p>';
                 echo '<h3>' . esc_html__( 'Text back missed calls (optional)', 'titan-zero-trades-front-desk' ) . '</h3>';
@@ -1031,12 +1098,13 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '<h2>' . esc_html__( '9. Review and finish', 'titan-zero-trades-front-desk' ) . '</h2>';
                 echo '<p>' . esc_html__( 'Trade:', 'titan-zero-trades-front-desk' ) . ' <strong>' . esc_html( $draft['vertical'] ?: '—' ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Services:', 'titan-zero-trades-front-desk' ) . ' <strong>' . count( $draft['services'] ) . '</strong></p>';
-                $tz_review_mode = TZFD_Intake_Mode::normalize( $draft['details']['intake_mode'] ?? '' );
-                echo '<p>' . esc_html__( 'Booking confirmation:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( TZFD_Intake_Mode::MODE_REQUEST === $tz_review_mode ? esc_html__( 'after you approve it', 'titan-zero-trades-front-desk' ) : esc_html__( 'straight away', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
+                $tzfd_review_mode = TZFD_Intake_Mode::normalize( $draft['details']['intake_mode'] ?? '' );
+                echo '<p>' . esc_html__( 'Booking confirmation:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( TZFD_Intake_Mode::MODE_REQUEST === $tzfd_review_mode ? esc_html__( 'after you approve it', 'titan-zero-trades-front-desk' ) : esc_html__( 'straight away', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Booking page:', 'titan-zero-trades-front-desk' ) . ' <strong>' . esc_html( self::booking_summary( $draft['details'] ) ) . '</strong></p>';
                 echo '<p>' . esc_html__( 'Text back missed calls:', 'titan-zero-trades-front-desk' ) . ' <strong>' . ( ! empty( $draft['details']['missed_call_on'] ) ? esc_html__( 'on', 'titan-zero-trades-front-desk' ) : esc_html__( 'off', 'titan-zero-trades-front-desk' ) ) . '</strong></p>';
                 self::render_ai_setup_review( $draft );
                 echo wp_kses( $form_open . '<input type="hidden" name="tz_fd_setup_action" value="finish" />', self::form_allowed_html() );
+                self::render_tag_confirmation( $draft );
                 echo '<p><button class="button button-primary">' . esc_html__( 'Finish setup', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             } else {
                 echo '<p><a href="' . esc_url( admin_url( 'admin.php?page=tzfd-setup&step=1' ) ) . '">' . esc_html__( 'Open the setup wizard', 'titan-zero-trades-front-desk' ) . '</a></p>';
@@ -1049,9 +1117,9 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
     } // End Class
 
     // Main add-on code
-    $tz_onboarding_obj = new TZFD_Onboarding();
+    $tzfd_onboarding_obj = new TZFD_Onboarding();
 
     // Add addon object to the objects list
-    global $tz_addons_objs_list;
-    $tz_addons_objs_list[ $tz_onboarding_obj->get_addon_id() ] = $tz_onboarding_obj;
+    global $tzfd_addons_objs_list;
+    $tzfd_addons_objs_list[ $tzfd_onboarding_obj->get_addon_id() ] = $tzfd_onboarding_obj;
 }

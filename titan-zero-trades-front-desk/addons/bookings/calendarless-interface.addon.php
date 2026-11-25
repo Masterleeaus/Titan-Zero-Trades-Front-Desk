@@ -38,7 +38,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 
 		public function get_addon_form_settings( $form_id )
 		{
-			global $wpdb, $tz_plugin;
+			global $wpdb, $tzfd_plugin;
             $form_id = absint( $form_id );
             $company_id = TZFD_Scoped_Store::company_id();
             if ( ! $form_id || ! $company_id || TZFD_Scoped_Store::company_for_form( $form_id ) !== $company_id ) {
@@ -73,10 +73,10 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 			}
 
 
-			$tz_rows = $wpdb->get_results(
+			$tzfd_local_rows = $wpdb->get_results(
 						$wpdb->prepare( "SELECT * FROM %i WHERE formid=%d AND company_id=%d", $wpdb->prefix.TZFD_Tables::SINGLE_DAYS, $form_id, $company_id )  
 					);
-			if (!count($tz_rows))
+			if (!count($tzfd_local_rows))
 			{
                 $row["autosel_enable"] = 0;
 			    $row["numberOfDays"] = 6;
@@ -86,13 +86,13 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
                 $row["str_more_slots"] = "Show more slots";
                 $row["str_more_days"] = "Show more days";
 			} else {
-                $row["autosel_enable"] = $tz_rows[0]->autosel_enable;
-			    $row["numberOfDays"] = $tz_rows[0]->numberOfDays;
-			    $row["numberOfSlots"] = $tz_rows[0]->numberOfSlots;;
-                $row["calendarCSSClass"] = $tz_rows[0]->calendarCSSClass;
-                $row["formatDate"] = $tz_rows[0]->formatDate;
-                $row["str_more_slots"] = $tz_rows[0]->str_more_slots;
-                $row["str_more_days"] = $tz_rows[0]->str_more_days;
+                $row["autosel_enable"] = $tzfd_local_rows[0]->autosel_enable;
+			    $row["numberOfDays"] = $tzfd_local_rows[0]->numberOfDays;
+			    $row["numberOfSlots"] = $tzfd_local_rows[0]->numberOfSlots;;
+                $row["calendarCSSClass"] = $tzfd_local_rows[0]->calendarCSSClass;
+                $row["formatDate"] = $tzfd_local_rows[0]->formatDate;
+                $row["str_more_slots"] = $tzfd_local_rows[0]->str_more_slots;
+                $row["str_more_days"] = $tzfd_local_rows[0]->str_more_days;
             }
 
 
@@ -102,13 +102,13 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 				<div class="inside">
 				   <input type="hidden" name="TZFD_SingleDaysSelection_id" value="<?php echo esc_attr( (string) $form_id ); ?>" />
                      <?php esc_html_e('Enable alternative time slot selection interface for this booking form?','titan-zero-trades-front-desk'); ?>:<br />
-                        <?php $tz_option = $row['autosel_enable']; ?>
+                        <?php $tzfd_option = $row['autosel_enable']; ?>
                         <select name="sds_autosel_enable" id="sds_autosel_enable">
-                          <option value="0"<?php if ($tz_option != '1') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
-                          <option value="1"<?php if ($tz_option == '1') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
+                          <option value="0"<?php if ($tzfd_option != '1') echo ' selected'; ?>><?php esc_html_e('No','titan-zero-trades-front-desk'); ?></option>
+                          <option value="1"<?php if ($tzfd_option == '1') echo ' selected'; ?>><?php esc_html_e('Yes','titan-zero-trades-front-desk'); ?></option>
                          </select><br /><br />
 
-                   <div id="sds_autoselhide_yes" <?php if ($tz_option != '1') echo ' style="display:none"'; ?>>
+                   <div id="sds_autoselhide_yes" <?php if ($tzfd_option != '1') echo ' style="display:none"'; ?>>
 
                      <div style="margin-bottom:10px;">
                         <?php esc_html_e('Number of days to display initially','titan-zero-trades-front-desk'); ?>:<br />
@@ -165,9 +165,9 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 			if( !$this->addon_is_active() ) return;
 
             add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_assets' ) );
-            add_filter( 'tz_fd_the_form', array( &$this, 'enqueue_script' ), 99, 2 );
-            add_filter( 'tz_fd_the_form', array( &$this, 'insert_style'), 99, 2 );
-            add_filter( 'tz_fd_csslayout', array( &$this, 'pp_tz_fd_csslayout' ), 10, 2);
+            add_filter( 'tzfd_the_form', array( &$this, 'enqueue_script' ), 99, 2 );
+            add_filter( 'tzfd_the_form', array( &$this, 'insert_style'), 99, 2 );
+            add_filter( 'tzfd_csslayout', array( &$this, 'pp_tz_fd_csslayout' ), 10, 2);
 
             $this->update_database();
 
@@ -215,10 +215,10 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
             global $wpdb;
 
             $charset_collate = $wpdb->get_charset_collate();
-            $tz_table_name      = $wpdb->prefix . TZFD_Tables::SINGLE_DAYS;
+            $tzfd_table_name      = $wpdb->prefix . TZFD_Tables::SINGLE_DAYS;
 
             // Note: dbDelta does not use "IF NOT EXISTS"
-            $sql = "CREATE TABLE {$tz_table_name} (
+            $sql = "CREATE TABLE {$tzfd_table_name} (
                     id mediumint(9) NOT NULL AUTO_INCREMENT,
                     formid INT NOT NULL,
                     company_id BIGINT UNSIGNED NOT NULL DEFAULT 0,
@@ -235,11 +235,11 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 
             // Include the WordPress upgrade library and run dbDelta
             // dbDelta() runs only when this schema is not yet recorded. The key is a hash of the SQL, so a schema change runs it again.
-            $tz_schema_key = 'tzfd_schema_' . md5( $sql );
-            if ( ! get_option( $tz_schema_key ) ) {
+            $tzfd_schema_key = 'tzfd_schema_' . md5( $sql );
+            if ( ! get_option( $tzfd_schema_key ) ) {
                 require_once ABSPATH . 'wp-admin/includes/upgrade.php';
                 dbDelta( $sql );
-                update_option( $tz_schema_key, '1', false );
+                update_option( $tzfd_schema_key, '1', false );
             }
             // Historical rows predate tenant IDs. Map them to the owner of their
             // globally unique form ID, never to whichever company is logged in.
@@ -247,7 +247,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
             if ( ! get_option( 'tzfd_tenant_migration_calendarless_v1', false ) ) {
                 $migrated = $wpdb->query( $wpdb->prepare(
                     'UPDATE %i a INNER JOIN %i f ON f.id=a.formid SET a.company_id=f.company_id WHERE a.company_id=0 AND f.company_id>0',
-                    $tz_table_name, $wpdb->prefix . TZFD_Tables::FORMS
+                    $tzfd_table_name, $wpdb->prefix . TZFD_Tables::FORMS
                 ) );
                 if ( false !== $migrated ) { update_option( 'tzfd_tenant_migration_calendarless_v1', 1, false ); }
             }
@@ -261,7 +261,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 
         public function pp_tz_fd_csslayout ($CSSClass, $formid)
         {
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
 
 
 
@@ -275,7 +275,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 
 
 		/**
-         * Enqueues the calendarless script for a form on the page that shows the form (tz_fd_the_form).
+         * Enqueues the calendarless script for a form on the page that shows the form (tzfd_the_form).
          * The six settings go through wp_localize_script(); the script body is js/inline/CALENDAR-JS-2-calendarless.js.
          */
         public function	enqueue_script( $form_code, $id )
@@ -311,7 +311,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
          */
         public function	insert_style( $form_code, $id )
 		{
-            global $wpdb, $tz_plugin;
+            global $wpdb, $tzfd_plugin;
 
             $is_enable = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM %i WHERE formid=%d AND company_id=%d AND autosel_enable=1", $wpdb->prefix.TZFD_Tables::SINGLE_DAYS, $id, TZFD_Scoped_Store::company_for_form( absint( $id ) ) ) );  
             if (!count($is_enable))
@@ -363,7 +363,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
     $TZFD_SingleDaysSelection_obj = new TZFD_SingleDaysSelection();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $TZFD_SingleDaysSelection_obj->get_addon_id() ] = $TZFD_SingleDaysSelection_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $TZFD_SingleDaysSelection_obj->get_addon_id() ] = $TZFD_SingleDaysSelection_obj;
 }
 

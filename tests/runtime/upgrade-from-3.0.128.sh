@@ -7,18 +7,19 @@
 # WordPress does not run the activation hook on a file-replacement update; deactivate and reactivate is the
 # closest reproducible equivalent, and it is what the plugin's install routines run on.
 #
-# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: BASE_SHA (default 4e0c3b3), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN
+# Usage: tests/runtime/upgrade-from-3.0.128.sh      Env: SAME_VERSION_OK (default 1, same-version release ZIP), BASE_SHA (default 22dc106^), BASE_ZIP (release ZIP path at BASE_SHA), WP_CLI, TZFD_RT_DB_ADMIN, UPGRADE_MULTISITE=1 (provision a network and run the same upgrade and downgrade on it)
 # Exit:  0 all upgrade checks passed; 1 a check failed; 3 prerequisites missing.
 set -u
 
 HERE="$(cd "$(dirname "$0")" && pwd)"
 NEW_PLUGIN="$(cd "$HERE/../../titan-zero-trades-front-desk" && pwd)"
 REPO_DIR="$(git -C "$HERE" rev-parse --show-toplevel 2>/dev/null)"
-# The base is a real earlier release, read from git history. The default is the Front Desk 2.0.1 release ZIP committed
-# at 4e0c3b3 (version 2.0.1, a different version from this checkout). The 3.0.128 extraction commit (22dc106) cannot be
-# the base any more: this checkout is also 3.0.128, so the upgrade would not change the version (issue #194).
-BASE_SHA="${BASE_SHA:-4e0c3b3}"
-BASE_ZIP="${BASE_ZIP:-Titan-Zero-Trades-Front-Desk-2.0.1-FULL-2026-10-14-r5.zip}"
+# The base is a real earlier release, read from git history. The default is the v3.0.128 release ZIP, read from the
+# commit before its extraction (22dc106^). This checkout is also 3.0.128, so SAME_VERSION_OK defaults to 1 and the
+# check asserts which source folder is loaded rather than the version string (issue #194, issue #349).
+BASE_SHA="${BASE_SHA:-22dc106^}"
+BASE_ZIP="${BASE_ZIP:-titan-zero-trades-front-desk-3.0.128-r16.zip}"
+SAME_VERSION_OK="${SAME_VERSION_OK:-1}"
 WP_CLI="${WP_CLI:-wp}"
 PORT="${PORT:-8080}"
 WORK="$(mktemp -d /tmp/tzfd-upg.XXXXXX)"
@@ -55,14 +56,21 @@ OLD_VER="$(sed -n 's/^.*Version: *//p' "$OLD_MAIN" | head -1)"
 NEW_VER="$(sed -n 's/^.*Version: *//p' "$NEW_PLUGIN/titan-zero-front-desk.php" | head -1)"
 say "Baseline $BASE_SHA${BASE_ZIP:+ ($BASE_ZIP)} reports version $OLD_VER; this checkout reports $NEW_VER"
 # Safety: the base must be a different version, otherwise the check does not exercise an upgrade.
-[ -n "$OLD_VER" ] && [ "$OLD_VER" != "$NEW_VER" ] || { say "FAIL upgrade -- base version '$OLD_VER' must differ from this checkout '$NEW_VER'"; exit 1; }
+# SAME_VERSION_OK=1 allows a same-version base (the 3.0.128 release ZIP against a 3.0.128 checkout). The folder swap is
+# still checked by the schema step, which asserts the loaded source folder (CURRENT_SRC), not the version string.
+[ -n "$OLD_VER" ] || { say "FAIL upgrade -- base version is empty"; exit 1; }
+if [ "$OLD_VER" = "$NEW_VER" ] && [ "${SAME_VERSION_OK:-0}" != 1 ]; then
+  say "FAIL upgrade -- base version '$OLD_VER' must differ from this checkout '$NEW_VER' (set SAME_VERSION_OK=1 for a same-version release ZIP)"; exit 1
+fi
 
 # 2. Site on the old plugin.
-PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }
+MS_ARGS=()
+if [ "${UPGRADE_MULTISITE:-0}" = 1 ]; then MS_ARGS=(--multisite); say "Network (multisite) run: UPGRADE_MULTISITE=1"; fi
+PROV="$("$HERE/provision-wp-site.sh" "$WORK/wp" "$OLD_PLUGIN" "${MS_ARGS[@]}" 2>>"$LOG")" || { say "FAIL provision -- see $LOG"; exit 1; }
 eval "$(echo "$PROV" | grep '^TZFD_RT_')"
 DB="$TZFD_RT_DB_NAME"
 PLUGIN_LINK="$WORK/wp/wp-content/plugins/titan-zero-trades-front-desk"
-say "PASS provision on $OLD_VER"
+say "PASS provision on $OLD_VER${MS_ARGS:+ (multisite)}"
 
 FP="$WORK/fingerprint.json"
 run_php() { TZFD_RT_PHASE="$1" TZFD_RT_FINGERPRINT="$FP" TZFD_RT_EXPECT_DIR="$CURRENT_SRC" $WP_CLI --allow-root --path="$WORK/wp" eval-file "$HERE/upgrade-seed-verify.php" --user=1 2>/dev/null | tee -a "$LOG"; }

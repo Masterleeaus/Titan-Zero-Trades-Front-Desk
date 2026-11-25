@@ -4,41 +4,41 @@ if (!defined('ABSPATH')) { exit; }
 require_once __DIR__.'/class-tzfd-scheduling.php';
 
 final class TZFD_Calendar {
-    private static function value($o,$tz_key,$default) { return property_exists($o,$tz_key)?$o->$tz_key:$default; }
+    private static function value($o,$tzfd_key,$default) { return property_exists($o,$tzfd_key)?$o->$tzfd_key:$default; }
     private static function fail() { throw new InvalidArgumentException('invalid_calendar_configuration'); }
-    private static function whole($tz_v,$min,$max) {
-        $n=TZFD_Scheduling::integer($tz_v,$min,$max); if($n===null){self::fail();} return $n;
+    private static function whole($tzfd_local_v,$min,$max) {
+        $n=TZFD_Scheduling::integer($tzfd_local_v,$min,$max); if($n===null){self::fail();} return $n;
     }
     /** Resolve one exact wall time. Neither PHP's gap normalization nor its fold choice is accepted. */
     public static function instant($wall, $zone) {
-        $tz_date=DateTimeImmutable::createFromFormat('!Y-m-d H:i:s',$wall,new DateTimeZone('UTC'));
-        if(!$tz_date || $tz_date->format('Y-m-d H:i:s')!==$wall){throw new InvalidArgumentException('invalid_local_time');}
-        $stamp=$tz_date->getTimestamp();$offsets=array();
+        $tzfd_date=DateTimeImmutable::createFromFormat('!Y-m-d H:i:s',$wall,new DateTimeZone('UTC'));
+        if(!$tzfd_date || $tzfd_date->format('Y-m-d H:i:s')!==$wall){throw new InvalidArgumentException('invalid_local_time');}
+        $stamp=$tzfd_date->getTimestamp();$offsets=array();
         $transitions=$zone->getTransitions($stamp-172800,$stamp+172800);
-        if($transitions===false){$offsets[]=$zone->getOffset($tz_date);}else{foreach($transitions as$t){$offsets[]=$t['offset'];}}
+        if($transitions===false){$offsets[]=$zone->getOffset($tzfd_date);}else{foreach($transitions as$t){$offsets[]=$t['offset'];}}
         $matches=array();
-        foreach(array_unique($offsets)as$tz_offset){$candidate=$stamp-$tz_offset;
+        foreach(array_unique($offsets)as$tzfd_offset){$candidate=$stamp-$tzfd_offset;
             if((new DateTimeImmutable('@'.$candidate))->setTimezone($zone)->format('Y-m-d H:i:s')===$wall){$matches[]=$candidate;}}
         if(count($matches)!==1){throw new InvalidArgumentException('nonunique_local_time');}
         return $matches[0];
     }
     /** Strict numeric jQuery date formats; textual/localized formats are explicitly unsupported. */
-    private static function formatted_date($tz_value,$format) {
-        if(!is_string($tz_value)||!is_string($format)){self::fail();}
+    private static function formatted_date($tzfd_value,$format) {
+        if(!is_string($tzfd_value)||!is_string($format)){self::fail();}
         $tokens=array();$regex='';
-        for($tz_i=0;$tz_i<strlen($format);){
-            $token=null;foreach(array('yy','mm','dd','y','m','d')as$t){if(substr($format,$tz_i,strlen($t))===$t){$token=$t;break;}}
-            if($token!==null){$tokens[]=$token;$regex.='('.($token==='yy'?'[0-9]{4}':($token==='y'?'[0-9]{2}':'[0-9]{1,2}')).')';$tz_i+=strlen($token);}
-            else{if(ctype_alpha($format[$tz_i])){self::fail();}$regex.=preg_quote($format[$tz_i],'/');$tz_i++;}
+        for($tzfd_i=0;$tzfd_i<strlen($format);){
+            $token=null;foreach(array('yy','mm','dd','y','m','d')as$t){if(substr($format,$tzfd_i,strlen($t))===$t){$token=$t;break;}}
+            if($token!==null){$tokens[]=$token;$regex.='('.($token==='yy'?'[0-9]{4}':($token==='y'?'[0-9]{2}':'[0-9]{1,2}')).')';$tzfd_i+=strlen($token);}
+            else{if(ctype_alpha($format[$tzfd_i])){self::fail();}$regex.=preg_quote($format[$tzfd_i],'/');$tzfd_i++;}
         }
-        if(count($tokens)!==3||!preg_match('/^'.$regex.'$/D',$tz_value,$m)){self::fail();}
-        $parts=array();foreach($tokens as$tz_i=>$token){$parts[$token[0]]=(int)$m[$tz_i+1];if($token==='y'){self::fail();}}
+        if(count($tokens)!==3||!preg_match('/^'.$regex.'$/D',$tzfd_value,$m)){self::fail();}
+        $parts=array();foreach($tokens as$tzfd_i=>$token){$parts[$token[0]]=(int)$m[$tzfd_i+1];if($token==='y'){self::fail();}}
         if(!isset($parts['y'],$parts['m'],$parts['d'])){self::fail();}
-        $tz_date=sprintf('%04d-%02d-%02d',$parts['y'],$parts['m'],$parts['d']);TZFD_Scheduling::date($tz_date);return $tz_date;
+        $tzfd_date=sprintf('%04d-%02d-%02d',$parts['y'],$parts['m'],$parts['d']);TZFD_Scheduling::date($tzfd_date);return $tzfd_date;
     }
-    private static function bound($tz_value,$format,$zone,$now,$maximum) {
-        if($tz_value===''){return null;}if(!is_string($tz_value)&&!is_int($tz_value)){self::fail();}
-        $parts=explode('@',trim((string)$tz_value));if(count($parts)>2||$parts[0]===''){self::fail();}
+    private static function bound($tzfd_value,$format,$zone,$now,$maximum) {
+        if($tzfd_value===''){return null;}if(!is_string($tzfd_value)&&!is_int($tzfd_value)){self::fail();}
+        $parts=explode('@',trim((string)$tzfd_value));if(count($parts)>2||$parts[0]===''){self::fail();}
         $clock=null;if(count($parts)===2){if(!preg_match('/^([01]?[0-9]|2[0-3]):([0-5][0-9])$/D',$parts[1],$m)){self::fail();}$clock=sprintf('%02d:%02d:00',$m[1],$m[2]);}
         $spec=trim($parts[0]);$relative=preg_match('/^(?:[+-]?(?:[0-9]+(?:\.[0-9]+)?|\.[0-9]+)\s*h\s*|[+-]?[0-9]+\s*[dwmy]?\s*)+$/D',$spec) && (preg_match('/^[+-]?[0-9]+$/D',$spec)||preg_match('/[dwmyh]/',$spec));
         $local=$now->setTimezone($zone);$base=TZFD_Scheduling::date($local->format('Y-m-d'));$hours=0;$has_hours=false;
@@ -48,7 +48,7 @@ final class TZFD_Calendar {
                 if($unit==='h'){$hours+=$n;$has_hours=true;continue;}
                 if($unit==='d'||$unit==='w'){$base=$base->modify(($n>=0?'+':'').($unit==='w'?$n*7:$n).' days');}
                 else{$year=(int)$base->format('Y');$month=(int)$base->format('n');$day=(int)$base->format('j');
-                    if($unit==='y'){$year+=$n;}else{$tz_total=$year*12+$month-1+$n;$year=(int)floor($tz_total/12);$month=$tz_total-$year*12+1;}
+                    if($unit==='y'){$year+=$n;}else{$tzfd_total=$year*12+$month-1+$n;$year=(int)floor($tzfd_total/12);$month=$tzfd_total-$year*12+1;}
                     if($year<1970||$year>9999){self::fail();}$first=TZFD_Scheduling::date(sprintf('%04d-%02d-01',$year,$month));
                     $base=$first->setDate($year,$month,min($day,(int)$first->format('t')));}
             }
@@ -79,10 +79,10 @@ final class TZFD_Calendar {
                     // The donor supports an unfinished empty special-range row as inactive.
                     if($type==='specialrange'&&$r->d===''){continue;}
                     $dates=explode(':',$r->d);if(count($dates)>($type==='special'?1:2)){self::fail();}
-                    foreach($dates as$tz_d){TZFD_Scheduling::date($tz_d);}if(count($dates)===1){$dates[]=$dates[0];}
+                    foreach($dates as$tzfd_d){TZFD_Scheduling::date($tzfd_d);}if(count($dates)===1){$dates[]=$dates[0];}
                     if($dates[0]>$dates[1]){self::fail();}
                 }elseif($type!=='all'&&!preg_match('/^d[0-6]$/D',$type)){self::fail();}
-                foreach(array('h1','h2','m1','m2')as$tz_k){if(!property_exists($r,$tz_k)){self::fail();}}
+                foreach(array('h1','h2','m1','m2')as$tzfd_k){if(!property_exists($r,$tzfd_k)){self::fail();}}
                 $start=self::whole($r->h1,0,23)*60+self::whole($r->m1,0,59);
                 $end=self::whole($r->h2,0,24)*60+self::whole($r->m2,0,59);if($end>1440){self::fail();}if($end<=$start){$end+=1440;}
                 $rules[]=array('type'=>$type,'dates'=>$dates,'start'=>$start,'end'=>$end);
@@ -90,12 +90,12 @@ final class TZFD_Calendar {
         }
         $working=self::value($field,'working_dates',array(true,true,true,true,true,true,true));
         if(!is_array($working)||array_keys($working)!==range(0,6)){self::fail();}
-        foreach($working as&$tz_v){if(!in_array($tz_v,array(true,false,0,1,'0','1'),true)){self::fail();}$tz_v=(bool)$tz_v;}unset($tz_v);
+        foreach($working as&$tzfd_local_v){if(!in_array($tzfd_local_v,array(true,false,0,1,'0','1'),true)){self::fail();}$tzfd_local_v=(bool)$tzfd_local_v;}unset($tzfd_local_v);
         $format=self::value($field,'dateFormat','mm/dd/yy');$invalid=self::value($field,'invalidDates','');
         if(!is_string($invalid)||strlen($invalid)>32768){self::fail();}$closed=array();$invalid=preg_replace('/\s+/','',$invalid);
         if($invalid!==''){$df=strpos($invalid,'.')!==false?$format:'mm/dd/yy';
             foreach(explode(',',$invalid)as$range){$dates=explode('-',$range);if(count($dates)>2){self::fail();}
-                foreach($dates as&$tz_d){$tz_d=self::formatted_date($tz_d,$df);}unset($tz_d);if(count($dates)===1){$dates[]=$dates[0];}
+                foreach($dates as&$tzfd_d){$tzfd_d=self::formatted_date($tzfd_d,$df);}unset($tzfd_d);if(count($dates)===1){$dates[]=$dates[0];}
                 if($dates[0]>$dates[1]){self::fail();}$closed[]=$dates;}}
         if(!isset($field->services)||!is_array($field->services)){self::fail();}$services=array();
         foreach($field->services as$s){if(!is_object($s)){self::fail();}$index=self::value($s,'ohindex',0);
@@ -109,18 +109,18 @@ final class TZFD_Calendar {
         return array('version'=>1,'zone'=>$zone->getName(),'now'=>$now->getTimestamp(),'schedules'=>$schedules,'services'=>$services,
             'working'=>$working,'closed'=>$closed,'min'=>$min,'max'=>$max);
     }
-    public static function allows($policy,$tz_date,$slot,$service) {
+    public static function allows($policy,$tzfd_date,$slot,$service) {
         try{
             if(!isset($policy['version'])||$policy['version']!==1||!isset($policy['services'][$service])){return false;}
-            $range=TZFD_Scheduling::interval($tz_date,$slot);$day=TZFD_Scheduling::date($tz_date);$midnight=$day->getTimestamp();
+            $range=TZFD_Scheduling::interval($tzfd_date,$slot);$day=TZFD_Scheduling::date($tzfd_date);$midnight=$day->getTimestamp();
             $s=$policy['services'][$service];$start=($range['start']-$midnight)/60;$end=($range['end']-$midnight)/60;
             if($range['duration']!==$s['duration']){return false;}
             $special=array();$weekday=array();$all=array();
             foreach($policy['schedules'][$s['schedule']]as$r){
-                if($r['dates']!==null&&$tz_date>=$r['dates'][0]&&$tz_date<=$r['dates'][1]){$special[]=$r;}
+                if($r['dates']!==null&&$tzfd_date>=$r['dates'][0]&&$tzfd_date<=$r['dates'][1]){$special[]=$r;}
                 elseif($r['type']==='d'.$day->format('w')){$weekday[]=$r;}elseif($r['type']==='all'){$all[]=$r;}}
             if(count($special)===0){if(!$policy['working'][(int)$day->format('w')]){return false;}
-                foreach($policy['closed']as$r){if($tz_date>=$r[0]&&$tz_date<=$r[1]){return false;}}}
+                foreach($policy['closed']as$r){if($tzfd_date>=$r[0]&&$tzfd_date<=$r[1]){return false;}}}
             $rules=count($special)?$special:(count($weekday)?$weekday:$all);$inside=false;
             foreach($rules as$r){if($start-$s['before']>=$r['start']&&$end+$s['after']<=$r['end']){$inside=true;break;}}
             if(!$inside){return false;}
@@ -136,7 +136,7 @@ final class TZFD_Calendar {
     }
     public static function assess($apps,$fields,$bound_format=null) {
         $policies=array();foreach($fields as$f){if(is_object($f)&&isset($f->ftype)&&$f->ftype==='fapp'){$policies[$f->name]=self::site_policy($f,$bound_format);}}
-        $conflicts=array();foreach($apps as$tz_i=>$tz_app){if(!isset($policies[$tz_app['field']])||!self::allows($policies[$tz_app['field']],$tz_app['date'],$tz_app['slot'],$tz_app['serviceindex'])){$conflicts[]=array('index'=>$tz_i,'reason'=>'calendar_unavailable');}}
+        $conflicts=array();foreach($apps as$tzfd_i=>$tzfd_app){if(!isset($policies[$tzfd_app['field']])||!self::allows($policies[$tzfd_app['field']],$tzfd_app['date'],$tzfd_app['slot'],$tzfd_app['serviceindex'])){$conflicts[]=array('index'=>$tzfd_i,'reason'=>'calendar_unavailable');}}
         return array('ok'=>count($conflicts)===0,'conflicts'=>$conflicts);
     }
 }

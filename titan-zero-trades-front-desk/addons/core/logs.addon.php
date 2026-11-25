@@ -30,9 +30,9 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
             $this->description = $this->tr_apply("The add-on logs booking additions, status changes and deletions, and shows the latest entries.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data', array( $this, 'log_created' ), 40, 1 );
-            add_action( 'tz_fd_update_status', array( $this, 'log_status' ), 40, 2 );
-            add_action( 'tz_fd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'log_created' ), 40, 1 );
+            add_action( 'tzfd_update_status', array( $this, 'log_status' ), 40, 2 );
+            add_action( 'tzfd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
         } // End __construct
 
         /************************ LOG STORAGE *****************************/
@@ -46,7 +46,7 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
         public static function record( $event, $booking_id, $formid, $detail = '' )
         {
             $user_id = function_exists( 'get_current_user_id' ) ? (int) get_current_user_id() : 0;
-            $tz_entry = array(
+            $tzfd_local_entry = array(
                 'time'    => current_time( 'mysql' ),
                 'event'   => (string) $event,
                 'booking' => (int) $booking_id,
@@ -54,25 +54,25 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
                 'user'    => $user_id,
                 'detail'  => (string) $detail,
             );
-            $log = TZFD_Addon_Support::append_log( self::entries(), $tz_entry, self::MAX_ENTRIES );
+            $log = TZFD_Addon_Support::append_log( self::entries(), $tzfd_local_entry, self::MAX_ENTRIES );
             update_option( self::OPTION, $log, false );
         }
 
         /************************ HOOKS *****************************/
 
-        public function log_created( $tz_params )
+        public function log_created( $tzfd_local_params )
         {
-            if ( ! is_array( $tz_params ) ) { return; }
-            $tz_count = isset( $tz_params['apps'] ) && is_array( $tz_params['apps'] ) ? count( $tz_params['apps'] ) : 0;
-            $name  = isset( $tz_params['formname'] ) && is_string( $tz_params['formname'] ) ? $tz_params['formname'] : '';
-            self::record( 'created', isset( $tz_params['itemnumber'] ) ? $tz_params['itemnumber'] : 0, isset( $tz_params['formid'] ) ? $tz_params['formid'] : 0,
-                trim( $name . ' (' . $tz_count . ' appointment' . ( 1 === $tz_count ? '' : 's' ) . ')' ) );
+            if ( ! is_array( $tzfd_local_params ) ) { return; }
+            $tzfd_local_count = isset( $tzfd_local_params['apps'] ) && is_array( $tzfd_local_params['apps'] ) ? count( $tzfd_local_params['apps'] ) : 0;
+            $name  = isset( $tzfd_local_params['formname'] ) && is_string( $tzfd_local_params['formname'] ) ? $tzfd_local_params['formname'] : '';
+            self::record( 'created', isset( $tzfd_local_params['itemnumber'] ) ? $tzfd_local_params['itemnumber'] : 0, isset( $tzfd_local_params['formid'] ) ? $tzfd_local_params['formid'] : 0,
+                trim( $name . ' (' . $tzfd_local_count . ' appointment' . ( 1 === $tzfd_local_count ? '' : 's' ) . ')' ) );
         }
 
         public function log_status( $booking_id, $status = '' )
         {
-            $tz_label = ( '' === (string) $status ) ? 'Approved' : (string) $status;
-            self::record( 'status', $booking_id, 0, 'Status set to ' . $tz_label );
+            $tzfd_label = ( '' === (string) $status ) ? 'Approved' : (string) $status;
+            self::record( 'status', $booking_id, 0, 'Status set to ' . $tzfd_label );
         }
 
         public function log_deleted( $booking_id )
@@ -101,14 +101,14 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
                 echo '<p><em>' . esc_html__( 'No activity has been logged yet.', 'titan-zero-trades-front-desk' ) . '</em></p>';
             } else {
                 echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Time', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Event', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Booking', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Calendar', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'User', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Details', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
-                foreach ( $shown as $tz_entry ) {
+                foreach ( $shown as $tzfd_local_entry ) {
                     echo '<tr>';
-                    echo '<td>' . esc_html( isset( $tz_entry['time'] ) ? $tz_entry['time'] : '' ) . '</td>';
-                    echo '<td>' . esc_html( self::event_label( isset( $tz_entry['event'] ) ? $tz_entry['event'] : '' ) ) . '</td>';
-                    echo '<td>#' . esc_html( (string) ( isset( $tz_entry['booking'] ) ? (int) $tz_entry['booking'] : 0 ) ) . '</td>';
-                    echo '<td>' . esc_html( (string) ( isset( $tz_entry['form'] ) ? (int) $tz_entry['form'] : 0 ) ) . '</td>';
-                    echo '<td>' . esc_html( self::user_label( isset( $tz_entry['user'] ) ? (int) $tz_entry['user'] : 0 ) ) . '</td>';
-                    echo '<td>' . esc_html( isset( $tz_entry['detail'] ) && is_scalar( $tz_entry['detail'] ) ? (string) $tz_entry['detail'] : '' ) . '</td>';
+                    echo '<td>' . esc_html( isset( $tzfd_local_entry['time'] ) ? $tzfd_local_entry['time'] : '' ) . '</td>';
+                    echo '<td>' . esc_html( self::event_label( isset( $tzfd_local_entry['event'] ) ? $tzfd_local_entry['event'] : '' ) ) . '</td>';
+                    echo '<td>#' . esc_html( (string) ( isset( $tzfd_local_entry['booking'] ) ? (int) $tzfd_local_entry['booking'] : 0 ) ) . '</td>';
+                    echo '<td>' . esc_html( (string) ( isset( $tzfd_local_entry['form'] ) ? (int) $tzfd_local_entry['form'] : 0 ) ) . '</td>';
+                    echo '<td>' . esc_html( self::user_label( isset( $tzfd_local_entry['user'] ) ? (int) $tzfd_local_entry['user'] : 0 ) ) . '</td>';
+                    echo '<td>' . esc_html( isset( $tzfd_local_entry['detail'] ) && is_scalar( $tzfd_local_entry['detail'] ) ? (string) $tzfd_local_entry['detail'] : '' ) . '</td>';
                     echo '</tr>';
                 }
                 echo '</tbody></table>';
@@ -134,8 +134,8 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
         private static function user_label( $user_id )
         {
             if ( $user_id <= 0 ) { return __( 'Visitor or system', 'titan-zero-trades-front-desk' ); }
-            $tz_user = function_exists( 'get_userdata' ) ? get_userdata( $user_id ) : false;
-            return ( is_object( $tz_user ) && isset( $tz_user->user_login ) ) ? (string) $tz_user->user_login : '#' . $user_id;
+            $tzfd_user = function_exists( 'get_userdata' ) ? get_userdata( $user_id ) : false;
+            return ( is_object( $tzfd_user ) && isset( $tzfd_user->user_login ) ) ? (string) $tzfd_user->user_login : '#' . $user_id;
         }
 
         /************************ ADDON OBJECT *****************************/
@@ -146,6 +146,6 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
     $TZFD_ActivityLogsWidget_obj = new TZFD_ActivityLogsWidget();
 
     // Add addon object to the objects list
-    global $tz_addons_objs_list;
-    $tz_addons_objs_list[ $TZFD_ActivityLogsWidget_obj->get_addon_id() ] = $TZFD_ActivityLogsWidget_obj;
+    global $tzfd_addons_objs_list;
+    $tzfd_addons_objs_list[ $TZFD_ActivityLogsWidget_obj->get_addon_id() ] = $TZFD_ActivityLogsWidget_obj;
 }

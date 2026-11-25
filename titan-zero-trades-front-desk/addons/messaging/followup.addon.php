@@ -28,7 +28,7 @@ if( !class_exists( 'TZFD_FollowUp' ) )
 			$this->description = $this->tr_apply("The add-on emails customers a follow-up a set number of hours after each appointment ends.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data', array( $this, 'schedule_followups' ), 40, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'schedule_followups' ), 40, 1 );
             add_action( self::HOOK, array( $this, 'send_followup' ), 10, 3 );
         } // End __construct
 
@@ -81,9 +81,9 @@ if( !class_exists( 'TZFD_FollowUp' ) )
 
         /************************ HOOKS *****************************/
 
-        public function schedule_followups( $tz_params )
+        public function schedule_followups( $tzfd_local_params )
         {
-            TZFD_Timed_Notices::schedule_booking( (array) $tz_params, self::KEY, self::HOOK, 'end', 1, self::defaults() );
+            TZFD_Timed_Notices::schedule_booking( (array) $tzfd_local_params, self::KEY, self::HOOK, 'end', 1, self::defaults() );
         }
 
         /** Cron callback. Approved and attended appointments only. */
@@ -97,9 +97,9 @@ if( !class_exists( 'TZFD_FollowUp' ) )
     } // End Class
 
     // Main add-on code
-    $tz_FollowUp_obj = new TZFD_FollowUp();
+    $tzfd_FollowUp_obj = new TZFD_FollowUp();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_FollowUp_obj->get_addon_id() ] = $tz_FollowUp_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_FollowUp_obj->get_addon_id() ] = $tzfd_FollowUp_obj;
 }

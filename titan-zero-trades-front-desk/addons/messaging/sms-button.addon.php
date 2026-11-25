@@ -27,7 +27,7 @@ if( !class_exists( 'TZFD_SMSButton' ) )
 			$this->description = $this->tr_apply("The add-on adds an SMS button below the booking form that opens a text message to the configured number.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_filter( 'tz_fd_the_form', array( $this, 'append_button' ), 99, 2 );
+            add_filter( 'tzfd_the_form', array( $this, 'append_button' ), 99, 2 );
         } // End __construct
 
         /************************ SETTINGS *****************************/
@@ -88,9 +88,9 @@ if( !class_exists( 'TZFD_SMSButton' ) )
     } // End Class
 
     // Main add-on code
-    $tz_SMSButton_obj = new TZFD_SMSButton();
+    $tzfd_SMSButton_obj = new TZFD_SMSButton();
 
 	// Add addon object to the objects list
-	global $tz_addons_objs_list;
-	$tz_addons_objs_list[ $tz_SMSButton_obj->get_addon_id() ] = $tz_SMSButton_obj;
+	global $tzfd_addons_objs_list;
+	$tzfd_addons_objs_list[ $tzfd_SMSButton_obj->get_addon_id() ] = $tzfd_SMSButton_obj;
 }

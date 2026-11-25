@@ -21,7 +21,8 @@ final class TZFD_Business_Facts {
     /** Tenant-scoped map: fact key => ['fingerprint' => sha256 at publication, 'published' => unix time]. */
     const PUBLISHED_KEY = 'tz_fd_ai_facts_published_v1';
 
-    const MAX_VALUE = 500;
+    /** Owner decision #330: 2000 characters per value. Longer values are cut here, not sent in full. */
+    const MAX_VALUE = 2000;
 
     /**
      * Allowlist. 'key' is the legacy scoped option name. 'intents' lists the intent categories this fact answers.
@@ -172,7 +173,7 @@ final class TZFD_Business_Facts {
     }
 
     public static function clean( $value ) {
-        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( (string) $value ) : strip_tags( (string) $value );
+        $value = function_exists( 'wp_strip_all_tags' ) ? wp_strip_all_tags( (string) $value ) : preg_replace( '/<[^>]*>?|\x00/', '', (string) $value );
         $value = preg_replace( '/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/', '', (string) $value );
         $value = trim( preg_replace( '/\s+/u', ' ', (string) $value ) );
         if ( mb_strlen( $value ) > self::MAX_VALUE ) {

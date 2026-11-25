@@ -234,6 +234,7 @@ final class TZFD_Enquiry_Triage {
         self::ensure_table();
         $placeholders = implode( ',', array_fill( 0, count( $ids ), '%d' ) );
         // phpcs:disable WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- $placeholders holds only '%d' tokens, one per id, so the IN list stays prepared.
+        // phpcs:ignore WordPress.DB.PreparedSQLPlaceholders.ReplacementsWrongNumber -- the sniff cannot see the array_merge() replacement list; %i (table) and one %d per id match the arguments exactly.
         $rows = $wpdb->get_results( $wpdb->prepare(
             "SELECT * FROM %i WHERE company_id = %d AND enquiry_id IN ({$placeholders})",
             array_merge( array( self::table(), $company_id ), $ids )
@@ -264,9 +265,8 @@ final class TZFD_Enquiry_Triage {
      */
     public static function row_html( $enquiry_id, $triage ) {
         if ( ! $triage ) { return '<div class="tzfd-triage"><small>' . esc_html__( 'Not triaged', 'titan-zero-trades-front-desk' ) . '</small></div>'; }
-        $override = (string) $triage->urgency_override;
-        $urgent   = '' !== $override ? 'override_' . $override : (string) $triage->urgency;
-        $effective = 'override_urgent' === $urgent ? 'urgent' : ( 'override_normal' === $urgent ? 'normal' : $urgent );
+        $override  = (string) $triage->urgency_override;
+        $effective = TZFD_Enquiry_Triage_Rules::effective_urgency( (string) $triage->urgency, $override );
         $out = '<div class="tzfd-triage"><strong>' . esc_html( self::intent_label( (string) $triage->primary_intent ) ) . '</strong>';
         if ( 'urgent' === $effective ) {
             $reasons = array_filter( explode( ',', (string) $triage->urgency_reasons ) );

@@ -121,5 +121,53 @@ if ( 'schema' === $tzfd_phase ) {
 	exit( preg_match( '/^FAIL /m', $tzfd_out ) ? 1 : 0 );
 }
 
-echo "FAIL harness -- set TZFD_RT_PHASE to seed, verify or schema\n";
+// Location registry (issue #369, T4). v3.0.128 has no location store, so its site holds no location options. The 3.x
+// code writes them after the upgrade, and the same raw options must read back byte-identical after the downgrade.
+// Company '1' is used for the seeded registry. Options are read raw, so the check does not depend on the 3.x classes.
+$tzfd_loc_fp  = getenv( 'TZFD_RT_LOC_FINGERPRINT' ) ?: '';
+$tzfd_loc_opt = array( 'tzfd_locations_1', 'tzfd_location_log_1' );
+
+if ( 'locbase' === $tzfd_phase ) {
+	$tzfd_loc_absent = true;
+	foreach ( $tzfd_loc_opt as $tzfd_loc_name ) {
+		if ( false !== get_option( $tzfd_loc_name, false ) ) { $tzfd_loc_absent = false; }
+	}
+	echo ( $tzfd_loc_absent ? 'PASS' : 'FAIL' ) . " no location registry on the 3.0.128 site before the upgrade (nothing to carry over)\n";
+	return;
+}
+
+if ( 'locseed' === $tzfd_phase ) {
+	require_once WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/class-tzfd-location-store.php';
+	$tzfd_loc_add  = TZFD_Location_Store::add( '1', 1, array( 'id' => 'loc-up', 'name' => 'Upgrade Site', 'timezone' => 'Australia/Melbourne' ), time() );
+	$tzfd_loc_add2 = TZFD_Location_Store::add( '1', 1, array( 'id' => 'loc-arch', 'name' => 'Upgrade Archived', 'timezone' => 'UTC' ), time() );
+	$tzfd_loc_upd  = TZFD_Location_Store::update( '1', 1, 'loc-arch', array( 'status' => 'archived' ), time() );
+	$tzfd_loc_ok   = ! empty( $tzfd_loc_add['ok'] ) && ! empty( $tzfd_loc_add2['ok'] ) && ! empty( $tzfd_loc_upd['ok'] );
+	$tzfd_loc_digest = md5( wp_json_encode( array_map( 'get_option', $tzfd_loc_opt ) ) );
+	file_put_contents( $tzfd_loc_fp, wp_json_encode( array( 'digest' => $tzfd_loc_digest ) ) ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_file_put_contents -- scratch fingerprint file outside the plugin, on the disposable site
+	echo ( $tzfd_loc_ok ? 'PASS' : 'FAIL' ) . " location registry written on this version (1 active, 1 archived)\n";
+	return;
+}
+
+if ( 'locverify' === $tzfd_phase ) {
+	ob_start();
+	$tzfd_loc_saved = json_decode( (string) file_get_contents( $tzfd_loc_fp ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- scratch fingerprint file outside the plugin, read on the disposable site
+	if ( ! is_array( $tzfd_loc_saved ) || empty( $tzfd_loc_saved['digest'] ) ) {
+		echo "FAIL location verify -- no location fingerprint file\n";
+	} else {
+		$tzfd_loc_now = md5( wp_json_encode( array_map( 'get_option', $tzfd_loc_opt ) ) );
+		echo ( $tzfd_loc_now === $tzfd_loc_saved['digest'] ? 'PASS' : 'FAIL' ) . " location registry and its log are byte-identical after the folder swap\n";
+		if ( '1' === getenv( 'TZFD_RT_LOC_API' ) ) {
+			// Only on a 3.x folder: the stored registry is read through the store, so an archived location grants nothing.
+			require_once WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/class-tzfd-location-store.php';
+			$tzfd_loc_usable = TZFD_Location_Store::has_active( '1', array( 'loc-up' ) );
+			$tzfd_loc_gone   = ! TZFD_Location_Store::has_active( '1', array( 'loc-arch' ) ) && ! TZFD_Location_Store::has_active( '1', array( 'loc-missing' ) );
+			echo ( $tzfd_loc_usable && $tzfd_loc_gone ? 'PASS' : 'FAIL' ) . " active location is usable, archived and unknown locations are refused (fail closed)\n";
+		}
+	}
+	$tzfd_out = (string) ob_get_clean();
+	echo $tzfd_out; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- already escaped line by line above
+	return;
+}
+
+echo "FAIL harness -- set TZFD_RT_PHASE to seed, verify, schema, locbase, locseed or locverify\n";
 exit( 1 );

@@ -12,6 +12,7 @@ Single WordPress Front Desk plugin; local free booking remains functional, hoste
 - [Platform map](https://github.com/Masterleeaus/Central/blob/main/docs/PLATFORM_MAP.md): ownership, cross-product handoffs, data and identity authority.
 - [Open issues](https://github.com/Masterleeaus/Titan-Zero-Trades-Front-Desk/issues?q=is%3Aissue+is%3Aopen): active work and evidence-backed checklists.
 - [Runtime test guide](../tests/runtime/README.md) and [WordPress plugin readme](../titan-zero-trades-front-desk/readme.txt).
+- [Release 3.1.0 rollback and migrations](RELEASE-3.1.0-ROLLBACK-AND-MIGRATIONS.md): rollback target, schema steps and what a downgrade leaves behind.
 
 ## Documentation maintenance
 

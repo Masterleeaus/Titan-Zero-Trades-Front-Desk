@@ -81,14 +81,14 @@ Downgrade means the remote service stops. It never means local data or local fea
 Local downgrade on the dashboard (`Switch this site to Free`):
 
 1. Requires capability `tz_fd_access` and a valid nonce.
-2. Deletes only the cached entitlement option `tzfd_ai_services_entitlement`.
+2. Deletes the cached entitlement option `tzfd_ai_services_entitlement`, and revokes the hosted data consent when one is granted (issue #423). The stored secret and endpoint are kept, so no hosted request is sent after the downgrade.
 3. Changes no booking, customer, service, calendar, rule or reminder rows.
 4. Does not cancel billing. The owner cancels the subscription in the Titan account, and the connector then sends a state change.
 
 Decisions made here, for review:
 
 5. The local downgrade is a cache reset, not a cancellation. It stops hosted use on this site immediately, even if the Titan account still has an active subscription. The next verified connector payload would set the level again.
-6. The dashboard does not record a downgrade in the audit log yet. That needs the local audit API, which is open below.
+6. A downgrade that revokes granted consent is written to the connection history as `consent_revoked`. A downgrade entry of its own still needs the local audit API, which is open below.
 
 ## Dashboard behaviour
 

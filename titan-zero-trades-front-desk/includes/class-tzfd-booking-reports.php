@@ -123,6 +123,76 @@ final class TZFD_Booking_Reports {
 		);
 	}
 
+	/** Stored tz_enquiries.source values (sanitize_key text) mapped to LEAD_SOURCES. Unlisted text becomes 'other'. */
+	const SOURCE_ALIASES = array(
+		'website-form' => 'web_form', 'web-form' => 'web_form', 'website_form' => 'web_form', 'web_form' => 'web_form',
+		'phone' => 'phone', 'call' => 'phone', 'telephone' => 'phone',
+		'walk-in' => 'walk_in', 'walk_in' => 'walk_in', 'walkin' => 'walk_in',
+		'referral' => 'referral', 'social' => 'social', 'other' => 'other',
+	);
+
+	/** Rows read for the lead source breakdown are capped here. The caller reads one extra row to detect the cap. */
+	const MAX_ENQUIRY_ROWS = 50000;
+
+	/**
+	 * UTC datetime window [start, end) covering whole days from..to inclusive, for comparing against received_utc.
+	 * @return array{start: string, end: string}|null Null for an invalid or reversed range.
+	 */
+	public static function utc_window( $from, $to ) {
+		$f = self::date( $from );
+		$t = self::date( $to );
+		if ( null === $f || null === $t || strcmp( $f, $t ) > 0 ) { return null; }
+		$start = gmmktime( 0, 0, 0, (int) substr( $f, 5, 2 ), (int) substr( $f, 8, 2 ), (int) substr( $f, 0, 4 ) );
+		$end   = gmmktime( 0, 0, 0, (int) substr( $t, 5, 2 ), (int) substr( $t, 8, 2 ) + 1, (int) substr( $t, 0, 4 ) );
+		return array( 'start' => gmdate( 'Y-m-d H:i:s', $start ), 'end' => gmdate( 'Y-m-d H:i:s', $end ) );
+	}
+
+	/** Maps a stored enquiry source to a LEAD_SOURCES value. Empty input is 'unknown'; unlisted text is 'other'. */
+	public static function normalise_lead_source( $raw ) {
+		if ( ! is_string( $raw ) || '' === trim( $raw ) ) { return 'unknown'; }
+		$key = strtolower( trim( $raw ) );
+		return self::SOURCE_ALIASES[ $key ] ?? 'other';
+	}
+
+	/**
+	 * Enquiries per lead source for a date range. Each row holds only the source and received time, never names or contact fields.
+	 *
+	 * @param string $from Y-m-d inclusive.
+	 * @param string $to   Y-m-d inclusive.
+	 * @param array  $rows Each: source (string), received_utc (Y-m-d H:i:s, UTC).
+	 * @return array range, total, by_lead_source (every LEAD_SOURCES key), reconciled.
+	 * @throws InvalidArgumentException On invalid range, malformed row, too many rows, or a failed reconciliation.
+	 */
+	public static function lead_source_breakdown( $from, $to, $rows ) {
+		$f = self::date( $from );
+		$t = self::date( $to );
+		if ( null === $f || null === $t || strcmp( $f, $t ) > 0 ) { throw new InvalidArgumentException( 'invalid_date_range' ); }
+		if ( ! is_array( $rows ) || count( $rows ) > self::MAX_ENQUIRY_ROWS ) { throw new InvalidArgumentException( 'too_many_records' ); }
+
+		$by_source = array();
+		foreach ( self::LEAD_SOURCES as $source ) { $by_source[ $source ] = 0; }
+		$total = 0;
+		foreach ( $rows as $row ) {
+			if ( ! is_array( $row ) || ! is_string( $row['received_utc'] ?? null ) ||
+				! preg_match( '/^([0-9]{4}-[0-9]{2}-[0-9]{2}) [0-9]{2}:[0-9]{2}:[0-9]{2}$/D', $row['received_utc'], $m ) ) {
+				throw new InvalidArgumentException( 'invalid_received_utc' );
+			}
+			$day = self::date( $m[1] );
+			if ( null === $day ) { throw new InvalidArgumentException( 'invalid_received_utc' ); }
+			if ( $day < $f || $day > $t ) { continue; }
+			$by_source[ self::normalise_lead_source( $row['source'] ?? null ) ]++;
+			$total++;
+		}
+		if ( array_sum( $by_source ) !== $total ) { throw new InvalidArgumentException( 'reconciliation_failed' ); }
+
+		return array(
+			'range'          => array( 'from' => $f, 'to' => $t ),
+			'total'          => $total,
+			'by_lead_source' => $by_source,
+			'reconciled'     => true,
+		);
+	}
+
 	/** Builds CSV from an allowlisted set of columns. Cells that a spreadsheet would run as formulas are neutralised. */
 	public static function csv( $columns, $rows ) {
 		if ( ! is_array( $columns ) || empty( $columns ) || ! is_array( $rows ) ) { throw new InvalidArgumentException( 'invalid_csv_inputs' ); }

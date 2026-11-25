@@ -12,6 +12,14 @@
  * Limit: the wizard's POST handler ends each branch with exit, so this file cannot call handle_post() and keep
  * running. It drives the review markup and the write path (apply_ai_setup) directly, through reflection. The write
  * path is the one the handler calls with the sanitized ai_pick values.
+ * Real-WordPress checks for the AI-guided setup steps (issues #40, #171, #450): the optional opening-hours step keeps
+ * saved hours and never invents them, the review step lists what is missing and offers only the tags that the
+ * services produce, rendering writes nothing, and the finish action refuses a request without a valid nonce or
+ * without the setup capability.
+ *
+ * Runs inside a disposable WordPress site, via WP-CLI, from tests/runtime/run-wp-runtime.sh:
+ *   wp eval-file tests/runtime/ai-guided-setup-runtime-tests.php --user=1
+ * Output: one line per check, "PASS|FAIL name -- detail". No live service is called. No hosted AI is used.
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

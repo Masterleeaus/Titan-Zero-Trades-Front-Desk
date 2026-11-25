@@ -66,7 +66,7 @@ jobs:
       - name: Other standalone suites that print PASS/FAIL (exit status gates the job)
         run: |
           set -e
-          for f in tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/unit/ai-widget/run-tests.php tests/sms-cancel-reschedule-checks.php tests/release/check-release-metadata.php; do
+          for f in tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/ai-services/run-downgrade-journey-tests.php tests/unit/ai-widget/run-tests.php tests/sms-cancel-reschedule-checks.php tests/release/check-release-metadata.php; do
             echo "== $f"
             php -d error_reporting=-1 "$f"
           done
@@ -86,6 +86,8 @@ jobs:
           - { php: "8.2", wp: "latest", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.4", wp: "latest", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.3", wp: "6.6", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
+          # Issue #428: the declared minimum (Requires PHP: 7.4) with the plugin minimum WordPress (6.6).
+          - { php: "7.4", wp: "6.6", db: "mariadb:10.11", db_label: "MariaDB 10.11" }
           - { php: "8.3", wp: "latest", db: "mysql:8.0", db_label: "MySQL 8.0" }
     services:
       db:
@@ -220,8 +222,9 @@ jobs:
           # Both scripts print PASS and FAIL lines and gate on their own exit status; the step also gates on the log.
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash oversell-http-tests.sh 2>&1 | tee -a "$LOG"
           B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-cancel-http-tests.sh 2>&1 | tee -a "$LOG"
+          B="$WP_URL" WP_ROOT="$WP_DIR" WP_CLI="php $WP_CLI" bash customer-reschedule-http-tests.sh 2>&1 | tee -a "$LOG"
           if grep -q '^FAIL ' "$LOG"; then echo "Checks failed:"; grep '^FAIL ' "$LOG"; exit 1; fi
-          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused'; do
+          for check in 'A18 the first booking for a free slot is stored' 'A18 a second booking for a full slot is refused' 'A18 a different free slot is still bookable' 'B13 the customer event is dispatched from the outbox' 'B13 replayed confirmation is refused' 'B13R the reschedule event is dispatched from the outbox' 'B13R replayed confirmation is reported as already saved'; do
             grep -q "^PASS $check" "$LOG" || { echo "Did not pass or did not run: $check"; exit 1; }
           done
       - name: Extra WordPress test files (if any)
@@ -403,3 +406,69 @@ jobs:
       - name: Server log on failure
         if: failure()
         run: tail -n 200 server.log || true
+
+  plugin-check:
+    # Issue #444 (item 9): WordPress Plugin Check on a real site. Report-only: it uploads the CSV and prints
+    # ERROR and WARNING counts but does not fail the job, because main still carries known Plugin Check ERRORs
+    # (docs/WORDPRESS-ORG-READINESS.md, section 1). Turning it into a gate is an owner decision.
+    name: Plugin Check report (WP latest, PHP 8.3, MariaDB 10.11)
+    runs-on: ubuntu-latest
+    needs: php-lint
+    services:
+      mariadb:
+        image: mariadb:10.11
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports: ["3306:3306"]
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=5s --health-timeout=5s --health-retries=20
+    env:
+      WP_CLI: /tmp/tzfd-ci/wp-cli.phar
+      WP_DIR: ${{ github.workspace }}/wp-site
+      WP_PORT: "8080"
+      WP_URL: http://localhost:8080
+      DB_NAME: wp_pc_ci
+      DB_USER: wppc
+      DB_PASS: wppcpass
+      PLUGIN_SRC: ${{ github.workspace }}/titan-zero-trades-front-desk
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.3"
+          extensions: mysqli, xml, mbstring, curl, zip, gd, intl
+      - name: Get WP-CLI and WordPress
+        run: |
+          mkdir -p "$(dirname "$WP_CLI")"
+          curl -sS -o "$WP_CLI" https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+          curl -sS -o wordpress.zip https://wordpress.org/latest.zip
+          unzip -q wordpress.zip && mv wordpress "$WP_DIR"
+      - name: Create database and install WordPress
+        run: |
+          mysql -h127.0.0.1 -P3306 -uroot -proot -e "CREATE DATABASE $DB_NAME DEFAULT CHARACTER SET utf8mb4; CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS'; GRANT ALL ON $DB_NAME.* TO '$DB_USER'@'%'; FLUSH PRIVILEGES;"
+          cd "$WP_DIR"
+          php "$WP_CLI" --allow-root config create --dbname=$DB_NAME --dbuser=$DB_USER --dbpass=$DB_PASS --dbhost=127.0.0.1:3306 --skip-check
+          php "$WP_CLI" --allow-root core install --url=$WP_URL --title="FD PC CI" --admin_user=fdadmin --admin_password=fdadmin-test-pass --admin_email=admin@example.test --skip-email
+      - name: Install plugin under test and the Plugin Check tool
+        run: |
+          cp -r "$PLUGIN_SRC" "$WP_DIR/wp-content/plugins/titan-zero-trades-front-desk"
+          cd "$WP_DIR"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" plugin install plugin-check --activate
+          php "$WP_CLI" --allow-root --path="$WP_DIR" plugin activate titan-zero-trades-front-desk
+      - name: Run Plugin Check and write the report
+        run: |
+          set -o pipefail
+          cd "$WP_DIR"
+          REPORT="$RUNNER_TEMP/plugin-check.csv"
+          php "$WP_CLI" --allow-root --path="$WP_DIR" plugin check titan-zero-trades-front-desk --format=csv > "$REPORT" || true
+          echo "Plugin Check rows (ERROR): $(grep -c ',ERROR,' "$REPORT" || true)"
+          echo "Plugin Check rows (WARNING): $(grep -c ',WARNING,' "$REPORT" || true)"
+          cp "$REPORT" "$GITHUB_WORKSPACE/plugin-check.csv"
+      - name: Upload Plugin Check report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: plugin-check-report
+          path: plugin-check.csv
+          if-no-files-found: warn

@@ -82,7 +82,7 @@ SECRET_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_
 [ -n "$SECRET_LINE" ] && eval "$SECRET_LINE" || echo "FAIL addon setup -- could not store the missed-call secret"
 
 # Hosted-service contract (issue #285): a test key and a read_settings-only agent scope, so the signed route is exercised.
-CONTRACT_LINES="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$k = bin2hex(random_bytes(32)); update_option("tzfd_hosted_contract_key", $k, false); update_option("tzfd_hosted_contract_scopes", array("read_settings"), false); echo "\nTZFD_RT_CONTRACT_KEY=" . $k . "\nTZFD_RT_CONTRACT_TENANT=" . (int) TZFD_Scoped_Store::company_id() . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_CONTRACT_')"
+CONTRACT_LINES="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$k = bin2hex(random_bytes(32)); update_option("tzfd_hosted_contract_key", $k, false); update_option("tzfd_hosted_contract_scopes", array("read_settings", "read_services", "read_locations"), false); echo "\nTZFD_RT_CONTRACT_KEY=" . $k . "\nTZFD_RT_CONTRACT_TENANT=" . (int) TZFD_Scoped_Store::company_id() . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_CONTRACT_')"
 [ -n "$CONTRACT_LINES" ] && eval "$CONTRACT_LINES" || echo "FAIL contract setup -- could not store the test contract key"
 
 echo "--- hosted-service contract over HTTP (service-contract-http-tests.sh, issue #285)"
@@ -119,8 +119,14 @@ $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/wp-runtime-tests.php" --
 
 echo "--- oversell through the public form over HTTP (oversell-http-tests.sh, issue #389 A18)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/oversell-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- public booking with name and email only over HTTP (public-booking-name-http-tests.sh, issue #420)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/public-booking-name-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- customer cancel end to end over HTTP (customer-cancel-http-tests.sh, issue #334 B13)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-cancel-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- customer reschedule end to end over HTTP (customer-reschedule-http-tests.sh, issue #463 B13 reschedule half)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-reschedule-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- customer reschedule end to end over HTTP (reschedule-http-tests.sh, issue #463 B13 reschedule half)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/reschedule-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- portal session switching (portal-session-switch-tests.php, issue #334)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/portal-session-switch-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- authorisation and tenant checks (security-runtime-tests.php, issue #8)"
@@ -134,6 +140,8 @@ echo "--- booking report (booking-report-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-report-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- staff access (staff-access-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/staff-access-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+echo "--- location admin (location-admin-runtime-tests.php, issue #362)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/location-admin-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 echo "--- AI answer box form (ai-answer-box-form-runtime-tests.php, issue #185)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/ai-answer-box-form-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- slot-holds schema (slot-holds-schema-runtime-tests.php, issue #186)"
@@ -151,8 +159,14 @@ echo "--- default booking form name (booking-default-form-name-runtime-tests.php
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/booking-default-form-name-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- SMS gateway outage (outage-runtime-tests.php, issue #340)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/outage-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- onboarding import outage (onboarding-import-outage-tests.php, issue #447)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/onboarding-import-outage-tests.php" --user=1 2>&1 | tee -a "$LOG"
+echo "--- onboarding import outage (onboarding-import-outage-runtime-tests.php, issue #447)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/onboarding-import-outage-runtime-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- get started (setup-page-runtime-tests.php)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/setup-page-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
+echo "--- AI-guided setup (ai-guided-setup-runtime-tests.php, issue #450)"
+$WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/ai-guided-setup-runtime-tests.php" --user=1 2>/dev/null | tee -a "$LOG"
 
 # Destructive: last, in its own process.
 echo "--- opt-in uninstall (uninstall-wipe-check.php)"

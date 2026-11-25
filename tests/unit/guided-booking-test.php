@@ -113,5 +113,17 @@ check( 'slot taken after confirmation refused', 'slot_unavailable' === TZFD_Guid
 check( 'submit with unavailable snapshot refused', 'engine_unavailable' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria(), null, $service, $slot, $values, $conf['token'] )['status'] );
 check( 'tenant mismatch refused', 'tenant_mismatch' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria( 'acme', 'other' ), $none, $service, $slot, $values, $conf['token'] )['status'] );
 
+// Issue #441 gap checks: cross-tenant token replay, off-grid slot, service swap, malformed company scope.
+$other_conf = TZFD_Guided_Booking::confirmation( 'other', $catalog, 'mel', $service, $slot, $values );
+check( 'token issued for another company is refused', 'confirmation_mismatch' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria(), $none, $service, $slot, $values, $other_conf['token'] )['status'] );
+$off_grid = array( 'start' => '2026-10-04T22:30:00Z', 'end' => '2026-10-04T23:30:00Z', 'resource_ids' => array( 'tech1' ) );
+$off_conf = TZFD_Guided_Booking::confirmation( 'acme', $catalog, 'mel', $service, $off_grid, $values );
+check( 'slot not offered by the engine is refused even with a matching token', 'slot_unavailable' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria(), $none, $service, $off_grid, $values, $off_conf['token'] )['status'] );
+$win = $services[1];
+check( 'token for one service does not accept another service', 'confirmation_mismatch' === TZFD_Guided_Booking::submit( 'acme', $catalog, criteria(), $none, $win, $slot, $values, $conf['token'] )['status'] );
+check( 'malformed company scope throws before any engine work', throws( function () use ( $catalog, $service, $slot, $values ) {
+    TZFD_Guided_Booking::submit( 'acme one!', $catalog, criteria( 'acme one!' ), array(), $service, $slot, $values, 'x' );
+} ) );
+
 echo $GLOBALS['tzfd_gb_pass'] . " passed, " . $GLOBALS['tzfd_gb_fail'] . " failed\n";
-if ( $GLOBALS['tzfd_gb_pass'] !== 27 || $GLOBALS['tzfd_gb_fail'] ) { echo "Check count or failures differ from expected.\n"; exit( 1 ); }
+if ( $GLOBALS['tzfd_gb_pass'] !== 31 || $GLOBALS['tzfd_gb_fail'] ) { echo "Check count or failures differ from expected.\n"; exit( 1 ); }

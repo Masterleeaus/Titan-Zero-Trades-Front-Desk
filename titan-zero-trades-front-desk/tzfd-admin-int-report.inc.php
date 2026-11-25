@@ -260,7 +260,7 @@ wp_enqueue_script( 'tzfd-report', plugins_url( 'js/inline/admina-report.js', __F
 	<div class="clear"></div>
 </div>
 
-<?php do_action("tz_fd_do_action_reportstats"); ?>
+<?php do_action("tzfd_do_action_reportstats"); do_action("tz_fd_do_action_reportstats"); /* phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release */ ?>
 
 <?php require_once dirname( __FILE__ ).'/tzfd-full-stats.inc.php'; ?>
 

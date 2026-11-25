@@ -1,6 +1,6 @@
 # WordPress.org readiness checklist (issues #3, #9, #44)
 
-Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.0.128).
+Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.1.0).
 Recorded 2026-11-16 on branch `packaging-provenance-wporg`. Plugin Check style review (section 6) recorded 2026-11-17 on branch `readiness/plugincheck`.
 
 This checklist records what was checked, what was not, and why. **It does not claim WordPress.org review or approval.** No submission has been made. Status values: **Done** (checked here with evidence), **Partial**, **Not run** (needs a WordPress environment or a human), **Open** (known gap).
@@ -12,7 +12,7 @@ This checklist records what was checked, what was not, and why. **It does not cl
 | Plugin header Name is the official display name | Done | `titan-zero-front-desk.php` line 3: "Scheduling & Enquiries Manager" |
 | Text Domain is `titan-zero-trades-front-desk` and matches the folder | Done | Header line 11 |
 | Requires at least 6.6, Requires PHP 7.4, License GPL-2.0-only | Done | Header lines 6, 7 and 9 |
-| Stable tag equals plugin Version | Done | Both 3.0.128 (readme "Stable tag", header "Version") |
+| Stable tag equals plugin Version | Done | Both 3.1.0 (readme "Stable tag", header "Version") |
 | readme.txt title matches the display name | Done | `readme.txt` line 1 |
 | Contributors, Tags (5 or fewer), Tested up to | Done | `readme.txt` header lines |
 | Standard readme sections (Description, Installation, FAQ, Changelog, Upgrade Notice, License) | Done | Present in readme.txt |
@@ -53,7 +53,7 @@ The readme "External services" section lists five services: an SMS gateway and p
 |---|---|---|
 | Every outbound call in code is disclosed | Partial | Four live call sites match a listed service. The WhatsApp and SMS buttons are links only. One dormant call site (AI connector transport) is not disclosed; see section 6, decision 3 |
 | Disclosure states that nothing is sent to the plugin author by default | Partial | Stated in readme. Not verified by tracing every path |
-| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` shortcode returns empty. readme says "This version does not use AI" |
+| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` stub is not registered; `includes/class-tzfd-retired-shortcodes.php` strips its tag from content (#185). readme says "This version does not use AI" |
 | Hosted Assistant and Agent Team are optional and separate | Done (documentation) | readme "Optional upgrades" section. No hosted client code is shipped in this lane |
 | Consent controls for external services | Not run | Not traced |
 | Safe endpoints (HTTPS, safe remote requests) | Partial | Webhook and import use `wp_safe_remote_*`. SMS gateway uses `wp_safe_remote_post`. Twilio uses `wp_remote_post` with the Twilio URL |
@@ -125,7 +125,7 @@ Checked by grep and by reading the files named. No WordPress site was available,
 | `base64_decode()` | Open | `includes/class-tzfd-booking-validation-recovery.php:50` and `includes/class-tzfd-addon-support.php:591`. Used to decode stored tokens and secrets, not code. Still a discouraged function |
 | `error_log()` | Open (low) | Four calls in `includes/class-tzfd-post-commit-dispatch.php:14` and `tzfd-main-class.inc.php:3992, 4016, 4078` |
 | `tempnam()` and `file_put_contents()` | Open | Scheduled CSV reports, `tzfd-main-class.inc.php:4030-4032` and `:4098-4100`. Uses a private temp directory; review with the security lane |
-| `file_get_contents()` | Partial | Four calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-legacy-ai-data.php:412` (uploaded temp file, size-checked), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887` |
+| `file_get_contents()` | Partial | Three calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887`. The fourth, in the legacy AI restore upload, was removed with the legacy screen under #360 (PR #467). |
 | `eval`, `exec`, `shell_exec`, `system`, `curl_*`, `ini_set`, `set_time_limit`, `create_function`, `unlink` | Done | No calls found in plugin code |
 | Superglobal access (`$_GET`, `$_POST`, `$_REQUEST`, `$_FILES`, `$_COOKIE`, `$_SERVER`) | Not run | About 376 references. Sanitising and nonce checks were not audited in this lane. Route to the security lane |
 
@@ -166,6 +166,34 @@ Checked by grep and by reading the files named. No WordPress site was available,
 3. **Dormant AI connector.** Either remove `includes/class-tzfd-ai-connector.php` before submission, or add it to "External services" and state that it is not called. Not changed here.
 4. **Installation wording.** "This is a new plugin, not an upgrade" is kept. Decide whether it stays before submission (see section 1).
 5. **Banned-function fixes** (`extract`, `base64_decode`, `error_log`) are not edited here. They change code, so they belong to a code lane with tests.
+
+## 7. Remaining work from #282 (issue #329, checked 2026-11-23)
+
+Each row is one checklist item from #329. Status values: **Verified** (run here, result recorded), **Blocked** (the tool or site it needs is not installed in this sandbox: no `wp`, no MySQL/MariaDB), **Owner** (needs a decision), **In flight** (an open PR owns it, so this lane did not duplicate it), **Open** (not started).
+
+| #329 item | Status | Evidence or reason |
+|---|---|---|
+| Free build has no bundled AI execution (clean-install check and code map) | Partial | `php tests/runtime/ai-free-edition-unit-tests.php`: 14 passed, 0 failed. Its checks include "only the Twilio SMS transport and the gated AI connector make outbound HTTP calls" and "no AI provider host or endpoint in plugin PHP". `tests/runtime/clean-install-ai-check.php` needs WP-CLI: **Blocked**. The code map is not written here. Dormant connector: see 6f and decision 3 |
+| Legacy AI removal decision | Owner | Decision 3 in 6i. Removing `includes/class-tzfd-ai-connector.php` needs the owner |
+| Old installs keep data access and the legacy AI data migration on a pre-AI site | Blocked | Needs a WordPress site. `tests/runtime/upgrade-from-3.0.128.sh` needs WP-CLI and a database. Not run |
+| Acceptance and cross-app compatibility for the AI removal | Owner | Needs the owner's acceptance decision and the Supercharged and Central contract owners. Not verified |
+| 17 Plugin Check ERRORs on main | In flight | Open PR #356 (`fix(plugin-check): clear the last three Plugin Check ERROR rows`). On main, `parse_url()` still appears at `titan-zero-trades-front-desk/tzfd-public-int.inc.php:11` and `includes/class-tzfd-ai-connector.php:316, 409`. Plugin Check itself is **Blocked** (needs WordPress) |
+| 672 Plugin Check WARNINGs | Blocked / Owner | Plugin Check cannot run here. Known code items are listed in 6d (`extract()`, `base64_decode()`, `error_log()`, temp-file writes). PR #313 covers global prefixing. Those fixes change code and need a code lane with tests |
+| Licence and provenance records match the release | Partial | `tests/release/check-release-metadata.php`: 16 checks passed (version 3.0.128). Byte-for-byte check of `LICENSE.txt` against gnu.org is **Blocked** (agent proxy). Licence wording is decision 1 |
+| SHA-256 manifests for v3.0.128 (ca912ee) and main | In flight | Open PR #361 (`docs(provenance): commit SHA-256 baselines`). Not duplicated here |
+| Three-way merge plan and regression diff against the v3.0.128 ZIP and the Pass 03 candidate | Blocked | The Pass 03 candidate is not in the repo. Needs the candidate source from the owner |
+| No loss of booking, cancellation, reminders, telephony logs, customer data, Woo/payment hooks, privacy exporter, credits | Blocked | `tests/runtime/wp-runtime-tests.php`, `runtime-tests.php` and `uninstall-wipe-check.php` need WordPress and a database. Not run |
+| Booking create, cancel and reschedule on a fresh install from the built ZIP; WordPress and PHP matrix; multisite | Blocked | Needs WP-CLI, MariaDB, and multiple WordPress and PHP versions. Not run |
+| Readme, screenshots, WCAG review of mobile booking forms, performance | Open / Owner | No screenshot set exists (section 1). WCAG and performance not measured |
+| Final readiness report listing every gap, with a tested downgrade | Partial | This section is the gap list. Tested downgrade is covered only by `upgrade-from-3.0.128.sh`, which is Blocked here |
+
+Evidence run on 2026-11-23 (PHP 8.3.6, no WordPress, no database):
+
+- `php -l` on every `.php` file under `titan-zero-trades-front-desk/`: no errors.
+- `php tests/unit/run.php`: local-free suite passed 572, failed 0; Free AI cases: assertions passed 177, failed 0.
+- `php tests/release/check-release-metadata.php`: 16 checks passed.
+- `php tests/runtime/ai-free-edition-unit-tests.php`: 14 passed, 0 failed.
+- Not run for lack of WordPress or a database: `clean-install-ai-check.php`, `uninstall-wipe-check.php` (both report FAIL "not running inside WordPress" when run standalone).
 
 ## Summary
 

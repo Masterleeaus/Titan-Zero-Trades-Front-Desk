@@ -19,6 +19,13 @@ function update_option( $name, $value, $autoload = null ) {
 	$GLOBALS['tzfd_test_options'][ $name ] = $value;
 	return true;
 }
+function add_option( $name, $value = '', $deprecated = '', $autoload = null ) {
+	if ( array_key_exists( $name, $GLOBALS['tzfd_test_options'] ) ) {
+		return false;
+	}
+	$GLOBALS['tzfd_test_options'][ $name ] = $value;
+	return true;
+}
 function delete_option( $name ) {
 	unset( $GLOBALS['tzfd_test_options'][ $name ] );
 	return true;

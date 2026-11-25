@@ -38,43 +38,48 @@ function tzfd_test_setup_checklist() {
 	tzfd_assert_same( $first, $C::record( false, $first, $all['steps'], $now + 900 ), 'turning consent off freezes the existing record' );
 	tzfd_assert_same( array( 'services' => $now ), $C::record( true, array( 'services' => $now ), array( 'services' => array( 'done' => true ), 'unknown' => array( 'done' => true ) ), $now + 1 ), 'steps not in the catalogue are never recorded' );
 
-	// Measures from a consented record (issue #367).
-	$none_m = $C::measures( array() );
-	tzfd_assert( false === $none_m['setup_complete'] && 0 === $none_m['steps_recorded'] && null === $none_m['first_booking_at'] && false === $none_m['converted'], 'an empty record measures nothing' );
-	$null_m = $C::measures( null );
-	tzfd_assert( 0 === $null_m['steps_recorded'] && null === $null_m['seconds_to_first_booking'], 'a non-array record is treated as empty, not an error' );
+	// Setup measures (issue #367): consent-gated, per site, derived only from the stored record.
+	$off = $C::metrics( array( 'services' => $now ), false );
+	tzfd_assert( false === $off['measured'] && null === $off['completion_percent'] && null === $off['converted'], 'without consent no setup measure is reported' );
+	tzfd_assert_same( array(), array_diff( array( 'steps_done', 'completion_percent', 'first_booking_at', 'seconds_to_first_booking', 'converted' ), array_keys( $off ) ), 'the unmeasured shape keeps every key' );
 
-	$full = array();
-	foreach ( array_keys( $steps ) as $i => $key ) { $full[ $key ] = $now + ( $i * 100 ); }
-	$m = $C::measures( $full );
-	tzfd_assert( true === $m['setup_complete'] && 7 === $m['steps_recorded'], 'all seven recorded steps mean setup is complete' );
-	tzfd_assert_same( $now + 600, $m['setup_completed_at'], 'setup completion time is the last step first seen done' );
-	tzfd_assert_same( $now + 400, $m['first_booking_at'], 'first booking time is the test_booking step time' );
-	tzfd_assert( false === $m['converted'], 'a booking seen before setup completed is not counted as converted after setup' );
-	tzfd_assert_same( 400, $m['seconds_to_first_booking'], 'time to first booking runs from the earliest recorded step' );
+	$none_m = $C::metrics( array(), true );
+	tzfd_assert( true === $none_m['measured'] && 0 === $none_m['steps_done'] && 0 === $none_m['completion_percent'], 'consent with no record measures zero completion' );
+	tzfd_assert( false === $none_m['complete'] && null === $none_m['first_booking_at'] && false === $none_m['converted'], 'no booking and no completion is not converted' );
 
-	$after = $full;
-	$after['test_booking'] = $now + 900;
-	$ma = $C::measures( $after );
-	tzfd_assert( true === $ma['converted'] && 900 === $ma['seconds_to_first_booking'], 'a booking seen after setup completion is converted' );
+	$partial = $C::metrics( array( 'services' => $now, 'calendar' => $now + 10, 'hours' => $now + 20 ), true );
+	tzfd_assert( 3 === $partial['steps_done'] && 43 === $partial['completion_percent'], 'three of seven steps is 43 percent' );
+	tzfd_assert( null === $partial['seconds_to_first_booking'] && false === $partial['converted'], 'no booking seen means no time to first booking' );
 
-	$partial = array( 'services' => $now, 'test_booking' => $now + 50, 'unknown' => $now, 'calendar' => 0, 'customer' => 'x' );
-	$mp = $C::measures( $partial );
-	tzfd_assert( false === $mp['setup_complete'] && 2 === $mp['steps_recorded'] && null === $mp['setup_completed_at'], 'unknown, zero and non-numeric entries are ignored and setup is not complete' );
-	tzfd_assert( false === $mp['converted'] && 50 === $mp['seconds_to_first_booking'], 'a partial record still reports a booking time but no conversion' );
+	$booked = $C::metrics( array( 'services' => $now, 'calendar' => $now + 10, 'hours' => $now + 20, 'test_booking' => $now + 300 ), true );
+	tzfd_assert( 300 === $booked['seconds_to_first_booking'] && $now + 300 === $booked['first_booking_at'], 'time to first booking runs from the earliest recorded step' );
+	tzfd_assert( false === $booked['converted'], 'a booking before setup is complete does not count as converted' );
 
-	tzfd_assert_same( $now + 600, $m['configured_at'], 'configured time is the last non-booking step first seen done' );
+	$full = array_fill_keys( array_keys( $C::steps() ), $now );
+	$full['test_booking'] = $now + 60;
+	$conv = $C::metrics( $full, true );
+	tzfd_assert( true === $conv['complete'] && 100 === $conv['completion_percent'] && true === $conv['converted'], 'complete setup with a booking is converted' );
+	tzfd_assert( 60 === $conv['seconds_to_first_booking'], 'full record gives the time to first booking' );
 
-	$no_booking = $full;
-	unset( $no_booking['test_booking'] );
-	$mn = $C::measures( $no_booking );
-	tzfd_assert( false === $mn['setup_complete'] && $now + 600 === $mn['configured_at'] && null === $mn['first_booking_at'] && false === $mn['converted'] && null === $mn['seconds_to_first_booking'], 'configured setup without a booking is not converted and has no booking time' );
+	$skew = $C::metrics( array( 'services' => $now, 'test_booking' => $now - 5 ), true );
+	tzfd_assert( 0 === $skew['seconds_to_first_booking'], 'a booking stamped before the first step is clamped to zero, never negative' );
+	tzfd_assert_same( 1, $C::metrics( array( 'services' => $now, 'bogus' => $now ), true )['steps_done'], 'keys outside the catalogue are not counted as steps' );
+	// Discovery links (issue #366): off by default, after opt-in and activation only, no registration.
+	$active = array( 'services' => true, 'calendar' => false );
+	tzfd_assert( false === $C::discovery_visible( null, $active ), 'discovery links are off when the option was never set' );
+	tzfd_assert( false === $C::discovery_visible( false, $active ), 'discovery links stay off when the administrator has not opted in' );
+	tzfd_assert( false === $C::discovery_visible( 'yes', $active ), 'a truthy non-boolean option does not turn discovery on' );
+	tzfd_assert( false === $C::discovery_visible( true, array() ), 'opt-in alone does not show links before the plugin is in use' );
+	tzfd_assert( false === $C::discovery_visible( true, array( 'services' => false, 'calendar' => false ) ), 'no service or calendar means the plugin is not yet in use' );
+	tzfd_assert( true === $C::discovery_visible( true, $active ), 'opt-in with a service shows the links' );
+	tzfd_assert( true === $C::discovery_visible( true, array( 'calendar' => true ) ), 'opt-in with a calendar shows the links' );
 
-	$booked_first = array( 'services' => $now, 'calendar' => $now + 1, 'hours' => $now + 2, 'form' => $now + 3, 'reminders' => $now + 4, 'customer' => $now + 5, 'test_booking' => $now + 6 );
-	$mb = $C::measures( $booked_first );
-	tzfd_assert( true === $mb['setup_complete'] && true === $mb['converted'] && 6 === $mb['seconds_to_first_booking'], 'configuration finished and then a booking, with the booking last, is converted' );
-	$mbb = $C::measures( array( 'services' => $now, 'calendar' => $now + 1, 'hours' => $now + 2, 'form' => $now + 3, 'reminders' => $now + 4, 'customer' => $now + 5, 'test_booking' => $now ) );
-	tzfd_assert( false === $mbb['converted'] && $now === $mbb['first_booking_at'], 'a booking seen before the last configuration step is not converted' );
+	$links = $C::discovery_links();
+	tzfd_assert_same( array( 'pro', 'ai', 'agent' ), array_keys( $links ), 'discovery links cover Pro, AI and Agent in that order' );
+	tzfd_assert_same( array( 'tzfd-booking-report', 'tzfd-ai-services', 'tzfd-agent-receipts' ), array_column( $links, 'page' ), 'each discovery link points to an existing admin screen' );
+	$text = '';
+	foreach ( $links as $link ) { $text .= $link['label'] . ' ' . $link['hint'] . ' '; }
+	tzfd_assert( false === stripos( $text, 'register' ) && false === stripos( $text, 'sign up' ) && false === stripos( $text, 'buy' ), 'discovery copy never asks for registration or a purchase' );
 }
 
 // Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).

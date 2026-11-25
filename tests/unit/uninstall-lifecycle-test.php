@@ -185,14 +185,14 @@ $wpdb->throw_on_drop_for = null;
 
 /* ---- 7. deactivation and activation never delete data (source guard) ---- */
 $main = file_get_contents( $plugin . '/titan-zero-front-desk.php' );
-if ( preg_match( '/function tz_fd_clear_scheduled_events\(\)\s*\{(.*?)\n\s{4}\}/s', $main, $m ) ) {
+if ( preg_match( '/function tzfd_clear_scheduled_events\(\)\s*\{(.*?)\n\s{4}\}/s', $main, $m ) ) {
 	$body = $m[1];
 	t_ok( 1 !== preg_match( '/DROP|DELETE|delete_option|TRUNCATE|wpdb|update_option/i', $body ), 'deactivation handler only unschedules events' );
-	t_ok( false !== strpos( $body, 'tz_fd_unschedule_all_events' ), 'deactivation handler unschedules through the shared helper' );
+	t_ok( false !== strpos( $body, 'tzfd_unschedule_all_events' ), 'deactivation handler unschedules through the shared helper' );
 } else {
-	t_ok( false, 'could not locate tz_fd_clear_scheduled_events body' );
+	t_ok( false, 'could not locate tzfd_clear_scheduled_events body' );
 }
-if ( preg_match( '/function tz_fd_activate\(\)\s*\{(.*?)\n\s{4}\}/s', $main, $m ) ) {
+if ( preg_match( '/function tzfd_activate\(\)\s*\{(.*?)\n\s{4}\}/s', $main, $m ) ) {
 	t_ok( 1 !== preg_match( '/DROP TABLE|TRUNCATE|DELETE FROM|uninstall/i', $m[1] ), 'activation handler contains no destructive statement' );
 }
 

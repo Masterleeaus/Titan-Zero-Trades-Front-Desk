@@ -26,12 +26,12 @@ require_once __DIR__ . '/agents/class-tzfd-orchestrator.php';
  *
  * Hooks:
  *   filter tz_fd_ai_create_booking        creates a booking (AI assistant)
- *   filter tz_fd_pipeline_source          label for where the booking came from, e.g. "whatsapp:inbound"
- *   filter tz_fd_pipeline_autonomous      true to approve automatically once the slot check passes
- *   filter tz_fd_pipeline_slot_capacity   places per slot (default 1)
- *   filter tz_fd_pipeline_duration        slot length in minutes (default 60)
- *   filter tz_fd_pipeline_fulfilment_reasons  extra slot-check reasons (for workers and resources)
- *   action tz_fd_pipeline_moved           after every state change: booking_id, from, to, stage, reason
+ *   filter tzfd_pipeline_source          label for where the booking came from, e.g. "whatsapp:inbound"
+ *   filter tzfd_pipeline_autonomous      true to approve automatically once the slot check passes
+ *   filter tzfd_pipeline_slot_capacity   places per slot (default 1)
+ *   filter tzfd_pipeline_duration        slot length in minutes (default 60)
+ *   filter tzfd_pipeline_fulfilment_reasons  extra slot-check reasons (for workers and resources)
+ *   action tzfd_pipeline_moved           after every state change: booking_id, from, to, stage, reason
  */
 final class TZFD_Pipeline {
 
@@ -41,7 +41,7 @@ final class TZFD_Pipeline {
     const OPTION_DB    = 'tz_fd_pipeline_db_version';
     const DB_VERSION   = '2';
     const CRON         = 'tz_fd_pipeline_supervisor';
-    const ACTION_MOVED = 'tz_fd_pipeline_moved';
+    const ACTION_MOVED = 'tzfd_pipeline_moved';
     const MAX_BATCH    = 50;
     const SCAN_LIMIT   = 5000;
 
@@ -101,7 +101,9 @@ final class TZFD_Pipeline {
         if ( ! is_array( $args ) || empty( $args['formid'] ) || ! isset( $args['draft'] ) || ! is_array( $args['draft'] ) ) {
             return $result;
         }
-        $source = substr( sanitize_text_field( (string) apply_filters( 'tz_fd_pipeline_source', 'front-desk', $args ) ), 0, 60 );
+        $source = (string) apply_filters( 'tzfd_pipeline_source', 'front-desk', $args );
+        $source = (string) apply_filters( 'tz_fd_pipeline_source', $source, $args ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        $source = substr( sanitize_text_field( $source ), 0, 60 );
         return self::submit( (int) $args['formid'], $args['draft'], $source );
     }
 
@@ -133,7 +135,8 @@ final class TZFD_Pipeline {
         $parts = self::slot_parts( $draft );
         if ( null === $parts ) { return self::fail( 'invalid_slot' ); }
 
-        $duration = (int) apply_filters( 'tz_fd_pipeline_duration', TZFD_Pipeline_Rules::DEFAULT_DURATION, $draft );
+        $duration = (int) apply_filters( 'tzfd_pipeline_duration', TZFD_Pipeline_Rules::DEFAULT_DURATION, $draft );
+        $duration = (int) apply_filters( 'tz_fd_pipeline_duration', $duration, $draft ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         $slot     = TZFD_Pipeline_Rules::slot_string( $parts['start'], $duration );
         if ( '' === $slot ) { return self::fail( 'invalid_duration' ); }
         $date  = $parts['date'];
@@ -474,7 +477,10 @@ final class TZFD_Pipeline {
         } finally {
             if ( ! $within_transaction && ! $committed ) { $wpdb->query( 'ROLLBACK' ); }
         }
-        if ( $notify ) { do_action( 'tz_fd_pipeline_moved', $id, $from, $to, $stage, (string) $reason ); }
+        if ( $notify ) {
+            do_action( 'tzfd_pipeline_moved', $id, $from, $to, $stage, (string) $reason );
+            do_action( 'tz_fd_pipeline_moved', $id, $from, $to, $stage, (string) $reason ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        }
         return true;
     }
 
@@ -515,17 +521,21 @@ final class TZFD_Pipeline {
 
     /** Places in a slot, between 1 and 1000. */
     public static function capacity( $formid, $date, $slot ) {
-        $capacity = (int) apply_filters( 'tz_fd_pipeline_slot_capacity', 1, (int) $formid, $date, $slot );
+        $capacity = (int) apply_filters( 'tzfd_pipeline_slot_capacity', 1, (int) $formid, $date, $slot );
+        $capacity = (int) apply_filters( 'tz_fd_pipeline_slot_capacity', $capacity, (int) $formid, $date, $slot ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         return max( 1, min( 1000, $capacity ) );
     }
 
     /**
      * Whether a booking that has passed the checks is approved without staff. The pipeline manager's
-     * policy sets the default. The tz_fd_pipeline_autonomous filter can override it.
+     * policy sets the default. The tzfd_pipeline_autonomous filter can override it.
      */
     public static function autonomous( $id, $source ) {
         $default = class_exists( 'TZFD_Manager_Pipeline' ) ? (bool) TZFD_Manager_Pipeline::policy()['autonomous'] : false;
-        return (bool) apply_filters( 'tz_fd_pipeline_autonomous', $default, array( 'booking_id' => (int) $id, 'source' => (string) $source ) );
+        $args = array( 'booking_id' => (int) $id, 'source' => (string) $source );
+        $autonomous = (bool) apply_filters( 'tzfd_pipeline_autonomous', $default, $args );
+        $autonomous = (bool) apply_filters( 'tz_fd_pipeline_autonomous', $autonomous, $args ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        return $autonomous;
     }
 
     /* ---------- Internals ---------- */

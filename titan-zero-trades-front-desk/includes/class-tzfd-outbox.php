@@ -8,7 +8,7 @@ require_once __DIR__ . '/class-tzfd-extension-core.php';
  * Outbound messages for the SMS and broadcast add-ons.
  *
  * Messages are queued as records, skip contacts who opted out, and are sent
- * through the connected channel adapter: tz_fd_sms_send for SMS, and wp_mail
+ * through the connected channel adapter: tzfd_sms_send for SMS, and wp_mail
  * for email. A message with no connected sender stays queued, so nothing is
  * lost when a site has not connected a provider yet. Opt-outs are stored as
  * hashes, not as plain phone numbers or addresses.
@@ -206,7 +206,8 @@ final class TZFD_Outbox {
         if ( 'email' === ( $tzfd_message['channel'] ?? '' ) ) {
             return (bool) wp_mail( $tzfd_message['to'], __( 'Message from us', 'titan-zero-trades-front-desk' ), $tzfd_message['body'], array( 'Content-Type: text/plain; charset=UTF-8' ) );
         }
-        $sent = apply_filters( 'tz_fd_sms_send', null, array( 'to' => $tzfd_message['to'], 'body' => $tzfd_message['body'] ) );
+        $sent = apply_filters( 'tzfd_sms_send', null, array( 'to' => $tzfd_message['to'], 'body' => $tzfd_message['body'] ) );
+        $sent = apply_filters( 'tz_fd_sms_send', $sent, array( 'to' => $tzfd_message['to'], 'body' => $tzfd_message['body'] ) ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         if ( null === $sent ) { return null; }
         return true === $sent;
     }

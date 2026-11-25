@@ -161,6 +161,19 @@ final class TZFD_Enquiry_Triage_Rules {
         return array( 'level' => $reasons ? 'urgent' : 'normal', 'reasons' => $reasons );
     }
 
+    /**
+     * Priority override. An administrator's 'urgent' or 'normal' choice beats the rule result in both directions.
+     * An empty or unknown override leaves the rule result unchanged.
+     *
+     * @param string $rule_level 'urgent' or 'normal' from urgency().
+     * @param string $override   '', 'urgent' or 'normal' as stored on the triage row.
+     * @return string 'urgent' or 'normal'.
+     */
+    public static function effective_urgency( $rule_level, $override ) {
+        if ( 'urgent' === $override || 'normal' === $override ) { return $override; }
+        return 'urgent' === $rule_level ? 'urgent' : 'normal';
+    }
+
     /** Minimum gap between two urgent alert emails for the same company. */
     const ALERT_WINDOW = 900;
 

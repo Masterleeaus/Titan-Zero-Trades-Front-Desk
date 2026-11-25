@@ -112,6 +112,13 @@ check( 'after revocation the screen shows no consent', false !== strpos( $html, 
 // Connector-side retention accepts the page's values.
 check( 'connector accepts retention set by the page', $P::normalise_retention( '45' ) === 45 && TZFD_AI_Connector::set_retention_days( 45 ) && 45 === TZFD_AI_Connector::retention_days() );
 
+// Usage and passthrough terms (#372 item 3): every usage model in the descriptor is rendered on the page.
+$desc_levels = TZFD_AI_Services::descriptors()['levels'];
+$html        = render_page();
+check( 'usage section heading renders', false !== strpos( $html, 'Usage and passthrough terms' ) );
+check( 'assistant usage model renders', false !== strpos( $html, htmlspecialchars( $desc_levels['assistant']['usage_model'], ENT_QUOTES ) ) );
+check( 'agent team usage model renders SMS and voice passthrough', false !== strpos( $html, htmlspecialchars( $desc_levels['agent_team']['usage_model'], ENT_QUOTES ) ) && false !== strpos( $html, 'SMS and voice are passed through' ) );
+check( 'free level shows no hosted usage model', false !== strpos( $html, 'No hosted usage model for this level.' ) );
 // Agent Team panel: this standalone run does not load the gateway, so the panel must degrade, not fatal.
 $html = render_page();
 check( 'agent panel heading renders', false !== strpos( $html, 'Agent Team controls' ) );
@@ -120,19 +127,20 @@ check( 'agent panel adds no write form', false === strpos( $html, 'tzfd_agent_st
 // Connect and disconnect screen (#333): the secret field is write-only and the page shows only paired / not paired.
 $GLOBALS['tz_opts'] = array();
 $html = render_page();
-check( 'unpaired screen offers the connect form', false !== strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'name="endpoint"' ) && false !== strpos( $html, 'name="site_id"' ) );
+check( 'unpaired screen offers the connect hosted account form (pairing code, issue #347)', false !== strpos( $html, 'name="pairing_code"' ) && false === strpos( $html, 'name="endpoint"' ) && false === strpos( $html, 'name="secret"' ) );
 check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tzfd_ai_connector_disconnect' ) );
-check( 'secret input is a password field with no value attribute', 1 === preg_match( '/<input type="password" id="tzfd-ai-secret" name="secret"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) );
+check( 'pairing code input is a text field with no value attribute and autocomplete off', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code" name="pairing_code"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) && false !== strpos( $m[0], 'autocomplete="off"' ) );
 check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
+check( 'connect control stays disabled until hosted pairing is live', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) );
 
 TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
 $html = render_page();
-check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="pairing_code"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
 check( 'paired screen never renders the secret', false === strpos( $html, $secret ) && false === strpos( $html, 'S3CRET' ) );
 
 TZFD_AI_Connector::disconnect();
 $html = render_page();
-check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="secret"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="pairing_code"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
 check( 'after disconnect the secret is not stored', false === TZFD_AI_Connector::status()['secret_set'] );
 
 $GLOBALS['tz_opts'] = array();

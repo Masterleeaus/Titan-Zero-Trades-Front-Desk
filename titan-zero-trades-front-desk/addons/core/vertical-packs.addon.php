@@ -117,7 +117,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             $packs = array();
 
             // 1. Optional site or extension packs. These add custom IDs; Workspace wins on canonical ID collisions.
-            $extra = apply_filters( 'tz_fd_vertical_packs_register', array() );
+            $extra = apply_filters( 'tzfd_vertical_packs_register', array() );
+            $extra = apply_filters( 'tz_fd_vertical_packs_register', $extra ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             foreach ( (array) $extra as $tzfd_local_entry ) {
                 if ( is_string( $tzfd_local_entry ) && file_exists( $tzfd_local_entry ) ) {
                     $tzfd_data = self::read_pack( $tzfd_local_entry );
@@ -403,7 +404,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             // write it. Quotes listens to this action and seeds its own catalogue from the pack.
             $cat_created = 0;
             if ( ! empty( $pack['catalog'] ) ) {
-                do_action( 'tz_fd_pack_catalog_items', $pack['catalog'], $id );
+                do_action( 'tzfd_pack_catalog_items', $pack['catalog'], $id );
+                do_action( 'tz_fd_pack_catalog_items', $pack['catalog'], $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 $cat_created = is_array( $pack['catalog'] ) ? count( $pack['catalog'] ) : 0;
             }
 
@@ -420,7 +422,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             );
             TZFD_Scoped_Store::update( self::STATE_OPTION, $installed );
 
-            do_action( 'tz_fd_vertical_pack_installed', $id, $pack );
+            do_action( 'tzfd_vertical_pack_installed', $id, $pack );
+            do_action( 'tz_fd_vertical_pack_installed', $id, $pack ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
             return array(
                 'ok'      => true,
@@ -441,7 +444,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             if ( $pack ) {
                 // Catalog items belong to Titan Zero Quotes. Quotes removes its own items for this pack.
                 if ( ! empty( $pack['catalog'] ) ) {
-                    do_action( 'tz_fd_pack_catalog_items_removed', $pack['catalog'], $id );
+                    do_action( 'tzfd_pack_catalog_items_removed', $pack['catalog'], $id );
+                    do_action( 'tz_fd_pack_catalog_items_removed', $pack['catalog'], $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 }
                 // Remove the pack-specific prompt block
                 $cur = (string) TZFD_Scoped_Store::get('tz_fd_ai_system_prompt','');
@@ -456,7 +460,8 @@ if ( ! class_exists( 'TZFD_Vertical_Packs' ) ) {
             // Report success only when the installed-state write is saved. A pack still marked installed must not fire the uninstall hook.
             if ( ! TZFD_Scoped_Store::update( self::STATE_OPTION, $installed ) ) { return false; }
 
-            do_action( 'tz_fd_vertical_pack_uninstalled', $id, $pack );
+            do_action( 'tzfd_vertical_pack_uninstalled', $id, $pack );
+            do_action( 'tz_fd_vertical_pack_uninstalled', $id, $pack ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             return true;
         }
 

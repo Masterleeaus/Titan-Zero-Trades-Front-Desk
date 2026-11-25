@@ -133,6 +133,28 @@ if ( ! class_exists( 'TZFD_Cancel_Reschedule_Assistant' ) ) {
         }
 
         /**
+         * Runtime entry point for a message with no booking context (the public assistant route). It can only
+         * classify, explain policy and point to the signed link. It never looks up a booking, never returns a
+         * change action, and a clear cancel or reschedule message always gets the verify step.
+         *
+         * @return array Keys: intent, action, message, policy.
+         */
+        public static function plan_without_booking( $text, array $policy ) {
+            $intent      = self::classify( $text );
+            $policy_text = self::policy_summary( $policy );
+            if ( self::INTENT_NONE === $intent ) {
+                return array( 'intent' => $intent, 'action' => 'not_applicable', 'message' => '', 'policy' => $policy_text );
+            }
+            $action = self::INTENT_UNCERTAIN === $intent ? self::ACTION_HANDOFF : self::ACTION_VERIFY;
+            return array(
+                'intent'  => $intent,
+                'action'  => $action,
+                'message' => self::MESSAGES[ $action ],
+                'policy'  => $policy_text,
+            );
+        }
+
+        /**
          * Plain-language policy text from fixed, validated numbers only.
          * $policy keys: cancel_notice_hours, reschedule_notice_hours (non-negative ints, max 8760).
          */

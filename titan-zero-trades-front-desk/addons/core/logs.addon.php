@@ -30,9 +30,9 @@ if( !class_exists( 'TZFD_ActivityLogsWidget' ) )
             $this->description = $this->tr_apply("The add-on logs booking additions, status changes and deletions, and shows the latest entries.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data', array( $this, 'log_created' ), 40, 1 );
-            add_action( 'tz_fd_update_status', array( $this, 'log_status' ), 40, 2 );
-            add_action( 'tz_fd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'log_created' ), 40, 1 );
+            add_action( 'tzfd_update_status', array( $this, 'log_status' ), 40, 2 );
+            add_action( 'tzfd_item_deleted', array( $this, 'log_deleted' ), 40, 1 );
         } // End __construct
 
         /************************ LOG STORAGE *****************************/

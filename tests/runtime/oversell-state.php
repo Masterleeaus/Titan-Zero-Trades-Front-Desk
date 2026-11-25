@@ -5,9 +5,11 @@
  *   TZFD_OS_MODE=count   TZFD_OS_DATE=<Y-m-d> TZFD_OS_SLOT=<start/end> wp eval-file ... (occupied bookings on that slot)
  *   TZFD_OS_MODE=restore wp eval-file ... (puts back the calendar row that setup changed, and removes the test page)
  *
- * Setup makes calendar 1 one that takes a single booking per slot (capacity 1, 60 minute visits, no CAPTCHA, so the
- * public form can be posted without a human answer), publishes a page with the calendar shortcode, and prints
- * KEY=value lines for the shell script. The original row is kept in an option until restore runs.
+ * Setup makes calendar 1 one that takes a single booking per slot (capacity 1, 60 minute visits), publishes a page
+ * with the calendar shortcode, and prints KEY=value lines for the shell script. The original row is kept in an option
+ * until restore runs. The booking CAPTCHA is left as it is: the shell script answers it the way a visitor does.
+ *   TZFD_OS_MODE=answer  TZFD_OS_CHALLENGE=<id> (prints the answer the server holds for a challenge id from the
+ *                        visitor's rand_code cookie; the only route to the answer without reading the image)
  * Driven by tests/runtime/oversell-http-tests.sh. Not shipped in the plugin.
  */
 
@@ -54,7 +56,7 @@ if ( 'setup' === $mode ) {
 		echo "FAIL oversell setup -- calendar 1 has no appointment field\n";
 		exit( 1 );
 	}
-	$wpdb->update( $forms, array( 'form_structure' => wp_json_encode( $decoded ), 'cv_enable_captcha' => 'false' ), array( 'id' => $form_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- test fixture write
+	$wpdb->update( $forms, array( 'form_structure' => wp_json_encode( $decoded ) ), array( 'id' => $form_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- test fixture write
 
 	$page_id = wp_insert_post( array(
 		'post_type'    => 'page',
@@ -70,6 +72,14 @@ if ( 'setup' === $mode ) {
 
 	echo 'TZFD_OS_PAGE=' . $page_id . "\n";
 	echo 'TZFD_OS_DATE=' . gmdate( 'Y-m-d', strtotime( '+30 days' ) ) . "\n";
+	exit( 0 );
+}
+
+if ( 'answer' === $mode ) {
+	// The answer the server stored for one challenge. Only the test harness calls this; the check itself is unchanged.
+	$challenge = preg_replace( '/[^a-z0-9]/', '', strtolower( (string) getenv( 'TZFD_OS_CHALLENGE' ) ) );
+	$answer    = '' !== $challenge ? get_transient( 'tzfd-captcha-' . $challenge ) : false;
+	echo 'TZFD_OS_CODE=' . ( is_string( $answer ) ? $answer : '' ) . "\n";
 	exit( 0 );
 }
 

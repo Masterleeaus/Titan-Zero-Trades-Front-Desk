@@ -8,7 +8,8 @@ require_once __DIR__ . '/class-tzfd-ai-free-core.php';
  * - Deterministic and offline. Booking and setup never need AI, a key or a connector.
  * - Suggestions come only from values the administrator entered (business name, service names).
  *   Hours, prices and other facts are never invented. Those fields are reported as missing.
- * - Every suggestion needs confirmation. Nothing is written by this class.
+ * - Every suggestion needs confirmation. This class writes nothing except through store_confirmed_tags(), which needs
+ *   confirmation. The greeting is not a suggestion: it is written at the first customer contact (#400).
  * - Existing values are kept: a suggestion is made only for a field that is empty, or for an FAQ or tag
  *   that does not already exist. That is what keeps upgraded sites safe.
  * - "required" in missing() means required before AI can be enabled. Booking never depends on these items.
@@ -38,7 +39,7 @@ final class TZFD_Ai_Setup_Check {
 			$out[] = self::item( 'hosted_connector', __( 'Hosted AI connection', 'titan-zero-trades-front-desk' ), false, __( 'Optional. Booking and rules-based FAQs work without it.', 'titan-zero-trades-front-desk' ) );
 		}
 		if ( '' === trim( (string) ( $state['greeting'] ?? '' ) ) ) {
-			$out[] = self::item( 'greeting', __( 'Greeting', 'titan-zero-trades-front-desk' ), false, __( 'A suggested greeting is available.', 'titan-zero-trades-front-desk' ) );
+			$out[] = self::item( 'greeting', __( 'Greeting', 'titan-zero-trades-front-desk' ), false, __( 'Written automatically when the first customer enquiry arrives. Nothing to confirm.', 'titan-zero-trades-front-desk' ) );
 		}
 		return $out;
 	}
@@ -77,9 +78,8 @@ final class TZFD_Ai_Setup_Check {
 		}
 		$services = array_values( array_unique( $services ) );
 
-		if ( '' === trim( (string) ( $state['greeting'] ?? '' ) ) && '' !== $name ) {
-			$out[] = self::suggestion( 'greeting', 'Hello, thanks for contacting ' . $name . '. How can we help you today?', 'business_name' );
-		}
+		// The greeting is not a suggestion. It is written at the first customer contact (owner decision on #400,
+		// 2026-11-23): see first_contact_greeting() and TZFD_Lead_Intake::submit_public().
 
 		$existing = array();
 		foreach ( (array) ( $state['faq_questions'] ?? array() ) as $q ) {
@@ -112,6 +112,44 @@ final class TZFD_Ai_Setup_Check {
 			$out[] = self::suggestion( 'tags', array_slice( $tags, 0, self::MAX_TAGS ), 'services' );
 		}
 		return $out;
+	}
+
+	/** Option that holds the confirmed enquiry tags. One list per site (agent-proposed default recorded on #400). */
+	const TAGS_OPTION = 'tz_fd_ai_enquiry_tags';
+
+	/** Text written as the greeting. Built only from the administrator's business name. */
+	public static function greeting_text( $business_name ) {
+		$name = TZFD_Ai_Free_Core::plain_text( $business_name, 120 );
+		return '' === $name ? '' : 'Hello, thanks for contacting ' . $name . '. How can we help you today?';
+	}
+
+	/**
+	 * Greeting to write at the first customer contact, or null. Written only when no greeting exists yet, so a
+	 * greeting the administrator wrote is never replaced. Needs a business name, so nothing is invented.
+	 */
+	public static function first_contact_greeting( $existing_greeting, $business_name ) {
+		if ( '' !== trim( (string) $existing_greeting ) ) { return null; }
+		$text = self::greeting_text( $business_name );
+		return '' === $text ? null : $text;
+	}
+
+	/** Confirmed enquiry tags already stored for this site. */
+	public static function saved_tags() {
+		$tags = get_option( self::TAGS_OPTION, array() );
+		return is_array( $tags ) ? array_values( array_filter( array_map( 'strval', $tags ), 'strlen' ) ) : array();
+	}
+
+	/**
+	 * Stores tags the administrator confirmed, in the one per-site list. Refuses without confirmation (via confirm()).
+	 * Returns array( 'ok' => true, 'value' => full list ) or the confirm() error.
+	 */
+	public static function store_confirmed_tags( array $suggestion, array $edits ) {
+		if ( 'tags' !== ( $suggestion['type'] ?? '' ) ) { return TZFD_Ai_Free_Core::fail( 'unknown_type' ); }
+		$done = self::confirm( $suggestion, $edits );
+		if ( empty( $done['ok'] ) ) { return $done; }
+		$list = array_values( array_unique( array_merge( self::saved_tags(), (array) $done['value'] ) ) );
+		update_option( self::TAGS_OPTION, $list, false );
+		return array( 'ok' => true, 'value' => $list );
 	}
 
 	/**

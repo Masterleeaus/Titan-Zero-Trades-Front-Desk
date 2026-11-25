@@ -23,7 +23,7 @@ if ( ! function_exists( 'tzfd_assert' ) ) {
 	} );
 }
 
-$tzfd_ai_src_file = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-legacy-ai-data.php';
+$tzfd_ai_src_file = dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes/class-tzfd-legacy-privacy.php';
 $tzfd_ai_src      = is_readable( $tzfd_ai_src_file ) ? (string) file_get_contents( $tzfd_ai_src_file ) : ''; // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local source file read by the test runner.
 
 tzfd_assert( '' !== $tzfd_ai_src, 'legacy-ai no-auto-delete: class source readable' );
@@ -42,18 +42,12 @@ $tzfd_ai_bad     = array_values( array_intersect( $tzfd_ai_hooks[1], $tzfd_ai_on
 tzfd_assert( array() === $tzfd_ai_bad, 'legacy-ai no-auto-delete: no on-load hook registered (found: ' . implode( ',', $tzfd_ai_bad ) . ')' );
 tzfd_assert( isset( $tzfd_ai_body['register'] ) && false === strpos( $tzfd_ai_body['register'], 'delete_option(' ) && false === stripos( $tzfd_ai_body['register'], 'DELETE FROM' ), 'legacy-ai no-auto-delete: register() performs no delete' );
 
-/* 2. Option deletes: only in delete_scope(), and only after the receipt check. */
+/* 2. Option deletes: none. The admin delete path was removed (#467); the class must not delete options at all. */
 $tzfd_ai_option_deleters = array();
 foreach ( $tzfd_ai_body as $tzfd_ai_name => $tzfd_ai_body_text ) {
 	if ( false !== strpos( $tzfd_ai_body_text, "delete_option(" ) ) { $tzfd_ai_option_deleters[] = $tzfd_ai_name; }
 }
-tzfd_assert( array( 'delete_scope' ) === $tzfd_ai_option_deleters, 'legacy-ai no-auto-delete: delete_option only in delete_scope (found in: ' . implode( ',', $tzfd_ai_option_deleters ) . ')' );
-
-$tzfd_ai_scope = isset( $tzfd_ai_body['delete_scope'] ) ? $tzfd_ai_body['delete_scope'] : '';
-$tzfd_ai_gate  = strpos( $tzfd_ai_scope, 'backup_current()' );
-$tzfd_ai_phr   = strpos( $tzfd_ai_scope, 'PHRASE' );
-$tzfd_ai_del   = strpos( $tzfd_ai_scope, 'delete_option(' );
-tzfd_assert( false !== $tzfd_ai_gate && false !== $tzfd_ai_phr && false !== $tzfd_ai_del && $tzfd_ai_gate < $tzfd_ai_del && $tzfd_ai_phr < $tzfd_ai_del, 'legacy-ai no-auto-delete: backup and phrase checks run before any option delete' );
+tzfd_assert( array() === $tzfd_ai_option_deleters, 'legacy-ai no-auto-delete: no delete_option anywhere (found in: ' . implode( ',', $tzfd_ai_option_deleters ) . ')' );
 
 /* 3. Row deletes: admin chat delete in delete_scope(), exact-address erase in privacy_erase(), nowhere else. */
 $tzfd_ai_row_deleters = array();
@@ -61,7 +55,7 @@ foreach ( $tzfd_ai_body as $tzfd_ai_name => $tzfd_ai_body_text ) {
 	if ( 1 === preg_match( "/DELETE\s+FROM/i", $tzfd_ai_body_text ) ) { $tzfd_ai_row_deleters[] = $tzfd_ai_name; }
 }
 sort( $tzfd_ai_row_deleters );
-tzfd_assert( array( 'delete_scope', 'privacy_erase' ) === $tzfd_ai_row_deleters, 'legacy-ai no-auto-delete: row deletes only in delete_scope and privacy_erase (found in: ' . implode( ',', $tzfd_ai_row_deleters ) . ')' );
+tzfd_assert( array( 'privacy_erase' ) === $tzfd_ai_row_deleters, 'legacy-ai no-auto-delete: row deletes only in privacy_erase (found in: ' . implode( ',', $tzfd_ai_row_deleters ) . ')' );
 
 /* The privacy eraser matches an exact, lower-cased address, never a pattern. */
 $tzfd_ai_erase = isset( $tzfd_ai_body['privacy_erase'] ) ? $tzfd_ai_body['privacy_erase'] : '';

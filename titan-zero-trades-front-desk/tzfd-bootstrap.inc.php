@@ -125,7 +125,7 @@ TZFD_Pipeline_Screen::register();
 
 $tzfd_plugin = new TZFD_Scheduling_Plugin;
 add_action('tzfd_process_data_before_insert', array($tzfd_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);
-add_action('tz_fd_process_data', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
 // A rejected/failed submission must release its per-calendar database lock as
 // reliably as a successful insert, including invalid customer and insert errors.
 add_action('tzfd_process_data_insert_failed', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);

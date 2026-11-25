@@ -82,7 +82,7 @@ final class TZFD_AI_Services_Page {
 
     /**
      * Connect hosted account (issue #347): the admin enters the single-use pairing code shown by Supercharged.
-     * TZFD_AI_Pairing exchanges it for the per-site secret over https. The code is read once, passed on and
+     * TZFD_AI_Pairing exchanges it over https for a signed central-pairing/1 assertion. The per-site secret comes from the secret store. The code is read once, passed on and
      * dropped; it is never echoed, logged or stored. Consent is revoked by a successful pairing, so data is
      * never sent to a new endpoint on old consent.
      */
@@ -188,9 +188,10 @@ final class TZFD_AI_Services_Page {
                     <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
                     <p>
                         <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label><br />
-                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required />
+                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required disabled />
                     </p>
-                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <p><button type="submit" class="button button-secondary" disabled><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <p class="description"><?php esc_html_e( 'Hosted pairing is not live yet, so this control stays disabled.', 'titan-zero-trades-front-desk' ); ?></p>
                 </form>
             <?php endif; ?>
 
@@ -207,6 +208,28 @@ final class TZFD_AI_Services_Page {
                         <td><?php echo esc_html( (string) $level['label'] ); ?></td>
                         <td><?php echo esc_html( (string) $level['disclosure'] ); ?></td>
                         <td><?php echo esc_html( self::usage_text( $level ) ); ?></td>
+                    </tr>
+                <?php endforeach; ?>
+                </tbody>
+            </table>
+
+            <h2><?php esc_html_e( 'Usage and passthrough terms', 'titan-zero-trades-front-desk' ); ?></h2>
+            <table class="widefat striped" style="max-width:52em">
+                <thead><tr>
+                    <th scope="col"><?php esc_html_e( 'Level', 'titan-zero-trades-front-desk' ); ?></th>
+                    <th scope="col"><?php esc_html_e( 'Usage model, SMS and voice passthrough, fair use', 'titan-zero-trades-front-desk' ); ?></th>
+                </tr></thead>
+                <tbody>
+                <?php foreach ( $levels as $key => $level ) : ?>
+                    <tr>
+                        <td><?php echo esc_html( (string) $level['label'] ); ?></td>
+                        <td><?php
+                            if ( isset( $level['usage_model'] ) && '' !== (string) $level['usage_model'] ) {
+                                echo esc_html( (string) $level['usage_model'] );
+                            } else {
+                                esc_html_e( 'No hosted usage model for this level.', 'titan-zero-trades-front-desk' );
+                            }
+                        ?></td>
                     </tr>
                 <?php endforeach; ?>
                 </tbody>
@@ -229,9 +252,6 @@ final class TZFD_AI_Services_Page {
                     <?php endforeach; ?>
                 </fieldset>
                 <p class="description"><?php echo esc_html( $setup['confirmation'] ); ?></p>
-                <?php if ( ! empty( $setup['owner_review'] ) ) : ?>
-                    <p class="description"><em><?php esc_html_e( 'This wording is a proposed default and has not yet been signed off by the plugin owner.', 'titan-zero-trades-front-desk' ); ?></em></p>
-                <?php endif; ?>
                 <p><button type="submit" class="button button-primary"><?php esc_html_e( 'Save consent', 'titan-zero-trades-front-desk' ); ?></button></p>
             </form>
             <?php if ( $status['consent'] ) : ?>

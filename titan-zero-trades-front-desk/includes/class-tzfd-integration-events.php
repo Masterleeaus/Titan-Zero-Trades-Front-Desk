@@ -6,7 +6,7 @@ class TZFD_Integration_Events {
 
     public static function register() {
         if ( function_exists( 'add_action' ) ) {
-            add_action( 'tz_fd_process_data', array( __CLASS__, 'dispatch_created' ), 20, 1 );
+            add_action( 'tzfd_process_data', array( __CLASS__, 'dispatch_created' ), 20, 1 );
             add_action( 'tzfd_update_status', array( __CLASS__, 'dispatch_status_update_attempted' ), 20, 2 );
         }
     }

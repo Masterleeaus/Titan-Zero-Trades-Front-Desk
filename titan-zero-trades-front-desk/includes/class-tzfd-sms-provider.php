@@ -41,7 +41,7 @@ abstract class TZFD_Sms_Provider_Addon extends TZFD_BaseAddon
         if ( ! $this->addon_is_active() ) { return; }
         TZFD_Outbox::boot();
         add_filter( 'tzfd_sms_send', array( $this, 'send' ), 10, 2 );
-        add_action( 'tz_fd_process_data', array( $this, 'queue_booking_text' ), 40, 1 );
+        add_action( 'tzfd_process_data', array( $this, 'queue_booking_text' ), 40, 1 );
         // The generic webhook route was removed (19 Oct, decision). handle_inbound() is not reachable until a route is re-homed.
     }
 

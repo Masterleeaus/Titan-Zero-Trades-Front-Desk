@@ -55,7 +55,7 @@ if( !class_exists( 'TZFD_Cache' ) )
             add_action( 'tzfd_cache_clean', array( &$this, 'cache_clean'), 99, 1 ); // $formid
                         
             add_action( 'tzfd_update_status', array( &$this, 'update_status' ), 10, 3 );
-            add_action( 'tz_fd_process_data', array( &$this, 'new_submission' ), 10, 2 );
+            add_action( 'tzfd_process_data', array( &$this, 'new_submission' ), 10, 2 );
             add_action( 'tzfd_item_deleted', array( &$this, 'item_deleted' ), 10, 1 );
             
             

@@ -796,7 +796,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     $text = TZFD_Ai_Setup_Check::describe( $suggestion );
                     if ( 'tags' === $suggestion['type'] ) {
                         // Tags have no saved place yet, so they are listed but never ticked.
-                        echo '<li>' . esc_html( $text . ' (' . __( 'not saved by this step', 'titan-zero-trades-front-desk' ) . ')' ) . '</li>';
+                        $not_saved = __( 'not saved by this step', 'titan-zero-trades-front-desk' );
+                        echo '<li>' . esc_html( $text . ' (' . $not_saved . ')' ) . '</li>';
                         continue;
                     }
                     echo '<li><label><input type="checkbox" name="ai_pick[]" value="' . esc_attr( $suggestion['id'] ) . '" /> ' . esc_html( $text ) . '</label></li>';

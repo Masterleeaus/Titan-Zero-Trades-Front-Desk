@@ -94,21 +94,23 @@ Response headers `X-TZFD-Timestamp`, `X-TZFD-Nonce` (must echo the request nonce
 - Transport error or timeout: `offline`, with `use_local => true`.
 - Secret is sent only in the HMAC, never in a result, status, usage record, or log line.
 
-## Pairing (issue #347, contract tzfd-pair/1)
+## Pairing (issue #347, contract central-pairing/1)
 
-The site owner enters a single-use pairing code shown by Supercharged on the AI Services screen (Connect hosted account). The plugin class is `TZFD_AI_Pairing` (`includes/class-tzfd-ai-pairing.php`).
+The site owner enters a single-use pairing code shown by Supercharged on the AI Services screen (Connect hosted account). The plugin class is `TZFD_AI_Pairing` (`includes/class-tzfd-ai-pairing.php`). The signed assertion is verified and stored by `TZFD_Central_Tenant::connect()` (`includes/class-tzfd-central-tenant.php`).
 
 - Endpoint: the constant `TZFD_AI_PAIRING_ENDPOINT` or the filter `tzfd_ai_pairing_endpoint`. Off by default: with neither set, nothing is sent and the screen says pairing is not available. The owner-approved value is `https://central.titanzero.io/api/tzfd/pair` (#347 and #456). Only https, with a host and no userinfo, is accepted.
-- Request: `POST`, `Content-Type: application/json`, JSON body `{"contract":"tzfd-pair/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. Timeout 8 seconds, redirects not followed. The code is sent once and is never stored, logged or echoed.
+- Request: `POST`, `Content-Type: application/json`, JSON body `{"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}`. Timeout 8 seconds, redirects not followed. The code is sent once and is never stored, logged or echoed.
 - Site id: 32 random hex characters, created on first pairing and kept across re-pairing.
-- Response: HTTP 200 and a JSON body `{"contract":"tzfd-pair/1","site":"<site id>","nonce":"<same nonce>","secret":"<64 lowercase hex>","feature_endpoint":"https://..."}`. The body is at most 16384 bytes. The `feature_endpoint` must be https and on the same host as the pairing endpoint. Any other reply is refused.
-- On success the secret and feature endpoint are stored through `TZFD_AI_Connector::configure()` and consent is revoked. A repeat pairing replaces the secret and needs consent again.
-- On any refusal or transport error the existing connection, consent and secret are left unchanged.
-- Results: `paired`, `pairing_off`, `invalid_code`, `busy`, `offline`, `rejected`, `invalid_response`. Lock: one pairing at a time, a lock older than 30 seconds is taken over.
-- Server obligations (hosted service, not in this plugin): accept each pairing code once only, rate-limit attempts, record consent for the site, return the response above, and sign the pairing response once a signing key exists.
+- Response: HTTP 200 and a JSON body with exactly the seven assertion fields `contract`, `site`, `company_uuid`, `operations`, `nonce`, `issued_at` and `expires_at`. Any other field, including a `secret` or `feature_endpoint`, is refused. The body is at most 16384 bytes.
+- Signature: the response carries `X-TZFD-Timestamp`, `X-TZFD-Nonce` and `X-TZFD-Signature: sha256=<hex>`, an HMAC-SHA256 over `<timestamp>.<nonce>.<raw body>` with the per-site secret. The `X-TZFD-Nonce` must echo the request nonce. `connect()` then checks the signature, timestamp skew, site, company UUID, nonce, issue and expiry times, lifetime and replay.
+- Per-site secret: delivered out of band through the secret store, provisioned by the Central operator. It is not in the request, the response body or any header. The plugin reads it with `TZFD_Central_Tenant::provisioned_secret()` from the constant `TZFD_CENTRAL_SITE_SECRET` or the filter `tzfd_central_site_secret` (at least 32 characters). Without it, nothing is sent and the result is `secret_missing`.
+- On success the assertion is stored by `TZFD_Central_Tenant::connect()` (the secret is stored from the secret store, never from the response) and consent is revoked. A repeat pairing for the same company is a rotation. A pairing for a different company needs an explicit reassignment and is refused otherwise.
+- On any refusal or transport error the existing pairing, credential and consent are left unchanged.
+- Results: `paired`, `pairing_off`, `invalid_code`, `secret_missing`, `busy`, `offline`, `rejected`, `invalid_response` (with a `reason`, for example `fields_mismatch`, `bad_signature`, `stale`, `nonce_not_echoed`, `company_reassign_required`). Lock: one pairing at a time, a lock older than 30 seconds is taken over.
+- Server obligations (hosted service, not in this plugin): accept each pairing code once only, rate-limit attempts, record consent for the site, return exactly the seven fields signed with the per-site secret, and never return the secret in the response.
 - Pairing does not fetch entitlements and does not make a hosted AI request. Hosted AI calls still need a valid Central company pairing (#376), so they stay `not_configured` until that is in place.
 
-Tests: `tests/ai-connector/run-pairing-tests.php`, offline, run in CI.
+Tests: `tests/ai-connector/run-pairing-tests.php`, offline, run in CI. The secret used by the tests is generated at run time.
 
 ## Server obligations (not in this plugin)
 

@@ -2,32 +2,34 @@
 /**
  * Pairing with the hosted AI service (issue #347).
  *
- * Owner decisions recorded on #347: the pairing endpoint is the one recorded on #456
- * (https://central.titanzero.io/api/tzfd/pair), the site owner enters a pairing code shown by
- * Supercharged, and the per-site secret is issued by the hosted service at pairing.
+ * Owner decisions recorded on #347: the pairing endpoint is https://central.titanzero.io/api/tzfd/pair (#456),
+ * the site owner enters a pairing code shown by Supercharged, and the per-site secret is delivered out of
+ * band through the secret store, provisioned by the Central operator. It is never in the pairing response.
  *
  * Rules:
  * - The endpoint comes only from the constant TZFD_AI_PAIRING_ENDPOINT or the filter tzfd_ai_pairing_endpoint.
  *   It is off by default: with neither set, nothing is sent. Only https URLs with a host and no userinfo are used.
+ * - The per-site secret is read from the secret store (TZFD_Central_Tenant::provisioned_secret()) and is never
+ *   sent, returned or logged. Without it, nothing is sent.
  * - The pairing code is single use. It is sent once, in the JSON body over HTTPS, and is never stored,
  *   logged, echoed or returned.
- * - The response must echo the contract, the site id and the nonce, carry a 64 lowercase hex secret, and
- *   name a feature endpoint on the same host as the pairing endpoint. Anything else is refused and the
- *   existing connection is left unchanged.
- * - A successful pairing stores the secret and feature endpoint through TZFD_AI_Connector::configure() and
- *   revokes consent, so data never goes to a new endpoint on old consent.
+ * - The response body carries exactly the seven signed assertion fields of central-pairing/1 and nothing else.
+ *   It is signed with HMAC-SHA256 in the X-TZFD-Timestamp, X-TZFD-Nonce and X-TZFD-Signature headers. The
+ *   signature and every field are checked by TZFD_Central_Tenant::connect(). The nonce must echo the request.
+ * - A refused or failed exchange leaves the existing pairing and credential unchanged.
  *
- * Request (POST, JSON body):    {"contract":"tzfd-pair/1","site":"<site id>","nonce":"<hex>","code":"<pairing code>"}
- * Response (JSON body, 200):    {"contract":"tzfd-pair/1","site":"<site id>","nonce":"<hex>","secret":"<64 hex>","feature_endpoint":"https://..."}
+ * Request (POST, JSON body):    {"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}
+ * Response (JSON body, 200):    {"contract":"central-pairing/1","site":"<site id>","company_uuid":"<uuid>","operations":["..."],"nonce":"<32 hex>","issued_at":<int>,"expires_at":<int>}
+ * Response headers:             X-TZFD-Timestamp, X-TZFD-Nonce, X-TZFD-Signature (sha256=<hex>)
  *
- * See docs/AI-SERVICE-CONNECTOR-CONTRACT.md, section "Pairing".
+ * See docs/AI-SERVICE-CONNECTOR-CONTRACT.md, section "Pairing", and docs/CENTRAL-COMPANY-PAIRING.md.
  */
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 final class TZFD_AI_Pairing {
 
-    const CONTRACT        = 'tzfd-pair/1';
+    const CONTRACT        = 'central-pairing/1';
     const ENDPOINT_CONST  = 'TZFD_AI_PAIRING_ENDPOINT';
     const ENDPOINT_FILTER = 'tzfd_ai_pairing_endpoint';
     const TRANSPORT_FILTER = 'tzfd_ai_pairing_transport';
@@ -57,8 +59,8 @@ final class TZFD_AI_Pairing {
     /**
      * Exchanges a single-use pairing code for a per-site secret.
      *
-     * @return array { status: paired|pairing_off|invalid_code|busy|offline|rejected|invalid_response, ... }
-     *               Never contains the code, the secret or the response body.
+     * @return array { status: paired|pairing_off|invalid_code|secret_missing|busy|offline|rejected|invalid_response, ... }
+     *               Never contains the code, the secret, the response body or the signature.
      */
     public static function pair( $code ) {
         $endpoint = self::endpoint();
@@ -76,6 +78,9 @@ final class TZFD_AI_Pairing {
     private static function exchange( $endpoint, $code ) {
         $site_id = self::site_id();
         if ( '' === $site_id ) { return self::result( 'invalid_response' ); }
+
+        $secret = TZFD_Central_Tenant::provisioned_secret();
+        if ( '' === $secret ) { return self::result( 'secret_missing' ); }
 
         $nonce = bin2hex( random_bytes( 16 ) );
         $body  = self::encode( array(
@@ -108,21 +113,27 @@ final class TZFD_AI_Pairing {
         $data = json_decode( $response_body, true );
         if ( ! is_array( $data ) ) { return self::result( 'invalid_response' ); }
 
-        if ( ! isset( $data['contract'] ) || self::CONTRACT !== $data['contract'] ) { return self::result( 'invalid_response' ); }
-        if ( ! isset( $data['site'] ) || ! is_string( $data['site'] ) || ! hash_equals( $site_id, $data['site'] ) ) { return self::result( 'invalid_response' ); }
-        if ( ! isset( $data['nonce'] ) || ! is_string( $data['nonce'] ) || ! hash_equals( $nonce, $data['nonce'] ) ) { return self::result( 'invalid_response' ); }
-        if ( ! isset( $data['secret'] ) || ! is_string( $data['secret'] ) || 1 !== preg_match( self::SECRET_PATTERN, $data['secret'] ) ) { return self::result( 'invalid_response' ); }
+        // Exactly the seven signed fields: a missing field, an extra field (including any secret) or a non-object body is refused.
+        $fields = TZFD_Central_Tenant::assertion_fields();
+        if ( array() !== array_diff( array_keys( $data ), $fields ) || array() !== array_diff( $fields, array_keys( $data ) ) ) {
+            return self::result( 'invalid_response', array( 'reason' => 'fields_mismatch' ) );
+        }
 
-        $feature = isset( $data['feature_endpoint'] ) && is_string( $data['feature_endpoint'] ) ? $data['feature_endpoint'] : '';
-        if ( ! self::valid_https_url( $feature ) || ! self::same_host( $endpoint, $feature ) ) { return self::result( 'invalid_response' ); }
+        $headers = isset( $raw['headers'] ) && is_array( $raw['headers'] ) ? $raw['headers'] : array();
+        $echo    = '';
+        foreach ( $headers as $name => $value ) {
+            if ( is_scalar( $value ) && 'x-tzfd-nonce' === strtolower( (string) $name ) ) { $echo = (string) $value; }
+        }
+        if ( '' === $echo || ! hash_equals( $nonce, $echo ) ) { return self::result( 'invalid_response', array( 'reason' => 'nonce_not_echoed' ) ); }
 
-        // configure() validates the endpoint, site id and secret before it writes anything, so a refusal keeps the old connection.
-        $saved = TZFD_AI_Connector::configure( $feature, $site_id, $data['secret'] );
-        $data  = array();
-        if ( ! $saved ) { return self::result( 'invalid_response' ); }
+        // connect() verifies the signature, timestamp, nonce, site, company, lifetime and replay, then stores the pairing.
+        $v = TZFD_Central_Tenant::connect( $response_body, $headers, $site_id, $secret, time() );
+        $response_body = '';
+        $data          = array();
+        if ( empty( $v['ok'] ) ) { return self::result( 'invalid_response', array( 'reason' => (string) $v['reason'] ) ); }
 
-        TZFD_AI_Connector::revoke_consent(); // rotation: consent must be granted again for the new pairing
-        return self::result( 'paired' );
+        TZFD_AI_Connector::revoke_consent(); // a new pairing needs consent again
+        return self::result( 'paired', array( 'reason' => (string) $v['reason'] ) );
     }
 
     /** Stable per-site id, created once and kept across re-pairing. */
@@ -146,14 +157,6 @@ final class TZFD_AI_Pairing {
             && ! isset( $parts['user'] ) && ! isset( $parts['pass'] );
     }
 
-    private static function same_host( $a, $b ) {
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pa = parse_url( $a );
-        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pb = parse_url( $b );
-        return is_array( $pa ) && is_array( $pb ) && strtolower( $pa['host'] ) === strtolower( $pb['host'] );
-    }
-
     private static function transport( array $request ) {
         $raw = function_exists( 'apply_filters' ) ? apply_filters( 'tzfd_ai_pairing_transport', null, $request ) : null;
         if ( null !== $raw ) { return $raw; }
@@ -165,9 +168,14 @@ final class TZFD_AI_Pairing {
             'redirection' => 0,
         ) );
         if ( is_wp_error( $response ) ) { return array( 'error' => 'offline' ); }
+        $headers = array();
+        foreach ( wp_remote_retrieve_headers( $response ) as $name => $value ) {
+            $headers[ (string) $name ] = is_array( $value ) ? implode( ',', $value ) : (string) $value;
+        }
         return array(
             'status_code' => (int) wp_remote_retrieve_response_code( $response ),
             'body'        => (string) wp_remote_retrieve_body( $response ),
+            'headers'     => $headers,
         );
     }
 

@@ -1,0 +1,649 @@
+# Multi-location source diff: titan-zero-trades-front-desk-3.0.128-r16.zip (22dc106^) -> repository working tree
+# Plugin files: diff -uN (an absent side is empty). Test files are not in the release ZIP: SHA-256 only.
+# The evaluator titan-zero-trades-front-desk/includes/class-tzfd-multi-location.php is compared like the other files; an empty diff means unchanged.
+
+--- a/titan-zero-trades-front-desk/includes/class-tzfd-location-registry.php
++++ b/titan-zero-trades-front-desk/includes/class-tzfd-location-registry.php
+@@ -0,0 +1,144 @@
++<?php
++/**
++ * Local location registry for the single Scheduling & Enquiries Manager plugin (issue #362).
++ *
++ * Pure PHP, no WordPress calls. A location exists only once it is registered here, so staff grants can no
++ * longer point at free-text ids. Ids are fixed at creation. Locations are archived, never deleted, so that
++ * booking and grant history keep their reference. Malformed records are rejected, never silently repaired.
++ *
++ * @package titan-zero-trades-front-desk
++ */
++if ( ! defined( 'ABSPATH' ) ) { exit; }
++
++require_once __DIR__ . '/class-tzfd-delegated-roles.php';
++
++final class TZFD_Location_Registry {
++
++	const STATUS_ACTIVE   = 'active';
++	const STATUS_ARCHIVED = 'archived';
++	const MAX_LOCATIONS   = 200;
++	const MAX_NAME_BYTES  = 120;
++
++	/** Fields an update may change. The id is fixed once the location exists. */
++	const MUTABLE_FIELDS = array( 'name', 'timezone', 'status' );
++
++	/** @return array Normalised location. @throws InvalidArgumentException */
++	public static function validate( $location ) {
++		if ( ! is_array( $location ) ) { throw new InvalidArgumentException( 'location_not_array' ); }
++		$allowed = array( 'id', 'name', 'timezone', 'status' );
++		foreach ( array_keys( $location ) as $key ) {
++			if ( ! in_array( $key, $allowed, true ) ) { throw new InvalidArgumentException( 'unknown_location_key' ); }
++		}
++
++		$id = $location['id'] ?? null;
++		if ( ! is_string( $id ) || ! preg_match( TZFD_Delegated_Roles::ID_PATTERN, $id ) ) { throw new InvalidArgumentException( 'invalid_location_id' ); }
++
++		$name = $location['name'] ?? null;
++		if ( ! is_string( $name ) ) { throw new InvalidArgumentException( 'invalid_location_name' ); }
++		$name = trim( $name );
++		if ( '' === $name || strlen( $name ) > self::MAX_NAME_BYTES || preg_match( '/[\x00-\x1F\x7F]/', $name ) ) {
++			throw new InvalidArgumentException( 'invalid_location_name' );
++		}
++
++		$tz = $location['timezone'] ?? null;
++		if ( ! is_string( $tz ) || ! preg_match( '/^[A-Za-z]+(?:[\/_+-][A-Za-z0-9_+-]+)*$/', $tz ) ) { throw new InvalidArgumentException( 'invalid_location_timezone' ); }
++		try {
++			new DateTimeZone( $tz );
++		} catch ( Throwable $e ) {
++			throw new InvalidArgumentException( 'invalid_location_timezone' );
++		}
++
++		$status = $location['status'] ?? self::STATUS_ACTIVE;
++		if ( ! in_array( $status, array( self::STATUS_ACTIVE, self::STATUS_ARCHIVED ), true ) ) { throw new InvalidArgumentException( 'unknown_location_status' ); }
++
++		return array(
++			'id'       => $id,
++			'name'     => $name,
++			'timezone' => $tz,
++			'status'   => $status,
++		);
++	}
++
++	/**
++	 * Validated stored list. A malformed or duplicate record is skipped and counted, so it grants nothing.
++	 *
++	 * @return array locations (list), skipped (int).
++	 */
++	public static function stored( $raw ) {
++		$valid   = array();
++		$seen    = array();
++		$skipped = 0;
++		foreach ( is_array( $raw ) ? $raw : array() as $item ) {
++			try {
++				$location = self::validate( $item );
++			} catch ( InvalidArgumentException $e ) {
++				$skipped++;
++				continue;
++			}
++			if ( isset( $seen[ $location['id'] ] ) ) {
++				$skipped++;
++				continue;
++			}
++			$seen[ $location['id'] ] = true;
++			$valid[]                 = $location;
++		}
++		return array( 'locations' => $valid, 'skipped' => $skipped );
++	}
++
++	/** Adds a new active location. @throws InvalidArgumentException */
++	public static function add( $list, $location ) {
++		$new = self::validate( $location );
++		if ( self::STATUS_ACTIVE !== $new['status'] ) { throw new InvalidArgumentException( 'new_location_must_be_active' ); }
++		if ( count( $list ) >= self::MAX_LOCATIONS ) { throw new InvalidArgumentException( 'location_limit_reached' ); }
++		if ( null !== self::find( $list, $new['id'] ) ) { throw new InvalidArgumentException( 'duplicate_location_id' ); }
++		$list[] = $new;
++		return $list;
++	}
++
++	/**
++	 * Changes name, timezone or status of one location. Any other key, including id, throws.
++	 *
++	 * @throws InvalidArgumentException
++	 */
++	public static function update( $list, $id, $changes ) {
++		if ( ! is_array( $changes ) ) { throw new InvalidArgumentException( 'invalid_changes' ); }
++		foreach ( array_keys( $changes ) as $key ) {
++			if ( ! in_array( $key, self::MUTABLE_FIELDS, true ) ) { throw new InvalidArgumentException( 'immutable_location_field' ); }
++		}
++		$out   = array();
++		$found = false;
++		foreach ( $list as $item ) {
++			if ( $item['id'] !== $id ) {
++				$out[] = $item;
++				continue;
++			}
++			$found = true;
++			$out[] = self::validate( array_merge( $item, $changes ) );
++		}
++		if ( ! $found ) { throw new InvalidArgumentException( 'unknown_location' ); }
++		return $out;
++	}
++
++	/** @return array|null The location with this id, or null. */
++	public static function find( $list, $id ) {
++		foreach ( $list as $item ) {
++			if ( $item['id'] === $id ) { return $item; }
++		}
++		return null;
++	}
++
++	/** True only for a registered, active location. */
++	public static function is_active( $list, $id ) {
++		$item = self::find( $list, $id );
++		return null !== $item && self::STATUS_ACTIVE === $item['status'];
++	}
++
++	/** @return string[] Ids of active locations, in stored order. */
++	public static function active_ids( $list ) {
++		$ids = array();
++		foreach ( $list as $item ) {
++			if ( self::STATUS_ACTIVE === $item['status'] ) { $ids[] = $item['id']; }
++		}
++		return $ids;
++	}
++}
+--- a/titan-zero-trades-front-desk/includes/class-tzfd-location-store.php
++++ b/titan-zero-trades-front-desk/includes/class-tzfd-location-store.php
+@@ -0,0 +1,99 @@
++<?php
++/**
++ * Stored location registry for one company, with an operation log of every change (issue #362).
++ *
++ * Each company has its own options, so nothing leaks across companies. The pure rules live in
++ * TZFD_Location_Registry. This class only reads and writes them and records ids, field names and actor ids.
++ *
++ * @package titan-zero-trades-front-desk
++ */
++if ( ! defined( 'ABSPATH' ) ) { exit; }
++
++require_once __DIR__ . '/class-tzfd-delegated-roles.php';
++require_once __DIR__ . '/class-tzfd-location-registry.php';
++
++final class TZFD_Location_Store {
++
++	const LOCATIONS_PREFIX = 'tzfd_locations_';
++	const LOG_PREFIX       = 'tzfd_location_log_';
++	const LOG_CAP          = 200;
++
++	/** Validated locations for a company, and the number of stored entries skipped as malformed. */
++	public static function locations( $company ) {
++		$company = self::company( $company );
++		return TZFD_Location_Registry::stored( get_option( self::LOCATIONS_PREFIX . $company, array() ) );
++	}
++
++	/** True only when every id is a registered, active location of this company. */
++	public static function has_active( $company, $ids ) {
++		if ( ! is_array( $ids ) || empty( $ids ) ) { return false; }
++		$active = TZFD_Location_Registry::active_ids( self::locations( $company )['locations'] );
++		foreach ( $ids as $id ) {
++			if ( ! is_string( $id ) || ! in_array( $id, $active, true ) ) { return false; }
++		}
++		return true;
++	}
++
++	/** @return array ok (bool), code (string). */
++	public static function add( $company, $actor_id, $location, $now ) {
++		$company = self::company( $company );
++		try {
++			$list = TZFD_Location_Registry::add( self::locations( $company )['locations'], $location );
++		} catch ( InvalidArgumentException $e ) {
++			return self::result( false, $e->getMessage() );
++		}
++		update_option( self::LOCATIONS_PREFIX . $company, $list, false );
++		self::log_change( $company, $actor_id, 'create', $location['id'], array( 'id' ), $now );
++		return self::result( true, 'created' );
++	}
++
++	/**
++	 * Changes name, timezone or status. The caller has already checked permissions and archive safety.
++	 *
++	 * @return array ok (bool), code (string).
++	 */
++	public static function update( $company, $actor_id, $location_id, $changes, $now ) {
++		$company = self::company( $company );
++		try {
++			$list = TZFD_Location_Registry::update( self::locations( $company )['locations'], (string) $location_id, $changes );
++		} catch ( InvalidArgumentException $e ) {
++			return self::result( false, $e->getMessage() );
++		}
++		$changed = array_keys( $changes );
++		$action  = in_array( 'status', $changed, true ) ? ( 'archived' === $changes['status'] ? 'archive' : 'restore' ) : 'update';
++		update_option( self::LOCATIONS_PREFIX . $company, $list, false );
++		self::log_change( $company, $actor_id, $action, (string) $location_id, $changed, $now );
++		return self::result( true, $action );
++	}
++
++	/** Operation log for a company, newest first. Read-only. */
++	public static function log( $company ) {
++		$company = self::company( $company );
++		$rows    = get_option( self::LOG_PREFIX . $company, array() );
++		return array_reverse( is_array( $rows ) ? array_values( $rows ) : array() );
++	}
++
++	private static function log_change( $company, $actor_id, $action, $location_id, $fields, $now ) {
++		$rows   = get_option( self::LOG_PREFIX . $company, array() );
++		$rows   = is_array( $rows ) ? array_values( $rows ) : array();
++		$rows[] = array(
++			'at'          => (int) $now,
++			'actor_id'    => (int) $actor_id,
++			'action'      => (string) $action,
++			'location_id' => (string) $location_id,
++			'fields'      => array_values( array_map( 'strval', (array) $fields ) ),
++		);
++		if ( count( $rows ) > self::LOG_CAP ) { $rows = array_slice( $rows, -self::LOG_CAP ); }
++		update_option( self::LOG_PREFIX . $company, $rows, false );
++	}
++
++	private static function company( $company ) {
++		$company = (string) $company;
++		if ( ! preg_match( TZFD_Delegated_Roles::ID_PATTERN, $company ) ) { throw new InvalidArgumentException( 'invalid_company_id' ); }
++		return $company;
++	}
++
++	private static function result( $ok, $code ) {
++		return array( 'ok' => (bool) $ok, 'code' => (string) $code );
++	}
++}
+--- a/titan-zero-trades-front-desk/includes/class-tzfd-location-policy.php
++++ b/titan-zero-trades-front-desk/includes/class-tzfd-location-policy.php
+@@ -0,0 +1,172 @@
++<?php
++/**
++ * Custom approval and staff-assignment policies per location, evaluated locally in the Free plugin.
++ *
++ * Pure PHP, no WordPress calls. Rules are stored by the admin screen and evaluated read-only here.
++ * Combination: any matching require_approval rule forces approval (union). Matching restrict_staff rules
++ * intersect their staff lists (intersection). A restriction that leaves no staff blocks every assignment.
++ * Malformed or cross-company rules throw; they never silently drop a restriction.
++ *
++ * @package titan-zero-trades-front-desk
++ */
++if ( ! defined( 'ABSPATH' ) ) { exit; }
++
++require_once __DIR__ . '/class-tzfd-delegated-roles.php';
++
++final class TZFD_Location_Policy {
++
++	const ACTION_REQUIRE_APPROVAL = 'require_approval';
++	const ACTION_RESTRICT_STAFF   = 'restrict_staff';
++	const ANY                     = '*';
++
++	/** @return array Normalised rule. @throws InvalidArgumentException */
++	public static function validate_rule( $rule ) {
++		if ( ! is_array( $rule ) ) { throw new InvalidArgumentException( 'rule_not_array' ); }
++		$keys = array( 'id', 'company_id', 'location_id', 'services', 'min_amount_minor', 'action', 'staff_ids', 'enabled' );
++		foreach ( array_keys( $rule ) as $key ) {
++			if ( ! in_array( $key, $keys, true ) ) { throw new InvalidArgumentException( 'unknown_rule_key' ); }
++		}
++		$id = $rule['id'] ?? null;
++		if ( ! self::is_id( $id ) ) { throw new InvalidArgumentException( 'invalid_rule_id' ); }
++		$company = $rule['company_id'] ?? null;
++		if ( ! self::is_id( $company ) ) { throw new InvalidArgumentException( 'invalid_company_id' ); }
++		$location = $rule['location_id'] ?? null;
++		if ( self::ANY !== $location && ! self::is_id( $location ) ) { throw new InvalidArgumentException( 'invalid_location_id' ); }
++
++		$services = $rule['services'] ?? null;
++		if ( ! is_array( $services ) || empty( $services ) ) { throw new InvalidArgumentException( 'services_required' ); }
++		if ( in_array( self::ANY, $services, true ) ) {
++			if ( count( $services ) !== 1 ) { throw new InvalidArgumentException( 'wildcard_must_stand_alone' ); }
++		} else {
++			foreach ( $services as $service ) {
++				if ( ! self::is_id( $service ) ) { throw new InvalidArgumentException( 'invalid_service_id' ); }
++			}
++		}
++
++		$min = $rule['min_amount_minor'] ?? null;
++		if ( null !== $min && ( ! is_int( $min ) || $min < 0 ) ) { throw new InvalidArgumentException( 'invalid_min_amount' ); }
++
++		$action = $rule['action'] ?? null;
++		if ( ! in_array( $action, array( self::ACTION_REQUIRE_APPROVAL, self::ACTION_RESTRICT_STAFF ), true ) ) { throw new InvalidArgumentException( 'unknown_action' ); }
++
++		$staff = $rule['staff_ids'] ?? array();
++		if ( self::ACTION_RESTRICT_STAFF === $action ) {
++			if ( ! is_array( $staff ) || empty( $staff ) ) { throw new InvalidArgumentException( 'restrict_needs_staff' ); }
++			foreach ( $staff as $member ) {
++				if ( ! self::is_id( $member ) ) { throw new InvalidArgumentException( 'invalid_staff_id' ); }
++			}
++		} elseif ( ! empty( $staff ) ) {
++			throw new InvalidArgumentException( 'staff_ids_only_for_restrict' );
++		}
++
++		$enabled = $rule['enabled'] ?? true;
++		if ( ! is_bool( $enabled ) ) { throw new InvalidArgumentException( 'invalid_enabled_flag' ); }
++
++		return array(
++			'id'               => $id,
++			'company_id'       => $company,
++			'location_id'      => $location,
++			'services'         => array_values( $services ),
++			'min_amount_minor' => $min,
++			'action'           => $action,
++			'staff_ids'        => array_values( array_unique( (array) $staff ) ),
++			'enabled'          => $enabled,
++		);
++	}
++
++	/**
++	 * Evaluates the rules for one prospective booking.
++	 *
++	 * @param array $rules   Stored rules (raw or validated).
++	 * @param array $booking company_id, location_id, service_id, amount_minor (int >= 0), staff_id (id|null).
++	 * @throws InvalidArgumentException On malformed booking, malformed rule or a rule from another company.
++	 */
++	public static function evaluate( $rules, $booking ) {
++		if ( ! is_array( $rules ) || ! is_array( $booking ) ) { throw new InvalidArgumentException( 'invalid_policy_inputs' ); }
++		$company  = $booking['company_id'] ?? null;
++		$location = $booking['location_id'] ?? null;
++		$service  = $booking['service_id'] ?? null;
++		$amount   = $booking['amount_minor'] ?? null;
++		$staff    = $booking['staff_id'] ?? null;
++		if ( ! self::is_id( $company ) || ! self::is_id( $location ) || ! self::is_id( $service ) ) { throw new InvalidArgumentException( 'invalid_booking_scope' ); }
++		if ( ! is_int( $amount ) || $amount < 0 ) { throw new InvalidArgumentException( 'invalid_booking_amount' ); }
++		if ( null !== $staff && ! self::is_id( $staff ) ) { throw new InvalidArgumentException( 'invalid_booking_staff' ); }
++
++		$approval = false;
++		$allowed  = null;
++		$matched  = array();
++		foreach ( $rules as $raw ) {
++			$rule = self::validate_rule( $raw );
++			if ( $rule['company_id'] !== $company ) { throw new InvalidArgumentException( 'cross_company_rule' ); }
++			if ( ! $rule['enabled'] ) { continue; }
++			if ( self::ANY !== $rule['location_id'] && $rule['location_id'] !== $location ) { continue; }
++			if ( ! in_array( self::ANY, $rule['services'], true ) && ! in_array( $service, $rule['services'], true ) ) { continue; }
++			if ( null !== $rule['min_amount_minor'] && $amount < $rule['min_amount_minor'] ) { continue; }
++
++			$matched[] = $rule['id'];
++			if ( self::ACTION_REQUIRE_APPROVAL === $rule['action'] ) {
++				$approval = true;
++			} else {
++				$allowed = null === $allowed ? $rule['staff_ids'] : array_values( array_intersect( $allowed, $rule['staff_ids'] ) );
++			}
++		}
++
++		return array(
++			'company_id'        => $company,
++			'location_id'       => $location,
++			'approval_required' => $approval,
++			'allowed_staff_ids' => $allowed,
++			'matched_rules'     => $matched,
++			'read_only'         => true,
++		);
++	}
++
++	/** True when the decision lets $staff_id take the booking. Null means no staff restriction applies. */
++	public static function assignment_allowed( $decision, $staff_id ) {
++		if ( ! is_array( $decision ) || ! array_key_exists( 'allowed_staff_ids', $decision ) ) { return false; }
++		if ( null === $decision['allowed_staff_ids'] ) { return true; }
++		return is_string( $staff_id ) && in_array( $staff_id, $decision['allowed_staff_ids'], true );
++	}
++
++	/**
++	 * Bulk enable or disable stored rules by id. Atomic: every stored rule is validated first, and any
++	 * unknown, duplicate or foreign-company id, or any malformed stored rule, throws and returns nothing.
++	 * Only the enabled flag changes; all other fields are kept as validated.
++	 *
++	 * @param array  $rules      Stored rules.
++	 * @param array  $ids        Rule ids to change (1 to 100 unique ids).
++	 * @param bool   $enabled    New enabled flag.
++	 * @param string $company_id Company scope of the caller.
++	 * @return array Updated, validated rule list in stored order.
++	 * @throws InvalidArgumentException
++	 */
++	public static function bulk_set_enabled( $rules, $ids, $enabled, $company_id ) {
++		if ( ! is_array( $rules ) || ! is_array( $ids ) || ! is_bool( $enabled ) || ! self::is_id( $company_id ) ) { throw new InvalidArgumentException( 'invalid_bulk_inputs' ); }
++		if ( empty( $ids ) || count( $ids ) > 100 ) { throw new InvalidArgumentException( 'bulk_size_out_of_range' ); }
++		foreach ( $ids as $id ) {
++			if ( ! self::is_id( $id ) ) { throw new InvalidArgumentException( 'invalid_bulk_rule_id' ); }
++		}
++		if ( count( array_unique( $ids ) ) !== count( $ids ) ) { throw new InvalidArgumentException( 'duplicate_bulk_rule_id' ); }
++
++		$out   = array();
++		$seen  = array();
++		$found = array();
++		foreach ( $rules as $raw ) {
++			$rule = self::validate_rule( $raw );
++			if ( $rule['company_id'] !== $company_id ) { throw new InvalidArgumentException( 'cross_company_rule' ); }
++			if ( isset( $seen[ $rule['id'] ] ) ) { throw new InvalidArgumentException( 'duplicate_rule_id' ); }
++			$seen[ $rule['id'] ] = true;
++			if ( in_array( $rule['id'], $ids, true ) ) {
++				$rule['enabled'] = $enabled;
++				$found[]         = $rule['id'];
++			}
++			$out[] = $rule;
++		}
++		if ( count( $found ) !== count( $ids ) ) { throw new InvalidArgumentException( 'unknown_rule_ids' ); }
++		return $out;
++	}
++
++	private static function is_id( $value ) {
++		return is_string( $value ) && (bool) preg_match( TZFD_Delegated_Roles::ID_PATTERN, $value );
++	}
++}
+--- a/titan-zero-trades-front-desk/includes/class-tzfd-location-admin.php
++++ b/titan-zero-trades-front-desk/includes/class-tzfd-location-admin.php
+@@ -0,0 +1,210 @@
++<?php
++/**
++ * Location admin and view screens (issue #362). Locations are registered here, once, and every staff grant must
++ * then name one of them. Changes are limited to site administrators. Archiving is refused while a staff grant
++ * still uses the location, so access is always revoked explicitly first.
++ *
++ * @package titan-zero-trades-front-desk
++ */
++if ( ! defined( 'ABSPATH' ) ) { exit; }
++
++require_once __DIR__ . '/class-tzfd-delegated-roles.php';
++require_once __DIR__ . '/class-tzfd-location-registry.php';
++require_once __DIR__ . '/class-tzfd-location-store.php';
++require_once __DIR__ . '/class-tzfd-staff-access.php';
++
++final class TZFD_Location_Admin {
++
++	const PAGE = 'tzfd-locations';
++	const CAP  = 'manage_options';
++
++	public static function register() {
++		add_action( 'admin_menu', array( __CLASS__, 'menu' ), 135 );
++		add_action( 'admin_post_tzfd_location_save', array( __CLASS__, 'handle_save' ) );
++		add_action( 'admin_post_tzfd_location_status', array( __CLASS__, 'handle_status' ) );
++	}
++
++	public static function menu() {
++		if ( ! current_user_can( self::CAP ) ) { return; }
++		$parent = class_exists( 'TZFD_Admin_Menu' ) ? TZFD_Admin_Menu::PARENT : '';
++		add_submenu_page( $parent, __( 'Locations', 'titan-zero-trades-front-desk' ), __( 'Locations', 'titan-zero-trades-front-desk' ), self::CAP, self::PAGE, array( __CLASS__, 'render' ) );
++	}
++
++	private static function company() {
++		return class_exists( 'TZFD_Scoped_Store' ) ? (string) TZFD_Scoped_Store::company_id() : '0';
++	}
++
++	private static function back( $code, $location = '' ) {
++		$args = array( 'page' => self::PAGE, 'tzfd_location_notice' => sanitize_key( $code ) );
++		if ( '' !== $location ) { $args['location'] = $location; }
++		wp_safe_redirect( add_query_arg( $args, admin_url( 'admin.php' ) ) );
++		exit;
++	}
++
++	private static function text( $key ) {
++		return isset( $_POST[ $key ] ) ? sanitize_text_field( wp_unslash( $_POST[ $key ] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- guard() checks the nonce first.
++	}
++
++	// phpcs:disable WordPress.Security.NonceVerification.Missing -- guard() below checks the capability and the nonce first.
++	public static function handle_save() {
++		self::guard( 'tzfd_location_save' );
++		$company = self::company();
++		if ( '0' === $company ) { self::back( 'no_business' ); }
++		$mode = isset( $_POST['mode'] ) ? sanitize_key( wp_unslash( $_POST['mode'] ) ) : '';
++		$id   = self::text( 'location_id' );
++		$name = self::text( 'name' );
++		$tz   = self::text( 'timezone' );
++		if ( 'create' === $mode ) {
++			$result = TZFD_Location_Store::add( $company, get_current_user_id(), array( 'id' => $id, 'name' => $name, 'timezone' => $tz, 'status' => TZFD_Location_Registry::STATUS_ACTIVE ), time() );
++		} elseif ( 'update' === $mode ) {
++			$result = TZFD_Location_Store::update( $company, get_current_user_id(), $id, array( 'name' => $name, 'timezone' => $tz ), time() );
++		} else {
++			self::back( 'unknown_mode' );
++		}
++		self::back( $result['code'], $id );
++	}
++
++	public static function handle_status() {
++		self::guard( 'tzfd_location_status' );
++		$company = self::company();
++		if ( '0' === $company ) { self::back( 'no_business' ); }
++		$id     = self::text( 'location_id' );
++		$action = isset( $_POST['status_action'] ) ? sanitize_key( wp_unslash( $_POST['status_action'] ) ) : '';
++		if ( ! in_array( $action, array( 'archive', 'restore' ), true ) ) { self::back( 'unknown_action', $id ); }
++		if ( 'archive' === $action && self::grants_using( $company, $id ) > 0 ) { self::back( 'location_in_use', $id ); }
++		$status = 'archive' === $action ? TZFD_Location_Registry::STATUS_ARCHIVED : TZFD_Location_Registry::STATUS_ACTIVE;
++		$result = TZFD_Location_Store::update( $company, get_current_user_id(), $id, array( 'status' => $status ), time() );
++		self::back( $result['code'], $id );
++	}
++	// phpcs:enable WordPress.Security.NonceVerification.Missing
++
++	private static function guard( $action ) {
++		if ( ! current_user_can( self::CAP ) ) { wp_die( esc_html__( 'You do not have permission to change locations.', 'titan-zero-trades-front-desk' ), '', array( 'response' => 403 ) ); }
++		check_admin_referer( $action, '_wpnonce' );
++	}
++
++	/** Number of stored staff grants that name this location. */
++	private static function grants_using( $company, $location_id ) {
++		$count = 0;
++		foreach ( TZFD_Staff_Access::grants( $company )['grants'] as $grant ) {
++			if ( in_array( $location_id, $grant['location_ids'], true ) ) { $count++; }
++		}
++		return $count;
++	}
++
++	public static function render() {
++		if ( ! current_user_can( self::CAP ) ) { return; }
++		$notice = isset( $_GET['tzfd_location_notice'] ) ? sanitize_key( wp_unslash( $_GET['tzfd_location_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
++		$view   = isset( $_GET['location'] ) ? sanitize_text_field( wp_unslash( $_GET['location'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
++		$company = self::company();
++		echo '<div class="wrap"><h1>' . esc_html__( 'Locations', 'titan-zero-trades-front-desk' ) . '</h1>';
++		if ( '' !== $notice ) { echo '<div class="notice notice-info is-dismissible"><p>' . esc_html( str_replace( '_', ' ', $notice ) ) . '</p></div>'; }
++		if ( '0' === $company ) {
++			echo '<p>' . esc_html__( 'Set up your business first. Locations apply to one business at a time.', 'titan-zero-trades-front-desk' ) . '</p></div>';
++			return;
++		}
++		$loaded = TZFD_Location_Store::locations( $company );
++		if ( $loaded['skipped'] > 0 ) {
++			echo '<div class="notice notice-error"><p>' . esc_html( sprintf( /* translators: %d: number of malformed stored locations. */ __( '%d stored location(s) are malformed and are not used. Recreate them.', 'titan-zero-trades-front-desk' ), $loaded['skipped'] ) ) . '</p></div>';
++		}
++		$found = '' === $view ? null : TZFD_Location_Registry::find( $loaded['locations'], $view );
++		if ( '' !== $view && null === $found ) {
++			echo '<p>' . esc_html__( 'That location is not registered.', 'titan-zero-trades-front-desk' ) . ' <a href="' . esc_url( self::list_url() ) . '">' . esc_html__( 'Back to locations', 'titan-zero-trades-front-desk' ) . '</a></p></div>';
++			return;
++		}
++		if ( null !== $found ) {
++			self::render_view( $company, $found );
++		} else {
++			self::render_list( $loaded['locations'] );
++		}
++		echo '</div>';
++	}
++
++	private static function list_url() {
++		return add_query_arg( array( 'page' => self::PAGE ), admin_url( 'admin.php' ) );
++	}
++
++	private static function render_list( $locations ) {
++		echo '<h2>' . esc_html__( 'Registered locations', 'titan-zero-trades-front-desk' ) . '</h2>';
++		if ( empty( $locations ) ) {
++			echo '<p>' . esc_html__( 'No locations are registered yet. Staff access can only be granted at a registered location.', 'titan-zero-trades-front-desk' ) . '</p>';
++		} else {
++			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Time zone', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
++			foreach ( $locations as $item ) {
++				$link = add_query_arg( array( 'page' => self::PAGE, 'location' => $item['id'] ), admin_url( 'admin.php' ) );
++				echo '<tr><td><a href="' . esc_url( $link ) . '">' . esc_html( $item['name'] ) . '</a></td><td>' . esc_html( $item['id'] ) . '</td><td>' . esc_html( $item['timezone'] ) . '</td><td>' . esc_html( $item['status'] ) . '</td></tr>';
++			}
++			echo '</tbody></table>';
++		}
++		echo '<h2>' . esc_html__( 'Add a location', 'titan-zero-trades-front-desk' ) . '</h2>';
++		self::render_form( 'create', null );
++	}
++
++	private static function render_view( $company, $location ) {
++		$id = $location['id'];
++		echo '<p><a href="' . esc_url( self::list_url() ) . '">&larr; ' . esc_html__( 'All locations', 'titan-zero-trades-front-desk' ) . '</a></p>';
++		echo '<h2>' . esc_html( $location['name'] ) . '</h2>';
++		echo '<table class="widefat striped"><tbody>';
++		echo '<tr><th>' . esc_html__( 'ID', 'titan-zero-trades-front-desk' ) . '</th><td>' . esc_html( $id ) . '</td></tr>';
++		echo '<tr><th>' . esc_html__( 'Time zone', 'titan-zero-trades-front-desk' ) . '</th><td>' . esc_html( $location['timezone'] ) . '</td></tr>';
++		echo '<tr><th>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</th><td>' . esc_html( $location['status'] ) . '</td></tr>';
++		echo '</tbody></table>';
++
++		echo '<h2>' . esc_html__( 'Staff access at this location', 'titan-zero-trades-front-desk' ) . '</h2>';
++		$here = array();
++		foreach ( TZFD_Staff_Access::grants( $company )['grants'] as $grant ) {
++			if ( in_array( $id, $grant['location_ids'], true ) ) { $here[] = $grant; }
++		}
++		if ( empty( $here ) ) {
++			echo '<p>' . esc_html__( 'No staff access is granted at this location.', 'titan-zero-trades-front-desk' ) . '</p>';
++		} else {
++			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'User ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Role', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Staff ID', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
++			foreach ( $here as $grant ) {
++				echo '<tr><td>' . esc_html( (string) $grant['user_id'] ) . '</td><td>' . esc_html( $grant['role'] ) . '</td><td>' . esc_html( (string) ( $grant['staff_id'] ?? '' ) ) . '</td></tr>';
++			}
++			echo '</tbody></table>';
++		}
++
++		echo '<h2>' . esc_html__( 'Edit location', 'titan-zero-trades-front-desk' ) . '</h2>';
++		self::render_form( 'update', $location );
++
++		echo '<h2>' . esc_html__( 'Status', 'titan-zero-trades-front-desk' ) . '</h2>';
++		$next   = TZFD_Location_Registry::STATUS_ACTIVE === $location['status'] ? 'archive' : 'restore';
++		$label  = 'archive' === $next ? __( 'Archive location', 'titan-zero-trades-front-desk' ) : __( 'Restore location', 'titan-zero-trades-front-desk' );
++		echo '<p>' . esc_html__( 'Archiving keeps the record and its history. It is refused while staff access still uses this location; revoke that access first.', 'titan-zero-trades-front-desk' ) . '</p>';
++		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
++		wp_nonce_field( 'tzfd_location_status', '_wpnonce' );
++		echo '<input type="hidden" name="action" value="tzfd_location_status"><input type="hidden" name="location_id" value="' . esc_attr( $id ) . '"><input type="hidden" name="status_action" value="' . esc_attr( $next ) . '">';
++		echo '<p><button class="button" type="submit">' . esc_html( $label ) . '</button></p></form>';
++
++		echo '<h2>' . esc_html__( 'Operation log for this location', 'titan-zero-trades-front-desk' ) . '</h2>';
++		$rows = array_values( array_filter( TZFD_Location_Store::log( $company ), function ( $row ) use ( $id ) {
++			return isset( $row['location_id'] ) && $row['location_id'] === $id;
++		} ) );
++		if ( empty( $rows ) ) {
++			echo '<p>' . esc_html__( 'No changes recorded for this location yet.', 'titan-zero-trades-front-desk' ) . '</p>';
++		} else {
++			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Time (UTC)', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Actor', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Action', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Fields', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
++			foreach ( array_slice( $rows, 0, 50 ) as $row ) {
++				echo '<tr><td>' . esc_html( gmdate( 'Y-m-d H:i:s', (int) $row['at'] ) ) . '</td><td>' . esc_html( (string) $row['actor_id'] ) . '</td><td>' . esc_html( $row['action'] ) . '</td><td>' . esc_html( implode( ', ', (array) $row['fields'] ) ) . '</td></tr>';
++			}
++			echo '</tbody></table>';
++		}
++	}
++
++	/** Create form (no location) or edit form (location is fixed; only name and time zone change). */
++	private static function render_form( $mode, $location ) {
++		$is_new = null === $location;
++		echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
++		wp_nonce_field( 'tzfd_location_save', '_wpnonce' );
++		echo '<input type="hidden" name="action" value="tzfd_location_save"><input type="hidden" name="mode" value="' . esc_attr( $mode ) . '">';
++		if ( $is_new ) {
++			echo '<p><label>' . esc_html__( 'Location ID (letters, digits, - and _; fixed after saving)', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="location_id" class="regular-text" maxlength="64" required></label></p>';
++		} else {
++			echo '<input type="hidden" name="location_id" value="' . esc_attr( $location['id'] ) . '">';
++		}
++		echo '<p><label>' . esc_html__( 'Name', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="name" class="regular-text" maxlength="120" required value="' . esc_attr( $is_new ? '' : $location['name'] ) . '"></label></p>';
++		echo '<p><label>' . esc_html__( 'Time zone', 'titan-zero-trades-front-desk' ) . ' <select name="timezone">' . wp_timezone_choice( $is_new ? 'UTC' : $location['timezone'] ) . '</select></label></p>';
++		echo '<p><button class="button button-primary" type="submit">' . esc_html( $is_new ? __( 'Add location', 'titan-zero-trades-front-desk' ) : __( 'Save changes', 'titan-zero-trades-front-desk' ) ) . '</button></p></form>';
++	}
++}
+
+# Test files (SHA-256 in the working tree; absent from the release ZIP)
+ee133bc16238d13e31b8e39dc3dc694421cedc910e071f5525e16d6582262b4e  tests/unit/test-multi-location.php
+35325d24cf0628b21e1003d6ab1fc2f65a35f28699e04d1e1ef5e5f3d5fbd7e9  tests/unit/test-location-registry.php
+44671eaa7de484fee6cc4be4245ee0008c9a3a2be8f002d5fcc9b32e298fb927  tests/unit/test-location-policy.php
+3cc666c3329ac41d9b9f71afd6d15af71774f9ca12ce513b3388f16befd70f86  tests/unit/test-retention-downgrade-multisite.php
+09a95e3814ea2a86d80d507f75e066a5b7e4f6aeb209d06398898ba4f6aa0626  tests/runtime/upgrade-from-3.0.128.sh
+24d4753992156ef3159999847c92f08d3813146445a948cc4ec5d5cd3bb439b5  tests/runtime/upgrade-seed-verify.php

@@ -112,7 +112,7 @@ Audit of the add-on registry, admin pages, AJAX, REST, scripts, settings and sho
 | `includes/class-tzfd-addon-loader.php` `domain_ids()` | `tzfd-AISetup` and `tzfd-AIAssistant` had no shipped module | removed; a saved legacy selection is dropped on the next catalogue save |
 | `includes/class-tzfd-upgrades.php` | Pro, AI Assistant and AI Agent sales URLs | URL constants emptied; the `tzfd_upgrade_url` filter still accepts a verified https URL |
 | `includes/class-tzfd-admin-notices.php` | `ai_key` dismiss key with no notice rendered | removed; only `speed` remains |
-| `titan-zero-front-desk.php` `tz_fd_ai_assistant` shortcode | Renders nothing | kept so old pages do not show raw shortcode text |
+| `tz_fd_ai_assistant` stub | Not registered (#185) | `includes/class-tzfd-retired-shortcodes.php` strips the tag from content so old pages do not show raw shortcode text |
 | `includes/class-tzfd-pipeline.php` filter `tz_fd_ai_create_booking` | Compatibility hook, no caller in the free build | kept; bookings still pass the same pipeline checks |
 | `includes/tzfd-cron-hooks.php` `tz_fd_ai_cascade_tick`, `tz_fd_ai_prune_cron` | Nothing schedules them now | kept so deactivation and uninstall clear events from older installs |
 | `includes/class-tzfd-scoped-store.php` `tz_fd_ai_*` keys | Stored text for the receptionist prompt, service list, area, greeting, fee and price ranges; never executed | kept as data |

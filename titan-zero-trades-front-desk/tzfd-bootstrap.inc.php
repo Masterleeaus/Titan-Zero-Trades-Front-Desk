@@ -111,6 +111,9 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-review.php';
 TZFD_Enquiry_Review::register();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-enquiry-triage.php';
 TZFD_Enquiry_Triage::register();
+// Guided booking step and cancel/reschedule assistant: read-only REST entry points (issue #336).
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-guided-booking-runtime.php';
+TZFD_Guided_Booking_Runtime::register();
 // Booking pipeline: managers, approval and supervisor for assistant and channel bookings.
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline-rules.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-pipeline.php';

@@ -418,7 +418,7 @@ if( !class_exists( 'TZFD_iCalExport' ) )
 			add_action( 'init', array( &$this, 'pp_iCalExport_update_status' ), 10, 1 );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_assets' ) );
 
-            add_filter( 'tz_fd_email_attachments', array( &$this, 'attach_ical_file' ), 10, 3 );
+            add_filter( 'tzfd_email_attachments', array( &$this, 'attach_ical_file' ), 10, 3 );
 
             // Calendar files are deleted once every email that carries them has finished sending.
             add_filter( 'wp_mail', array( &$this, 'track_ical_attachments' ), 999, 1 );

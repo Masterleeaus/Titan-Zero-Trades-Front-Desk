@@ -33,8 +33,8 @@ if( !class_exists( 'TZFD_Passwordaddon' ) )
 			$this->description = $this->tr_apply("The add-on requires customers to enter a password before a booking is accepted.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_filter( 'tz_fd_the_form', array( $this, 'add_password_field' ), 98, 2 );
-            add_action( 'tz_fd_process_data_before_insert', array( $this, 'check_submission' ), 7, 1 );
+            add_filter( 'tzfd_the_form', array( $this, 'add_password_field' ), 98, 2 );
+            add_action( 'tzfd_process_data_before_insert', array( $this, 'check_submission' ), 7, 1 );
         } // End __construct
 
         /************************ SETTINGS *****************************/

@@ -217,7 +217,8 @@ class TZFD_BOOK_BaseClass {
         if ( $tzfd_value == '' && is_object( $this->option_buffered_item ) && $this->option_buffered_item->form_structure == '' )
             $tzfd_value = $default_value;
 
-        $tzfd_value = apply_filters( 'tz_fd_get_option', $tzfd_value, $field, $this->item );
+        $tzfd_value = apply_filters( 'tzfd_get_option', $tzfd_value, $field, $this->item );
+        $tzfd_value = apply_filters( 'tz_fd_get_option', $tzfd_value, $field, $this->item ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 
         return $tzfd_value;
     }

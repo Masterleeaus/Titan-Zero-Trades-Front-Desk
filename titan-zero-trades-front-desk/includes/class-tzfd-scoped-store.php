@@ -33,6 +33,7 @@ final class TZFD_Scoped_Store {
         'tz_fd_ai_greeting',
         'tz_fd_ai_emergency_fee',
         'tz_fd_ai_price_ranges',
+        'tz_fd_ai_opening_hours',
         'tz_fd_addons_active_list',
         'tz_fd_setup_draft',
         'tz_fd_setup_done',

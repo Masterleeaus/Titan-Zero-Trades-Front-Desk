@@ -11,9 +11,9 @@
  *   instant can still both pass. The conflict guard catches sequential stale edits, not a true race. Documented in
  *   the PR under "Decisions for review".
  * - No local cap on entry count. The 100-entry figure in #21/#42 is a hosted pilot sizing target only.
- * - Per-entry size caps (issue #330 decision): question 300 characters, answer 1000 characters, 20 keywords of
- *   40 characters each. Counted in characters, not bytes. Enforced by sanitise() and pinned by
- *   tests/unit/content-size-caps-test.php.
+ * - Size caps (owner decision #330, approved 2026-11-22): every text value holds at most MAX_ANSWER characters
+ *   (2000), and the stored entry's JSON payload is at most MAX_PAYLOAD_BYTES (8192) bytes. Oversized entries are
+ *   refused with 'invalid', never truncated. Question (300) and keyword (40) limits stay stricter per field.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
@@ -26,9 +26,12 @@ final class TZFD_Knowledge_Store {
     const STATUS_DRAFT    = 'draft';
 
     const MAX_QUESTION = 300;
-    const MAX_ANSWER   = 1000;
+    /** Owner decision #330: 2000 characters per value. */
+    const MAX_ANSWER   = 2000;
     const MAX_KEYWORDS = 20;
     const MAX_KEYWORD  = 40;
+    /** Owner decision #330: 8192 bytes per payload (the JSON form of one stored entry). */
+    const MAX_PAYLOAD_BYTES = 8192;
 
     /** @var TZFD_Tenant_Storage */
     private $storage;
@@ -192,13 +195,20 @@ final class TZFD_Knowledge_Store {
             $keywords[] = $kw;
         }
 
-        return array(
+        $clean = array(
             'question' => $question,
             'answer'   => $answer,
             'keywords' => array_values( array_unique( $keywords ) ),
             'lang'     => $lang,
             'status'   => $status,
         );
+
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.json_encode_json_encode -- byte count of the payload; no WordPress call needed here.
+        $payload = json_encode( $clean, JSON_UNESCAPED_UNICODE );
+        if ( ! is_string( $payload ) || strlen( $payload ) > self::MAX_PAYLOAD_BYTES ) {
+            return array( 'error' => 'The FAQ entry must be at most ' . self::MAX_PAYLOAD_BYTES . ' bytes in total.' );
+        }
+        return $clean;
     }
 
     /** Lower-case and whitespace-folded form used for dedupe hashes. */

@@ -10,6 +10,7 @@
  * It is not the production hosted server. The production server component is still not in
  * this repository (see issue #16 and issue #256).
  */
+if ( ! defined( 'ABSPATH' ) ) { define( 'ABSPATH', __DIR__ . '/' ); }
 if ( ! defined( 'TZFD_CONTRACT_TEST' ) ) {
 	define( 'TZFD_CONTRACT_TEST', 1 );
 }

@@ -1,6 +1,6 @@
 # WordPress.org readiness checklist (issues #3, #9, #44)
 
-Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.0.128).
+Plugin: Scheduling & Enquiries Manager (folder and slug `titan-zero-trades-front-desk`, version 3.1.0).
 Recorded 2026-11-16 on branch `packaging-provenance-wporg`. Plugin Check style review (section 6) recorded 2026-11-17 on branch `readiness/plugincheck`.
 
 This checklist records what was checked, what was not, and why. **It does not claim WordPress.org review or approval.** No submission has been made. Status values: **Done** (checked here with evidence), **Partial**, **Not run** (needs a WordPress environment or a human), **Open** (known gap).
@@ -12,7 +12,7 @@ This checklist records what was checked, what was not, and why. **It does not cl
 | Plugin header Name is the official display name | Done | `titan-zero-front-desk.php` line 3: "Scheduling & Enquiries Manager" |
 | Text Domain is `titan-zero-trades-front-desk` and matches the folder | Done | Header line 11 |
 | Requires at least 6.6, Requires PHP 7.4, License GPL-2.0-only | Done | Header lines 6, 7 and 9 |
-| Stable tag equals plugin Version | Done | Both 3.0.128 (readme "Stable tag", header "Version") |
+| Stable tag equals plugin Version | Done | Both 3.1.0 (readme "Stable tag", header "Version") |
 | readme.txt title matches the display name | Done | `readme.txt` line 1 |
 | Contributors, Tags (5 or fewer), Tested up to | Done | `readme.txt` header lines |
 | Standard readme sections (Description, Installation, FAQ, Changelog, Upgrade Notice, License) | Done | Present in readme.txt |
@@ -53,7 +53,7 @@ The readme "External services" section lists five services: an SMS gateway and p
 |---|---|---|
 | Every outbound call in code is disclosed | Partial | Four live call sites match a listed service. The WhatsApp and SMS buttons are links only. One dormant call site (AI connector transport) is not disclosed; see section 6, decision 3 |
 | Disclosure states that nothing is sent to the plugin author by default | Partial | Stated in readme. Not verified by tracing every path |
-| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` shortcode returns empty. readme says "This version does not use AI" |
+| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` stub is not registered; `includes/class-tzfd-retired-shortcodes.php` strips its tag from content (#185). readme says "This version does not use AI" |
 | Hosted Assistant and Agent Team are optional and separate | Done (documentation) | readme "Optional upgrades" section. No hosted client code is shipped in this lane |
 | Consent controls for external services | Not run | Not traced |
 | Safe endpoints (HTTPS, safe remote requests) | Partial | Webhook and import use `wp_safe_remote_*`. SMS gateway uses `wp_safe_remote_post`. Twilio uses `wp_remote_post` with the Twilio URL |
@@ -125,7 +125,7 @@ Checked by grep and by reading the files named. No WordPress site was available,
 | `base64_decode()` | Open | `includes/class-tzfd-booking-validation-recovery.php:50` and `includes/class-tzfd-addon-support.php:591`. Used to decode stored tokens and secrets, not code. Still a discouraged function |
 | `error_log()` | Open (low) | Four calls in `includes/class-tzfd-post-commit-dispatch.php:14` and `tzfd-main-class.inc.php:3992, 4016, 4078` |
 | `tempnam()` and `file_put_contents()` | Open | Scheduled CSV reports, `tzfd-main-class.inc.php:4030-4032` and `:4098-4100`. Uses a private temp directory; review with the security lane |
-| `file_get_contents()` | Partial | Four calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-legacy-ai-data.php:412` (uploaded temp file, size-checked), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887` |
+| `file_get_contents()` | Partial | Three calls, all on local files, each with a phpcs ignore comment: `includes/class-tzfd-builtin-verticals.php:128` (ignore on the preceding line), `includes/class-tzfd-ai-services.php:55` and `tzfd-main-class.inc.php:2887`. The fourth, in the legacy AI restore upload, was removed with the legacy screen under #360 (PR #467). |
 | `eval`, `exec`, `shell_exec`, `system`, `curl_*`, `ini_set`, `set_time_limit`, `create_function`, `unlink` | Done | No calls found in plugin code |
 | Superglobal access (`$_GET`, `$_POST`, `$_REQUEST`, `$_FILES`, `$_COOKIE`, `$_SERVER`) | Not run | About 376 references. Sanitising and nonce checks were not audited in this lane. Route to the security lane |
 

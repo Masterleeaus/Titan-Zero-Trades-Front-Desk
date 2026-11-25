@@ -21,8 +21,8 @@ final class TZFD_Business_Facts {
     /** Tenant-scoped map: fact key => ['fingerprint' => sha256 at publication, 'published' => unix time]. */
     const PUBLISHED_KEY = 'tz_fd_ai_facts_published_v1';
 
-    /** Per-value cap in characters (issue #330 decision). Longer values are cut at this length, not rejected. */
-    const MAX_VALUE = 500;
+    /** Owner decision #330: 2000 characters per value. Longer values are cut here, not sent in full. */
+    const MAX_VALUE = 2000;
 
     /**
      * Allowlist. 'key' is the legacy scoped option name. 'intents' lists the intent categories this fact answers.

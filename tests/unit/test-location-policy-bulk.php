@@ -80,3 +80,9 @@ function tzfd_test_location_policy_bulk() {
 		$P::bulk_set_enabled( array_merge( $stored, array( $rule( array( 'id' => 'r8', 'enabled' => 'yes' ) ) ) ), array( 'r1' ), false, 'co-1' );
 	}, 'non-boolean stored flag on an unselected rule throws' );
 }
+
+// Run on its own (php tests/unit/<this file>): one PASS or FAIL line per assertion, exit 1 on failure (issue #192).
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

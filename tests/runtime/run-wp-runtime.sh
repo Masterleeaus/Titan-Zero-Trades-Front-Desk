@@ -121,6 +121,8 @@ echo "--- oversell through the public form over HTTP (oversell-http-tests.sh, is
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/oversell-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- customer cancel end to end over HTTP (customer-cancel-http-tests.sh, issue #334 B13)"
 B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" "$HERE/customer-cancel-http-tests.sh" 2>&1 | tee -a "$LOG"
+echo "--- customer reschedule end to end over HTTP (reschedule-http-tests.sh, issue #463 B13 reschedule half)"
+B="$URL" WP_ROOT="$WP_ROOT" WP_CLI="$WP_CLI" bash "$HERE/reschedule-http-tests.sh" 2>&1 | tee -a "$LOG"
 echo "--- portal session switching (portal-session-switch-tests.php, issue #334)"
 $WP_CLI --allow-root --path="$WP_ROOT" eval-file "$HERE/portal-session-switch-tests.php" --user=1 2>&1 | tee -a "$LOG"
 echo "--- authorisation and tenant checks (security-runtime-tests.php, issue #8)"

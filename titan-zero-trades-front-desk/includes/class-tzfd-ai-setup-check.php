@@ -194,6 +194,46 @@ final class TZFD_Ai_Setup_Check {
 		return '';
 	}
 
+	/**
+	 * Plans the writes for the suggestions the administrator ticked on the review step. Pure: nothing is written here.
+	 * Only ids that the current state still offers are applied. Each is confirmed with confirmed = true.
+	 * Returns array( 'greeting' => string|null, 'faqs' => array of array( 'question', 'answer' ), 'skipped' => array( id => reason ) ).
+	 * Tags are skipped: no store exists for them yet. FAQs are saved unapproved by the caller, so they are not answered from until the owner approves them.
+	 */
+	public static function plan_apply( array $state, array $chosen_ids ) {
+		$plan = array( 'greeting' => null, 'faqs' => array(), 'skipped' => array() );
+		$offered = array();
+		foreach ( self::suggestions( $state ) as $suggestion ) {
+			$offered[ $suggestion['id'] ] = $suggestion;
+		}
+		$seen = array();
+		foreach ( $chosen_ids as $id ) {
+			$id = (string) $id;
+			if ( isset( $seen[ $id ] ) ) { continue; }
+			$seen[ $id ] = true;
+			if ( ! isset( $offered[ $id ] ) ) {
+				$plan['skipped'][ $id ] = 'not_offered';
+				continue;
+			}
+			$suggestion = $offered[ $id ];
+			if ( 'tags' === $suggestion['type'] ) {
+				$plan['skipped'][ $id ] = 'not_saved_here';
+				continue;
+			}
+			$result = self::confirm( $suggestion, array( 'confirmed' => true ) );
+			if ( empty( $result['ok'] ) ) {
+				$plan['skipped'][ $id ] = (string) ( $result['error'] ?? 'refused' );
+				continue;
+			}
+			if ( 'greeting' === $suggestion['type'] ) {
+				$plan['greeting'] = $result['value'];
+			} elseif ( 'faq' === $suggestion['type'] ) {
+				$plan['faqs'][] = $result['value'];
+			}
+		}
+		return $plan;
+	}
+
 	private static function item( $key, $label, $required, $hint ) {
 		return array( 'key' => $key, 'label' => $label, 'required' => (bool) $required, 'hint' => $hint );
 	}

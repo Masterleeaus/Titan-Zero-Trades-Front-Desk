@@ -127,19 +127,20 @@ check( 'agent panel adds no write form', false === strpos( $html, 'tzfd_agent_st
 // Connect and disconnect screen (#333): the secret field is write-only and the page shows only paired / not paired.
 $GLOBALS['tz_opts'] = array();
 $html = render_page();
-check( 'unpaired screen offers the connect form', false !== strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'name="endpoint"' ) && false !== strpos( $html, 'name="site_id"' ) );
+check( 'unpaired screen offers the connect hosted account form (pairing code, issue #347)', false !== strpos( $html, 'name="pairing_code"' ) && false === strpos( $html, 'name="endpoint"' ) && false === strpos( $html, 'name="secret"' ) );
 check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tzfd_ai_connector_disconnect' ) );
-check( 'secret input is a password field with no value attribute', 1 === preg_match( '/<input type="password" id="tzfd-ai-secret" name="secret"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) );
+check( 'pairing code input is a text field with no value attribute and autocomplete off', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code" name="pairing_code"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) && false !== strpos( $m[0], 'autocomplete="off"' ) );
 check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
+check( 'connect control stays disabled until hosted pairing is live', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) );
 
 TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
 $html = render_page();
-check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="secret"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'paired screen replaces the connect form with disconnect', false === strpos( $html, 'name="pairing_code"' ) && false !== strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
 check( 'paired screen never renders the secret', false === strpos( $html, $secret ) && false === strpos( $html, 'S3CRET' ) );
 
 TZFD_AI_Connector::disconnect();
 $html = render_page();
-check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="secret"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
+check( 'after disconnect the connect form returns', false !== strpos( $html, 'name="pairing_code"' ) && false === strpos( $html, 'value="tzfd_ai_connector_disconnect"' ) );
 check( 'after disconnect the secret is not stored', false === TZFD_AI_Connector::status()['secret_set'] );
 
 $GLOBALS['tz_opts'] = array();

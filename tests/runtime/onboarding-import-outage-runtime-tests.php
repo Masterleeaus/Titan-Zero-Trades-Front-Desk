@@ -59,6 +59,9 @@ global $wpdb;
 
 $tzfd_company  = (int) TZFD_Scoped_Store::company_id();
 $tzfd_bookings = $wpdb->prefix . 'tz_bookings';
+// wp eval-file runs this file inside a function, so the helpers below (which use `global`) need these in $GLOBALS.
+$GLOBALS['tzfd_company']  = $tzfd_company;
+$GLOBALS['tzfd_bookings'] = $tzfd_bookings;
 tzfd_oi_ok( 'onboarding-import: a company resolves for the administrator', $tzfd_company > 0, 'company=' . $tzfd_company );
 
 /* ---- Harness state, reset for every case ---- */
@@ -89,6 +92,8 @@ add_filter( 'pre_http_request', $tzfd_oi_http_filter, 10, 3 );
 function tzfd_oi_post( array $fields, array $files = array() ) {
 	$_SERVER['REQUEST_METHOD'] = 'POST';
 	$_POST  = array_merge( array( 'tz_fd_setup_nonce' => wp_create_nonce( 'tz_fd_setup' ) ), $fields );
+	// check_admin_referer() reads $_REQUEST, which a CLI process does not fill from the POST it sets here.
+	$_REQUEST = array_merge( (array) $_REQUEST, $_POST );
 	$_FILES = $files;
 	$out    = array( 'step' => '', 'error' => '', 'threw' => '' );
 	$redirect_filter = function ( $location ) {

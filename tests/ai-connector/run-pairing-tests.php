@@ -45,7 +45,7 @@ const OTHER_END  = 'https://central-staging.titanzero.io/api/tzfd/pair';
 const CODE       = 'ABCD-1234-EFGH';
 const COMPANY    = '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f';
 const COMPANY_B  = '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d';
-const FEATURE    = 'https://central.titanzero.io/api/tzfd/ai';
+const FEATURE    = 'https://superchargedat.work/api/tzfd/ai';
 const EIGHT      = array( 'contract', 'site', 'company_uuid', 'operations', 'nonce', 'issued_at', 'expires_at', 'feature_endpoint' );
 
 $GLOBALS['tz_fail'] = 0;
@@ -323,7 +323,7 @@ $tamper = function ( $inner ) {
     return function ( $request ) use ( $inner ) {
         $resp = $inner( $request );
         $data = json_decode( $resp['body'], true );
-        $data['feature_endpoint'] = 'https://central.titanzero.io/api/tzfd/other';
+        $data['feature_endpoint'] = 'https://superchargedat.work/api/tzfd/other';
         $resp['body'] = json_encode( $data );
         return $resp;
     };
@@ -337,14 +337,59 @@ check( 'J4 a response without feature_endpoint is refused (fields_mismatch) and 
 $r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://evil.example.test/ai' ) ) );
 check( 'J5 a signed endpoint on another host is refused (endpoint_invalid), nothing stored', 'invalid_response' === $r['status'] && 'endpoint_invalid' === $r['reason'] && $good_endpoint === stored_endpoint() && $GLOBALS['tz_store'] === stored_secret() );
 
-$r = pair_with( signed_reply( array( 'feature_endpoint' => 'http://central.titanzero.io/api/tzfd/ai' ) ) );
+$r = pair_with( signed_reply( array( 'feature_endpoint' => 'http://superchargedat.work/api/tzfd/ai' ) ) );
 check( 'J6 a signed endpoint over http is refused (endpoint_invalid)', 'invalid_response' === $r['status'] && 'endpoint_invalid' === $r['reason'] && $good_endpoint === stored_endpoint() );
 
 $r = pair_with( signed_reply( array( 'feature_endpoint' => FEATURE ), array(), null, str_repeat( 'c', 64 ) ) );
 check( 'J7 a valid endpoint with a bad signature is refused and nothing is set', 'bad_signature' === $r['reason'] && $good_endpoint === stored_endpoint() );
 
-$r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://central.titanzero.io/api/tzfd/other' ) ) );
-check( 'J8 a new signed endpoint on the same host is accepted and replaces the old one', 'paired' === $r['status'] && 'https://central.titanzero.io/api/tzfd/other' === stored_endpoint() );
+$r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://superchargedat.work/api/tzfd/other' ) ) );
+check( 'J8 a new signed endpoint on the same host is accepted and replaces the old one', 'paired' === $r['status'] && 'https://superchargedat.work/api/tzfd/other' === stored_endpoint() );
+
+// ---- K. Feature endpoint host allowlist (owner decision on #347): https, exact host, default superchargedat.work ----
+function feature_reply( $url ) { return signed_reply( array( 'feature_endpoint' => $url ) ); }
+function refused_feature( $url, $reset = true ) {
+    if ( $reset ) { reset_state(); use_endpoint( ENDPOINT ); } // $reset false keeps the filters the test set up
+    $r = pair_with( feature_reply( $url ) );
+    return 'invalid_response' === $r['status'] && 'endpoint_invalid' === $r['reason'] && null === stored_record() && '' === stored_endpoint();
+}
+
+reset_state();
+use_endpoint( ENDPOINT );
+check( 'K0 the default allowlist is superchargedat.work only', array( 'superchargedat.work' ) === TZFD_AI_Pairing::feature_hosts() );
+$r = pair_with( feature_reply( 'https://superchargedat.work/api/tzfd/ai' ) );
+check( 'K1 positive: an https endpoint on superchargedat.work is accepted and set', 'paired' === $r['status'] && 'https://superchargedat.work/api/tzfd/ai' === stored_endpoint() );
+
+reset_state();
+use_endpoint( ENDPOINT );
+$r = pair_with( feature_reply( 'https://SuperchargedAT.work/api/tzfd/ai' ) );
+check( 'K1b host case is ignored: an uppercase host on the allowlist is accepted', 'paired' === $r['status'] );
+
+check( 'K2 subdomain is refused (api.superchargedat.work)', refused_feature( 'https://api.superchargedat.work/api/tzfd/ai' ) );
+check( 'K2b deeper subdomain is refused', refused_feature( 'https://a.b.superchargedat.work/api/tzfd/ai' ) );
+check( 'K3 lookalike is refused (superchargedat.work.example.test)', refused_feature( 'https://superchargedat.work.example.test/api/tzfd/ai' ) );
+check( 'K3b lookalike is refused (evilsuperchargedat.work)', refused_feature( 'https://evilsuperchargedat.work/api/tzfd/ai' ) );
+check( 'K3c lookalike is refused (superchargedat.worx)', refused_feature( 'https://superchargedat.worx/api/tzfd/ai' ) );
+check( 'K4 http is refused on the allowlisted host', refused_feature( 'http://superchargedat.work/api/tzfd/ai' ) );
+check( 'K5 an explicit port is refused', refused_feature( 'https://superchargedat.work:8443/api/tzfd/ai' ) );
+check( 'K6 userinfo is refused', refused_feature( 'https://user@superchargedat.work/api/tzfd/ai' ) );
+check( 'K7 a trailing dot on the host is refused (not an exact match)', refused_feature( 'https://superchargedat.work./api/tzfd/ai' ) );
+check( 'K8 the pairing endpoint host is no longer enough (central.titanzero.io is not on the default list)', refused_feature( 'https://central.titanzero.io/api/tzfd/ai' ) );
+
+reset_state();
+use_endpoint( ENDPOINT );
+add_filter( 'tzfd_ai_feature_hosts', function () { return array( 'central.titanzero.io' ); } );
+check( 'K9 the filter tzfd_ai_feature_hosts replaces the default list', array( 'central.titanzero.io' ) === TZFD_AI_Pairing::feature_hosts() );
+check( 'K9b with the override, the default host is refused', refused_feature( 'https://superchargedat.work/api/tzfd/ai', false ) );
+reset_state();
+use_endpoint( ENDPOINT );
+add_filter( 'tzfd_ai_feature_hosts', function () { return array( 'central.titanzero.io' ); } );
+$r = pair_with( feature_reply( 'https://central.titanzero.io/api/tzfd/ai' ) );
+check( 'K9c with the override, an allowlisted host is accepted and set', 'paired' === $r['status'] && 'https://central.titanzero.io/api/tzfd/ai' === stored_endpoint() );
+reset_state();
+use_endpoint( ENDPOINT );
+add_filter( 'tzfd_ai_feature_hosts', function () { return 'superchargedat.work'; } );
+check( 'K10 a non-array filter result allows nothing', array() === TZFD_AI_Pairing::feature_hosts() && refused_feature( 'https://superchargedat.work/api/tzfd/ai', false ) );
 
 // ---- I. Constants win over filters (defined last: a constant can be set only once) ----
 define( 'TZFD_AI_PAIRING_ENDPOINT', ENDPOINT );

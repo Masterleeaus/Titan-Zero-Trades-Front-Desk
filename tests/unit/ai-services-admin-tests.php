@@ -11,7 +11,10 @@ $GLOBALS['tz_opts'] = array();
 function get_option( $k, $d = false ) { return array_key_exists( $k, $GLOBALS['tz_opts'] ) ? $GLOBALS['tz_opts'][ $k ] : $d; }
 function update_option( $k, $v, $autoload = null ) { $GLOBALS['tz_opts'][ $k ] = $v; return true; }
 function delete_option( $k ) { unset( $GLOBALS['tz_opts'][ $k ] ); return true; }
-function apply_filters( $tag, $value, ...$args ) { return $value; }
+function apply_filters( $tag, $value, ...$args ) {
+    if ( isset( $GLOBALS['tz_filters'][ $tag ] ) ) { return call_user_func( $GLOBALS['tz_filters'][ $tag ], $value, ...$args ); }
+    return $value;
+}
 function add_action( $hook, $cb, $prio = 10, $args = 1 ) { return true; }
 function add_submenu_page( ...$args ) { return 'hook'; }
 function current_user_can( $cap ) { return true; }
@@ -31,6 +34,7 @@ function esc_html_e( $s, $d = '' ) { echo esc_html( $s ); }
 function __( $s, $d = '' ) { return $s; }
 function checked( $c, $cur = true, $echo = true ) { $r = $c ? " checked='checked'" : ''; if ( $echo ) { echo $r; } return $r; }
 
+require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-services-page.php';
 
 $GLOBALS['tz_fail'] = 0;
@@ -132,6 +136,29 @@ check( 'unpaired screen has no disconnect control', false === strpos( $html, 'tz
 check( 'pairing code input is a text field with no value attribute and autocomplete off', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code" name="pairing_code"[^>]*>/', $html, $m ) && false === strpos( $m[0], 'value=' ) && false !== strpos( $m[0], 'autocomplete="off"' ) );
 check( 'connect form posts to the connect action', false !== strpos( $html, 'value="tzfd_ai_connector_connect"' ) );
 check( 'connect control stays disabled until hosted pairing is live', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) && 1 === preg_match( '/<button type="submit" class="button button-secondary" disabled>/', $html ) );
+// #452: the connect control is enabled only when a pairing endpoint is configured (constant or filter).
+$GLOBALS['tz_filters']['tzfd_ai_pairing_endpoint'] = function () { return 'https://pair.example.test/api/tzfd/pair'; };
+$html = render_page();
+check( 'connect control is enabled when a pairing endpoint is configured', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"([^>]*)>/', $html, $m ) && false === strpos( $m[1], 'disabled' ) && 1 === preg_match( '/<button type="submit" class="button button-secondary"([^>]*)>/', $html, $b ) && false === strpos( $b[1], 'disabled' ) );
+check( 'enabled connect control shows no "not live" note', false === strpos( $html, 'not live yet' ) );
+unset( $GLOBALS['tz_filters']['tzfd_ai_pairing_endpoint'] );
+$html = render_page();
+check( 'connect control returns to disabled when the endpoint is unset again', 1 === preg_match( '/<input type="text" id="tzfd-ai-pairing-code"[^>]* disabled \/>/', $html ) );
+
+// #452: disconnect also removes the Central company pairing, so the site can be re-paired to another company.
+$now    = time();
+$nonce  = bin2hex( random_bytes( 16 ) );
+$claims = array(
+    'contract' => 'central-pairing/1', 'site' => 'site-a', 'company_uuid' => '11111111-1111-4111-8111-111111111111',
+    'operations' => array( 'hosted.request' ), 'nonce' => $nonce, 'issued_at' => $now, 'expires_at' => $now + 600,
+    'feature_endpoint' => 'https://hosted.example.test/ai',
+);
+$cbody  = json_encode( $claims );
+$cheads = array( 'X-TZFD-Timestamp' => (string) $now, 'X-TZFD-Nonce' => $nonce, 'X-TZFD-Signature' => TZFD_Central_Tenant::sign( $secret, (string) $now, $nonce, $cbody ) );
+$paired = TZFD_Central_Tenant::connect( $cbody, $cheads, 'site-a', $secret, $now );
+check( 'central pairing is stored before disconnect', ! empty( $paired['ok'] ) && TZFD_Central_Tenant::status()['connected'] );
+TZFD_AI_Connector::disconnect();
+check( 'disconnect removes the central pairing and its credential', false === TZFD_Central_Tenant::status()['connected'] && 'not_paired' === TZFD_Central_Tenant::resolve( 'site-a', TZFD_Central_Tenant::OPERATION_HOSTED, $now )['reason'] );
 
 TZFD_AI_Connector::configure( 'https://hosted.example.test/ai', 'site-a', $secret );
 $html = render_page();

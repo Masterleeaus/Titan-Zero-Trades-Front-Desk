@@ -54,7 +54,7 @@ The pairing assertion itself is checked for: signature (HMAC-SHA256 over timesta
 
 ## 4. Setup (site owner)
 
-Status: there is no admin screen for pairing yet. The connect call exists in code (`TZFD_Central_Tenant::connect()`) and is tested, but no page calls it.
+Status: the admin screen is on the AI Services page (`TZFD_AI_Services_Page`). It calls `TZFD_AI_Pairing::pair()`, which calls `TZFD_Central_Tenant::connect()`. The connect control is enabled only when a pairing endpoint is configured (constant or filter), so it stays disabled by default. Disconnect also removes the Central pairing and its credential (`TZFD_AI_Connector::disconnect()`).
 
 1. In Supercharged, create a pairing code. (Owner decision, 2026-11-18: the site owner enters a pairing code shown by Supercharged.)
 2. Enter the code in Front Desk and connect the site. This step needs the admin screen and the pairing endpoint, both still open.
@@ -77,7 +77,7 @@ Disconnecting removes the pairing and credential only. Bookings, customers, sett
 
 - Central #186 text: not read from this session. The contract id and field names are accepted as `central-pairing/1` by the owner decision on #451. Confirming them against Central #186 needs owner or Central sign-off.
 - Pairing endpoint URL: decided by the owner (issue #456) as `https://central.titanzero.io/api/tzfd/pair`. Not yet in code on main; proposed in PR #427, which is open and not merged.
-- Admin connect screen (enter the pairing code): not built. `TZFD_Central_Tenant::connect()` has no caller yet (tracked on #452).
+- Admin connect and disconnect screen (enter the pairing code): built on the AI Services page (#452). Connect stays disabled until a pairing endpoint is configured. The endpoint default is not wired on main (PR #427), so it is off.
 - Live end-to-end pairing against the hosted service: not run. It needs the endpoint URL and the hosted side.
 
 ## 7. Task breakdown and status (issue #456)
@@ -102,7 +102,7 @@ Each task is independently verifiable. "Done" means evidence on main.
 | 2 | Verify assertion signature, timestamp, nonce, site, company UUID, lifetime and replay | Done | `tests/central-tenant/run-central-tenant-tests.php`, run by `.github/workflows/tests.yml` (step "Central company pairing tests") |
 | 3 | Refuse hosted calls on unpaired, expired, mismatched or unsupported pairings, with no budget charge | Done | `class-tzfd-ai-connector.php` (`TZFD_Central_Tenant::resolve()` before transport); `tests/ai-connector/run-ai-connector-tests.php` (`not_configured`, no transport call) |
 | 4 | Keep the local integer `company_id` out of the hosted call and out of company UUID checks | Done | `is_company_uuid()` rejects integers; test "local integer 1 is not a company UUID" in the central tenant runner |
-| 5 | Admin screen to enter a pairing code | Open (#452) | No caller of `connect()` in the admin UI |
+| 5 | Admin screen to enter a pairing code | Done (#452; standalone shim suite passes, not run inside WordPress) | `class-tzfd-ai-services-page.php` connect form; `tests/unit/ai-services-admin-tests.php` (enabled gate, disconnect clears Central pairing) |
 | 6 | Confirm the Central #186 contract text | Open, owner or Central sign-off | Not readable from this session |
 | 7 | Wire the owner-decided endpoint URL as an https-only default | Open in PR #427 (not merged) | No URL in code on main |
 | 8 | Live pairing end to end against the hosted service | Open, blocked by 6 and 7 | Not run |

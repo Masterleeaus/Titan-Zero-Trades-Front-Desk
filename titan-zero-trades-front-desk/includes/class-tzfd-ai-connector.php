@@ -404,10 +404,14 @@ final class TZFD_AI_Connector {
         return true;
     }
 
-    /** Removes the secret, endpoint, consent and entitlements. Usage history is kept. */
+    /**
+     * Removes the secret, endpoint, consent and entitlements, and the Central company pairing (#452), so a
+     * later pairing can choose a different company. Usage history is kept.
+     */
     public static function disconnect() {
         delete_option( self::SECRET_OPTION );
         update_option( self::OPTION, array( 'consent' => false, 'scopes' => array(), 'endpoint' => '', 'site_id' => '', 'entitlements' => array() ), false );
+        if ( class_exists( 'TZFD_Central_Tenant' ) ) { TZFD_Central_Tenant::disconnect(); }
         self::audit( 'disconnect' );
         return true;
     }

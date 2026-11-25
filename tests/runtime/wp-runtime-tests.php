@@ -176,8 +176,8 @@ $tzfd_after  = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE
 tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . wp_json_encode( $tzfd_cas ) );
 
 // B13 cancel end to end over HTTP (with the customer outbox) runs in customer-cancel-http-tests.sh, which CI runs
-// after this file (issue #389). Reschedule end to end is not driven over HTTP yet, so it stays a SKIP.
-tzfd_rt_skip( 'B13 customer reschedule end to end', 'the reschedule preview and confirm over HTTP (customer-reschedule flow) is not driven yet; cancel is driven in customer-cancel-http-tests.sh' );
+// after this file (issue #389). Reschedule end to end over HTTP runs in customer-reschedule-http-tests.sh (issue #428).
+tzfd_rt_skip( 'B13 customer reschedule end to end', 'driven over HTTP by customer-reschedule-http-tests.sh (issue #428); this in-process check is not run' );
 
 /* ------------------------------------------------------------------ C. Reminders and the outbox */
 

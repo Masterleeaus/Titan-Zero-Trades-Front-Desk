@@ -11,6 +11,7 @@ if ( ! function_exists( 'wp_json_encode' ) ) {
 $tzfd_includes = getenv( 'TZFD_INCLUDES' ) ? getenv( 'TZFD_INCLUDES' ) : dirname( __DIR__, 2 ) . '/titan-zero-trades-front-desk/includes';
 require_once $tzfd_includes . '/class-tzfd-guided-booking.php';
 require_once $tzfd_includes . '/class-tzfd-cancel-reschedule-assistant.php';
+require_once $tzfd_includes . '/class-tzfd-guided-booking-runtime.php';
 
 $GLOBALS['tzfd_gbf_pass'] = 0;
 $GLOBALS['tzfd_gbf_fail'] = 0;
@@ -95,6 +96,90 @@ gbf_check( 'plain enquiry is not applicable', 'not_applicable' === $plan['action
 
 $plan = $A::plan( 'Please cancel my booking', array_merge( $facts, array( 'ownership_verified' => true ) ), array( 'cancel_notice_hours' => -1 ) );
 gbf_check( 'bad policy numbers fall back to contact wording', false !== strpos( $plan['policy'], 'Please contact us' ) );
+
+// Runtime entry points (issue #336): pure helpers behind the read-only REST routes. No WordPress needed.
+$R = 'TZFD_Guided_Booking_Runtime';
+if ( ! function_exists( 'wp_verify_nonce' ) ) {
+    function wp_verify_nonce( $nonce, $action ) { return 'good-nonce' === $nonce && 'wp_rest' === $action ? 1 : false; }
+}
+// Permission: the REST nonce is required. Missing, wrong or non-request input is refused (no anonymous access).
+$req_stub = function ( $nonce ) {
+    return new class( $nonce ) {
+        private $n;
+        public function __construct( $n ) { $this->n = $n; }
+        public function get_header( $name ) { return 'x_wp_nonce' === $name ? $this->n : null; }
+    };
+};
+gbf_check( 'runtime permission: valid REST nonce allowed', true === $R::nonce_permission( $req_stub( 'good-nonce' ) ) );
+gbf_check( 'runtime permission: missing nonce refused', false === $R::nonce_permission( $req_stub( null ) ) );
+gbf_check( 'runtime permission: empty nonce refused', false === $R::nonce_permission( $req_stub( '' ) ) );
+gbf_check( 'runtime permission: wrong nonce refused', false === $R::nonce_permission( $req_stub( 'bad' ) ) );
+gbf_check( 'runtime permission: non-request refused', false === $R::nonce_permission( null ) );
+
+$catalog_ids = array( 'deep', 'win' );
+$raw_services = array(
+    array( 'id' => 'deep', 'name' => 'Deep Clean', 'duration_minutes' => 60 ),
+    array( 'id' => 'win', 'name' => 'Window Wash', 'duration_minutes' => 30 ),
+);
+
+// Normal: one clear match asks for confirmation; a valid chosen ID moves on.
+$step = $R::guided_step( 'I want to book a deep clean', $raw_services );
+gbf_check( 'runtime: single match asks confirmation', 'confirm_service' === $step['step'] && array( 'deep' ) === $step['service_ids'] );
+$step = $R::guided_step( 'book', $raw_services, 'win' );
+gbf_check( 'runtime: valid chosen service shows availability', 'show_availability' === $step['step'] && array( 'win' ) === $step['service_ids'] );
+
+// Negative and tenant-safe: an ID outside the owner's list is never returned or accepted.
+$step = $R::guided_step( 'book', $raw_services, 'plumbing-99' );
+gbf_check( 'runtime: unknown chosen ID refused', 'choose_service' === $step['step'] && $catalog_ids === $step['service_ids'] );
+$step = $R::guided_step( 'book a clean or a wash', $raw_services, 'deep" OR 1=1' );
+gbf_check( 'runtime: injected ID refused', 'choose_service' === $step['step'] && $catalog_ids === $step['service_ids'] );
+$all_inside = true;
+foreach ( array( 'book', 'book a deep clean', 'book something', 'cancel my booking', 'hello' ) as $probe ) {
+    foreach ( $R::guided_step( $probe, $raw_services )['service_ids'] as $id ) {
+        if ( ! in_array( $id, $catalog_ids, true ) ) { $all_inside = false; }
+    }
+}
+gbf_check( 'runtime: every returned service ID comes from the owner list', $all_inside );
+
+// No services configured: a booking request gets the fallback, never an empty prompt. Change still hands off.
+$step = $R::guided_step( 'I want to book', array() );
+gbf_check( 'runtime: no services gives fallback for booking', 'fallback' === $step['step'] && array() === $step['service_ids'] );
+$step = $R::guided_step( 'cancel my booking', null );
+gbf_check( 'runtime: change request still hands off with no services', 'handoff' === $step['step'] );
+
+// Invalid owner list (duplicate IDs, non-array) never fatals and never leaks services.
+$step = $R::guided_step( 'book a deep clean', array( $raw_services[0], $raw_services[0] ) );
+gbf_check( 'runtime: duplicate owner IDs give fallback', 'fallback' === $step['step'] );
+gbf_check( 'runtime: non-array owner list gives fallback', 'fallback' === $R::guided_step( 'book', 'not-a-list' )['step'] );
+gbf_check( 'runtime: services_from_filter rejects bad input to empty', array() === $R::services_from_filter( 42 ) );
+
+// Privacy: fixed copy only. A phone number or name in the customer text is never echoed back.
+$secret_text = 'book a deep clean, my name is Ann Smith, 0412 345 678';
+$step = $R::guided_step( $secret_text, $raw_services );
+$echo = json_encode( $step );
+gbf_check( 'runtime: customer phone not echoed', false === strpos( $echo, '0412' ) );
+gbf_check( 'runtime: customer name not echoed', false === strpos( $echo, 'Ann' ) );
+gbf_check( 'runtime: non-string text is unknown and falls back', 'fallback' === $R::guided_step( array( 'book' ), $raw_services )['step'] );
+
+// Cancel assistant runtime entry point: never a change action, never a phone-number lookup.
+$policy_ok = array( 'cancel_notice_hours' => 24, 'reschedule_notice_hours' => 12 );
+$plan = $R::cancel_plan( 'Please cancel my booking', $policy_ok );
+gbf_check( 'runtime cancel: asks for the secure link', 'request_verified_link' === $plan['action'] && 'cancel' === $plan['intent'] );
+$plan = $R::cancel_plan( 'Cancel my booking, my number is 0412 345 678', $policy_ok );
+gbf_check( 'runtime cancel: a phone number does not authorise a change', 'request_verified_link' === $plan['action'] );
+$plan = $R::cancel_plan( 'Can I reschedule to Friday?', $policy_ok );
+gbf_check( 'runtime reschedule: asks for the secure link', 'request_verified_link' === $plan['action'] && 'reschedule' === $plan['intent'] );
+$plan = $R::cancel_plan( 'Cancel and rebook me please', $policy_ok );
+gbf_check( 'runtime: cancel and rebook is handed to staff', 'handoff_to_staff' === $plan['action'] );
+$plan = $R::cancel_plan( 'Do you do gutter cleaning?', $policy_ok );
+gbf_check( 'runtime: plain enquiry is not applicable', 'not_applicable' === $plan['action'] && '' === $plan['message'] );
+$never_change = true;
+foreach ( array( 'cancel', 'reschedule', 'cancel and rebook', 'hello', '' ) as $probe ) {
+    if ( 0 === strpos( $R::cancel_plan( $probe, $policy_ok )['action'], 'send_' ) ) { $never_change = false; }
+}
+gbf_check( 'runtime cancel: no input yields a send_* change action', $never_change );
+gbf_check( 'runtime cancel: missing policy gives contact wording', false !== strpos( $R::cancel_plan( 'cancel', null )['policy'], 'Please contact us' ) );
+gbf_check( 'runtime cancel: policy text uses only validated numbers', false !== strpos( $R::cancel_plan( 'cancel', $policy_ok )['policy'], '24 hours' ) );
 
 echo $GLOBALS['tzfd_gbf_pass'] . " passed, " . $GLOBALS['tzfd_gbf_fail'] . " failed\n";
 exit( $GLOBALS['tzfd_gbf_fail'] ? 1 : 0 );

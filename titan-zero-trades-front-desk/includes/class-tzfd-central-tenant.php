@@ -35,9 +35,9 @@ final class TZFD_Central_Tenant {
     const AUDIT_LIMIT     = 20;
     const OPERATION_HOSTED = 'hosted.request';       // the only operation the AI connector uses
 
-    /** Assertion fields the hosted service must send. Names are provisional (see file header). */
+    /** Assertion fields the hosted service must send, all covered by the signature. feature_endpoint is the AI endpoint (eighth field, owner decision on #347). */
     public static function assertion_fields() {
-        return array( 'contract', 'site', 'company_uuid', 'operations', 'nonce', 'issued_at', 'expires_at' );
+        return array( 'contract', 'site', 'company_uuid', 'operations', 'nonce', 'issued_at', 'expires_at', 'feature_endpoint' );
     }
 
     /**

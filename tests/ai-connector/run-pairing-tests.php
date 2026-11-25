@@ -203,6 +203,38 @@ check( 'a 5xx from the service means service_error', 'service_error' === $r['sta
 list( $r, $s ) = attempt( function ( $req ) { return array( 'error' => 'offline' ); } );
 check( 'transport failure means offline with use_local', 'offline' === $r['status'] && true === $r['use_local'] && null === $s );
 
+// Feature endpoint on the Supercharged host (allowlist default, 2026-11-25).
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://superchargedat.work/api/tzfd/ai' ) ); } );
+check( 'feature endpoint on the default Supercharged host is accepted', 'ok' === $r['status'] && SECRET === $s );
+
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://SuperchargedAT.work/api/tzfd/ai' ) ); } );
+check( 'the allowlisted host is matched case-insensitively', 'ok' === $r['status'] );
+
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://api.superchargedat.work/ai' ) ); } );
+check( 'a subdomain of the allowlisted host is refused (exact match only)', 'invalid_response' === $r['status'] && null === $s );
+
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://superchargedat.work.evil.example.test/ai' ) ); } );
+check( 'a lookalike host is refused', 'invalid_response' === $r['status'] && null === $s );
+
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://evilsuperchargedat.work/ai' ) ); } );
+check( 'a different domain ending in the same letters is refused', 'invalid_response' === $r['status'] && null === $s );
+
+list( $r, $s ) = attempt( function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'http://superchargedat.work/ai' ) ); } );
+check( 'the Supercharged host over http is refused', 'invalid_response' === $r['status'] && null === $s );
+
+reset_state();
+set_endpoint( ENDPOINT );
+add_filter( 'tzfd_ai_feature_hosts', function () { return array( 'Other-Feature.example.test', 'not a host', 42 ); } );
+check( 'the feature allowlist filter replaces the default and drops invalid entries', array( 'other-feature.example.test' ) === $P::feature_hosts() );
+$GLOBALS['tz_filters']['tzfd_ai_feature_hosts'] = array( function () { return array( 'other-feature.example.test' ); } );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://other-feature.example.test/ai' ) ); };
+check( 'a host added through the filter is accepted', 'ok' === $P::pair( CODE )['status'] );
+$GLOBALS['tz_filters']['tzfd_ai_feature_hosts'] = array( function () { return array(); } );
+$GLOBALS['tz_reply'] = function ( $req ) { return fake_pair_reply( $req, array( 'feature' => 'https://superchargedat.work/ai' ) ); };
+check( 'an empty filter leaves only the pairing host allowed', 'invalid_response' === $P::pair( 'WXYZ-9876-QRST-5432' )['status'] );
+unset( $GLOBALS['tz_filters']['tzfd_ai_feature_hosts'] );
+clear_endpoint_filter();
+
 // A failed exchange keeps the previous connection intact.
 reset_state();
 set_endpoint( ENDPOINT );

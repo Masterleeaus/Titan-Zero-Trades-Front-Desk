@@ -46,6 +46,12 @@ final class TZFD_AI_Pairing {
     const MAX_RESPONSE_BYTES = 8192;
     const CODE_PATTERN      = '/^[A-Za-z0-9_-]{16,64}$/D';
     const SECRET_PATTERN    = '/^[a-f0-9]{64}$/D';
+    const FEATURE_HOSTS_FILTER = 'tzfd_ai_feature_hosts';
+    /**
+     * Hosts the AI feature endpoint may use besides the pairing host. Proposed default (2026-11-25, Jason):
+     * the Supercharged host. Only exact hostnames are accepted.
+     */
+    const DEFAULT_FEATURE_HOSTS = array( 'superchargedat.work' );
 
     /**
      * Pairing endpoint: constant, then filter. Only an https URL with a host is returned; anything else is ''.
@@ -166,13 +172,34 @@ final class TZFD_AI_Pairing {
             && '' !== $parts['host'];
     }
 
-    private static function same_host( $a, $b ) {
+    /**
+     * The feature endpoint host must be the pairing host or one of the allowlisted feature hosts.
+     * The allowlist comes from the filter tzfd_ai_feature_hosts and defaults to DEFAULT_FEATURE_HOSTS.
+     */
+    private static function feature_host_allowed( $endpoint, $feature ) {
         // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pa = parse_url( $a );
+        $pe = parse_url( $endpoint );
         // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
-        $pb = parse_url( $b );
-        return is_array( $pa ) && is_array( $pb ) && isset( $pa['host'], $pb['host'] )
-            && strtolower( $pa['host'] ) === strtolower( $pb['host'] );
+        $pf = parse_url( $feature );
+        if ( ! is_array( $pe ) || ! is_array( $pf ) || ! isset( $pe['host'], $pf['host'] ) ) { return false; }
+        $host = strtolower( $pf['host'] );
+        if ( $host === strtolower( $pe['host'] ) ) { return true; }
+        return in_array( $host, self::feature_hosts(), true );
+    }
+
+    /** Lowercase exact hostnames allowed for the feature endpoint, from the filter or the default. */
+    public static function feature_hosts() {
+        $list = self::DEFAULT_FEATURE_HOSTS;
+        if ( function_exists( 'apply_filters' ) ) {
+            $list = apply_filters( self::FEATURE_HOSTS_FILTER, $list );
+        }
+        $out = array();
+        foreach ( is_array( $list ) ? $list : array() as $host ) {
+            if ( is_string( $host ) && 1 === preg_match( '/^[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?(\.[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?)+$/D', strtolower( $host ) ) ) {
+                $out[] = strtolower( $host );
+            }
+        }
+        return array_values( array_unique( $out ) );
     }
 
     private static function transport( array $request ) {
@@ -236,7 +263,7 @@ final class TZFD_AI_Pairing {
         $secret   = isset( $json['secret'] ) && is_string( $json['secret'] ) ? $json['secret'] : '';
         $feature  = isset( $json['feature_endpoint'] ) && is_string( $json['feature_endpoint'] ) ? $json['feature_endpoint'] : '';
         if ( 1 !== preg_match( self::SECRET_PATTERN, $secret ) ) { return array( 'status' => 'invalid_response' ); }
-        if ( ! self::valid_https_url( $feature ) || ! self::same_host( $endpoint, $feature ) ) {
+        if ( ! self::valid_https_url( $feature ) || ! self::feature_host_allowed( $endpoint, $feature ) ) {
             return array( 'status' => 'invalid_response' );
         }
 

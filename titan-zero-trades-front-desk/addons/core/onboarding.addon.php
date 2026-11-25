@@ -644,6 +644,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 return self::go( 9 );
             }
 
+            if ( 'ai_setup' === $action ) {
+                $raw_picks = isset( $_POST['ai_pick'] ) ? map_deep( wp_unslash( $_POST['ai_pick'] ), 'sanitize_key' ) : array();
+                $picks     = is_array( $raw_picks ) ? array_slice( array_values( array_filter( $raw_picks, 'is_string' ) ), 0, 20 ) : array();
+                $written   = self::apply_ai_setup( $draft, $picks );
+                wp_safe_redirect( add_query_arg( array( 'page' => 'tzfd-setup', 'step' => '9', 'ai_saved' => (string) $written ), admin_url( 'admin.php' ) ) );
+                exit;
+            }
+
             if ( 'finish' === $action ) {
                 $d = $draft['details'];
                 // Finish needs the details step: without it there is nothing valid to install or to write.
@@ -803,13 +811,52 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 echo '</ul>';
             }
 
+            // The gate is shown, not changed here: AI stays off until every required item is in place (opening hours are not collected by this wizard yet).
+            if ( ! $review['gate']['allowed'] ) {
+                echo '<p class="description">' . esc_html__( 'AI stays off. Turn it on from the AI services screen once every item above is in place.', 'titan-zero-trades-front-desk' ) . '</p>';
+            }
+
             if ( ! empty( $review['suggestions'] ) ) {
-                echo '<p><strong>' . esc_html__( 'Suggestions for you to review:', 'titan-zero-trades-front-desk' ) . '</strong></p><ul>';
+                echo '<p><strong>' . esc_html__( 'Suggestions for you to review:', 'titan-zero-trades-front-desk' ) . '</strong></p>';
+                echo wp_kses( '<form method="post" action="' . esc_url( admin_url( 'admin.php?page=tzfd-setup&step=9' ) ) . '">' . wp_nonce_field( 'tz_fd_setup', 'tz_fd_setup_nonce', true, false ), self::form_allowed_html() );
+                echo '<input type="hidden" name="tz_fd_setup_action" value="ai_setup" />';
+                echo '<ul>';
                 foreach ( $review['suggestions'] as $suggestion ) {
-                    echo '<li>' . esc_html( TZFD_Ai_Setup_Check::describe( $suggestion ) ) . '</li>';
+                    $text = TZFD_Ai_Setup_Check::describe( $suggestion );
+                    if ( 'tags' === $suggestion['type'] ) {
+                        // Tags have no saved place yet, so they are listed but never ticked.
+                        $not_saved = __( 'not saved by this step', 'titan-zero-trades-front-desk' );
+                        echo '<li>' . esc_html( $text . ' (' . $not_saved . ')' ) . '</li>';
+                        continue;
+                    }
+                    echo '<li><label><input type="checkbox" name="ai_pick[]" value="' . esc_attr( $suggestion['id'] ) . '" /> ' . esc_html( $text ) . '</label></li>';
                 }
                 echo '</ul>';
+                echo '<p class="description">' . esc_html__( 'Ticked FAQs are saved as not approved, so they are not answered from until you approve them in the FAQ screen. Nothing is added unless you tick it.', 'titan-zero-trades-front-desk' ) . '</p>';
+                echo '<p><button class="button" type="submit">' . esc_html__( 'Save the ticked suggestions', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             }
+        }
+
+        /**
+         * Writes the ticked AI setup suggestions (issue #450). Only ids the current review still offers are written.
+         * FAQs go to the FAQ index unapproved. Tags are not written. The greeting is not offered here (written at first contact, #400).
+         */
+        private static function apply_ai_setup( array $draft, array $picks )
+        {
+            if ( ! class_exists( 'TZFD_Ai_Setup_Check' ) || ! class_exists( 'TZFD_Faq_Retrieval' ) ) return 0;
+            $state = self::ai_setup_state( $draft );
+            $plan  = TZFD_Ai_Setup_Check::plan_apply( $state, $picks );
+            $company = TZFD_Scoped_Store::company_id();
+            $written = 0;
+            if ( ! empty( $plan['faqs'] ) ) {
+                $entries = TZFD_Faq_Retrieval::all_entries( $company );
+                foreach ( $plan['faqs'] as $faq ) {
+                    $entries[] = array( 'question' => $faq['question'], 'answer' => $faq['answer'], 'keywords' => array(), 'exclude' => array(), 'approved' => false );
+                    $written++;
+                }
+                TZFD_Faq_Retrieval::save_entries( $company, $entries );
+            }
+            return $written;
         }
 
         /** Setup values for the AI check, read from the draft and the saved business profile. */
@@ -908,6 +955,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             $setup_error = isset( $_GET['error'] ) ? tzfd_request_text( 'get', 'error' ) : '';
             if ( '' !== $setup_error ) {
                 echo '<div class="notice notice-error"><p>' . esc_html( rawurldecode( $setup_error ) ) . '</p></div>';
+            }
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only count from a redirect; no state change.
+            if ( isset( $_GET['ai_saved'] ) ) {
+                echo '<div class="notice notice-success is-dismissible"><p>' . esc_html( sprintf(
+                    /* translators: %d: number of AI setup suggestions saved. */
+                    _n( '%d AI setup suggestion saved.', '%d AI setup suggestions saved.', absint( wp_unslash( $_GET['ai_saved'] ) ), 'titan-zero-trades-front-desk' ),
+                    absint( wp_unslash( $_GET['ai_saved'] ) )
+                ) ) . '</p></div>';
             }
 
             if ( 'done' === $step ) {

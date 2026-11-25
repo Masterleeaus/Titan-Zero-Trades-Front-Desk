@@ -178,7 +178,7 @@ final class TZFD_AI_Pairing {
      */
     public static function feature_hosts() {
         $hosts = function_exists( 'apply_filters' )
-            ? apply_filters( self::FEATURE_HOSTS_FILTER, array( self::FEATURE_HOST_DEFAULT ) )
+            ? apply_filters( 'tzfd_ai_feature_hosts', array( self::FEATURE_HOST_DEFAULT ) )
             : array( self::FEATURE_HOST_DEFAULT );
         if ( ! is_array( $hosts ) ) { return array(); }
         $clean = array();

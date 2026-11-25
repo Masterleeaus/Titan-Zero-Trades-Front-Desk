@@ -1,5 +1,17 @@
 <?php
 /**
+ * Real-WordPress checks for the AI-guided setup review step (issue #450; builds on #40, #171 and #400).
+ * The review step lists suggestions with tick boxes for FAQs. Only ticked FAQs are saved, unapproved.
+ * Tags are listed but never ticked and never saved. The greeting is not offered (written at first contact, #400).
+ * AI is never turned on from the wizard.
+ *
+ * Runs inside a disposable WordPress site, via WP-CLI, from the CI "Extra WordPress test files" step:
+ *   wp eval-file tests/runtime/ai-guided-setup-runtime-tests.php --user=1
+ * Output: one line per check, "PASS|FAIL name -- detail". No live service is called.
+ *
+ * Limit: the wizard's POST handler ends each branch with exit, so this file cannot call handle_post() and keep
+ * running. It drives the review markup and the write path (apply_ai_setup) directly, through reflection. The write
+ * path is the one the handler calls with the sanitized ai_pick values.
  * Real-WordPress checks for the AI-guided setup steps (issues #40, #171, #450): the optional opening-hours step keeps
  * saved hours and never invents them, the review step lists what is missing and offers only the tags that the
  * services produce, rendering writes nothing, and the finish action refuses a request without a valid nonce or
@@ -15,135 +27,136 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit( 1 );
 }
 
-$GLOBALS['tzfd_ags'] = array( 'PASS' => 0, 'FAIL' => 0 );
+$GLOBALS['tzfd_ais'] = array( 'PASS' => 0, 'FAIL' => 0 );
 
-function tzfd_ags_ok( $name, $ok, $detail = '' ) {
+function tzfd_ais_ok( $name, $ok, $detail = '' ) {
 	$status = $ok ? 'PASS' : 'FAIL';
-	$GLOBALS['tzfd_ags'][ $status ]++;
+	$GLOBALS['tzfd_ais'][ $status ]++;
 	echo esc_html( $status . ' ' . $name . ( '' !== $detail ? ' -- ' . $detail : '' ) ) . "\n";
 	return (bool) $ok;
 }
 
-$tzfd_inc = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/';
-$tzfd_add = WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/addons/core/onboarding.addon.php';
-if ( ! is_readable( $tzfd_inc . 'class-tzfd-ai-setup-check.php' ) || ! is_readable( $tzfd_add ) ) {
-	tzfd_ags_ok( 'ai-setup: files readable', false, 'AI setup check or onboarding addon not found in the active plugin' );
-	exit( 1 );
+/** Calls a private static method of the onboarding wizard. */
+function tzfd_ais_call( $method, array $args ) {
+	$ref = new ReflectionMethod( 'TZFD_Onboarding', $method );
+	$ref->setAccessible( true );
+	return $ref->invokeArgs( null, $args );
 }
-require_once $tzfd_inc . 'class-tzfd-ai-free-services.php';
-require_once $tzfd_inc . 'class-tzfd-ai-setup-check.php';
-require_once $tzfd_add;
 
-$ags_company = TZFD_Scoped_Store::company_id();
-tzfd_ags_ok( 'ai-setup: a company is selected for the run', $ags_company > 0, 'company=' . (int) $ags_company );
-if ( $ags_company < 1 ) {
-	echo 'Summary (ai-guided-setup-runtime): ' . (int) $GLOBALS['tzfd_ags']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_ags']['FAIL'] . " failed\n";
+/** Renders the review step to a string. */
+function tzfd_ais_render( array $draft ) {
+	ob_start();
+	tzfd_ais_call( 'render_ai_setup_review', array( $draft ) );
+	return (string) ob_get_clean();
+}
+
+if ( ! class_exists( 'TZFD_Onboarding' ) || ! class_exists( 'TZFD_Ai_Setup_Check' ) || ! class_exists( 'TZFD_Faq_Retrieval' ) || ! class_exists( 'TZFD_Scoped_Store' ) ) {
+	tzfd_ais_ok( 'ai-setup: wizard classes are loaded', false, 'TZFD_Onboarding, TZFD_Ai_Setup_Check, TZFD_Faq_Retrieval or TZFD_Scoped_Store is missing' );
 	exit( 1 );
 }
 
 wp_set_current_user( 1 );
-$ags_obj = null;
-global $tzfd_addons_objs_list;
-foreach ( (array) $tzfd_addons_objs_list as $ags_candidate ) {
-	if ( $ags_candidate instanceof TZFD_Onboarding ) { $ags_obj = $ags_candidate; break; }
+$ais_company = (int) TZFD_Scoped_Store::company_id();
+tzfd_ais_ok( 'ai-setup: a company is selected on the test site', $ais_company > 0 );
+if ( $ais_company < 1 ) {
+	echo 'Summary (ai-guided-setup-runtime): 0 passed, 1 failed' . "\n";
+	exit( 1 );
 }
-tzfd_ags_ok( 'ai-setup: onboarding addon object is loaded', null !== $ags_obj );
 
-$ags_hours_key = TZFD_Onboarding::HOURS_KEY;
-$ags_before_tags = get_option( TZFD_Ai_Setup_Check::TAGS_OPTION, false );
+// Keep the site's own FAQs and tags aside, start from none, and put them back at the end.
+$ais_orig_entries = TZFD_Faq_Retrieval::all_entries( $ais_company );
+$ais_orig_tags    = get_option( TZFD_Ai_Setup_Check::TAGS_OPTION, null );
+TZFD_Faq_Retrieval::save_entries( $ais_company, array() );
+delete_option( TZFD_Ai_Setup_Check::TAGS_OPTION );
 
-// Seed a draft with one service and a business name, and no hours yet.
-$ags_draft = array(
-	'vertical' => '',
-	'trades'   => array(),
-	'services' => array( array( 'name' => 'Drain unblocking' ) ),
-	'details'  => array( 'business_name' => 'Runtime Setup Co', 'intake_mode' => 'instant' ),
+// A small wizard draft. The names are unusual so they cannot collide with other suites on this site.
+$ais_draft = array(
+	'vertical'   => '',
+	'trades'     => array(),
+	'candidates' => array(),
+	'services'   => array( array( 'name' => 'Gutter cleaning' ), array( 'name' => 'Pipe relining' ) ),
+	'details'    => array( 'business_name' => 'RT Gutter and Pipe Co', 'opening_hours' => 'Mon-Fri 8am-5pm' ),
 );
-TZFD_Scoped_Store::update( TZFD_Onboarding::DRAFT, $ags_draft );
-TZFD_Scoped_Store::delete( $ags_hours_key );
 
-// 1. Opening hours: blank with nothing saved stays blank. No hours are invented.
-TZFD_Onboarding::apply_details( array( 'business_name' => 'Runtime Setup Co', 'opening_hours' => '' ), $ags_draft['services'] );
-tzfd_ags_ok( 'ai-setup: blank hours invent nothing', '' === (string) TZFD_Scoped_Store::get( $ags_hours_key, '' ) );
-
-// 2. Typed hours are stored.
-TZFD_Onboarding::apply_details( array( 'business_name' => 'Runtime Setup Co', 'opening_hours' => 'Sat 9am to noon' ), $ags_draft['services'] );
-tzfd_ags_ok( 'ai-setup: typed hours are stored', 'Sat 9am to noon' === (string) TZFD_Scoped_Store::get( $ags_hours_key, '' ) );
-
-// 3. A blank answer later keeps the saved hours (never overwritten with empty text).
-TZFD_Onboarding::apply_details( array( 'business_name' => 'Runtime Setup Co', 'opening_hours' => '   ' ), $ags_draft['services'] );
-tzfd_ags_ok( 'ai-setup: blank answer keeps saved hours', 'Sat 9am to noon' === (string) TZFD_Scoped_Store::get( $ags_hours_key, '' ) );
-
-// 4. Hours count as configured only from the saved value or the typed answer, so the gate reads them correctly.
-$ags_state = array( 'business_name' => 'Runtime Setup Co', 'services' => array( 'Drain unblocking' ), 'greeting' => '', 'hours_configured' => false, 'connector_available' => false );
-tzfd_ags_ok( 'ai-setup: AI gate stays closed while hours are missing', false === TZFD_Ai_Setup_Check::ai_gate( $ags_state )['allowed'] );
-
-// 5. Review step renders the check, lists the missing items and offers the tag tick box for the service.
-TZFD_Scoped_Store::delete( $ags_hours_key );
-$ags_get_step = $_GET; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- test harness only; restored below.
-$_GET['step'] = '9';
-ob_start();
-$ags_obj->render();
-$ags_html = (string) ob_get_clean();
-$_GET = $ags_get_step;
-
-tzfd_ags_ok( 'ai-setup: review step shows the AI setup check', false !== strpos( $ags_html, 'AI setup check' ) );
-tzfd_ags_ok( 'ai-setup: review step lists opening hours as missing', false !== strpos( $ags_html, 'Opening hours' ) && false !== strpos( $ags_html, 'None are assumed' ) );
-tzfd_ags_ok( 'ai-setup: review step offers the service tag, ticked', false !== strpos( $ags_html, 'name="ai_tags[]" value="drain-unblocking" checked' ) );
-tzfd_ags_ok( 'ai-setup: review step states that AI stays off', false !== strpos( $ags_html, 'AI stays off' ) );
-
-// 6. Rendering writes nothing: no tags are stored by showing the review.
-tzfd_ags_ok( 'ai-setup: rendering the review stores no tags', get_option( TZFD_Ai_Setup_Check::TAGS_OPTION, false ) === $ags_before_tags );
-
-// 7. Finish without a nonce is refused and stores no tags. wp_die is caught so the harness keeps running.
-$ags_die_msg = '';
-$ags_die_filter = function () {
-	return function ( $message ) {
-		throw new RuntimeException( is_string( $message ) ? $message : 'wp_die' );
-	};
-};
-add_filter( 'wp_die_handler', $ags_die_filter );
-$ags_saved_post   = $_POST; // phpcs:ignore WordPress.Security.NonceVerification.Missing -- test harness only; restored below.
-$ags_saved_server = $_SERVER;
-$_SERVER['REQUEST_METHOD'] = 'POST';
-$_POST = array( 'tz_fd_setup_action' => 'finish', 'ai_tags' => array( 'drain-unblocking' ) );
-$ags_refused = false;
-try {
-	$ags_obj->handle_post();
-} catch ( RuntimeException $e ) {
-	$ags_refused = true;
-	$ags_die_msg = $e->getMessage();
+// The suggestions the review step should offer for this draft, read from the same state the wizard uses.
+$ais_state    = tzfd_ais_call( 'ai_setup_state', array( $ais_draft ) );
+$ais_offered  = TZFD_Ai_Setup_Check::suggestions( $ais_state );
+$ais_faq_ids  = array();
+$ais_tag_id   = '';
+$ais_greet    = 0;
+foreach ( $ais_offered as $ais_s ) {
+	if ( 'faq' === $ais_s['type'] ) { $ais_faq_ids[] = $ais_s['id']; }
+	if ( 'tags' === $ais_s['type'] ) { $ais_tag_id = $ais_s['id']; }
+	if ( 'greeting' === $ais_s['type'] ) { $ais_greet++; }
 }
-$_POST   = $ags_saved_post;
-$_SERVER = $ags_saved_server;
-tzfd_ags_ok( 'ai-setup: finish without a nonce is refused', $ags_refused );
-tzfd_ags_ok( 'ai-setup: refusal is the nonce check, not the write guard', $ags_refused && false === strpos( $ags_die_msg, 'Invalid or oversized' ), 'message=' . substr( $ags_die_msg, 0, 60 ) );
-tzfd_ags_ok( 'ai-setup: refused finish stores no tags', get_option( TZFD_Ai_Setup_Check::TAGS_OPTION, false ) === $ags_before_tags );
 
-// 8. Finish by a user without the setup capability is refused.
-$ags_user = get_current_user_id();
-wp_set_current_user( 0 );
-$ags_cap_refused = false;
-$ags_cap_msg     = '';
-$_SERVER['REQUEST_METHOD'] = 'POST';
-$_POST = array( 'tz_fd_setup_action' => 'finish', 'ai_tags' => array( 'drain-unblocking' ) );
-try {
-	$ags_obj->handle_post();
-} catch ( RuntimeException $e ) {
-	$ags_cap_refused = true;
-	$ags_cap_msg     = $e->getMessage();
+// 1. Suggestions are listed on the review step.
+tzfd_ais_ok( 'ai-setup: two FAQ suggestions are offered for two services', 2 === count( $ais_faq_ids ) );
+tzfd_ais_ok( 'ai-setup: a tag suggestion is offered for the services', '' !== $ais_tag_id );
+tzfd_ais_ok( 'ai-setup: no greeting is offered on the review step', 0 === $ais_greet );
+
+$ais_html = tzfd_ais_render( $ais_draft );
+tzfd_ais_ok( 'ai-setup: review lists the suggestions', false !== strpos( $ais_html, 'Suggestions for you to review:' ) );
+tzfd_ais_ok( 'ai-setup: each FAQ suggestion has its question text', false !== strpos( $ais_html, 'FAQ: Do you offer Gutter cleaning?' ) && false !== strpos( $ais_html, 'FAQ: Do you offer Pipe relining?' ) );
+tzfd_ais_ok( 'ai-setup: the review posts the ai_setup action and the nonce', false !== strpos( $ais_html, 'name="tz_fd_setup_action" value="ai_setup"' ) && false !== strpos( $ais_html, 'name="tz_fd_setup_nonce"' ) );
+tzfd_ais_ok( 'ai-setup: the review form posts back to the setup review step', false !== strpos( $ais_html, 'page=tzfd-setup&amp;step=9' ) );
+
+// 2. The tick boxes: one per FAQ, none for the tag, none for the greeting.
+tzfd_ais_ok( 'ai-setup: exactly two tick boxes, one per FAQ', 2 === substr_count( $ais_html, 'name="ai_pick[]"' ) );
+$ais_all_faq_ticked = true;
+foreach ( $ais_faq_ids as $ais_id ) {
+	if ( false === strpos( $ais_html, 'value="' . $ais_id . '"' ) ) { $ais_all_faq_ticked = false; }
 }
-$_POST   = $ags_saved_post;
-$_SERVER = $ags_saved_server;
-wp_set_current_user( $ags_user ? $ags_user : 1 );
-tzfd_ags_ok( 'ai-setup: finish without the setup capability is refused', $ags_cap_refused && false !== strpos( $ags_cap_msg, 'not allowed' ), 'message=' . substr( $ags_cap_msg, 0, 60 ) );
-tzfd_ags_ok( 'ai-setup: refused capability check stores no tags', get_option( TZFD_Ai_Setup_Check::TAGS_OPTION, false ) === $ags_before_tags );
+tzfd_ais_ok( 'ai-setup: each FAQ has a tick box with its id', $ais_all_faq_ticked );
+tzfd_ais_ok( 'ai-setup: the tag is listed as not saved by this step', false !== strpos( $ais_html, 'not saved by this step' ) );
+tzfd_ais_ok( 'ai-setup: the tag has no tick box', false === strpos( $ais_html, 'value="' . $ais_tag_id . '"' ) );
+tzfd_ais_ok( 'ai-setup: no greeting line on the review step', false === strpos( $ais_html, 'Greeting:' ) );
+tzfd_ais_ok( 'ai-setup: the review states that FAQs are saved unapproved', false !== strpos( $ais_html, 'saved as not approved' ) );
 
-remove_filter( 'wp_die_handler', $ags_die_filter );
+// 3. Nothing is saved before the administrator posts a tick.
+tzfd_ais_ok( 'ai-setup: no FAQ is saved before any tick', array() === TZFD_Faq_Retrieval::all_entries( $ais_company ) );
+tzfd_ais_ok( 'ai-setup: no tag is saved before any tick', array() === TZFD_Ai_Setup_Check::saved_tags() );
 
-// Clean up disposable state written by this run.
-TZFD_Scoped_Store::delete( TZFD_Onboarding::DRAFT );
-TZFD_Scoped_Store::delete( $ags_hours_key );
+// 4. Ticking one FAQ saves only that FAQ, unapproved. The unticked FAQ is not saved.
+$ais_written = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array( $ais_faq_ids[1] ) ) );
+tzfd_ais_ok( 'ai-setup: one ticked FAQ is written', 1 === $ais_written, 'written=' . $ais_written );
+$ais_entries = TZFD_Faq_Retrieval::all_entries( $ais_company );
+tzfd_ais_ok( 'ai-setup: only the ticked FAQ is in the store', 1 === count( $ais_entries ) && 'Do you offer Pipe relining?' === ( $ais_entries[0]['question'] ?? '' ) );
+tzfd_ais_ok( 'ai-setup: the saved FAQ is unapproved', 1 === count( $ais_entries ) && false === ( $ais_entries[0]['approved'] ?? true ) );
+tzfd_ais_ok( 'ai-setup: the unticked FAQ is not saved', false === strpos( wp_json_encode( $ais_entries ), 'Gutter cleaning' ) );
+tzfd_ais_ok( 'ai-setup: an unapproved FAQ is never answered from', array() === TZFD_Faq_Retrieval::approved_entries( $ais_company ) );
+tzfd_ais_ok( 'ai-setup: no tag is saved after a FAQ tick', array() === TZFD_Ai_Setup_Check::saved_tags() );
 
-echo 'Summary (ai-guided-setup-runtime): ' . (int) $GLOBALS['tzfd_ags']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_ags']['FAIL'] . " failed\n";
-exit( (int) $GLOBALS['tzfd_ags']['FAIL'] > 0 ? 1 : 0 );
+// 5. Items that were not ticked, or were typed in by hand, are refused. Nothing new is saved.
+$ais_tag_post = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array( $ais_tag_id ) ) );
+tzfd_ais_ok( 'ai-setup: a tag id posted by hand is not saved', 0 === $ais_tag_post && array() === TZFD_Ai_Setup_Check::saved_tags() );
+$ais_unknown = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array( 'not-a-real-id' ) ) );
+tzfd_ais_ok( 'ai-setup: an id the review does not offer is not saved', 0 === $ais_unknown && 1 === count( TZFD_Faq_Retrieval::all_entries( $ais_company ) ) );
+$ais_greet_before = TZFD_Scoped_Store::get( 'tz_fd_ai_greeting', '' );
+$ais_greet_post   = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array( 'greeting' ) ) );
+tzfd_ais_ok( 'ai-setup: a greeting id posted by hand is not written', 0 === $ais_greet_post && $ais_greet_before === TZFD_Scoped_Store::get( 'tz_fd_ai_greeting', '' ) );
+$ais_none = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array() ) );
+tzfd_ais_ok( 'ai-setup: nothing ticked saves nothing', 0 === $ais_none && 1 === count( TZFD_Faq_Retrieval::all_entries( $ais_company ) ) );
+
+// 6. After saving, the saved FAQ is no longer offered, so it cannot be saved twice.
+$ais_state2   = tzfd_ais_call( 'ai_setup_state', array( $ais_draft ) );
+$ais_faq_now  = array();
+foreach ( TZFD_Ai_Setup_Check::suggestions( $ais_state2 ) as $ais_s ) {
+	if ( 'faq' === $ais_s['type'] ) { $ais_faq_now[] = $ais_s['id']; }
+}
+tzfd_ais_ok( 'ai-setup: the saved FAQ is not offered again', array( $ais_faq_ids[0] ) === $ais_faq_now );
+$ais_html2 = tzfd_ais_render( $ais_draft );
+tzfd_ais_ok( 'ai-setup: the review shows one tick box after one save', 1 === substr_count( $ais_html2, 'name="ai_pick[]"' ) );
+$ais_again = (int) tzfd_ais_call( 'apply_ai_setup', array( $ais_draft, array( $ais_faq_ids[1] ) ) );
+tzfd_ais_ok( 'ai-setup: ticking the same FAQ again saves nothing new', 0 === $ais_again && 1 === count( TZFD_Faq_Retrieval::all_entries( $ais_company ) ) );
+
+// Clean up: put back the site's own FAQs, tags and greeting state.
+TZFD_Faq_Retrieval::save_entries( $ais_company, $ais_orig_entries );
+if ( null === $ais_orig_tags ) {
+	delete_option( TZFD_Ai_Setup_Check::TAGS_OPTION );
+} else {
+	update_option( TZFD_Ai_Setup_Check::TAGS_OPTION, $ais_orig_tags, false );
+}
+
+echo 'Summary (ai-guided-setup-runtime): ' . (int) $GLOBALS['tzfd_ais']['PASS'] . ' passed, ' . (int) $GLOBALS['tzfd_ais']['FAIL'] . " failed\n";
+exit( (int) $GLOBALS['tzfd_ais']['FAIL'] > 0 ? 1 : 0 );

@@ -91,14 +91,61 @@ final class TZFD_AI_Services_Page {
         $code   = self::post_string( 'pairing_code' );
         $result = TZFD_AI_Pairing::pair( $code );
         $code   = '';
-        $map    = array(
-            'paired'      => 'connect_saved',
-            'pairing_off' => 'pair_off',
-            'busy'        => 'pair_offline',
-            'offline'     => 'pair_offline',
-        );
         $status = isset( $result['status'] ) ? (string) $result['status'] : '';
-        self::redirect_notice( isset( $map[ $status ] ) ? $map[ $status ] : 'connect_invalid' );
+        self::redirect_notice( self::pairing_notice( $status ) );
+    }
+
+    /**
+     * Maps a TZFD_AI_Pairing status to the notice code shown on the screen. Unknown statuses read as a generic
+     * invalid connection, so no raw status value reaches the owner.
+     *
+     * @param string $status Status from TZFD_AI_Pairing::pair().
+     * @return string Notice code.
+     */
+    public static function pairing_notice( $status ) {
+        $map = array(
+            'paired'         => 'connect_saved',
+            'pairing_off'    => 'pair_off',
+            'busy'           => 'pair_offline',
+            'offline'        => 'pair_offline',
+            'secret_missing' => 'pair_not_provisioned',
+            'rejected'       => 'pair_rejected',
+        );
+        return isset( $map[ (string) $status ] ) ? $map[ (string) $status ] : 'connect_invalid';
+    }
+
+    /**
+     * Whether the connect control may be used on this site: 'off' when no https pairing endpoint is configured
+     * (the default), 'no_secret' when the endpoint is set but no credential is provisioned, else 'ready'.
+     * Nothing is sent in either non-ready state.
+     *
+     * @return string off|no_secret|ready
+     */
+    public static function pairing_ready() {
+        if ( '' === TZFD_AI_Pairing::endpoint() ) { return 'off'; }
+        if ( ! class_exists( 'TZFD_Central_Tenant' ) || '' === TZFD_Central_Tenant::provisioned_secret() ) { return 'no_secret'; }
+        return 'ready';
+    }
+
+    /**
+     * One plain sentence telling the owner the next setup step (connect, then consent, then plan).
+     * Built only from the stored connection and consent state and the verified plan level.
+     *
+     * @param array $status   Output of TZFD_AI_Connector::status().
+     * @param array $resolved Output of TZFD_AI_Services::resolve().
+     * @return string
+     */
+    public static function next_step_text( array $status, array $resolved ) {
+        if ( ! $status['endpoint_set'] && ! $status['secret_set'] ) {
+            return __( 'Next step: connect the hosted account below.', 'titan-zero-trades-front-desk' );
+        }
+        if ( empty( $status['consent'] ) ) {
+            return __( 'Next step: grant hosted data consent below. Hosted requests stay off until you do.', 'titan-zero-trades-front-desk' );
+        }
+        if ( TZFD_AI_Services::LEVEL_FREE === $resolved['level'] ) {
+            return __( 'Next step: none. The hosted plan is shown only after a verified response from the hosted service. Until then this site stays on the free level.', 'titan-zero-trades-front-desk' );
+        }
+        return __( 'Consent is granted and the hosted plan is verified. Local features are unchanged.', 'titan-zero-trades-front-desk' );
     }
 
     /** Removes the secret, endpoint and consent. Usage history and the event log are kept. */
@@ -170,6 +217,7 @@ final class TZFD_AI_Services_Page {
                         <td><?php echo $status['endpoint_set'] ? esc_html__( 'Set', 'titan-zero-trades-front-desk' ) : esc_html__( 'Not set. Connect below if you use the hosted service.', 'titan-zero-trades-front-desk' ); ?></td></tr>
                 </tbody>
             </table>
+            <p class="description"><?php echo esc_html( self::next_step_text( $status, $resolved ) ); ?></p>
 
             <h2><?php esc_html_e( 'Connection', 'titan-zero-trades-front-desk' ); ?></h2>
             <?php if ( $status['endpoint_set'] || $status['secret_set'] ) : ?>
@@ -181,6 +229,7 @@ final class TZFD_AI_Services_Page {
                         <span class="description"><?php esc_html_e( 'Removes the secret, the endpoint and consent. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
                 </form>
             <?php else : ?>
+                <?php $pair_state = self::pairing_ready(); $dis = 'ready' === $pair_state ? '' : ' disabled'; ?>
                 <h3><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></h3>
                 <p class="description"><?php esc_html_e( 'Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect. Enter the pairing code shown by Supercharged. Each code works once.', 'titan-zero-trades-front-desk' ); ?></p>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
@@ -188,10 +237,14 @@ final class TZFD_AI_Services_Page {
                     <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
                     <p>
                         <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label><br />
-                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required disabled />
+                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required<?php echo $dis; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed attribute string ?> />
                     </p>
-                    <p><button type="submit" class="button button-secondary" disabled><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
-                    <p class="description"><?php esc_html_e( 'Hosted pairing is not live yet, so this control stays disabled.', 'titan-zero-trades-front-desk' ); ?></p>
+                    <p><button type="submit" class="button button-secondary"<?php echo $dis; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- fixed attribute string ?>><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <?php if ( 'off' === $pair_state ) : ?>
+                        <p class="description"><?php esc_html_e( 'Hosted account pairing is not available on this site yet, so this control stays disabled.', 'titan-zero-trades-front-desk' ); ?></p>
+                    <?php elseif ( 'no_secret' === $pair_state ) : ?>
+                        <p class="description"><?php esc_html_e( 'Pairing is configured, but this site has no site credential yet. The control stays disabled until the hosted service operator provides one.', 'titan-zero-trades-front-desk' ); ?></p>
+                    <?php endif; ?>
                 </form>
             <?php endif; ?>
 
@@ -466,6 +519,8 @@ final class TZFD_AI_Services_Page {
             'connect_invalid'   => __( 'Connection not saved. Check the pairing code and try again. Your previous connection, if any, is unchanged.', 'titan-zero-trades-front-desk' ),
             'pair_off'          => __( 'Hosted account pairing is not available on this site yet. Nothing was sent.', 'titan-zero-trades-front-desk' ),
             'pair_offline'      => __( 'Could not reach the hosted service, or another pairing is in progress. Your previous connection, if any, is unchanged. Try again later.', 'titan-zero-trades-front-desk' ),
+            'pair_not_provisioned' => __( 'Hosted account pairing needs a site credential from the hosted service operator, and this site does not have one. Nothing was sent.', 'titan-zero-trades-front-desk' ),
+            'pair_rejected'     => __( 'The hosted service did not accept this pairing code. Check the code, or ask for a new one. Your previous connection, if any, is unchanged.', 'titan-zero-trades-front-desk' ),
             'disconnected'      => __( 'Hosted AI disconnected. The secret, endpoint and consent were removed. Local features are unchanged.', 'titan-zero-trades-front-desk' ),
         );
     }

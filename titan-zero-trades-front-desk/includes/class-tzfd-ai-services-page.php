@@ -4,9 +4,10 @@
  *
  * Shows status, the descriptor comparison, the local downgrade and the hosted connector controls:
  * consent (grant and revoke), event retention and the redacted event log (#4, #261).
- * It does not take payment or card details, and it makes no network calls.
- * Connect and disconnect: the administrator types the endpoint, site ID and secret once (nonce and capability
- * checked). The secret field is write-only; the screen shows only its stored/not-stored flag.
+ * It does not take payment or card details, and rendering makes no network calls.
+ * Connect: the administrator enters the single-use pairing code shown by the hosted service (issue #347); the
+ * exchange is handled by TZFD_AI_Pairing, which sends a request only when the pairing endpoint is configured.
+ * Disconnect removes the secret, endpoint and consent (nonce and capability checked). The secret is never shown.
  * The "Connect account" control (hosted account pairing, #46) stays disabled until that verified pairing is live.
  */
 if ( ! defined( 'ABSPATH' ) ) { exit; }

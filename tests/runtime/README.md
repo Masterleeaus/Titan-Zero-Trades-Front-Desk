@@ -87,9 +87,11 @@ Run recorded on `main` (same date; kept alongside the branch run so both records
 
 ## Skipped, and why
 
-- Customer reschedule end to end (B13, the reschedule half): the preview and confirm over HTTP are not driven yet, so
-  that check stays a SKIP. Cancel end to end over HTTP, with the customer outbox, is driven in
-  `customer-cancel-http-tests.sh`. Oversell through the public form (A18) is driven over HTTP in
+- Customer reschedule end to end (B13, the reschedule half): driven over HTTP in `customer-reschedule-http-tests.sh`
+  (issue #463: preview, nonce refusals, confirm, replay, outbox dispatch with mail capture, reminder queue). Written
+  on 2026-11-25 without a database or WP-CLI, so it has not been executed yet. The `wp-runtime-tests.php` SKIP line
+  for B13 reschedule remains until a run of that script passes. Cancel end to end over HTTP, with the customer outbox,
+  is driven in `customer-cancel-http-tests.sh`. Oversell through the public form (A18) is driven over HTTP in
   `oversell-http-tests.sh` (issue #389). The primitives (capacity lock, hold validation, tokens, compare-and-swap)
   are also tested in `wp-runtime-tests.php`.
 - Reminder dispatch (C11) is run with a local transport stub (filter `tzfd_booking_deliver_v1`); no provider is called.

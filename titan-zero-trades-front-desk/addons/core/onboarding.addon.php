@@ -490,7 +490,9 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $url = trim( esc_url_raw( tzfd_request_text( 'post', 'web_url' ) ) );
                 if ( in_array( 'url', $sources, true ) && 0 === stripos( $url, 'https://' ) && TZFD_MissedCall::is_https( $url ) ) {
                     // wp_safe_remote_get() refuses private and loopback hosts. The page is read once and only parsed as text.
-                    $resp = wp_safe_remote_get( $url, array( 'timeout' => 10, 'redirection' => 3, 'limit_response_size' => self::MAX_HTML ) );
+                    // The read limit is one byte above MAX_HTML: a transport that cuts the body at the limit then leaves
+                    // more than MAX_HTML bytes, so the length check below refuses an oversized page instead of parsing a cut-off one.
+                    $resp = wp_safe_remote_get( $url, array( 'timeout' => 10, 'redirection' => 3, 'limit_response_size' => self::MAX_HTML + 1 ) );
                     if ( is_wp_error( $resp ) || 200 !== (int) wp_remote_retrieve_response_code( $resp ) ) {
                         return self::go( 2, __( 'The service web page could not be fetched safely.', 'titan-zero-trades-front-desk' ) );
                     }

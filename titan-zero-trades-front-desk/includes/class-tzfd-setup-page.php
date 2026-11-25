@@ -143,8 +143,9 @@ final class TZFD_Setup_Page {
 			echo '<button class="button" type="submit">' . esc_html__( 'Clear the records', 'titan-zero-trades-front-desk' ) . '</button></form>';
 		}
 
-		$measures = TZFD_Setup_Checklist::metrics( $record, $consent );
-		if ( $measures['measured'] ) {
+		// Shown only when a progress record exists (issue #367, T3): no record, no measures.
+		$measures = TZFD_Setup_Checklist::measures( $record, $consent );
+		if ( $measures['measured'] && ! empty( $record ) ) {
 			echo '<h3>' . esc_html__( 'Setup measures for this site', 'titan-zero-trades-front-desk' ) . '</h3><ul>';
 			echo '<li>' . esc_html( sprintf(
 				/* translators: 1: completion percentage, 2: steps recorded, 3: total steps. */

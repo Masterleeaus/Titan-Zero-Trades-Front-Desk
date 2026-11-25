@@ -79,13 +79,80 @@ final class TZFD_Service_Contract_REST {
 		return true;
 	}
 
-	/** Operations that have a handler. Each receives the verified envelope and returns the result payload. */
+	/**
+	 * Operations that have a handler. Each receives the verified envelope and returns the result payload,
+	 * or a WP_Error refusal. Handlers read only the local tenant (handle() has already matched it) and
+	 * return a minimal projection of each record.
+	 */
 	public static function executors() {
 		return array(
-			'capability.check' => static function ( $env ) {
+			'capability.check'       => static function ( $env ) {
 				return array( 'op' => $env['op'], 'allowed' => true );
 			},
+			'service.catalogue.list' => array( __CLASS__, 'service_catalogue' ),
+			'locations.list'         => array( __CLASS__, 'locations' ),
 		);
+	}
+
+	/**
+	 * service.catalogue.list (scope read_services). Active standalone services of the local company.
+	 * Optional payload.limit (1-200, default 50).
+	 *
+	 * @param array $env Verified envelope.
+	 * @return array|WP_Error
+	 */
+	public static function service_catalogue( $env ) {
+		if ( ! class_exists( 'TZFD_Local_Services' ) ) {
+			return self::refuse( 503, 'service_catalogue_unavailable' );
+		}
+		$rows = TZFD_Local_Services::list( array( 'limit' => self::payload_limit( $env ) ) );
+		$out  = array();
+		foreach ( (array) $rows as $row ) {
+			$out[] = array(
+				'id'               => (int) $row['id'],
+				'name'             => (string) $row['name'],
+				'description'      => (string) $row['description'],
+				'price'            => (string) $row['price'],
+				'duration_minutes' => (int) $row['duration_minutes'],
+				'gst_applies'      => (bool) (int) $row['gst_applies'],
+			);
+		}
+		return array( 'services' => $out );
+	}
+
+	/**
+	 * locations.list (scope read_locations). Locations of the local company with their id, name, timezone and status.
+	 * The stored-entry count skipped as malformed is returned so a caller can see that data was left out.
+	 *
+	 * @param array $env Verified envelope (unused: the tenant comes from the site).
+	 * @return array|WP_Error
+	 */
+	public static function locations( $env ) {
+		if ( ! class_exists( 'TZFD_Location_Store' ) ) {
+			return self::refuse( 503, 'locations_unavailable' );
+		}
+		try {
+			$stored = TZFD_Location_Store::locations( (string) self::local_tenant() );
+		} catch ( InvalidArgumentException $e ) {
+			return self::refuse( 503, 'locations_unavailable' );
+		}
+		$out = array();
+		foreach ( $stored['locations'] as $loc ) {
+			$out[] = array(
+				'id'       => $loc['id'],
+				'name'     => $loc['name'],
+				'timezone' => $loc['timezone'],
+				'status'   => $loc['status'],
+			);
+		}
+		return array( 'locations' => $out, 'skipped' => (int) $stored['skipped'] );
+	}
+
+	/** payload.limit when it is an integer from 1 to 200, otherwise 50. */
+	private static function payload_limit( $env ) {
+		$payload = isset( $env['payload'] ) && is_array( $env['payload'] ) ? $env['payload'] : array();
+		$limit   = isset( $payload['limit'] ) ? $payload['limit'] : 50;
+		return is_int( $limit ) && $limit >= 1 && $limit <= 200 ? $limit : 50;
 	}
 
 	/**
@@ -116,6 +183,9 @@ final class TZFD_Service_Contract_REST {
 			return self::refuse( 501, 'operation_not_implemented' );
 		}
 		$result = call_user_func( $executors[ $env['op'] ], $env );
+		if ( is_wp_error( $result ) ) {
+			return $result;
+		}
 
 		return new WP_REST_Response( array( 'ok' => true, 'op' => $env['op'], 'result' => $result ), 200 );
 	}

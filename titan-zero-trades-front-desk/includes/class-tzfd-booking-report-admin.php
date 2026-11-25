@@ -13,6 +13,8 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 require_once __DIR__ . '/class-tzfd-booking-view.php';
 require_once __DIR__ . '/class-tzfd-booking-reports.php';
 require_once __DIR__ . '/class-tzfd-booking-report-summary.php';
+require_once __DIR__ . '/class-tzfd-company-read-context.php';
+require_once __DIR__ . '/class-tzfd-tables.php';
 
 final class TZFD_Booking_Report_Admin {
 
@@ -50,6 +52,48 @@ final class TZFD_Booking_Report_Admin {
 			$out['error'] = $e->getMessage();
 		}
 		return $out;
+	}
+
+	/**
+	 * Enquiries per lead source for the current company and range. Reads only source and received time, scoped by
+	 * company_id in the WHERE clause. Returns breakdown null with an error code when the read fails or is truncated.
+	 *
+	 * @return array{breakdown: ?array, error: string}
+	 */
+	private static function lead_sources( $from, $to ) {
+		global $wpdb;
+		$out        = array( 'breakdown' => null, 'error' => '' );
+		$company_id = TZFD_Company_Read_Context::id();
+		if ( $company_id < 1 ) { $out['error'] = 'no_company'; return $out; }
+		$window = TZFD_Booking_Reports::utc_window( $from, $to );
+		if ( null === $window ) { $out['error'] = 'invalid_date_range'; return $out; }
+		$limit = TZFD_Booking_Reports::MAX_ENQUIRY_ROWS;
+		$rows  = $wpdb->get_results( $wpdb->prepare(
+			'SELECT source, received_utc FROM %i WHERE company_id = %d AND received_utc >= %s AND received_utc < %s ORDER BY id DESC LIMIT %d',
+			$wpdb->prefix . TZFD_Tables::ENQUIRIES, $company_id, $window['start'], $window['end'], $limit + 1
+		), ARRAY_A );
+		if ( ! is_array( $rows ) || ! empty( $wpdb->last_error ) ) { $out['error'] = 'read_failed'; return $out; }
+		if ( count( $rows ) > $limit ) { $out['error'] = 'truncated'; return $out; }
+		try {
+			$out['breakdown'] = TZFD_Booking_Reports::lead_source_breakdown( $from, $to, $rows );
+		} catch ( InvalidArgumentException $e ) {
+			$out['error'] = $e->getMessage();
+		}
+		return $out;
+	}
+
+	/** Display labels for LEAD_SOURCES values. */
+	private static function lead_source_label( $source ) {
+		$labels = array(
+			'phone'    => __( 'Phone', 'titan-zero-trades-front-desk' ),
+			'web_form' => __( 'Web form', 'titan-zero-trades-front-desk' ),
+			'walk_in'  => __( 'Walk-in', 'titan-zero-trades-front-desk' ),
+			'referral' => __( 'Referral', 'titan-zero-trades-front-desk' ),
+			'social'   => __( 'Social', 'titan-zero-trades-front-desk' ),
+			'other'    => __( 'Other', 'titan-zero-trades-front-desk' ),
+			'unknown'  => __( 'Unknown', 'titan-zero-trades-front-desk' ),
+		);
+		return $labels[ $source ] ?? $source;
 	}
 
 	// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only date range for the report; no state changes.
@@ -97,8 +141,24 @@ final class TZFD_Booking_Report_Admin {
 			echo '<p><a class="button" href="' . esc_url( wp_nonce_url( add_query_arg( array( 'action' => 'tzfd_booking_report_csv', 'from' => $from, 'to' => $to ), admin_url( 'admin-post.php' ) ), 'tzfd_booking_report_csv' ) ) . '">' . esc_html__( 'Download CSV', 'titan-zero-trades-front-desk' ) . '</a></p>';
 		}
 
+		$lead = self::lead_sources( $from, $to );
+		echo '<h2>' . esc_html__( 'Enquiries by lead source', 'titan-zero-trades-front-desk' ) . '</h2>';
+		if ( null === $lead['breakdown'] ) {
+			$message = 'truncated' === $lead['error']
+				? __( 'The date range has more enquiries than one report can count. Narrow the range.', 'titan-zero-trades-front-desk' )
+				: __( 'Lead source figures could not be read, so none are shown.', 'titan-zero-trades-front-desk' );
+			echo '<div class="notice notice-warning inline"><p>' . esc_html( $message ) . '</p></div>';
+		} else {
+			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Lead source', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Enquiries', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+			foreach ( $lead['breakdown']['by_lead_source'] as $source => $count ) {
+				echo '<tr><td>' . esc_html( self::lead_source_label( (string) $source ) ) . '</td><td>' . esc_html( (string) $count ) . '</td></tr>';
+			}
+			echo '<tr><th>' . esc_html__( 'Total', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html( (string) $lead['breakdown']['total'] ) . '</th></tr>';
+			echo '</tbody></table>';
+		}
+
 		echo '<h2>' . esc_html__( 'Not measured yet', 'titan-zero-trades-front-desk' ) . '</h2>';
-		echo '<p>' . esc_html__( 'This plugin does not store these, so the report does not show them: lead source, first-response time, revenue and refunds, location and service duration (utilisation), and enquiry-to-booking conversion.', 'titan-zero-trades-front-desk' ) . '</p>';
+		echo '<p>' . esc_html__( 'This plugin does not store these, so the report does not show them: first-response time, revenue and refunds, location and service duration (utilisation), and enquiry-to-booking conversion.', 'titan-zero-trades-front-desk' ) . '</p>';
 		echo '</div>';
 	}
 	// phpcs:enable WordPress.Security.NonceVerification.Recommended

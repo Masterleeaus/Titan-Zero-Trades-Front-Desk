@@ -101,9 +101,17 @@ if ( ! empty( $sp_sub ) ) {
 // site with no service and no calendar, so clear them for this company first (services are archived, forms deleted).
 global $wpdb;
 $sp_company = class_exists( 'TZFD_Scoped_Store' ) ? (int) TZFD_Scoped_Store::company_id() : 0;
+// The suites after this file (wp-runtime-tests.php: A18 and B13 submit bookings through form 1) need the calendar row
+// and the active services the provisioned site started with. Snapshot them here and put them back at the end of this file.
+$sp_forms_t         = $wpdb->prefix . TZFD_Tables::FORMS;
+$sp_svc_t           = $wpdb->prefix . 'tzfd_local_services';
+$sp_forms_before    = array();
+$sp_services_active = array();
 if ( $sp_company > 0 ) {
-	$wpdb->query( $wpdb->prepare( 'UPDATE %i SET archived = 1 WHERE company_id = %d', $wpdb->prefix . 'tzfd_local_services', $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
-	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id = %d', $wpdb->prefix . TZFD_Tables::FORMS, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+	$sp_forms_before    = (array) $wpdb->get_results( $wpdb->prepare( 'SELECT * FROM %i WHERE company_id = %d', $sp_forms_t, $sp_company ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site, snapshot for restore.
+	$sp_services_active = (array) $wpdb->get_col( $wpdb->prepare( 'SELECT id FROM %i WHERE company_id = %d AND archived = 0', $sp_svc_t, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site, snapshot for restore.
+	$wpdb->query( $wpdb->prepare( 'UPDATE %i SET archived = 1 WHERE company_id = %d', $sp_svc_t, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
+	$wpdb->query( $wpdb->prepare( 'DELETE FROM %i WHERE company_id = %d', $sp_forms_t, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- disposable test site.
 }
 delete_option( TZFD_Setup_Checklist::DISCOVERY_OPTION );
 $sp_html = $sp_render();
@@ -118,6 +126,17 @@ tzfd_sp_ok( 'setup-page: discovery is not visible without a service or calendar'
 $sp_facts = TZFD_Setup_Checklist::facts();
 tzfd_sp_ok( 'setup-page: opt-in shows receipt links only when a service or calendar exists', ( ! empty( $sp_facts['services'] ) || ! empty( $sp_facts['calendar'] ) ) === ( false !== strpos( $sp_html, 'admin.php?page=tzfd-agent-receipts' ) ), 'services=' . wp_json_encode( $sp_facts['services'] ) . ' calendar=' . wp_json_encode( $sp_facts['calendar'] ) );
 update_option( TZFD_Setup_Checklist::DISCOVERY_OPTION, false, false );
+
+// Put back the calendar rows and the active services this file cleared, so the later suites see the same site.
+if ( $sp_company > 0 ) {
+	foreach ( $sp_forms_before as $sp_form_row ) {
+		$wpdb->replace( $sp_forms_t, $sp_form_row ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- restores the row this file cleared.
+	}
+	if ( ! empty( $sp_services_active ) ) {
+		$sp_ids = implode( ',', array_map( 'absint', $sp_services_active ) );
+		$wpdb->query( $wpdb->prepare( 'UPDATE %i SET archived = 0 WHERE company_id = %d AND id IN (' . $sp_ids . ')', $sp_svc_t, $sp_company ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.NotPrepared -- ids are absint values from this file's own snapshot.
+	}
+}
 
 // Clean up.
 delete_option( TZFD_Setup_Checklist::CONSENT_OPTION );

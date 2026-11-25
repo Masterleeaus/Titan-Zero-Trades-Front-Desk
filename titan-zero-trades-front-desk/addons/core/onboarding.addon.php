@@ -830,14 +830,14 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     echo '<li><label><input type="checkbox" name="ai_pick[]" value="' . esc_attr( $suggestion['id'] ) . '" /> ' . esc_html( $text ) . '</label></li>';
                 }
                 echo '</ul>';
-                echo '<p class="description">' . esc_html__( 'Ticked greetings are used as they are. Ticked FAQs are saved as not approved, so they are not answered from until you approve them in the FAQ screen. Nothing is added unless you tick it.', 'titan-zero-trades-front-desk' ) . '</p>';
+                echo '<p class="description">' . esc_html__( 'Ticked FAQs are saved as not approved, so they are not answered from until you approve them in the FAQ screen. Nothing is added unless you tick it.', 'titan-zero-trades-front-desk' ) . '</p>';
                 echo '<p><button class="button" type="submit">' . esc_html__( 'Save the ticked suggestions', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             }
         }
 
         /**
          * Writes the ticked AI setup suggestions (issue #450). Only ids the current review still offers are written.
-         * Greeting goes to the scoped greeting option. FAQs go to the FAQ index unapproved. Tags are not written.
+         * FAQs go to the FAQ index unapproved. Tags are not written. The greeting is not offered here (written at first contact, #400).
          */
         private static function apply_ai_setup( array $draft, array $picks )
         {
@@ -846,10 +846,6 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             $plan  = TZFD_Ai_Setup_Check::plan_apply( $state, $picks );
             $company = TZFD_Scoped_Store::company_id();
             $written = 0;
-            if ( null !== $plan['greeting'] ) {
-                TZFD_Scoped_Store::update( 'tz_fd_ai_greeting', $plan['greeting'] );
-                $written++;
-            }
             if ( ! empty( $plan['faqs'] ) ) {
                 $entries = TZFD_Faq_Retrieval::all_entries( $company );
                 foreach ( $plan['faqs'] as $faq ) {

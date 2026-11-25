@@ -235,11 +235,12 @@ final class TZFD_Ai_Setup_Check {
 	/**
 	 * Plans the writes for the suggestions the administrator ticked on the review step. Pure: nothing is written here.
 	 * Only ids that the current state still offers are applied. Each is confirmed with confirmed = true.
-	 * Returns array( 'greeting' => string|null, 'faqs' => array of array( 'question', 'answer' ), 'skipped' => array( id => reason ) ).
+	 * Returns array( 'faqs' => array of array( 'question', 'answer' ), 'skipped' => array( id => reason ) ).
+	 * The greeting is not offered here: it is written at the first customer contact (#400).
 	 * Tags are skipped: no store exists for them yet. FAQs are saved unapproved by the caller, so they are not answered from until the owner approves them.
 	 */
 	public static function plan_apply( array $state, array $chosen_ids ) {
-		$plan = array( 'greeting' => null, 'faqs' => array(), 'skipped' => array() );
+		$plan = array( 'faqs' => array(), 'skipped' => array() );
 		$offered = array();
 		foreach ( self::suggestions( $state ) as $suggestion ) {
 			$offered[ $suggestion['id'] ] = $suggestion;
@@ -263,9 +264,7 @@ final class TZFD_Ai_Setup_Check {
 				$plan['skipped'][ $id ] = (string) ( $result['error'] ?? 'refused' );
 				continue;
 			}
-			if ( 'greeting' === $suggestion['type'] ) {
-				$plan['greeting'] = $result['value'];
-			} elseif ( 'faq' === $suggestion['type'] ) {
+			if ( 'faq' === $suggestion['type'] ) {
 				$plan['faqs'][] = $result['value'];
 			}
 		}

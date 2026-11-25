@@ -451,7 +451,8 @@ class TZFD_Privacy_Exporter {
 					return self::erase_unavailable( $removed );
 				}
 				$removed['bookings'] = isset( $removed['bookings'] ) ? $removed['bookings'] + 1 : 1;
-				do_action( 'tz_fd_item_deleted', $booking_id );
+				do_action( 'tzfd_item_deleted', $booking_id );
+				do_action( 'tz_fd_item_deleted', $booking_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
 			}
 			$response['done'] = ! $has_more;
 		}

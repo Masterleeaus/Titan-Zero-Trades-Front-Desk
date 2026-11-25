@@ -35,7 +35,7 @@ final class TZFD_Ai_Free_Core {
 		$granted = (bool) $granted;
 		update_option( self::CONSENT_OPTION, array( 'granted' => $granted, 'at' => (int) $now ), false );
 		if ( ! $granted ) {
-			do_action( self::CONSENT_WITHDRAWN_ACTION );
+			do_action( 'tzfd_ai_consent_withdrawn' );
 		}
 		return $granted;
 	}
@@ -61,7 +61,7 @@ final class TZFD_Ai_Free_Core {
 			'company_id'     => $company_id,
 			'payload'        => self::minimise( $payload ),
 		);
-		$result = apply_filters( self::HOSTED_FILTER, null, $envelope );
+		$result = apply_filters( 'tzfd_ai_hosted_request', null, $envelope );
 		if ( ! is_array( $result ) || empty( $result['ok'] ) ) {
 			return self::fail( is_array( $result ) && isset( $result['error'] ) && is_string( $result['error'] )
 				? $result['error'] : 'connector_unavailable' );

@@ -32,8 +32,11 @@ final class TZFD_Suite_Gateway {
             'company_id' => (int) $id,
             'payload' => $payload,
         );
-        $result = function_exists( 'apply_filters' )
-            ? apply_filters( 'titan_zero_suite_owner_request_v1', null, $envelope ) : null;
+        $result = null;
+        if ( function_exists( 'apply_filters' ) ) {
+            $result = apply_filters( 'tzfd_suite_owner_request_v1', null, $envelope );
+            $result = apply_filters( 'titan_zero_suite_owner_request_v1', $result, $envelope ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
+        }
         if ( ! is_array( $result ) || ! isset( $result['ok'] ) || true !== $result['ok'] ) {
             return self::failure( is_array( $result ) && isset( $result['error'] ) && is_string( $result['error'] )
                 ? $result['error'] : 'owner_unavailable' );

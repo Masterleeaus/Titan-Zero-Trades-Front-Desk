@@ -64,7 +64,7 @@ final class TZFD_Uninstaller {
         'tz_fd_setup_draft',
     );
 
-    /** Earlier chat table kept by the legacy AI data class. Dropped only on opt-in (ported from main). */
+    /** Earlier chat table kept for the privacy exporter and eraser (class-tzfd-legacy-privacy.php). Dropped only on opt-in (ported from main). */
     const LEGACY_CHAT_TABLE = 'tz_ai_conversations';
 
     /** Option that stores the cursor of a background worker. Always removed. */
@@ -164,7 +164,7 @@ final class TZFD_Uninstaller {
         require_once __DIR__ . '/tzfd-cron-clear.php';
         $hooks = include __DIR__ . '/tzfd-cron-hooks.php';
         foreach ( (array) $hooks as $hook ) {
-            tz_fd_unschedule_all_events( $hook );
+            tzfd_unschedule_all_events( $hook );
         }
     }
 

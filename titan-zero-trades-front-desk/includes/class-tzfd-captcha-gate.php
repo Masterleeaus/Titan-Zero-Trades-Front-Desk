@@ -32,8 +32,8 @@ abstract class TZFD_Captcha_Gate_Addon extends TZFD_BaseAddon
     protected function captcha_boot()
     {
         if ( ! $this->addon_is_active() ) { return; }
-        add_filter( 'tz_fd_the_form', array( $this, 'add_widget' ), 96, 2 );
-        add_filter( 'tz_fd_valid_submission', array( $this, 'verify_submission' ), 10, 1 );
+        add_filter( 'tzfd_the_form', array( $this, 'add_widget' ), 96, 2 );
+        add_filter( 'tzfd_valid_submission', array( $this, 'verify_submission' ), 10, 1 );
     }
 
     public function settings()
@@ -54,7 +54,7 @@ abstract class TZFD_Captcha_Gate_Addon extends TZFD_BaseAddon
         return TZFD_Extension_Core::insert_before_submit( $html, $widget );
     }
 
-    /** Returns the verdict for the tz_fd_valid_submission filter. */
+    /** Returns the verdict for the tzfd_valid_submission filter. */
     public function verify_submission( $valid )
     {
         if ( ! $valid ) { return false; }

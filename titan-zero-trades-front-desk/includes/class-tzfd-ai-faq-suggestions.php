@@ -69,7 +69,7 @@ final class TZFD_Ai_Faq_Suggestions {
 	 * and text, in the shape the batch and the knowledge builder expect (approved, id, text).
 	 */
 	public static function approved_for( $company_id ) {
-		$raw = apply_filters( self::FACTS_FILTER, array(), (int) $company_id );
+		$raw = apply_filters( 'tzfd_ai_approved_faq_facts', array(), (int) $company_id );
 		$out = array();
 		foreach ( is_array( $raw ) ? $raw : array() as $f ) {
 			if ( is_array( $f ) && ! empty( $f['approved'] ) && isset( $f['id'], $f['text'] ) ) {

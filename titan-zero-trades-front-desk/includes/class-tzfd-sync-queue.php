@@ -13,7 +13,7 @@ require_once __DIR__ . '/class-tzfd-extension-core.php';
  *   false, or an array without 'ok'      -> failed, retried up to MAX_ATTEMPTS times;
  *   null                                 -> no adapter connected, the job waits.
  * Contact details in a job are removed once it succeeds. Only a 'remote_id' from the adapter result is kept.
- * Listeners get the full result through the titan_zero_front_desk_sync_done action.
+ * Listeners get the full result through the tzfd_sync_done action.
  */
 final class TZFD_Sync_Queue {
     const KIND         = 'sync';
@@ -53,7 +53,8 @@ final class TZFD_Sync_Queue {
                 $job['result'] = array( 'remote_id' => is_array( $result ) ? substr( sanitize_text_field( is_string( $result['remote_id'] ?? null ) ? $result['remote_id'] : '' ), 0, 190 ) : '' );
                 $counts['done']++;
                 TZFD_Addon_Records::update( $addon, self::KIND, $row['ref'], $job );
-                do_action( 'titan_zero_front_desk_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $tzfd_data );
+                do_action( 'tzfd_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $tzfd_data );
+                do_action( 'titan_zero_front_desk_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $tzfd_data ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             } else {
                 $job['attempts'] = (int) ( $job['attempts'] ?? 0 ) + 1;
                 $job['status']   = $job['attempts'] >= self::MAX_ATTEMPTS ? 'failed' : 'queued';
@@ -121,7 +122,8 @@ final class TZFD_Sync_Queue {
                 }
                 $counts[ $ok ? 'done' : 'review' ]++;
                 if ( $ok ) {
-                    do_action( 'titan_zero_front_desk_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $job['data'] );
+                    do_action( 'tzfd_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $job['data'] );
+                    do_action( 'titan_zero_front_desk_sync_done', $addon, $row['booking_id'], is_array( $result ) ? $result : array(), $job['data'] ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 }
             }
         }

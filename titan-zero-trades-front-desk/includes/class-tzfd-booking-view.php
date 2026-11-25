@@ -434,7 +434,7 @@ final class TZFD_Booking_View {
 
     /** Week view: seven columns, one per day, with the day's appointments listed in each. */
     private static function render_week( array $range, array $by ) {
-        echo self::scroll_hint();
+        echo wp_kses_post( self::scroll_hint() );
         echo '<div class="tzfd-card tzfd-cal-scroll"><table class="tzfd-cal-grid tzfd-cal-week"><thead><tr>';
         foreach ( $range['days'] as $day ) {
             echo '<th scope="col"' . ( self::is_today( $day ) ? ' class="tzfd-cal-today"' : '' ) . '><a href="' . esc_url( self::url( array( 'view' => 'day', 'date' => $day, 'fcal' => self::cal_arg() ) ) ) . '">' . esc_html( self::label( $day, 'D j M' ) ) . '</a></th>';
@@ -451,7 +451,7 @@ final class TZFD_Booking_View {
     /** Month view: a grid of whole weeks. Days outside the month are muted; busy days link to their Day view. */
     private static function render_month( array $range, array $by ) {
         $month = substr( $range['date'], 0, 7 );
-        echo self::scroll_hint();
+        echo wp_kses_post( self::scroll_hint() );
         echo '<div class="tzfd-card tzfd-cal-scroll"><table class="tzfd-cal-grid tzfd-cal-month"><thead><tr>';
         for ( $i = 0; $i < 7; $i++ ) {
             echo '<th scope="col">' . esc_html( self::label( $range['days'][ $i ], 'D' ) ) . '</th>';

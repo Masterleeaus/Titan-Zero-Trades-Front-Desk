@@ -38,6 +38,7 @@ function apply_filters( $tag, $value, ...$args ) {
 }
 function wp_json_encode( $v ) { return json_encode( $v ); }
 
+require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
 
 const SIM_SECRET = 'simulation-secret-0123456789abcdef0123456789';
@@ -102,6 +103,18 @@ function sim_run_tenant( $tenant_index ) {
     $site = 'sim-site-' . $tenant_index;
     $GLOBALS['tz_opts']   = array();
     $GLOBALS['sim_calls'] = 0;
+    // Issue #376: each simulated site is paired to its own Central company before any hosted call.
+    $now   = time();
+    $nonce = bin2hex( random_bytes( 16 ) );
+    $pbody = json_encode( array(
+        'contract' => 'central-pairing/1', 'site' => $site,
+        'company_uuid' => sprintf( '00000000-0000-4000-8000-%012d', $tenant_index + 1 ),
+        'operations' => array( 'hosted.request' ), 'nonce' => $nonce, 'issued_at' => $now, 'expires_at' => $now + 600,
+    ) );
+    TZFD_Central_Tenant::connect( $pbody, array(
+        'X-TZFD-Timestamp' => (string) $now, 'X-TZFD-Nonce' => $nonce,
+        'X-TZFD-Signature' => TZFD_Central_Tenant::sign( SIM_SECRET, (string) $now, $nonce, $pbody ),
+    ), $site, SIM_SECRET, $now );
     TZFD_AI_Connector::configure( 'https://ai.example.test/v1/request', $site, SIM_SECRET );
     TZFD_AI_Connector::grant_consent( array( 'faq.read', 'reports.read' ) );
     TZFD_AI_Connector::set_entitlements( array( 'free_ai' ) );

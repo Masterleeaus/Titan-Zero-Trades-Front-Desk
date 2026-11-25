@@ -14,7 +14,7 @@ final class TZFD_Lead_Intake {
 
     const HOOK = 'tz_builder_lead_captured';
 
-    /** Called once from tz_fd_boot(), after Workspace is confirmed. */
+    /** Called once from tzfd_boot(), after Workspace is confirmed. */
     public static function register() {
         add_action( self::HOOK, array( __CLASS__, 'receive' ), 10, 1 );
         add_shortcode( 'tzfd_enquiry_form', array( __CLASS__, 'shortcode' ) );

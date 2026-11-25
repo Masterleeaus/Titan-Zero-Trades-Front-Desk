@@ -30,7 +30,7 @@ if( !class_exists( 'TZFD_WebHook' ) )
 			$this->description = $this->tr_apply("The add-on sends signed booking events to an HTTPS endpoint you control.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_filter( 'titan_zero_front_desk_webhook_config', array( $this, 'provide_config' ), 10, 1 );
+            add_filter( 'tzfd_webhook_config', array( $this, 'provide_config' ), 10, 1 );
         } // End __construct
 
         /************************ SETTINGS *****************************/

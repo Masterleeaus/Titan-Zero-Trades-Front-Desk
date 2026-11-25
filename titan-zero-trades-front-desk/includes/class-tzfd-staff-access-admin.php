@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 require_once __DIR__ . '/class-tzfd-delegated-roles.php';
 require_once __DIR__ . '/class-tzfd-staff-access.php';
+require_once __DIR__ . '/class-tzfd-location-store.php';
 
 final class TZFD_Staff_Access_Admin {
 
@@ -44,8 +45,9 @@ final class TZFD_Staff_Access_Admin {
 		$user_id  = isset( $_POST['user_id'] ) ? absint( wp_unslash( $_POST['user_id'] ) ) : 0;
 		$role     = isset( $_POST['role'] ) ? sanitize_key( wp_unslash( $_POST['role'] ) ) : '';
 		$staff    = isset( $_POST['staff_id'] ) ? sanitize_text_field( wp_unslash( $_POST['staff_id'] ) ) : '';
-		$raw_locs = isset( $_POST['location_ids'] ) ? sanitize_text_field( wp_unslash( $_POST['location_ids'] ) ) : '';
-		$locations = array_values( array_filter( array_map( 'trim', explode( ',', $raw_locs ) ), 'strlen' ) );
+		// Checkboxes from the location registry (issue #362). Ids are checked against the registry in TZFD_Staff_Access::assign.
+		$raw_locs  = isset( $_POST['location_ids'] ) && is_array( $_POST['location_ids'] ) ? wp_unslash( $_POST['location_ids'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- each entry is sanitised below.
+		$locations = array_values( array_unique( array_filter( array_map( 'sanitize_text_field', array_filter( (array) $raw_locs, 'is_string' ) ), 'strlen' ) ) );
 		$grant = array(
 			'company_id'   => $company,
 			'user_id'      => $user_id,
@@ -119,7 +121,17 @@ final class TZFD_Staff_Access_Admin {
 			echo '<option value="' . esc_attr( $role ) . '">' . esc_html( $role ) . '</option>';
 		}
 		echo '</select></label></p>';
-		echo '<p><label>' . esc_html__( 'Location IDs (comma separated; not used for company admin)', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="location_ids" class="regular-text"></label></p>';
+		$active = TZFD_Location_Store::locations( $company )['locations'];
+		$active = array_filter( $active, function ( $loc ) { return TZFD_Location_Registry::STATUS_ACTIVE === $loc['status']; } );
+		if ( empty( $active ) ) {
+			echo '<p>' . esc_html__( 'No active locations are registered. Add one on the Locations screen before granting location access.', 'titan-zero-trades-front-desk' ) . '</p>';
+		} else {
+			echo '<fieldset><legend>' . esc_html__( 'Locations (not used for company admin)', 'titan-zero-trades-front-desk' ) . '</legend>';
+			foreach ( $active as $loc ) {
+				echo '<p><label><input type="checkbox" name="location_ids[]" value="' . esc_attr( $loc['id'] ) . '"> ' . esc_html( $loc['name'] . ' (' . $loc['id'] . ')' ) . '</label></p>';
+			}
+			echo '</fieldset>';
+		}
 		echo '<p><label>' . esc_html__( 'Staff ID (staff role only)', 'titan-zero-trades-front-desk' ) . ' <input type="text" name="staff_id" class="regular-text"></label></p>';
 		echo '<p><button class="button button-primary" type="submit">' . esc_html__( 'Save access', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
 

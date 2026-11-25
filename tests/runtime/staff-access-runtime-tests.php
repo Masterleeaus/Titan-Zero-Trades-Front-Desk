@@ -52,6 +52,12 @@ foreach ( array( 'loc-a', 'loc-b' ) as $sa_loc ) {
 	tzfd_sa_ok( 'staff-access: location ' . $sa_loc . ' registered', true === $sa_added['ok'] );
 }
 
+// Registry isolation (issue #362): each company has its own registry. The same id may be registered by another
+// company, but a location registered only for one company is not usable by the other.
+$sa_other_add = TZFD_Location_Store::add( $sa_oth, 1, array( 'id' => 'loc-a', 'name' => 'Other company site', 'timezone' => 'UTC' ), time() );
+tzfd_sa_ok( 'staff-access: another company can register the same location id', true === $sa_other_add['ok'], $sa_other_add['code'] );
+tzfd_sa_ok( 'staff-access: a location registered for one company is not active for another', TZFD_Location_Store::has_active( $sa_co, array( 'loc-b' ) ) && false === TZFD_Location_Store::has_active( $sa_oth, array( 'loc-b' ) ) );
+
 // Disposable users: one staff member, one location admin, one company admin.
 $sa_make = function ( $login ) {
 	$id = wp_create_user( $login, wp_generate_password( 20, true, true ), $login . '@example.test' );

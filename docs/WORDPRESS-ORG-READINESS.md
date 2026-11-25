@@ -53,7 +53,7 @@ The readme "External services" section lists five services: an SMS gateway and p
 |---|---|---|
 | Every outbound call in code is disclosed | Partial | Four live call sites match a listed service. The WhatsApp and SMS buttons are links only. One dormant call site (AI connector transport) is not disclosed; see section 6, decision 3 |
 | Disclosure states that nothing is sent to the plugin author by default | Partial | Stated in readme. Not verified by tracing every path |
-| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` shortcode returns empty. readme says "This version does not use AI" |
+| No hosted AI in the Free build | Done | `titan-zero-front-desk.php`: `tz_fd_ai_assistant` stub is not registered; `includes/class-tzfd-retired-shortcodes.php` strips its tag from content (#185). readme says "This version does not use AI" |
 | Hosted Assistant and Agent Team are optional and separate | Done (documentation) | readme "Optional upgrades" section. No hosted client code is shipped in this lane |
 | Consent controls for external services | Not run | Not traced |
 | Safe endpoints (HTTPS, safe remote requests) | Partial | Webhook and import use `wp_safe_remote_*`. SMS gateway uses `wp_safe_remote_post`. Twilio uses `wp_remote_post` with the Twilio URL |

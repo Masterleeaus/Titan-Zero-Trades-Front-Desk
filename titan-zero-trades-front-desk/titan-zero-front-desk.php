@@ -75,9 +75,10 @@ TZFD_Operations_Monitor::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-recovery.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-smart-task-events.php';
 TZFD_Smart_Task_Events::register();
-// The AI assistant is not part of the free build. Keep the shortcode so pages that
-// already contain it render nothing instead of showing raw shortcode text.
-add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' );
+// The AI assistant is not part of the free build. The empty [tz_fd_ai_assistant] stub is no longer registered (issue #185).
+// Its tag is stripped from page content instead, so old pages do not show raw shortcode text.
+require_once dirname( __FILE__ ) . '/includes/class-tzfd-retired-shortcodes.php';
+TZFD_Retired_Shortcodes::boot();
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-access.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-hosted-ai-connector.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-legacy-privacy.php';

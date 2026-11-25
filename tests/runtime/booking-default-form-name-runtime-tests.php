@@ -6,10 +6,10 @@
  * template now has a required "Name" field and an optional "Phone" field. These checks cover:
  *   1. the default template contains the fields with the right types and required flags;
  *   2. the server-side customer check refuses a booking without a name and accepts name + email;
- *   3. a booking row shaped like the one a submission stores keeps the name, and the bookings list reads it.
+ *   3. a booking stored through the public create path keeps the name and phone, and the bookings list reads the name.
  *
- * Scope: checks 1-3 run the same validation and read-back code the public form uses. They do not send an HTTP
- * POST through the form handler, so the full public submission path is not proven by this file.
+ * Scope: checks 1-3 run the same validation, create and read-back code the public form uses. They do not send an HTTP
+ * POST through the form handler (tzfd_main_class process path), so the HTTP submission itself is not proven by this file.
  *
  * Runs inside a disposable WordPress site, via WP-CLI:
  *   wp eval-file tests/runtime/booking-default-form-name-runtime-tests.php --user=1
@@ -80,38 +80,46 @@ tzfd_bn_ok( 'public check: name and email alone are accepted', '' === $tzfd_bn_o
 $tzfd_bn_markup = TZFD_Customer_Field_Check::first_error( $tzfd_bn_build( array( 'name' => '<b>x</b>', 'email' => 'visitor@example.test' ) ) );
 tzfd_bn_ok( 'public check: markup in the name is refused', '' !== $tzfd_bn_markup );
 
-// 3. Stored row with the name, read back the way the bookings list reads it.
+// 3. Store a booking shaped like a public submission (name + phone + email, no other customer fields) through the same
+//    transactional create path the public form uses, then read it back the way the bookings list reads it.
+foreach ( array( 'class-tzfd-intake-mode.php', 'class-tzfd-final-booking-write.php', 'class-tzfd-transaction-storage.php', 'class-tzfd-booking-create-transaction.php' ) as $tzfd_bn_inc ) {
+	require_once WP_PLUGIN_DIR . '/titan-zero-trades-front-desk/includes/' . $tzfd_bn_inc;
+}
 $tzfd_bn_table = $wpdb->prefix . TZFD_Tables::BOOKINGS;
-$tzfd_bn_date  = '2026-11-20';
-$tzfd_bn_data  = array(
-	'apps'  => array( array( 'service' => 'Service 1', 'date' => $tzfd_bn_date, 'slot' => '10:30/11:30' ) ),
+$tzfd_bn_date  = gmdate( 'Y-m-d', strtotime( '+30 days' ) );
+$tzfd_bn_params = array(
+	'apps'  => array( array( 'id' => 1, 'service' => '[all services]', 'date' => $tzfd_bn_date, 'slot' => '10:30/11:30', 'cancelled' => '', 'duration' => 60, 'price' => 0, 'quant' => 0 ) ),
 	'name'  => 'Runtime Name',
-	'phone' => '',
+	'phone' => '+61 400 000 000',
 	'email' => 'visitor@example.test',
+	'formid' => 1,
 );
-$wpdb->insert(
-	$tzfd_bn_table,
+$tzfd_bn_created = TZFD_Booking_Create_Transaction::create(
+	$wpdb,
+	1,
 	array(
 		'formid'      => 1,
-		'time'        => '2026-11-18 09:00:00',
+		'time'        => current_time( 'mysql' ),
 		'ipaddr'      => '127.0.0.1',
-		'notifyto'    => '',
-		'data'        => '',
-		'posted_data' => serialize( $tzfd_bn_data ),
-		'whoadded'    => 'runtime-test-299',
-		'company_id'  => 1,
-	)
+		'notifyto'    => 'visitor@example.test',
+		'data'        => 'runtime-test-299',
+		'posted_data' => serialize( $tzfd_bn_params ),
+		'whoadded'    => '0',
+	),
+	$tzfd_bn_params,
+	TZFD_Intake_Mode::MODE_INSTANT
 );
-$tzfd_bn_id = (int) $wpdb->insert_id;
-tzfd_bn_ok( 'stored row: test booking inserted', $tzfd_bn_id > 0 );
+$tzfd_bn_id = 'success' === ( $tzfd_bn_created['status'] ?? '' ) ? (int) $tzfd_bn_created['id'] : 0;
+tzfd_bn_ok( 'stored row: booking created through the public create path', $tzfd_bn_id > 0, 'status: ' . ( $tzfd_bn_created['status'] ?? 'none' ) );
 
 if ( $tzfd_bn_id > 0 ) {
 	$tzfd_bn_raw     = (string) $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id = %d', $tzfd_bn_table, $tzfd_bn_id ) );
 	$tzfd_bn_decoded = TZFD_Stored_Data::decode_booking( $tzfd_bn_raw );
 	tzfd_bn_ok( 'stored row: name is kept in the stored booking', is_array( $tzfd_bn_decoded ) && 'Runtime Name' === ( $tzfd_bn_decoded['name'] ?? '' ) );
+	tzfd_bn_ok( 'stored row: phone is kept in the stored booking', is_array( $tzfd_bn_decoded ) && '+61 400 000 000' === ( $tzfd_bn_decoded['phone'] ?? '' ) );
 
 	$tzfd_bn_items_list = is_array( $tzfd_bn_decoded )
-		? TZFD_Booking_View::items_from_booking( $tzfd_bn_id, 1, '', 'visitor@example.test', $tzfd_bn_decoded, '2026-11-01', '2026-11-30' )
+		? TZFD_Booking_View::items_from_booking( $tzfd_bn_id, 1, '', 'visitor@example.test', $tzfd_bn_decoded, gmdate( 'Y-m-d' ), gmdate( 'Y-m-d', strtotime( '+60 days' ) ) )
 		: array();
 	$tzfd_bn_customer   = $tzfd_bn_items_list[0]['customer'] ?? '';
 	tzfd_bn_ok( 'bookings list: customer column shows the name, not the email', 'Runtime Name' === $tzfd_bn_customer, 'got: ' . $tzfd_bn_customer );

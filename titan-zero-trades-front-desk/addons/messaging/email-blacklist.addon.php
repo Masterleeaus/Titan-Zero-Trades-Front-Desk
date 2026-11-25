@@ -26,7 +26,7 @@ if( !class_exists( 'TZFD_EmailBlacklistaddon' ) )
 			$this->description = $this->tr_apply("The add-on refuses public bookings made with blacklisted email addresses or domains.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data_before_insert', array( $this, 'check_submission' ), 5, 1 );
+            add_action( 'tzfd_process_data_before_insert', array( $this, 'check_submission' ), 5, 1 );
         } // End __construct
 
         /************************ SETTINGS *****************************/

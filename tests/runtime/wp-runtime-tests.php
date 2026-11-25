@@ -149,6 +149,8 @@ if ( is_array( $tzfd_handle ) ) {
 $tzfd_rows = TZFD_Booking_Capacity_Reader::all_for_calendar( $tzfd_form, $tzfd_company );
 tzfd_rt_ok( 'A17 capacity reader returns every reservation for the calendar, not an empty set on error', is_array( $tzfd_rows ) && count( $tzfd_rows ) >= 1, 'rows=' . ( is_array( $tzfd_rows ) ? count( $tzfd_rows ) : 'null' ) );
 
+// A18 (oversell through the public form, end to end) runs over HTTP in oversell-http-tests.sh, which CI runs
+// after this file. It is not a SKIP here any more (issue #389).
 // A18: oversell through the booking submit path. Calendar capacity is 1 by default, so a second customer asking for
 // the same slot must be refused and no second row may be written. The public enquiry form stores enquiries only; the
 // booking submit path (pipeline intake, then the slot check) is the path that holds the capacity lock.
@@ -183,6 +185,8 @@ $tzfd_cas    = TZFD_Customer_Cancellation::compare_and_swap( $wpdb, $tzfd_id, 's
 $tzfd_after  = $wpdb->get_var( $wpdb->prepare( 'SELECT posted_data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw column read, bypasses the object cache
 tzfd_rt_ok( 'B12 compare-and-swap writes nothing for a stale original and leaves the booking unchanged', empty( $tzfd_cas ) && $tzfd_stored === $tzfd_after, 'result=' . wp_json_encode( $tzfd_cas ) );
 
+// B13 cancel end to end over HTTP (with the customer outbox) runs in customer-cancel-http-tests.sh, which CI runs
+// after this file (issue #389). Reschedule end to end is not driven over HTTP yet, so it stays a SKIP.
 // B13: customer cancel through the public link, over HTTP. A booking is made through the booking submit path, then the
 // link is previewed (GET), confirmed (POST with the nonce from the preview), and replayed. The cancelled row and the
 // staged customer event must each appear once. Reschedule end to end is not covered here (see the report on #334).
@@ -381,12 +385,12 @@ delete_option( TZFD_Call_Lifecycle::FAILURE_OPTION );
 wp_set_current_user( 0 );
 $tzfd_act_error = '';
 try {
-	if ( function_exists( 'tz_fd_activate' ) ) {
+	if ( function_exists( 'tzfd_activate' ) ) {
 		ob_start();
-		tz_fd_activate();
+		tzfd_activate();
 		ob_end_clean();
 	} else {
-		$tzfd_act_error = 'tz_fd_activate is not defined';
+		$tzfd_act_error = 'tzfd_activate is not defined';
 	}
 } catch ( Throwable $e ) {
 	if ( ob_get_level() > 0 ) { ob_end_clean(); }

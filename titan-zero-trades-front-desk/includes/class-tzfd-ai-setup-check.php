@@ -56,12 +56,13 @@ final class TZFD_Ai_Setup_Check {
 		return $out;
 	}
 
-	/** AI can be enabled only when every required item is present. */
+	/**
+	 * AI can be enabled only when every required item is present. The hosted connector is optional (owner decision
+	 * on #400, recorded 2026-11-22): it is listed in missing() but never closes the gate, so the free plugin works without it.
+	 */
 	public static function ai_gate( array $state ) {
 		$required = array_filter( self::missing( $state ), static function ( $i ) { return $i['required']; } );
 		$keys = array_map( static function ( $i ) { return $i['key']; }, $required );
-		// The hosted connector is required to enable AI, even though it is not required for booking.
-		if ( empty( $state['connector_available'] ) ) { $keys[] = 'hosted_connector'; }
 		return array( 'allowed' => empty( $keys ), 'missing' => array_values( array_unique( $keys ) ) );
 	}
 

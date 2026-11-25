@@ -253,7 +253,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             TZFD_Scoped_Store::update( TZFD_Vertical_Packs::VARS_OPTION, self::pack_vars_from( $d ) );
 
             if ( $on ) {
-                if ( ! class_exists( 'TZFD_Addon_Support' ) ) return 'Missed-call settings are not available in this build.';
+                if ( ! class_exists( 'TZFD_Addon_Support' ) ) return __( 'Missed-call settings are not available in this build.', 'titan-zero-trades-front-desk' );
                 TZFD_Addon_Support::save_global_settings( 'missed_call', TZFD_MissedCall::defaults(), $settings );
             }
             return '';
@@ -630,7 +630,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 $d = $draft['details'];
                 // Finish needs the details step: without it there is nothing valid to install or to write.
                 if ( ! is_array( $d ) || ! array_key_exists( 'intake_mode', $d ) || ! array_key_exists( 'business_name', $d ) ) {
-                    return self::go( 5, 'Complete the details step before finishing setup.' );
+                    return self::go( 5, __( 'Complete the details step before finishing setup.', 'titan-zero-trades-front-desk' ) );
                 }
                 $secret = '';
                 $current = TZFD_Addon_Support::global_settings( 'missed_call', TZFD_MissedCall::defaults() );
@@ -735,7 +735,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             echo '<fieldset><legend><strong>' . esc_html__( 'Where do customers book?', 'titan-zero-trades-front-desk' ) . '</strong></legend>';
             echo '<p><label><input type="radio" name="booking_choice" value="new" ' . checked( $choice, 'new', false ) . ' /> ' . esc_html__( 'Create a booking page for me. It will be published as "Book an appointment". (Recommended)', 'titan-zero-trades-front-desk' ) . '</label></p>';
             echo '<p><label><input type="radio" name="booking_choice" value="page" ' . checked( $choice, 'page', false ) . ' /> ' . esc_html__( 'Use a page I already have on this website:', 'titan-zero-trades-front-desk' ) . '</label><br>';
-            echo '<select name="booking_page_id"><option value="0">' . esc_html__( 'Choose a page', 'titan-zero-trades-front-desk' ) . '</option>';
+            echo '<select name="booking_page_id" aria-label="' . esc_attr__( 'Use a page I already have on this website:', 'titan-zero-trades-front-desk' ) . '"><option value="0">' . esc_html__( 'Choose a page', 'titan-zero-trades-front-desk' ) . '</option>';
             foreach ( TZFD_Booking_Page::choices() as $page ) {
                 echo '<option value="' . (int) $page['id'] . '" ' . selected( $chosen_page, (int) $page['id'], false ) . '>' . esc_html( $page['title'] ) . '</option>';
             }
@@ -747,7 +747,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
             }
             echo '</select></label><br><span class="description">' . esc_html__( 'Only used when the booking page is created. For a page you already have, set the calendar in that page.', 'titan-zero-trades-front-desk' ) . '</span></p>';
             echo '<p><label><input type="radio" name="booking_choice" value="link" ' . checked( $choice, 'link', false ) . ' /> ' . esc_html__( 'My booking page is somewhere else. Paste its web address:', 'titan-zero-trades-front-desk' ) . '</label><br>';
-            echo '<input type="url" class="large-text" name="booking_link" placeholder="https://" value="' . esc_attr( $d['booking_url'] ?? '' ) . '" /></p>';
+            echo '<input type="url" class="large-text" name="booking_link" placeholder="https://" aria-label="' . esc_attr__( 'My booking page is somewhere else. Paste its web address:', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( $d['booking_url'] ?? '' ) . '" /></p>';
             echo '</fieldset>';
         }
 
@@ -928,8 +928,8 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                 foreach ( $opts as $key => $label ) {
                     echo '<p><label><input type="checkbox" name="sources[]" value="' . esc_attr( $key ) . '" ' . checked( 'pack' === $key && isset( $packs[ $draft['vertical'] ] ), true, false ) . ' /> ' . esc_html( $label ) . '</label></p>';
                 }
-                echo '<p><input type="file" name="services_csv" accept=".csv,text/csv" /></p>';
-                echo '<p><input type="url" name="web_url" class="regular-text" placeholder="https://" /> <span class="description">' . esc_html__( 'Must start with https://. Read once, when you press Next. Nothing is sent.', 'titan-zero-trades-front-desk' ) . '</span></p>';
+                echo '<p><input type="file" name="services_csv" accept=".csv,text/csv" aria-label="' . esc_attr__( 'A CSV file (name, price)', 'titan-zero-trades-front-desk' ) . '" /></p>';
+                echo '<p><input type="url" name="web_url" class="regular-text" placeholder="https://" aria-label="' . esc_attr__( 'A web page (list items are read)', 'titan-zero-trades-front-desk' ) . '" /> <span class="description">' . esc_html__( 'Must start with https://. Read once, when you press Next. Nothing is sent.', 'titan-zero-trades-front-desk' ) . '</span></p>';
                 echo '<p><button class="button button-primary">' . esc_html__( 'Find services', 'titan-zero-trades-front-desk' ) . '</button></p></form>';
             } elseif ( '3' === $step ) {
                 echo '<h2>' . wp_kses( TZFD_UI_Graphics::brand_html( 'services', 32 ), TZFD_UI_Graphics::allowed_html() ) . esc_html__( '3. Choose your services', 'titan-zero-trades-front-desk' ) . '</h2>';
@@ -961,22 +961,22 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     echo '<h3>' . esc_html__( 'Questions customers ask', 'titan-zero-trades-front-desk' ) . '</h3>';
                     foreach ( (array) $view['kb'] as $i => $qa ) {
                         $i = (int) $i;
-                        echo '<fieldset class="tzfd-qa-row"><p><label>' . esc_html__( 'Question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_q[' . (int) $i . ']" value="' . esc_attr( $qa['q'] ?? '' ) . '" /></label></p>';
+                        echo '<div class="tzfd-qa-row"><p><label>' . esc_html__( 'Question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_q[' . (int) $i . ']" value="' . esc_attr( $qa['q'] ?? '' ) . '" /></label></p>';
                         echo '<p><label>' . esc_html__( 'Answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="3" name="kb_a[' . (int) $i . ']">' . esc_textarea( $qa['a'] ?? '' ) . '</textarea></label></p>';
-                        echo '<p><label><input type="checkbox" name="kb_del[' . (int) $i . ']" value="1" ' . checked( in_array( $i, $removed, true ), true, false ) . ' /> ' . esc_html__( 'Remove this question', 'titan-zero-trades-front-desk' ) . '</label></p></fieldset>';
+                        echo '<p><label><input type="checkbox" name="kb_del[' . (int) $i . ']" value="1" ' . checked( in_array( $i, $removed, true ), true, false ) . ' /> ' . esc_html__( 'Remove this question', 'titan-zero-trades-front-desk' ) . '</label></p></div>';
                     }
                     echo '<h3>' . esc_html__( 'Add your own questions (optional)', 'titan-zero-trades-front-desk' ) . '</h3>';
                     echo '<p class="description">' . esc_html__( 'Write a question a customer often asks, and the answer you would give. Leave a row empty to skip it.', 'titan-zero-trades-front-desk' ) . '</p>';
                     for ( $k = 0; $k < 3; $k++ ) {
-                        echo '<fieldset class="tzfd-qa-row"><p><label>' . esc_html__( 'New question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_nq[' . (int) $k . ']" value="" /></label></p>';
-                        echo '<p><label>' . esc_html__( 'Your answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="2" name="kb_na[' . (int) $k . ']"></textarea></label></p></fieldset>';
+                        echo '<div class="tzfd-qa-row"><p><label>' . esc_html__( 'New question', 'titan-zero-trades-front-desk' ) . '<br><input type="text" class="large-text" name="kb_nq[' . (int) $k . ']" value="" /></label></p>';
+                        echo '<p><label>' . esc_html__( 'Your answer', 'titan-zero-trades-front-desk' ) . '<br><textarea class="large-text" rows="2" name="kb_na[' . (int) $k . ']"></textarea></label></p></div>';
                     }
                     echo '<h3>' . esc_html__( 'Prices', 'titan-zero-trades-front-desk' ) . '</h3>';
                     echo '<p class="description">' . esc_html__( 'Example prices from the trade pack, per unit. Enter numbers only. You can set your own full price list later in Titan Zero Quotes.', 'titan-zero-trades-front-desk' ) . '</p>';
-                    echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+                    echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
                     foreach ( (array) $view['catalog'] as $i => $item ) {
-                        echo '<tr><td><input type="text" class="regular-text" name="cat_label[' . (int) $i . ']" value="' . esc_attr( $item['label'] ?? '' ) . '" /></td>';
-                        echo '<td><input type="number" min="0" step="0.01" name="cat_price[' . (int) $i . ']" value="' . esc_attr( number_format( (float) ( $item['unit_price'] ?? 0 ), 2, '.', '' ) ) . '" /> <span class="description">' . esc_html( $item['unit'] ?? '' ) . '</span></td></tr>';
+                        echo '<tr><td><input type="text" class="regular-text" name="cat_label[' . (int) $i . ']" aria-label="' . esc_attr__( 'Item', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( $item['label'] ?? '' ) . '" /></td>';
+                        echo '<td><input type="number" min="0" step="0.01" name="cat_price[' . (int) $i . ']" aria-label="' . esc_attr__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( number_format( (float) ( $item['unit_price'] ?? 0 ), 2, '.', '' ) ) . '" /> <span class="description">' . esc_html( $item['unit'] ?? '' ) . '</span></td></tr>';
                     }
                     echo '</tbody></table>';
                 }

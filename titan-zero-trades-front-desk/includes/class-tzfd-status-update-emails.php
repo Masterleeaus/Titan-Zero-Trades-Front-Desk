@@ -12,7 +12,7 @@ if ( ! class_exists( 'TZFD_Status_Update_Emails' ) ) {
         const OPTION = 'titan_zero_front_desk_status_update_email_settings';
         const OPTION_GROUP = 'titan_zero_front_desk_status_update_email_settings';
         const PAGE = 'tzfd-status-update-emails';
-        const STATUS_HOOK = 'titan_zero_front_desk_booking_status_persisted';
+        const STATUS_HOOK = 'tzfd_booking_status_persisted';
 
         public function register() {
             add_action( self::STATUS_HOOK, array( $this, 'send_status_email' ), 10, 3 );

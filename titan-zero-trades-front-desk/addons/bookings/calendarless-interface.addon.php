@@ -165,9 +165,9 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 			if( !$this->addon_is_active() ) return;
 
             add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_assets' ) );
-            add_filter( 'tz_fd_the_form', array( &$this, 'enqueue_script' ), 99, 2 );
-            add_filter( 'tz_fd_the_form', array( &$this, 'insert_style'), 99, 2 );
-            add_filter( 'tz_fd_csslayout', array( &$this, 'pp_tz_fd_csslayout' ), 10, 2);
+            add_filter( 'tzfd_the_form', array( &$this, 'enqueue_script' ), 99, 2 );
+            add_filter( 'tzfd_the_form', array( &$this, 'insert_style'), 99, 2 );
+            add_filter( 'tzfd_csslayout', array( &$this, 'pp_tz_fd_csslayout' ), 10, 2);
 
             $this->update_database();
 
@@ -275,7 +275,7 @@ if( !class_exists( 'TZFD_SingleDaysSelection' ) )
 
 
 		/**
-         * Enqueues the calendarless script for a form on the page that shows the form (tz_fd_the_form).
+         * Enqueues the calendarless script for a form on the page that shows the form (tzfd_the_form).
          * The six settings go through wp_localize_script(); the script body is js/inline/CALENDAR-JS-2-calendarless.js.
          */
         public function	enqueue_script( $form_code, $id )

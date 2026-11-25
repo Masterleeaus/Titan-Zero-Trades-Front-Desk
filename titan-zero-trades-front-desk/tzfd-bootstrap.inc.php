@@ -21,6 +21,7 @@ require_once dirname( __FILE__ ) . '/includes/class-tzfd-builtin-verticals.php';
 require_once dirname( __FILE__ ) . '/includes/class-tzfd-automation.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-booking-status-api.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-business-knowledge.php';
+include_once dirname( __FILE__ ) . '/includes/class-tzfd-service-contract-rest.php';
 include_once dirname( __FILE__ ) . '/includes/class-tzfd-addon-loader.php';
 
 // loading add-ons
@@ -32,7 +33,7 @@ $tzfd_addons_active_list = array();
 if (!is_array($tzfd_addons_objs_list))
     $tzfd_addons_objs_list	 = array();
 
-function tz_fd_loading_add_ons()
+function tzfd_loading_add_ons()
 {
 	global $tzfd_addons_active_list, // List of addon IDs
 		   $tzfd_addons_objs_list; // List of addon objects
@@ -123,11 +124,11 @@ TZFD_Pipeline_Screen::register();
 
 
 $tzfd_plugin = new TZFD_Scheduling_Plugin;
-add_action('tz_fd_process_data_before_insert', array($tzfd_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);
-add_action('tz_fd_process_data', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data_before_insert', array($tzfd_plugin, 'begin_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
 // A rejected/failed submission must release its per-calendar database lock as
 // reliably as a successful insert, including invalid customer and insert errors.
-add_action('tz_fd_process_data_insert_failed', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
+add_action('tzfd_process_data_insert_failed', array($tzfd_plugin, 'finish_capacity_reservation'), PHP_INT_MIN, 1);
 
 
 // Customer self-service, status emails, and the messaging and sync framework. These load on every
@@ -188,9 +189,9 @@ if ( is_admin() ) {
 // register gutenberg block
 if (function_exists('register_block_type'))
 {
-    add_action( 'init', 'tz_fd_hour_register_dynamic_block' );
+    add_action( 'init', 'tzfd_hour_register_dynamic_block' );
 
-    function tz_fd_hour_register_dynamic_block() {
+    function tzfd_hour_register_dynamic_block() {
         global $tzfd_plugin;
 
         register_block_type( 'tzfdhour/form-rendering', array(
@@ -208,9 +209,9 @@ if (function_exists('register_block_type'))
     }
 }
 
-add_filter( 'block_categories_all', 'tz_fd_hour_register_block_category', 10, 2 );
+add_filter( 'block_categories_all', 'tzfd_hour_register_block_category', 10, 2 );
 
-function tz_fd_hour_register_block_category( $categories, $post ) {
+function tzfd_hour_register_block_category( $categories, $post ) {
     return array_merge(
         $categories,
         array(
@@ -225,8 +226,8 @@ function tz_fd_hour_register_block_category( $categories, $post ) {
 
 
 
-add_filter('autoptimize_filter_js_exclude', 'tz_fd_hour_autoptimize_filter_js_exclude' );
-function tz_fd_hour_autoptimize_filter_js_exclude($excluded)
+add_filter('autoptimize_filter_js_exclude', 'tzfd_hour_autoptimize_filter_js_exclude' );
+function tzfd_hour_autoptimize_filter_js_exclude($excluded)
 {
     return $excluded.",jquery.ui.datepicker-fr-CA.js,".
                      "jquery.ui.datepicker-es_ES.js,".
@@ -289,8 +290,8 @@ function tz_fd_hour_autoptimize_filter_js_exclude($excluded)
 
 // code for compatibility with third party scripts
 
-add_filter('litespeed_cache_optimize_js_excludes', 'tz_fd_hour_litespeed_cache_optimize_js_excludes' );
-function tz_fd_hour_litespeed_cache_optimize_js_excludes($tzfd_options)
+add_filter('litespeed_cache_optimize_js_excludes', 'tzfd_hour_litespeed_cache_optimize_js_excludes' );
+function tzfd_hour_litespeed_cache_optimize_js_excludes($tzfd_options)
 {
     return  "jquery.ui.datepicker-fr-CA.js\n".
                      "jquery.ui.datepicker-es_ES.js\n".
@@ -350,8 +351,8 @@ function tz_fd_hour_litespeed_cache_optimize_js_excludes($tzfd_options)
                      "jquery.validate.min.js\njQuery.stringify.js\njquery.validate.js\njquery.js\n".$tzfd_options;
 }
 
-add_filter('option_sbp_settings', 'tz_fd_hour_sbp_fix_conflict' );
-function tz_fd_hour_sbp_fix_conflict($tzfd_option)
+add_filter('option_sbp_settings', 'tzfd_hour_sbp_fix_conflict' );
+function tzfd_hour_sbp_fix_conflict($tzfd_option)
 {
     if(!is_admin())
     {
@@ -361,7 +362,7 @@ function tz_fd_hour_sbp_fix_conflict($tzfd_option)
     return $tzfd_option;
 }
 
-function tz_fd_hour_tp_disable_filter()
+function tzfd_hour_tp_disable_filter()
 {
     return false;
 }
@@ -386,16 +387,16 @@ add_filter( 'content_save_pre', function ( $content ) {
 
 
 // Exclude from SiteGround Speed Optimizer JS Combination
-add_filter( 'sgo_javascript_combine_exclude', 'tz_fd_hour_exclude_js_from_combination' );
-function tz_fd_hour_exclude_js_from_combination( $exclude_list ) {
+add_filter( 'sgo_javascript_combine_exclude', 'tzfd_hour_exclude_js_from_combination' );
+function tzfd_hour_exclude_js_from_combination( $exclude_list ) {
     $exclude_list[] = 'tz_fd_frontdesk_language_file';
     $exclude_list[] = 'tz_fd_frontdesk_builder_script';
     return $exclude_list;
 }
 
 // Exclude from SiteGround Speed Optimizer JS Minification
-add_filter( 'sgo_js_minify_exclude', 'tz_fd_hour_exclude_js_from_minification' );
-    function tz_fd_hour_exclude_js_from_minification( $exclude_list ) {
+add_filter( 'sgo_js_minify_exclude', 'tzfd_hour_exclude_js_from_minification' );
+    function tzfd_hour_exclude_js_from_minification( $exclude_list ) {
     $exclude_list[] = 'tz_fd_frontdesk_language_file';
     $exclude_list[] = 'tz_fd_frontdesk_builder_script';
     return $exclude_list;

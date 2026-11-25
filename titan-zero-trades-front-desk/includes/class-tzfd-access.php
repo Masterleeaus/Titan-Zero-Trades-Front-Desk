@@ -11,7 +11,7 @@ class TZFD_Access {
     const ROLE_WORKER  = 'titan_zero_worker';
     const ROLE_MANAGER = 'titan_zero_manager';
 
-    /** Registers the grant. Called once from tz_fd_boot(), after Workspace is confirmed. */
+    /** Registers the grant. Called once from tzfd_boot(), after Workspace is confirmed. */
     public static function register() {
         add_filter( 'user_has_cap', array( __CLASS__, 'grant' ), 10, 4 );
     }

@@ -29,11 +29,11 @@ if( !class_exists( 'TZFD_Reminder' ) )
 			$this->description = $this->tr_apply("The add-on emails customers a reminder a set number of hours before each approved appointment.", 'titan-zero-trades-front-desk' );
             if ( ! $this->addon_is_active() ) return;
 
-            add_action( 'tz_fd_process_data', array( $this, 'schedule_reminders' ), 40, 1 );
+            add_action( 'tzfd_process_data', array( $this, 'schedule_reminders' ), 40, 1 );
             add_action( self::HOOK, array( $this, 'send_reminder' ), 10, 3 );
             // A customer reschedule or a status change (approval, cancellation) re-queues the reminders.
             add_action( 'tzfd_booking_time_changed', array( $this, 'refresh_after_move' ), 20, 3 );
-            add_action( 'tz_fd_update_status', array( $this, 'refresh_after_status' ), 60, 2 );
+            add_action( 'tzfd_update_status', array( $this, 'refresh_after_status' ), 60, 2 );
         } // End __construct
 
         /************************ SETTINGS *****************************/

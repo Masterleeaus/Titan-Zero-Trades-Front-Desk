@@ -48,7 +48,8 @@ final class TZFD_Specialist_Slot_Check extends TZFD_Agent {
                 'occupied' => TZFD_Pipeline::occupied_count( $facts['formid'], $facts['date'], $facts['slot'], $id ),
                 'capacity' => TZFD_Pipeline::capacity( $facts['formid'], $facts['date'], $facts['slot'] ),
             ) );
-            $extra  = (array) apply_filters( 'tz_fd_pipeline_fulfilment_reasons', array(), $facts, $id );
+            $extra  = (array) apply_filters( 'tzfd_pipeline_fulfilment_reasons', array(), $facts, $id );
+            $extra  = (array) apply_filters( 'tz_fd_pipeline_fulfilment_reasons', $extra, $facts, $id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
         } finally {
             // Release the capacity lock even when a count, the fulfilment rules or a filter throws.
             TZFD_Capacity_Lock::release( $wpdb, $lock );

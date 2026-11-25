@@ -53,3 +53,8 @@ function tzfd_test_customer_record_exposure() {
 	tzfd_assert( 1 === count( $visible_to_7 ) && 1 === $visible_to_7[0]['id'], 'company 7 sees only its own customer' );
 	tzfd_assert( 1 === count( $visible_to_8 ) && 2 === $visible_to_8[0]['id'], 'company 8 sees only its own customer after a switch' );
 }
+
+if ( ! defined( 'TZFD_UNIT_FILE_RUNNER' ) && realpath( (string) ( $_SERVER['SCRIPT_FILENAME'] ?? '' ) ) === __FILE__ ) {
+	require_once __DIR__ . '/tzfd-standalone-runner.php';
+	exit( tzfd_standalone_run( __FILE__ ) );
+}

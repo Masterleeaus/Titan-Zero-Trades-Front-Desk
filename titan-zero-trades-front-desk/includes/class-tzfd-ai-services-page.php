@@ -13,6 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 require_once __DIR__ . '/class-tzfd-ai-services.php';
 require_once __DIR__ . '/class-tzfd-ai-connector.php';
+require_once __DIR__ . '/class-tzfd-ai-pairing.php';
 
 final class TZFD_AI_Services_Page {
     const SLUG   = 'tzfd-ai-services';
@@ -80,22 +81,24 @@ final class TZFD_AI_Services_Page {
     }
 
     /**
-     * Pairs the site with the hosted service from the admin's typed values. The secret is read once, passed to
-     * the connector and dropped; it is never echoed, logged or stored outside the connector's option.
-     * Consent is revoked after any successful pairing, so data is never sent to a new endpoint on old consent.
+     * Connect hosted account (issue #347): the admin enters the single-use pairing code shown by Supercharged.
+     * TZFD_AI_Pairing exchanges it over https for a signed central-pairing/1 assertion. The per-site secret comes from the secret store. The code is read once, passed on and
+     * dropped; it is never echoed, logged or stored. Consent is revoked by a successful pairing, so data is
+     * never sent to a new endpoint on old consent.
      */
     public static function handle_connect() {
         self::guard_connector_request();
-        $endpoint = self::post_string( 'endpoint' );
-        $site_id  = self::post_string( 'site_id' );
-        $secret   = self::post_string( 'secret' );
-        $saved    = TZFD_AI_Connector::configure( $endpoint, $site_id, $secret );
-        $secret   = '';
-        if ( ! $saved ) {
-            self::redirect_notice( 'connect_invalid' );
-        }
-        TZFD_AI_Connector::revoke_consent();
-        self::redirect_notice( 'connect_saved' );
+        $code   = self::post_string( 'pairing_code' );
+        $result = TZFD_AI_Pairing::pair( $code );
+        $code   = '';
+        $map    = array(
+            'paired'      => 'connect_saved',
+            'pairing_off' => 'pair_off',
+            'busy'        => 'pair_offline',
+            'offline'     => 'pair_offline',
+        );
+        $status = isset( $result['status'] ) ? (string) $result['status'] : '';
+        self::redirect_notice( isset( $map[ $status ] ) ? $map[ $status ] : 'connect_invalid' );
     }
 
     /** Removes the secret, endpoint and consent. Usage history and the event log are kept. */
@@ -178,23 +181,17 @@ final class TZFD_AI_Services_Page {
                         <span class="description"><?php esc_html_e( 'Removes the secret, the endpoint and consent. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
                 </form>
             <?php else : ?>
-                <p class="description"><?php esc_html_e( 'Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect.', 'titan-zero-trades-front-desk' ); ?></p>
+                <h3><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></h3>
+                <p class="description"><?php esc_html_e( 'Optional. Booking, customers, calendars and FAQ work without it. Read the hosted AI consent below before you connect. Enter the pairing code shown by Supercharged. Each code works once.', 'titan-zero-trades-front-desk' ); ?></p>
                 <form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
                     <input type="hidden" name="action" value="<?php echo esc_attr( self::ACTION_CONNECT ); ?>" />
                     <?php wp_nonce_field( self::CONNECTOR_NONCE ); ?>
                     <p>
-                        <label for="tzfd-ai-endpoint"><?php esc_html_e( 'Endpoint (https)', 'titan-zero-trades-front-desk' ); ?></label><br />
-                        <input type="url" id="tzfd-ai-endpoint" name="endpoint" class="regular-text" required />
+                        <label for="tzfd-ai-pairing-code"><?php esc_html_e( 'Pairing code', 'titan-zero-trades-front-desk' ); ?></label><br />
+                        <input type="text" id="tzfd-ai-pairing-code" name="pairing_code" maxlength="64" pattern="[A-Za-z0-9\-]{6,64}" autocomplete="off" spellcheck="false" class="regular-text" required disabled />
                     </p>
-                    <p>
-                        <label for="tzfd-ai-site-id"><?php esc_html_e( 'Site ID', 'titan-zero-trades-front-desk' ); ?></label><br />
-                        <input type="text" id="tzfd-ai-site-id" name="site_id" maxlength="64" pattern="[A-Za-z0-9_.\-]{1,64}" required />
-                    </p>
-                    <p>
-                        <label for="tzfd-ai-secret"><?php esc_html_e( 'Secret (at least 32 characters)', 'titan-zero-trades-front-desk' ); ?></label><br />
-                        <input type="password" id="tzfd-ai-secret" name="secret" minlength="32" autocomplete="new-password" class="regular-text" required />
-                    </p>
-                    <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Connect', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <p><button type="submit" class="button button-secondary" disabled><?php esc_html_e( 'Connect hosted account', 'titan-zero-trades-front-desk' ); ?></button></p>
+                    <p class="description"><?php esc_html_e( 'Hosted pairing is not live yet, so this control stays disabled.', 'titan-zero-trades-front-desk' ); ?></p>
                 </form>
             <?php endif; ?>
 
@@ -232,6 +229,7 @@ final class TZFD_AI_Services_Page {
                         </label>
                     <?php endforeach; ?>
                 </fieldset>
+                <p class="description"><?php echo esc_html( $setup['confirmation'] ); ?></p>
                 <p><button type="submit" class="button button-primary"><?php esc_html_e( 'Save consent', 'titan-zero-trades-front-desk' ); ?></button></p>
             </form>
             <?php if ( $status['consent'] ) : ?>
@@ -241,6 +239,29 @@ final class TZFD_AI_Services_Page {
                     <p><button type="submit" class="button button-secondary"><?php esc_html_e( 'Revoke consent', 'titan-zero-trades-front-desk' ); ?></button>
                         <span class="description"><?php esc_html_e( 'Hosted requests stop at once. Local features are unchanged.', 'titan-zero-trades-front-desk' ); ?></span></p>
                 </form>
+            <?php endif; ?>
+
+            <h2><?php esc_html_e( 'Connection and consent history', 'titan-zero-trades-front-desk' ); ?></h2>
+            <?php $trail = self::audit_rows( TZFD_AI_Connector::audit_log() ); ?>
+            <?php if ( array() === $trail ) : ?>
+                <p><?php esc_html_e( 'No connection or consent changes recorded.', 'titan-zero-trades-front-desk' ); ?></p>
+            <?php else : ?>
+                <table class="widefat striped" style="max-width:52em">
+                    <thead><tr>
+                        <th scope="col"><?php esc_html_e( 'When (UTC)', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Change', 'titan-zero-trades-front-desk' ); ?></th>
+                        <th scope="col"><?php esc_html_e( 'Detail', 'titan-zero-trades-front-desk' ); ?></th>
+                    </tr></thead>
+                    <tbody>
+                    <?php foreach ( $trail as $row ) : ?>
+                        <tr>
+                            <td><?php echo esc_html( gmdate( 'Y-m-d H:i:s', $row['at'] ) ); ?></td>
+                            <td><?php echo esc_html( $row['label'] ); ?></td>
+                            <td><?php echo esc_html( $row['detail'] ); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                    </tbody>
+                </table>
             <?php endif; ?>
 
             <h2><?php esc_html_e( 'Event log retention', 'titan-zero-trades-front-desk' ); ?></h2>
@@ -372,6 +393,37 @@ final class TZFD_AI_Services_Page {
         return $rows;
     }
 
+    /**
+     * Turns stored audit entries into the three fields the screen shows. Pure function.
+     *
+     * @param array $entries Entries from TZFD_AI_Connector::audit_log().
+     * @return array<int, array{at:int, label:string, detail:string}>
+     */
+    public static function audit_rows( array $entries ) {
+        $labels = array(
+            'connect'         => __( 'Connected to the hosted service', 'titan-zero-trades-front-desk' ),
+            'consent_granted' => __( 'Consent granted', 'titan-zero-trades-front-desk' ),
+            'consent_revoked' => __( 'Consent revoked', 'titan-zero-trades-front-desk' ),
+            'disconnect'      => __( 'Disconnected', 'titan-zero-trades-front-desk' ),
+        );
+        $rows = array();
+        foreach ( $entries as $entry ) {
+            if ( ! is_array( $entry ) || ! isset( $entry['action'] ) || ! isset( $labels[ $entry['action'] ] ) ) {
+                continue;
+            }
+            $detail = '';
+            if ( isset( $entry['scopes'] ) && is_array( $entry['scopes'] ) ) {
+                $detail = implode( ', ', array_map( 'strval', $entry['scopes'] ) );
+            }
+            $rows[] = array(
+                'at'     => isset( $entry['at'] ) ? (int) $entry['at'] : 0,
+                'label'  => $labels[ $entry['action'] ],
+                'detail' => $detail,
+            );
+        }
+        return $rows;
+    }
+
     /** @return string[] */
     private static function allowed_scopes() {
         $disclosure = TZFD_AI_Connector::disclosure();
@@ -389,7 +441,9 @@ final class TZFD_AI_Services_Page {
             'retention_invalid' => __( 'Retention must be a whole number of days from 1 to 365.', 'titan-zero-trades-front-desk' ),
             'events_cleared'    => __( 'Hosted AI event log cleared.', 'titan-zero-trades-front-desk' ),
             'connect_saved'     => __( 'Hosted AI service connected. Consent is needed again before any hosted request is sent.', 'titan-zero-trades-front-desk' ),
-            'connect_invalid'   => __( 'Connection not saved. Use an https endpoint, a site ID of up to 64 letters, numbers, dots, dashes or underscores, and a secret of at least 32 characters.', 'titan-zero-trades-front-desk' ),
+            'connect_invalid'   => __( 'Connection not saved. Check the pairing code and try again. Your previous connection, if any, is unchanged.', 'titan-zero-trades-front-desk' ),
+            'pair_off'          => __( 'Hosted account pairing is not available on this site yet. Nothing was sent.', 'titan-zero-trades-front-desk' ),
+            'pair_offline'      => __( 'Could not reach the hosted service, or another pairing is in progress. Your previous connection, if any, is unchanged. Try again later.', 'titan-zero-trades-front-desk' ),
             'disconnected'      => __( 'Hosted AI disconnected. The secret, endpoint and consent were removed. Local features are unchanged.', 'titan-zero-trades-front-desk' ),
         );
     }

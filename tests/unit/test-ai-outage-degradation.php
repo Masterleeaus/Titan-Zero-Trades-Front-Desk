@@ -38,6 +38,7 @@ function tzfd_outage_pair( $site, $secret ) {
 		'contract' => 'central-pairing/1', 'site' => $site, 'company_uuid' => '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f',
 		'operations' => array( 'hosted.request' ), 'nonce' => $nonce,
 		'issued_at' => $now, 'expires_at' => $now + 600,
+		'feature_endpoint' => 'https://central.titanzero.io/api/tzfd/ai',
 	) );
 	$headers = array(
 		'X-TZFD-Timestamp' => (string) $now,

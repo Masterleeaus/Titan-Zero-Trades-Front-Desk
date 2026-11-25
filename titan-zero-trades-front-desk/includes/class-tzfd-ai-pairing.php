@@ -13,13 +13,15 @@
  *   sent, returned or logged. Without it, nothing is sent.
  * - The pairing code is single use. It is sent once, in the JSON body over HTTPS, and is never stored,
  *   logged, echoed or returned.
- * - The response body carries exactly the seven signed assertion fields of central-pairing/1 and nothing else.
- *   It is signed with HMAC-SHA256 in the X-TZFD-Timestamp, X-TZFD-Nonce and X-TZFD-Signature headers. The
- *   signature and every field are checked by TZFD_Central_Tenant::connect(). The nonce must echo the request.
+ * - The response body carries exactly the eight signed fields of central-pairing/1 and nothing else: the seven
+ *   assertion fields plus feature_endpoint, the AI endpoint. It is signed with HMAC-SHA256 in the X-TZFD-Timestamp,
+ *   X-TZFD-Nonce and X-TZFD-Signature headers, so the endpoint is covered by the same signature. The signature and
+ *   every field are checked by TZFD_Central_Tenant::connect(). The nonce must echo the request. The endpoint must be
+ *   https and on the host of the pairing endpoint; it is then set as the AI connector endpoint.
  * - A refused or failed exchange leaves the existing pairing and credential unchanged.
  *
  * Request (POST, JSON body):    {"contract":"central-pairing/1","site":"<site id>","nonce":"<32 hex>","code":"<pairing code>"}
- * Response (JSON body, 200):    {"contract":"central-pairing/1","site":"<site id>","company_uuid":"<uuid>","operations":["..."],"nonce":"<32 hex>","issued_at":<int>,"expires_at":<int>}
+ * Response (JSON body, 200):    {"contract":"central-pairing/1","site":"<site id>","company_uuid":"<uuid>","operations":["..."],"nonce":"<32 hex>","issued_at":<int>,"expires_at":<int>,"feature_endpoint":"https://..."}
  * Response headers:             X-TZFD-Timestamp, X-TZFD-Nonce, X-TZFD-Signature (sha256=<hex>)
  *
  * See docs/AI-SERVICE-CONNECTOR-CONTRACT.md, section "Pairing", and docs/CENTRAL-COMPANY-PAIRING.md.
@@ -113,7 +115,7 @@ final class TZFD_AI_Pairing {
         $data = json_decode( $response_body, true );
         if ( ! is_array( $data ) ) { return self::result( 'invalid_response' ); }
 
-        // Exactly the seven signed fields: a missing field, an extra field (including any secret) or a non-object body is refused.
+        // Exactly the eight signed fields: a missing field, an extra field (including any secret) or a non-object body is refused.
         $fields = TZFD_Central_Tenant::assertion_fields();
         if ( array() !== array_diff( array_keys( $data ), $fields ) || array() !== array_diff( $fields, array_keys( $data ) ) ) {
             return self::result( 'invalid_response', array( 'reason' => 'fields_mismatch' ) );
@@ -126,12 +128,22 @@ final class TZFD_AI_Pairing {
         }
         if ( '' === $echo || ! hash_equals( $nonce, $echo ) ) { return self::result( 'invalid_response', array( 'reason' => 'nonce_not_echoed' ) ); }
 
+        // The AI endpoint is signed with the rest of the body. It must be https on the pairing endpoint's host.
+        $feature = is_string( $data['feature_endpoint'] ) ? $data['feature_endpoint'] : '';
+        if ( ! self::valid_https_url( $feature ) || ! self::same_host( $endpoint, $feature ) ) {
+            return self::result( 'invalid_response', array( 'reason' => 'endpoint_invalid' ) );
+        }
+
         // connect() verifies the signature, timestamp, nonce, site, company, lifetime and replay, then stores the pairing.
         $v = TZFD_Central_Tenant::connect( $response_body, $headers, $site_id, $secret, time() );
         $response_body = '';
         $data          = array();
         if ( empty( $v['ok'] ) ) { return self::result( 'invalid_response', array( 'reason' => (string) $v['reason'] ) ); }
 
+        // Only after the signed pairing is stored: the endpoint and the secret go to the AI connector.
+        if ( ! TZFD_AI_Connector::configure( $feature, $site_id, $secret ) ) {
+            return self::result( 'invalid_response', array( 'reason' => 'endpoint_rejected' ) );
+        }
         TZFD_AI_Connector::revoke_consent(); // a new pairing needs consent again
         return self::result( 'paired', array( 'reason' => (string) $v['reason'] ) );
     }
@@ -155,6 +167,14 @@ final class TZFD_AI_Pairing {
             && 'https' === strtolower( $parts['scheme'] )
             && '' !== $parts['host']
             && ! isset( $parts['user'] ) && ! isset( $parts['pass'] );
+    }
+
+    private static function same_host( $a, $b ) {
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
+        $pa = parse_url( $a );
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.parse_url_parse_url -- see valid_https_url().
+        $pb = parse_url( $b );
+        return is_array( $pa ) && is_array( $pb ) && strtolower( $pa['host'] ) === strtolower( $pb['host'] );
     }
 
     private static function transport( array $request ) {

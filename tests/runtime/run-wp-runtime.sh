@@ -82,7 +82,7 @@ SECRET_LINE="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$s = bin2hex(random_
 [ -n "$SECRET_LINE" ] && eval "$SECRET_LINE" || echo "FAIL addon setup -- could not store the missed-call secret"
 
 # Hosted-service contract (issue #285): a test key and a read_settings-only agent scope, so the signed route is exercised.
-CONTRACT_LINES="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$k = bin2hex(random_bytes(32)); update_option("tzfd_hosted_contract_key", $k, false); update_option("tzfd_hosted_contract_scopes", array("read_settings"), false); echo "\nTZFD_RT_CONTRACT_KEY=" . $k . "\nTZFD_RT_CONTRACT_TENANT=" . (int) TZFD_Scoped_Store::company_id() . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_CONTRACT_')"
+CONTRACT_LINES="$($WP_CLI --allow-root --path="$WP_ROOT" eval '$k = bin2hex(random_bytes(32)); update_option("tzfd_hosted_contract_key", $k, false); update_option("tzfd_hosted_contract_scopes", array("read_settings", "read_services", "read_locations"), false); echo "\nTZFD_RT_CONTRACT_KEY=" . $k . "\nTZFD_RT_CONTRACT_TENANT=" . (int) TZFD_Scoped_Store::company_id() . "\n";' --user=1 2>>"$LOG" | grep '^TZFD_RT_CONTRACT_')"
 [ -n "$CONTRACT_LINES" ] && eval "$CONTRACT_LINES" || echo "FAIL contract setup -- could not store the test contract key"
 
 echo "--- hosted-service contract over HTTP (service-contract-http-tests.sh, issue #285)"

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # HTTP checks for the hosted-service contract route (issue #285). Posts signed contract v1 envelopes to the
 # disposable test site. Env: B (base URL), KEY (contract key stored by the runner), TENANT (site company id),
-# plus the scopes the runner granted: read_settings only. Nothing here calls a live hosted service.
+# plus the scopes the runner granted: read_settings, read_services and read_locations. Nothing here calls a live hosted service.
 # REST is called as ?rest_route= because pretty permalinks are not routed on the test server.
 set -u
 B="${B:-${TZFD_RT_URL:-}}"
@@ -42,6 +42,9 @@ check "unscoped read refused" 403 'scope_missing' "$(sign "$KEY" booking.list "$
 check "write refused without its scope" 403 'scope_missing' "$(sign "$KEY" booking.create "$TENANT" "$(nonce)")"
 check "unknown operation refused" 400 'unknown_operation' "$(sign "$KEY" booking.delete_all "$TENANT" "$(nonce)")"
 check "allowed but unimplemented operation answers 501" 501 'operation_not_implemented' "$(sign "$KEY" settings.get "$TENANT" "$(nonce)")"
+check "service catalogue read answers with services" 200 '"services":' "$(sign "$KEY" service.catalogue.list "$TENANT" "$(nonce)")"
+check "locations read answers with locations" 200 '"locations":' "$(sign "$KEY" locations.list "$TENANT" "$(nonce)")"
+check "scoped read of another tenant refused" 403 'tenant_mismatch' "$(sign "$KEY" locations.list "$((TENANT + 1))" "$(nonce)")"
 check "stale timestamp refused" 400 'timestamp_outside_window' "$(KEY="$KEY" php -r '
   define("ABSPATH", "/"); require $argv[1];
   $e = array("v"=>"1.0.0","op"=>"capability.check","tenant_id"=>(int)$argv[2],"ts"=>time()-3600,"nonce"=>$argv[3],"payload"=>array());

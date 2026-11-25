@@ -973,7 +973,7 @@ if ( ! class_exists( 'TZFD_Onboarding' ) )
                     }
                     echo '<h3>' . esc_html__( 'Prices', 'titan-zero-trades-front-desk' ) . '</h3>';
                     echo '<p class="description">' . esc_html__( 'Example prices from the trade pack, per unit. Enter numbers only. You can set your own full price list later in Titan Zero Quotes.', 'titan-zero-trades-front-desk' ) . '</p>';
-                    echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
+                    echo '<table class="widefat striped"><thead><tr><th scope="col">' . esc_html__( 'Item', 'titan-zero-trades-front-desk' ) . '</th><th scope="col">' . esc_html__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '</th></tr></thead><tbody>';
                     foreach ( (array) $view['catalog'] as $i => $item ) {
                         echo '<tr><td><input type="text" class="regular-text" name="cat_label[' . (int) $i . ']" aria-label="' . esc_attr__( 'Item', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( $item['label'] ?? '' ) . '" /></td>';
                         echo '<td><input type="number" min="0" step="0.01" name="cat_price[' . (int) $i . ']" aria-label="' . esc_attr__( 'Price per unit', 'titan-zero-trades-front-desk' ) . '" value="' . esc_attr( number_format( (float) ( $item['unit_price'] ?? 0 ), 2, '.', '' ) ) . '" /> <span class="description">' . esc_html( $item['unit'] ?? '' ) . '</span></td></tr>';

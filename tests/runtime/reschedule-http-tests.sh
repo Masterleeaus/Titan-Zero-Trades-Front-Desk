@@ -46,7 +46,7 @@ PAGE="$(curl -s -L -o /dev/null -w '%{url_effective}' --max-time 30 "$PAGE" || t
 html="$(curl -s -L --max-time 30 -c "$JAR" -b "$JAR" "$PAGE" || true)"
 nonce="$(printf '%s' "$html" | grep -o '<input name="anonce"[^>]*>' | grep -o 'value="[^"]*"' | head -1 | cut -d'"' -f2)"
 seq="$(printf '%s' "$html" | grep -o 'name="tz_fd_pform_psequence" value="[^"]*"' | head -1 | sed 's/.*value="\([^"]*\)"/\1/')"
-captcha_src="$(printf '%s' "$html" | grep -o 'src="[^"]*tz_fd_frontdesk_captcha=captcha[^"]*"' | head -1 | sed 's/^src="//; s/"$//; s/&amp;/\&/g')"
+captcha_src="$(printf '%s' "$html" | grep -o 'src="[^"]*tz_fd_frontdesk_captcha=captcha[^"]*"' | head -1 | sed 's/^src="//; s/"$//; s/&#038;/\&/g; s/&amp;/\&/g')"
 if [ -z "$nonce" ] || [ -z "$seq" ] || [ -z "$captcha_src" ]; then
   bad "B13 reschedule: the public form renders with its nonce and security code" "missing nonce, sequence or code image"
   echo "Summary (reschedule-http): $pass passed, $fail failed"; exit 1

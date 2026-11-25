@@ -194,7 +194,11 @@ $tzfd_cx_email = 'rt-cancel-' . substr( md5( uniqid( '', true ) ), 0, 10 ) . '@e
 $tzfd_cx_sub   = TZFD_Pipeline::submit( $tzfd_form, array( 'slot' => gmdate( 'Y-m-d', time() + 12 * DAY_IN_SECONDS ) . ' 11:00', 'name' => 'RT Cancel', 'email' => $tzfd_cx_email, 'service_type' => 'rt-cancel', 'description' => 'runtime cancel check' ), 'front-desk' );
 $tzfd_cx_id    = (int) ( $tzfd_cx_sub['booking_id'] ?? 0 );
 $tzfd_cx_row   = $tzfd_cx_id ? $wpdb->get_row( $wpdb->prepare( 'SELECT id, formid, notifyto, posted_data, data FROM %i WHERE id=%d', $tzfd_bookings, $tzfd_cx_id ) ) : null; // phpcs:ignore WordPress.DB.DirectDatabaseQuery -- raw row read for the token version
-$tzfd_cx_base  = rtrim( (string) getenv( 'TZFD_RT_URL' ), '/' ) . '/wp-admin/admin-post.php';
+// The CI workflow does not set TZFD_RT_URL. Without the fallback the request URL is relative, wp_remote_get fails
+// before any request is sent, and the preview reports code 0. The site's own home URL is the server the CI step runs.
+$tzfd_cx_root  = (string) getenv( 'TZFD_RT_URL' );
+if ( '' === $tzfd_cx_root ) { $tzfd_cx_root = home_url(); }
+$tzfd_cx_base  = rtrim( $tzfd_cx_root, '/' ) . '/wp-admin/admin-post.php';
 $tzfd_cx_exp   = TZFD_Customer_Cancellation::new_expiry();
 $tzfd_cx_tok   = is_object( $tzfd_cx_row ) ? TZFD_Customer_Cancellation::create_token( $tzfd_cx_id, $tzfd_cx_email, wp_salt( 'auth' ), TZFD_Customer_Cancellation::row_version( $tzfd_cx_row ), $tzfd_cx_exp ) : '';
 $tzfd_cx_args  = array( 'action' => TZFD_Customer_Cancellation::ACTION, 'booking_id' => $tzfd_cx_id, 'token' => $tzfd_cx_tok, 'expires' => $tzfd_cx_exp );

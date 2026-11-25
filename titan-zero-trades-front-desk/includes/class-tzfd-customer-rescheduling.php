@@ -23,7 +23,7 @@ final class TZFD_Customer_Rescheduling {
     }
 
     public function register() {
-        add_filter('titan_zero_front_desk_customer_copy_message', array($this,'customer_copy'), 10, 4);
+        add_filter('tzfd_customer_copy_message', array($this,'customer_copy'), 10, 4);
         add_action('admin_post_'.self::ACTION, array($this,'handle_public_request'));
         add_action('admin_post_nopriv_'.self::ACTION, array($this,'handle_public_request'));
     }
@@ -384,7 +384,8 @@ final class TZFD_Customer_Rescheduling {
             $followup_failed=false;
             try {
                 TZFD_Customer_Event_Outbox::schedule();
-                do_action('tz_fd_cache_clean',$tzfd_local_form);
+                do_action('tzfd_cache_clean',$tzfd_local_form);
+                do_action( 'tz_fd_cache_clean',$tzfd_local_form); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
                 // Synchronous, after commit: reminder add-ons re-queue for the new slot before the old one can fire.
                 do_action('tzfd_booking_time_changed',$id,$tzfd_local_form,$company);
             } catch (Throwable $tzfd_error) { $followup_failed=true; }

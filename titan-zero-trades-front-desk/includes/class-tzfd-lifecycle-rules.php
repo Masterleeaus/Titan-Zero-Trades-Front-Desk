@@ -37,7 +37,8 @@ final class TZFD_Lifecycle_Rules {
         }
 
         if ( function_exists( 'apply_filters' ) ) {
-            $filtered = apply_filters( 'titan_zero_front_desk_allowed_booking_statuses', $allowed );
+            $filtered = apply_filters( 'tzfd_allowed_booking_statuses', $allowed );
+            $filtered = apply_filters( 'titan_zero_front_desk_allowed_booking_statuses', $filtered ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
             if ( is_array( $filtered ) ) {
                 foreach ( $filtered as $status ) {
                     if ( is_string( $status ) && ! in_array( $status, $allowed, true ) ) {

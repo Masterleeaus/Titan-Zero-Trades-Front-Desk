@@ -36,7 +36,8 @@ require_once __DIR__ . '/includes/class-tzfd-request-scalar.php';
     </div>
     <div style="float:left;">
        <?php 
-         $status = apply_filters('tz_fd_app_admin_default_status', $this->get_option('defaultpaidstatus', '') );        
+         $status = apply_filters('tzfd_app_admin_default_status', $this->get_option('defaultpaidstatus', '') );        
+         $status = apply_filters( 'tz_fd_app_admin_default_status', $status ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound, WordPress.WP.GlobalVariablesOverride.Prohibited -- legacy alias: fires the pre-rename hook name for one release
          if (isset($preload_params) && is_array($preload_params) && count($preload_params) && isset($preload_params["apps"])) 
          {
             for($tzfd_k=0; $tzfd_k<count($preload_params["apps"]); $tzfd_k++)

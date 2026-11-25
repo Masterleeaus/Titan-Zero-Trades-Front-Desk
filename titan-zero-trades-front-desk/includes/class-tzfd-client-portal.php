@@ -19,7 +19,7 @@ require_once __DIR__ . '/class-tzfd-customer-rescheduling.php';
  * page layout) and a client portal. Clients sign in with their email address: they get a one-time
  * link that lasts 20 minutes and opens a session for 2 hours. The portal lists their bookings, with
  * the same signed cancel and reschedule links used in booking emails. Quotes are listed by Titan Zero Quotes
- * through the tz_fd_client_portal_sections action (19 Oct split); Front Desk never reads quote tables.
+ * through the tzfd_client_portal_sections action (19 Oct split); Front Desk never reads quote tables.
  *
  * The portal never reveals whether an email address has records: the reply is the same either way.
  */
@@ -322,11 +322,25 @@ final class TZFD_Client_Portal {
         // Claim the link before opening a session. delete_transient() returns true only for the one request
         // that removed it, so two clicks on the same link at the same moment cannot both sign in.
         if ( ! delete_transient( self::token_key( self::LINK_PREFIX, $token ) ) ) { self::redirect_expired_link(); }
-        $session = wp_generate_password( 40, false, false );
-        set_transient( self::token_key( self::SESSION_PREFIX, $session ), $identity, self::SESSION_TTL );
+        $previous = sanitize_text_field( wp_unslash( $_COOKIE[ self::COOKIE ] ?? '' ) );
+        $session  = self::open_session( $identity, $previous );
         self::set_session_cookie( $session, time() + self::SESSION_TTL );
         wp_safe_redirect( self::portal_url() );
         exit;
+    }
+
+    /**
+     * Opens a new portal session for a verified identity. When this browser already holds a session, that
+     * session is ended first, so switching to another client's link leaves no older session working.
+     * Returns the new session token.
+     */
+    public static function open_session( array $identity, $previous = '' ) {
+        if ( self::is_token( $previous ) ) {
+            delete_transient( self::token_key( self::SESSION_PREFIX, $previous ) );
+        }
+        $session = wp_generate_password( 40, false, false );
+        set_transient( self::token_key( self::SESSION_PREFIX, $session ), $identity, self::SESSION_TTL );
+        return $session;
     }
 
     /** The stored identity for a sign-in token, or null. Read-only: the token is not consumed. */
@@ -541,7 +555,8 @@ final class TZFD_Client_Portal {
         }
 
         // Other Titan Zero plugins add their own portal sections here (Quotes lists the client's quotes).
-        do_action( 'tz_fd_client_portal_sections', $records );
+        do_action( 'tzfd_client_portal_sections', $records );
+        do_action( 'tz_fd_client_portal_sections', $records ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- legacy alias: fires the pre-rename hook name for one release
     }
 
     private static function render_bookings( array $items, $allow_change ) {

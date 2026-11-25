@@ -36,8 +36,8 @@ require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-co
 $T = 'TZFD_Central_Tenant';
 $C = 'TZFD_AI_Connector';
 
-const SECRET_A  = '0123456789abcdef0123456789abcdef0123456789abcdef';
-const SECRET_B  = 'fedcba9876543210fedcba9876543210fedcba9876543210';
+define( 'SECRET_A', bin2hex( random_bytes( 32 ) ) ); // generated at run time, never a literal
+define( 'SECRET_B', bin2hex( random_bytes( 32 ) ) );
 const SITE_A    = 'site-a';
 const SITE_B    = 'site-b';
 const COMPANY_X = '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f';

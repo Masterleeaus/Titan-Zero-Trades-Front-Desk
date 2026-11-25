@@ -50,6 +50,21 @@ final class TZFD_Central_Tenant {
         return '00000000-0000-0000-0000-000000000000' !== strtolower( $value );
     }
 
+    /**
+     * The per-site secret from the secret store, provisioned by the Central operator. It is never taken from a
+     * pairing response. Source: the constant TZFD_CENTRAL_SITE_SECRET, else the filter tzfd_central_site_secret.
+     * Returns '' when absent or shorter than MIN_SECRET, so nothing is sent without it. Never log or echo the result.
+     */
+    public static function provisioned_secret() {
+        $raw = '';
+        if ( defined( 'TZFD_CENTRAL_SITE_SECRET' ) ) {
+            $raw = constant( 'TZFD_CENTRAL_SITE_SECRET' );
+        } elseif ( function_exists( 'apply_filters' ) ) {
+            $raw = apply_filters( 'tzfd_central_site_secret', '' );
+        }
+        return is_string( $raw ) && strlen( $raw ) >= self::MIN_SECRET ? $raw : '';
+    }
+
     /** HMAC-SHA256 over "<timestamp>.<nonce>.<body>", formatted as sha256=<hex>. */
     public static function sign( $secret, $timestamp, $nonce, $body ) {
         return 'sha256=' . hash_hmac( 'sha256', $timestamp . '.' . $nonce . '.' . $body, (string) $secret );

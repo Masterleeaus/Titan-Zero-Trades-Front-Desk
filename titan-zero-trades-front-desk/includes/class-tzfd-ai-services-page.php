@@ -82,7 +82,7 @@ final class TZFD_AI_Services_Page {
 
     /**
      * Connect hosted account (issue #347): the admin enters the single-use pairing code shown by Supercharged.
-     * TZFD_AI_Pairing exchanges it for the per-site secret over https. The code is read once, passed on and
+     * TZFD_AI_Pairing exchanges it over https for a signed central-pairing/1 assertion. The per-site secret comes from the secret store. The code is read once, passed on and
      * dropped; it is never echoed, logged or stored. Consent is revoked by a successful pairing, so data is
      * never sent to a new endpoint on old consent.
      */

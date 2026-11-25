@@ -34,7 +34,7 @@ function __( $text, $domain = '' ) { return $text; } // translation shim for the
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-central-tenant.php';
 require __DIR__ . '/../../titan-zero-trades-front-desk/includes/class-tzfd-ai-connector.php';
 
-const SECRET = '0123456789abcdef0123456789abcdef0123456789abcdef';
+define( 'SECRET', bin2hex( random_bytes( 32 ) ) ); // generated at run time, never a literal
 const SITE   = 'site-a';
 
 $GLOBALS['tz_fail'] = 0;

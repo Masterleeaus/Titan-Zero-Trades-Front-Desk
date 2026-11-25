@@ -55,7 +55,9 @@ function tzfd_rs_reminder_hours() {
 }
 
 if ( 'setup' === $mode ) {
-	$engine = $GLOBALS['tz_fd_plugin'] ?? null;
+	// The plugin keeps its engine in a local variable at boot, so the harness builds one. TZFD_Scheduling_Plugin
+	// has no constructor in its class chain, so creating it has no side effects.
+	$engine = $GLOBALS['tz_fd_plugin'] ?? new TZFD_Scheduling_Plugin();
 	if ( ! $engine instanceof TZFD_Scheduling_Plugin ) {
 		echo "FAIL harness -- scheduling engine not loaded\n";
 		exit( 1 );

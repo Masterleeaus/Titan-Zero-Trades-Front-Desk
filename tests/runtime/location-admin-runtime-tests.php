@@ -180,6 +180,25 @@ $LA::render();
 $list = ob_get_clean();
 tzfd_la_ok( 'location-admin: list view shows the registered name', false !== strpos( $list, 'North Depot (renamed)' ) );
 
+// 7. Legacy grants: a grant at an id that is not registered is listed with a flag and keeps its revoke control.
+$legacy = TZFD_Delegated_Roles::validate( array( 'company_id' => $co, 'user_id' => $sub, 'role' => 'viewer', 'location_ids' => array( 'legacy-9' ), 'staff_id' => null ) );
+update_option( 'tzfd_staff_access_g_' . $co, array( $legacy ), false );
+ob_start();
+TZFD_Staff_Access_Admin::render();
+$staff_screen = ob_get_clean();
+tzfd_la_ok( 'location-admin: a legacy grant at an unregistered id is flagged on the staff access screen', false !== strpos( $staff_screen, 'legacy-9 (not registered: legacy grant)' ) );
+tzfd_la_ok( 'location-admin: a legacy grant keeps its revoke control', false !== strpos( $staff_screen, 'Revoke at this location' ) );
+
+// 8. Company isolation: a location registered for another company is not active or grantable for this one.
+$other = TZFD_Location_Store::add( '2', $admin, array( 'id' => 'loc-x1', 'name' => 'Other business site', 'timezone' => 'UTC', 'status' => 'active' ), $now );
+tzfd_la_ok( 'location-admin: a location can be registered for a second company', true === $other['ok'], $other['code'] );
+tzfd_la_ok( 'location-admin: another company\'s location is not in this company\'s registry', null === TZFD_Location_Registry::find( $ST::locations( $co )['locations'], 'loc-x1' ) );
+tzfd_la_ok( 'location-admin: another company\'s location is not active for this company', false === $ST::has_active( $co, array( 'loc-x1' ) ) );
+$x = $SA::assign( $co, $admin, true, array( 'company_id' => $co, 'user_id' => $sub, 'role' => 'viewer', 'location_ids' => array( 'loc-x1' ), 'staff_id' => null ), $now );
+tzfd_la_ok( 'location-admin: a grant in this company to another company\'s location is refused', false === $x['ok'] && 'unknown_location' === $x['code'], $x['code'] );
+delete_option( 'tzfd_locations_2' );
+delete_option( 'tzfd_location_log_2' );
+
 // Restore the options this test touched, remove the disposable user, and clear request state.
 foreach ( $opt as $k ) {
 	if ( null === $saved[ $k ] ) { delete_option( $k ); } else { update_option( $k, $saved[ $k ], false ); }

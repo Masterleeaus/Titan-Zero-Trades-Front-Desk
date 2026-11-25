@@ -214,6 +214,15 @@ t_check( 'alert setting: array value stays off', '0' === $R::alert_setting_from_
 t_check( 'alert setting: true boolean stays off', '0' === $R::alert_setting_from_request( true ) );
 t_check( 'alert setting: other text stays off', '0' === $R::alert_setting_from_request( 'yes' ) && '0' === $R::alert_setting_from_request( '1 ' ) );
 
+// ---- Priority override (issue #336): an admin choice beats the rule result in both directions ----
+t_check( 'override: no override keeps urgent rule', 'urgent' === $R::effective_urgency( 'urgent', '' ) );
+t_check( 'override: no override keeps normal rule', 'normal' === $R::effective_urgency( 'normal', '' ) );
+t_check( 'override: marked urgent beats normal rule', 'urgent' === $R::effective_urgency( 'normal', 'urgent' ) );
+t_check( 'override: marked not urgent beats urgent rule', 'normal' === $R::effective_urgency( 'urgent', 'normal' ) );
+t_check( 'override: unknown override value is ignored', 'urgent' === $R::effective_urgency( 'urgent', 'maybe' ) && 'normal' === $R::effective_urgency( 'normal', 'maybe' ) );
+t_check( 'override: empty rule result is not urgent', 'normal' === $R::effective_urgency( '', '' ) );
+t_check( 'override: negated urgent phrase stays normal without override', 'normal' === $R::effective_urgency( $R::urgency( 'no rush, not urgent at all' )['level'], '' ) );
+
 // ---- Allowlisted business routing rules ----------------------------------------------------
 $rules = array( 'cancel' => 'quote_review', 'booking' => 'not_a_queue', 'general' => 'spam_review', 'spam' => 'enquiry_queue' );
 t_check( 'rule routes intent to allowlisted queue', 'quote_review' === $R::route_for_intent( 'cancel', $rules ) );

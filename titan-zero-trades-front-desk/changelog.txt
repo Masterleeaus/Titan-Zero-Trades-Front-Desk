@@ -1,4 +1,5 @@
 = Unreleased =
+* Locations: a registry of named locations per company, with admin add, rename, archive and restore, and a view per location with its staff access and change log. Staff access is granted only at registered, active locations. Archiving is refused while a grant still uses the location.
 * Hosted account pairing (issue #347): AI Services has a Connect hosted account form that takes the single-use pairing code shown by Supercharged. The plugin exchanges it over https for a per-site secret. The pairing endpoint is off by default and is set by the TZFD_AI_PAIRING_ENDPOINT constant or the tzfd_ai_pairing_endpoint filter. A refused or failed pairing leaves the existing connection unchanged, and a successful pairing revokes consent until it is granted again. The manual endpoint, site ID and secret form is removed.
 
 = 3.1.0 =

@@ -45,7 +45,8 @@ const OTHER_END  = 'https://central-staging.titanzero.io/api/tzfd/pair';
 const CODE       = 'ABCD-1234-EFGH';
 const COMPANY    = '3f2b8c1e-5d4a-4b7e-9c1f-0a1b2c3d4e5f';
 const COMPANY_B  = '9a8b7c6d-5e4f-4a3b-8c2d-1e0f9a8b7c6d';
-const SEVEN      = array( 'contract', 'site', 'company_uuid', 'operations', 'nonce', 'issued_at', 'expires_at' );
+const FEATURE    = 'https://central.titanzero.io/api/tzfd/ai';
+const EIGHT      = array( 'contract', 'site', 'company_uuid', 'operations', 'nonce', 'issued_at', 'expires_at', 'feature_endpoint' );
 
 $GLOBALS['tz_fail'] = 0;
 $GLOBALS['tz_pass'] = 0;
@@ -92,6 +93,7 @@ function signed_reply( array $claims = array(), array $headers = array(), $body 
             'nonce'        => $sent['nonce'],
             'issued_at'    => $now,
             'expires_at'   => $now + 600,
+            'feature_endpoint' => FEATURE,
         );
         foreach ( $claims as $k => $v ) {
             if ( null === $v ) { unset( $data[ $k ] ); } else { $data[ $k ] = $v; }
@@ -117,6 +119,8 @@ function pair_with( $reply, $code = CODE ) {
 
 function stored_record() { return get_option( TZFD_Central_Tenant::OPTION, null ); }
 function stored_secret() { return get_option( TZFD_Central_Tenant::SECRET_OPTION, '' ); }
+function stored_endpoint() { return get_option( TZFD_AI_Connector::OPTION, array() )['endpoint'] ?? ''; }
+function stored_connector_secret() { return get_option( TZFD_AI_Connector::SECRET_OPTION, '' ); }
 function stored_company() { $r = stored_record(); return is_array( $r ) ? $r['company_uuid'] : ''; }
 function lock_held() { return array_key_exists( TZFD_AI_Pairing::LOCK_OPTION, $GLOBALS['tz_opts'] ); }
 
@@ -191,8 +195,8 @@ reset_state();
 use_endpoint( ENDPOINT );
 $r = pair_with( signed_reply() );
 check( 'D1 a response with exactly the seven signed fields pairs', 'paired' === $r['status'] && COMPANY === stored_company() );
-check( 'D2 the response body has exactly the seven fields', is_string( $GLOBALS['tz_last_response_body'] ) && SEVEN === array_keys( json_decode( $GLOBALS['tz_last_response_body'], true ) ) );
-foreach ( SEVEN as $field ) {
+check( 'D2 the response body has exactly the eight signed fields', is_string( $GLOBALS['tz_last_response_body'] ) && EIGHT === array_keys( json_decode( $GLOBALS['tz_last_response_body'], true ) ) );
+foreach ( EIGHT as $field ) {
     reset_state();
     use_endpoint( ENDPOINT );
     $r = pair_with( signed_reply( array( $field => null ) ) );
@@ -236,8 +240,8 @@ $r = pair_with( signed_reply( array(), array( 'X-TZFD-Timestamp' => (string) ( t
 check( 'E4 a timestamp outside the skew window is refused (stale)', 'invalid_response' === $r['status'] && 'stale' === $r['reason'] );
 $r = pair_with( signed_reply( array( 'secret' => $GLOBALS['tz_store'] ) ) );
 check( 'E5 a response that carries a secret field is refused (fields_mismatch)', 'invalid_response' === $r['status'] && 'fields_mismatch' === $r['reason'] && null === stored_record() );
-$r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://central.titanzero.io/api/tzfd/ai' ) ) );
-check( 'E6 an extra feature_endpoint field is refused (fields_mismatch)', 'invalid_response' === $r['status'] && 'fields_mismatch' === $r['reason'] );
+$r = pair_with( signed_reply( array( 'extra_field' => 'x' ) ) );
+check( 'E6 an extra field beyond the eight is refused (fields_mismatch)', 'invalid_response' === $r['status'] && 'fields_mismatch' === $r['reason'] && null === stored_record() );
 
 reset_state();
 use_endpoint( ENDPOINT );
@@ -302,6 +306,45 @@ check( 'H1 a fresh lock means busy and no transport call', 'busy' === $r['status
 $GLOBALS['tz_opts'][ TZFD_AI_Pairing::LOCK_OPTION ] = time() - 120;
 $r = pair_with( signed_reply() );
 check( 'H2 a stale lock (over 30 seconds) is taken over and pairing proceeds', 'paired' === $r['status'] && ! lock_held() );
+
+// ---- J. The AI endpoint: an eighth signed field that sets the connector endpoint ----
+reset_state();
+use_endpoint( ENDPOINT );
+TZFD_AI_Connector::grant_consent( array( 'booking_details' ) );
+$r = pair_with( signed_reply() );
+check( 'J1 the connector endpoint is taken from the signed feature_endpoint', 'paired' === $r['status'] && FEATURE === stored_endpoint() );
+check( 'J2 the connector holds the same secret from the store and the site id of this pairing', $GLOBALS['tz_store'] === stored_connector_secret() && TZFD_AI_Pairing::site_id() === get_option( TZFD_AI_Connector::OPTION, array() )['site_id'] );
+
+reset_state();
+use_endpoint( ENDPOINT );
+pair_with( signed_reply() );
+$good_endpoint = stored_endpoint();
+$tamper = function ( $inner ) {
+    return function ( $request ) use ( $inner ) {
+        $resp = $inner( $request );
+        $data = json_decode( $resp['body'], true );
+        $data['feature_endpoint'] = 'https://central.titanzero.io/api/tzfd/other';
+        $resp['body'] = json_encode( $data );
+        return $resp;
+    };
+};
+$r = pair_with( $tamper( signed_reply() ) );
+check( 'J3 an endpoint changed after signing is refused (bad_signature) and the connector endpoint is unchanged', 'invalid_response' === $r['status'] && 'bad_signature' === $r['reason'] && $good_endpoint === stored_endpoint() );
+
+$r = pair_with( signed_reply( array( 'feature_endpoint' => null ) ) );
+check( 'J4 a response without feature_endpoint is refused (fields_mismatch) and the connector endpoint is unchanged', 'invalid_response' === $r['status'] && 'fields_mismatch' === $r['reason'] && $good_endpoint === stored_endpoint() );
+
+$r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://evil.example.test/ai' ) ) );
+check( 'J5 a signed endpoint on another host is refused (endpoint_invalid), nothing stored', 'invalid_response' === $r['status'] && 'endpoint_invalid' === $r['reason'] && $good_endpoint === stored_endpoint() && $GLOBALS['tz_store'] === stored_secret() );
+
+$r = pair_with( signed_reply( array( 'feature_endpoint' => 'http://central.titanzero.io/api/tzfd/ai' ) ) );
+check( 'J6 a signed endpoint over http is refused (endpoint_invalid)', 'invalid_response' === $r['status'] && 'endpoint_invalid' === $r['reason'] && $good_endpoint === stored_endpoint() );
+
+$r = pair_with( signed_reply( array( 'feature_endpoint' => FEATURE ), array(), null, str_repeat( 'c', 64 ) ) );
+check( 'J7 a valid endpoint with a bad signature is refused and nothing is set', 'bad_signature' === $r['reason'] && $good_endpoint === stored_endpoint() );
+
+$r = pair_with( signed_reply( array( 'feature_endpoint' => 'https://central.titanzero.io/api/tzfd/other' ) ) );
+check( 'J8 a new signed endpoint on the same host is accepted and replaces the old one', 'paired' === $r['status'] && 'https://central.titanzero.io/api/tzfd/other' === stored_endpoint() );
 
 // ---- I. Constants win over filters (defined last: a constant can be set only once) ----
 define( 'TZFD_AI_PAIRING_ENDPOINT', ENDPOINT );

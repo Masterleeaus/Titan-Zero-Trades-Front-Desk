@@ -205,6 +205,39 @@ final class TZFD_Ai_Faq_Suggestions {
 		return self::finish( $key, $state, 'done', $added, '' );
 	}
 
+	/**
+	 * Measured hosted usage for one company over the given ISO weeks (e.g. '2026-W47'). Only batches that
+	 * completed count, and token counts are the values the hosted service reported. No price is applied here:
+	 * cost reporting needs an owner-approved rate, so it is not computed in this class.
+	 *
+	 * @param int   $company_id Company (tenant) whose batches are read.
+	 * @param array $weeks      ISO week keys to include. Malformed keys are ignored.
+	 * @return array{batches:int,input_tokens:int,output_tokens:int,total_tokens:int}
+	 */
+	public static function usage_report( $company_id, array $weeks ) {
+		$cid    = (int) $company_id;
+		$report = array( 'batches' => 0, 'input_tokens' => 0, 'output_tokens' => 0, 'total_tokens' => 0 );
+		if ( $cid < 1 ) {
+			return $report;
+		}
+		foreach ( array_unique( $weeks ) as $week ) {
+			if ( ! is_string( $week ) || ! preg_match( '/^\d{4}-W\d{2}$/', $week ) ) {
+				continue;
+			}
+			$state = get_option( self::batch_key( $cid, $week ), array() );
+			if ( ! is_array( $state ) || 'done' !== ( $state['status'] ?? '' ) || ! isset( $state['usage'] ) || ! is_array( $state['usage'] ) ) {
+				continue;
+			}
+			$in  = max( 0, (int) ( $state['usage']['input_tokens'] ?? 0 ) );
+			$out = max( 0, (int) ( $state['usage']['output_tokens'] ?? 0 ) );
+			$report['batches']++;
+			$report['input_tokens']  += $in;
+			$report['output_tokens'] += $out;
+		}
+		$report['total_tokens'] = $report['input_tokens'] + $report['output_tokens'];
+		return $report;
+	}
+
 	/** Pending proposals for one company, oldest first. */
 	public static function pending( $company_id ) {
 		$out = array();

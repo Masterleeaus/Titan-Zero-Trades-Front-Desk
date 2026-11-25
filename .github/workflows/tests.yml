@@ -66,7 +66,7 @@ jobs:
       - name: Other standalone suites that print PASS/FAIL (exit status gates the job)
         run: |
           set -e
-          for f in tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/unit/ai-widget/run-tests.php tests/sms-cancel-reschedule-checks.php tests/release/check-release-metadata.php; do
+          for f in tests/ai-assist/run-tests.php tests/ai-services/run-contract-tests.php tests/ai-services/run-downgrade-journey-tests.php tests/unit/ai-widget/run-tests.php tests/sms-cancel-reschedule-checks.php tests/release/check-release-metadata.php; do
             echo "== $f"
             php -d error_reporting=-1 "$f"
           done

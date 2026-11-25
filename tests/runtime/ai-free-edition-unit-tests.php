@@ -93,11 +93,11 @@ $notices = file_get_contents( $inc . '/class-tzfd-admin-notices.php' );
 ai_check( 'dismiss handler allows only speed notice', false !== strpos( $notices, "\$known    = array( 'speed' );" ) );
 ai_check( 'no AI key reminder left in notices', false === strpos( $notices, 'ai_key' ) );
 
-// 6. Shortcode for the retired assistant still renders nothing.
+// 6. The retired assistant stub is not a registered shortcode; its tag is stripped from content instead (#185).
 $main = file_get_contents( $root . '/titan-zero-front-desk.php' );
 ai_check(
-	'retired AI shortcode renders empty',
-	false !== strpos( $main, "add_shortcode( 'tz_fd_ai_assistant', '__return_empty_string' )" )
+	'retired AI shortcode is not registered',
+	false === strpos( $main, "add_shortcode( 'tz_fd_ai_assistant'" ) && false !== strpos( $main, 'TZFD_Retired_Shortcodes::boot();' )
 );
 
 // 7. Static scan: no outbound AI provider calls anywhere in the plugin PHP.

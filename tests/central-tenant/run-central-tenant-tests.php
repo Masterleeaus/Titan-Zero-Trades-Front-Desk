@@ -63,6 +63,7 @@ function make_assertion( array $o = array() ) {
         'nonce'        => isset( $o['claim_nonce'] ) ? $o['claim_nonce'] : $nonce,
         'issued_at'    => isset( $o['issued_at'] ) ? $o['issued_at'] : $now,
         'expires_at'   => isset( $o['expires_at'] ) ? $o['expires_at'] : $now + 600,
+        'feature_endpoint' => isset( $o['feature_endpoint'] ) ? $o['feature_endpoint'] : 'https://central.titanzero.io/api/tzfd/ai',
     );
     if ( array_key_exists( 'drop', $o ) ) { unset( $claims[ $o['drop'] ] ); }
     $body = isset( $o['body'] ) ? $o['body'] : json_encode( $claims );
@@ -117,6 +118,13 @@ $badc = make_assertion( array( 'contract' => 'central-pairing/9' ) );
 check( 'unknown contract version is rejected', 'contract_unsupported' === $T::verify_assertion( $badc['body'], $badc['headers'], SITE_A, SECRET_A, $now )['reason'] );
 $missing = make_assertion( array( 'drop' => 'company_uuid' ) );
 check( 'assertion missing a required field is rejected', 'missing_field' === $T::verify_assertion( $missing['body'], $missing['headers'], SITE_A, SECRET_A, $now )['reason'] );
+$noep = make_assertion( array( 'now' => $now, 'drop' => 'feature_endpoint' ) );
+check( 'assertion without the eighth field feature_endpoint is rejected (missing_field)', 'missing_field' === $T::verify_assertion( $noep['body'], $noep['headers'], SITE_A, SECRET_A, $now )['reason'] );
+$ep = make_assertion( array( 'now' => $now ) );
+$ep_claims = json_decode( $ep['body'], true );
+$ep_claims['feature_endpoint'] = 'https://central.titanzero.io/api/tzfd/other';
+$ep_changed = json_encode( $ep_claims );
+check( 'feature_endpoint is covered by the signature (changed endpoint is bad_signature)', 'bad_signature' === $T::verify_assertion( $ep_changed, $ep['headers'], SITE_A, SECRET_A, $now )['reason'] );
 $echo = make_assertion( array( 'claim_nonce' => str_repeat( 'a', 32 ) ) );
 check( 'response nonce not echoed in the signed body is rejected', 'nonce_mismatch' === $T::verify_assertion( $echo['body'], $echo['headers'], SITE_A, SECRET_A, $now )['reason'] );
 $op = make_assertion( array( 'operations' => array() ) );

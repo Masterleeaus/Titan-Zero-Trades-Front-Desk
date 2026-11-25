@@ -139,6 +139,29 @@ ok( 'decide refuses another company\'s proposal', ( $cross['error'] ?? '' ) === 
 ok( 'approved_for drops facts that the owner has not approved', array_column( TZFD_Ai_Faq_Suggestions::approved_for( $CO ), 'id' ) === array( 'svc-1' ) );
 ok( 'approved_for returns nothing for a company without a filter', TZFD_Ai_Faq_Suggestions::approved_for( $OTHER ) === array() );
 
+/* ---------- measured usage report (per company, per ISO week, completed batches only) ---------- */
+reset_state();
+install_facts_filter( $FACTS_7 );
+grant();
+record_boiler_questions( $CO, $NOW );
+record_boiler_questions( $OTHER, $NOW );
+add_filter( TZFD_Ai_Free_Core::HOSTED_FILTER, static function ( $value, $env ) {
+	return array( 'ok' => true, 'company_id' => $env['company_id'], 'data' => array( 'faqs' => array(
+		array( 'question' => 'Do you repair boilers?', 'answer' => 'Yes, boiler repair is offered.', 'fact_ids' => array( 'svc-1' ) ),
+	) ), 'usage' => array( 'input_tokens' => 120, 'output_tokens' => 45 ) );
+} );
+TZFD_Ai_Faq_Suggestions::run_scheduled( $NOW );
+$wk_now  = TZFD_Ai_Free_Core::week_key( $NOW );
+$wk_next = TZFD_Ai_Free_Core::week_key( $NOW + 7 * DAY_IN_SECONDS );
+$rep = TZFD_Ai_Faq_Suggestions::usage_report( $CO, array( $wk_now, $wk_next, 'not-a-week', $wk_now ) );
+ok( 'usage report counts the completed batch once, with reported tokens', 1 === $rep['batches'] && 120 === $rep['input_tokens'] && 45 === $rep['output_tokens'] && 165 === $rep['total_tokens'] );
+ok( 'usage report skips weeks with no batch and malformed keys', 0 === TZFD_Ai_Faq_Suggestions::usage_report( $CO, array( $wk_next, 'bogus' ) )['batches'] );
+ok( 'usage report for a week with no batch is all zero', 0 === TZFD_Ai_Faq_Suggestions::usage_report( $CO, array( $wk_next ) )['total_tokens'] );
+ok( 'usage report is tenant-scoped: another company sees none of it', 0 === TZFD_Ai_Faq_Suggestions::usage_report( $OTHER, array( $wk_now ) )['batches'] );
+ok( 'usage report for company 0 or no weeks is all zero', 0 === TZFD_Ai_Faq_Suggestions::usage_report( 0, array( $wk_now ) )['total_tokens'] && 0 === TZFD_Ai_Faq_Suggestions::usage_report( $CO, array() )['total_tokens'] );
+$GLOBALS['tzfd_test_options'][ 'tz_fd_ai_faq_batch_' . $CO . '_' . $wk_next ] = array( 'status' => 'retry', 'attempts' => 1, 'usage' => array( 'input_tokens' => 999, 'output_tokens' => 999 ) );
+ok( 'a batch that did not complete is not counted, even if it holds usage', 0 === TZFD_Ai_Faq_Suggestions::usage_report( $CO, array( $wk_next ) )['batches'] );
+
 /* ---------- result ---------- */
 echo "Passed: {$GLOBALS['tzfd_pass']}  Failed: {$GLOBALS['tzfd_fail']}\n";
 exit( $GLOBALS['tzfd_fail'] > 0 ? 1 : 0 );

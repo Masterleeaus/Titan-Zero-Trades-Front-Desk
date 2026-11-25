@@ -76,6 +76,19 @@ final class TZFD_Staff_Access_Admin {
 		check_admin_referer( $action, '_wpnonce' );
 	}
 
+	/** Name and id of a granted location. A grant at an id that is no longer registered is flagged, not hidden (issue #362). */
+	private static function location_label( $registry, $loc ) {
+		if ( '' === $loc ) { return __( 'all locations', 'titan-zero-trades-front-desk' ); }
+		$item = TZFD_Location_Registry::find( $registry, $loc );
+		if ( null === $item ) {
+			/* translators: %s: location id that is not in the local registry. */
+			return sprintf( __( '%s (not registered: legacy grant)', 'titan-zero-trades-front-desk' ), $loc );
+		}
+		$label = $item['name'] . ' (' . $item['id'] . ')';
+		if ( TZFD_Location_Registry::STATUS_ARCHIVED === $item['status'] ) { $label .= ' - ' . __( 'archived', 'titan-zero-trades-front-desk' ); }
+		return $label;
+	}
+
 	public static function render() {
 		if ( ! current_user_can( self::CAP ) ) { return; }
 		$notice = isset( $_GET['tzfd_staff_notice'] ) ? sanitize_key( wp_unslash( $_GET['tzfd_staff_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- display only.
@@ -86,7 +99,8 @@ final class TZFD_Staff_Access_Admin {
 			echo '<p>' . esc_html__( 'Set up your business first. Staff access applies to one business at a time.', 'titan-zero-trades-front-desk' ) . '</p></div>';
 			return;
 		}
-		$stored = TZFD_Staff_Access::grants( $company );
+		$stored   = TZFD_Staff_Access::grants( $company );
+		$registry = TZFD_Location_Store::locations( $company )['locations'];
 		if ( $stored['skipped'] > 0 ) {
 			echo '<div class="notice notice-error"><p>' . esc_html( sprintf( /* translators: %d: number of malformed stored grants. */ __( '%d stored grant(s) are malformed and grant nothing. Revoke and re-add them.', 'titan-zero-trades-front-desk' ), $stored['skipped'] ) ) . '</p></div>';
 		}
@@ -98,7 +112,7 @@ final class TZFD_Staff_Access_Admin {
 			echo '<table class="widefat striped"><thead><tr><th>' . esc_html__( 'User ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Role', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Staff ID', 'titan-zero-trades-front-desk' ) . '</th><th>' . esc_html__( 'Locations', 'titan-zero-trades-front-desk' ) . '</th><th></th></tr></thead><tbody>';
 			foreach ( $stored['grants'] as $g ) {
 				foreach ( ( empty( $g['location_ids'] ) ? array( '' ) : $g['location_ids'] ) as $loc ) {
-					echo '<tr><td>' . esc_html( (string) $g['user_id'] ) . '</td><td>' . esc_html( $g['role'] ) . '</td><td>' . esc_html( (string) ( $g['staff_id'] ?? '' ) ) . '</td><td>' . esc_html( '' === $loc ? __( 'all locations', 'titan-zero-trades-front-desk' ) : $loc ) . '</td><td>';
+					echo '<tr><td>' . esc_html( (string) $g['user_id'] ) . '</td><td>' . esc_html( $g['role'] ) . '</td><td>' . esc_html( (string) ( $g['staff_id'] ?? '' ) ) . '</td><td>' . esc_html( self::location_label( $registry, $loc ) ) . '</td><td>';
 					if ( '' !== $loc ) {
 						echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '">';
 						wp_nonce_field( 'tzfd_staff_revoke', '_wpnonce' );
